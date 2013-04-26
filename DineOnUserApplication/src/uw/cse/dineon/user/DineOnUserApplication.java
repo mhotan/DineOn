@@ -9,6 +9,11 @@ import com.parse.ParseUser;
 
 import android.app.Application;
 
+/** 
+ * 
+ * @author mtrathjen08
+ *
+ */
 public class DineOnUserApplication extends Application {
 
 	@Override
