@@ -43,7 +43,7 @@ public class UserLoginActivity extends Activity {
 		
 		String user = "customer";//ParseUser.getCurrentUser().getUsername();
 		
-		ParseObject testObject = new ParseObject("Order");
+		ParseObject testObject = new ParseObject("º");
 		testObject.put("item", message);
 		testObject.put("uname", user);
 		

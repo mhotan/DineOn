@@ -13,7 +13,7 @@ public class CustomerReceiver extends BroadcastReceiver {
 
 	private static final String TAG = "CustomerReceiver";
 	private TextView tv;
-	public CustomerReceiver(TextView tv){
+	public CustomerReceiver(TextView tv) {
 		this.tv = tv;
 	}
 	@Override
