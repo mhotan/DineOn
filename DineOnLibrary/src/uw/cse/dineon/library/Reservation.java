@@ -85,4 +85,26 @@ public class Reservation extends Storable {
 	public void setCurrSession(DiningSession currSess) {
 		this.currSession = currSess;
 	}
+
+	@Override
+	public Bundle bundle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void unbundle(Bundle b) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public ParseObject packObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void unpackObject(ParseObject pobj) {
+		// TODO Auto-generated method stub
+	}
 }

@@ -60,7 +60,7 @@ public class RestaurantInfo extends Storable {
 	 *
 	 * @return phone
 	 */
-	public String getPhone() {
+	public int getPhone() {
 		return phone;
 	}
 
@@ -118,5 +118,27 @@ public class RestaurantInfo extends Storable {
 	 */
 	public void setMenu(Menu m) {
 		this.menu = m;
+	}
+
+	@Override
+	public Bundle bundle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void unbundle(Bundle b) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public ParseObject packObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void unpackObject(ParseObject pobj) {
+		// TODO Auto-generated method stub
 	}
 }
