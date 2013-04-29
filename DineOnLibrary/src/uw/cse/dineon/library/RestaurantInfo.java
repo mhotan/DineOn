@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.parse.ParseObject;
 
 /**
+ * Class for storing information on Restaurants.
  * @author Espeo196
  *
  */

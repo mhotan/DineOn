@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.text.format.Time;
 
 /**
- * Reservation class that stores info for user reservations at restaurants
+ * Reservation class that stores info for user reservations at restaurants.
  * @author Espeo196
  *
  */

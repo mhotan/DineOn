@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.parse.ParseObject;
 
 /**
+ * Basic User class.
  * @author Espeo196
  *
  */
