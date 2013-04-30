@@ -30,7 +30,14 @@ LoginFragment.OnLoginListener {
 	// Request code to create a new account
 	private static final int REQUEST_CREATE_NEW_ACCOUNT = 0x1;
 
+	/**
+	 * Return code for  
+	 */
 	public static final String RETURN_CODE_LOGIN_CREDENTIALS = TAG + ":LOGIN_NEW_CREDENTIALS";
+	
+	/**
+	 * 
+	 */
 	public static final String RETURN_CODE_LOGIN_3RDPARTY = TAG + ":LOGIN_3RD_PARTY";
 
 	@Override
