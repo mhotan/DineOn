@@ -1,6 +1,8 @@
 package uw.cse.dineon.library;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import android.os.Bundle;
 
@@ -30,7 +32,9 @@ public class Menu extends Storable {
 	 * @return the items
 	 */
 	public List<MenuItem> getItems() {
-		return items;
+		List<MenuItem> copy = new ArrayList<MenuItem>(items.size());
+		Collections.copy(copy, items);
+		return copy;
 	}
 
 	/**

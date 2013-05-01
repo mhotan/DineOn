@@ -1,6 +1,8 @@
 package uw.cse.dineon.library;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import android.os.Bundle;
 
@@ -96,7 +98,9 @@ public class Order extends Storable {
 	 * @return the menuItems
 	 */
 	public List<MenuItem> getMenuItems() {
-		return menuItems;
+		List<MenuItem> copy = new ArrayList<MenuItem>(menuItems.size());
+		Collections.copy(copy, menuItems);
+		return copy;
 	}
 
 	/**

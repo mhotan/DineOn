@@ -1,6 +1,6 @@
 package uw.cse.dineon.library;
 
-import java.util.List;
+import java.util.*;
 
 import android.os.Bundle;
 
@@ -13,7 +13,7 @@ import com.parse.ParseObject;
  */
 public class Restaurant extends Storable {
 
-	private Menu menu;
+	private Map<String,Menu> menus;
 	private List<Reservation> reservationList;
 	private RestaurantInfo info;
 	private List<Order> orders;
@@ -26,7 +26,7 @@ public class Restaurant extends Storable {
 	 * @param orders
 	 * @Param sessions
 	 */
-	public Restaurant(Menu menu, List<Reservation> reservationList, RestaurantInfo info,
+	public Restaurant(Map<String,Menu> menus, List<Reservation> reservationList, RestaurantInfo info,
 			List<Order> orders, List<DiningSession> sessions) {
 		super();
 		this.menu = menu;
@@ -37,25 +37,27 @@ public class Restaurant extends Storable {
 	}
 	
 	/**
-	 * @return Menu
+	 * @return a shallow copy of the Menu map
 	 */
-	public Menu getMenu() {
-		return menu;
+	public Menu getMenus() {
+		return menus.clone();
 	}
 	
 	/**
 	 * @param menu: A Menu object to set as the new menu
 	 * 
 	 */
-	public void setMenu(Menu menu) {
-		this.menu = menu;
+	public void setMenus(Map<String,Menu> menus) {
+		this.menus = menus;
 	}
 	
 	/**
 	 * @return List<Reservation>
 	 */
 	public List<Reservation> getReservationList() {
-		return reservationList;
+		List<Order> copy = new ArrayList<Order>(reservationList.size());
+		Collections.copy(copy, reservationList);
+		return copy;
 	}
 	
 	/**
@@ -85,7 +87,9 @@ public class Restaurant extends Storable {
 	 * @return List<Order>
 	 */
 	public List<Order> getOrders() {
-		return orders;
+		List<Order> copy = new ArrayList<Order>(orders.size());
+		Collections.copy(copy, orders);
+		return copy;
 	}
 	
 	/**
@@ -100,7 +104,9 @@ public class Restaurant extends Storable {
 	 * @return List<DiningSession>
 	 */
 	public List<DiningSession> getSessions() {
-		return sessions;
+		List<DiningSession> copy = new ArrayList<DiningSession>(sessions.size());
+		Collections.copy(copy, sessions);
+		return copy;
 	}
 	
 	/**
@@ -109,6 +115,31 @@ public class Restaurant extends Storable {
 	 */
 	public void setSessions(List<DiningSession> newSessions) {
 		sessions = newSessions;
+	}
+	
+	/**
+	 * Adds the given menu to the menu map
+	 * @param String for the name
+	 * @param Menu to add
+	 */
+	public void addMenu(String name, Menu newMenu) {
+		menus.add(name, newMenu);
+	}
+	
+	/**
+	 * Remove the specified menu
+	 * @param name
+	 */
+	public void removeMenu(String name) {
+		menus.remove(name);
+	}
+	
+	/**
+	 * Return the menu for the specified name
+	 * @param name
+	 */
+	public Menu getMenu(String name) {
+		return menus.get(name);
 	}
 	
 	/**

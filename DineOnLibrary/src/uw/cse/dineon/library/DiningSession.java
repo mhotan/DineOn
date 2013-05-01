@@ -1,6 +1,9 @@
 package uw.cse.dineon.library;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import android.os.Bundle;
 
@@ -13,6 +16,10 @@ import com.parse.ParseObject;
  */
 public class DiningSession extends Storable {
 	
+	private List<User> users;
+	private long startTime;
+	private long endTime;
+	private boolean isCheckedIn;
 	private List<Order> orders;
 	private int sessToken;
 	private int tableID;
@@ -35,7 +42,9 @@ public class DiningSession extends Storable {
 	 * @return the orders
 	 */
 	public List<Order> getOrders() {
-		return orders;
+		List<Order> copy = new ArrayList<Order>(orders.size());
+		Collections.copy(copy, orders);
+		return copy;
 	}
 	/**
 	 * @param orders the orders to set
@@ -108,4 +117,62 @@ public class DiningSession extends Storable {
 		
 	}
 	
+	/**
+	 * @return the users
+	 * 
+	 */
+	public List<User> getUsers() {
+		List<User> copy = new ArrayList<User>(users.size());
+		Collections.copy(copy, users);
+		return copy;
+	}
+
+	/**
+	 * @param users the users to set
+	 */
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
+
+	/**
+	 * @return the startTime
+	 */
+	public long getStartTime() {
+		return startTime;
+	}
+
+	/**
+	 * @param startTime the startTime to set
+	 */
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
+	/**
+	 * @return the endTime
+	 */
+	public long getEndTime() {
+		return endTime;
+	}
+
+	/**
+	 * @param endTime the endTime to set
+	 */
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
+	}
+
+	/**
+	 * @return the isCheckedIn
+	 */
+	public boolean isCheckedIn() {
+		return isCheckedIn;
+	}
+
+	/**
+	 * @param isCheckedIn the isCheckedIn to set
+	 */
+	public void setCheckedIn(boolean isCheckedIn) {
+		this.isCheckedIn = isCheckedIn;
+	}
 }
