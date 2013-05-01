@@ -29,7 +29,7 @@ public class Restaurant extends Storable {
 	public Restaurant(Map<String,Menu> menus, List<Reservation> reservationList, RestaurantInfo info,
 			List<Order> orders, List<DiningSession> sessions) {
 		super();
-		this.menu = menu;
+		this.menus = menus;
 		this.reservationList = reservationList;
 		this.info = info;
 		this.orders = orders;
@@ -39,7 +39,7 @@ public class Restaurant extends Storable {
 	/**
 	 * @return a shallow copy of the Menu map
 	 */
-	public Menu getMenus() {
+	public Map<String,Menu> getMenus() {
 		return menus.clone();
 	}
 	
