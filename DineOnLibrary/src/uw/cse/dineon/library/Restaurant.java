@@ -55,7 +55,7 @@ public class Restaurant extends Storable {
 	 * @return List<Reservation>
 	 */
 	public List<Reservation> getReservationList() {
-		List<Order> copy = new ArrayList<Order>(reservationList.size());
+		List<Reservation> copy = new ArrayList<Reservation>(reservationList.size());
 		Collections.copy(copy, reservationList);
 		return copy;
 	}
@@ -123,7 +123,7 @@ public class Restaurant extends Storable {
 	 * @param Menu to add
 	 */
 	public void addMenu(String name, Menu newMenu) {
-		menus.add(name, newMenu);
+		menus.put(name, newMenu);
 	}
 	
 	/**
