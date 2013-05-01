@@ -40,7 +40,7 @@ public class Restaurant extends Storable {
 	 * @return a shallow copy of the Menu map
 	 */
 	public Map<String,Menu> getMenus() {
-		return menus.clone();
+		return new HashMap<String,Menu>(menus);
 	}
 	
 	/**
