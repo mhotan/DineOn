@@ -148,37 +148,11 @@ public class DineOnUserActivity extends FragmentActivity {
 	 */
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-
-		// Save the fields of mDiningSession to savedInstanceState
-		savedInstanceState.putInt("sessToken", mDiningSession.getSessToken());
-		savedInstanceState.putInt("tableID", mDiningSession.getTableID());
-
-		List<Order> orderList = mDiningSession.getOrders();
-		int i = 1;
+		// bundle mDiningSession w/ our bundle method
+		Bundle diningBundle = mDiningSession.bundle();
 		
-		// save number of orders to reclaim later
-		savedInstanceState.putInt("numOrders", orderList.size());
-		// save each order item, keep track individual orderswith concatenated ints
-		for (Order order : orderList) {
-			savedInstanceState.putInt("tableID_" + i, order.getTableID());
-			savedInstanceState.putInt("userID_" + i, order.getUserID());
-			savedInstanceState.putInt("restID_" + i, order.getRestID());
-			savedInstanceState.putInt("timestamp_" + i, order.getTimestamp());
-			
-			// use this long syntax to ensure that the correct type of MenuItem is used
-			List<uw.cse.dineon.library.MenuItem> itemList = order.getMenuItems();
-			int j = 1;
-			savedInstanceState.putInt("numItems_" + i, itemList.size());
-			// save each menu item in the order 
-			// fields saved as <fieldName>_<orderNumber>_<itemNumber>
-			for (uw.cse.dineon.library.MenuItem item : itemList) {
-				savedInstanceState.putInt("productID_" + i + "" + j, item.getProductID());
-				savedInstanceState.putDouble("price_" + i + "" + j, item.getPrice());
-				savedInstanceState.putString("description_" + i + "" + j, item.getDescription());
-				j++;
-			}
-			i++;
-		}
+		// save entire bundle w/ key value, retrieve using this string
+		savedInstanceState.putBundle("diningSession", diningBundle);
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
@@ -192,44 +166,6 @@ public class DineOnUserActivity extends FragmentActivity {
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-
-		if(savedInstanceState != null) {
-			mDiningSession.setSessToken(savedInstanceState.getInt("sessToken"));
-			mDiningSession.setTableID(savedInstanceState.getInt("tableID"));
-			int orderSize = savedInstanceState.getInt("numOrders");
-			List<Order> orderList = new ArrayList<Order>();
-		
-			// restore orders
-			for (int i = 1; i <= orderSize; i++) {
-				int itemSize = savedInstanceState.getInt("numItems_" + i);
-				List<uw.cse.dineon.library.MenuItem> itemList = 
-						  	new ArrayList<uw.cse.dineon.library.MenuItem>();
-				  
-				// grab fields for an order
-				int tableID = mDiningSession.getTableID();
-				int userID = savedInstanceState.getInt("userID_" + i);
-				int restID = savedInstanceState.getInt("restID_" + i);
-				int timestamp = savedInstanceState.getInt("timestamp_" + i);
-				Order order = new Order(tableID, userID, restID, timestamp, null);
-	
-				// add menu items to order before adding to mDiningSession
-				for (int j = 1; j <= itemSize; j++) {
-					// grab fields for a MenuItem
-					int productID = savedInstanceState.getInt("productID_" + i + "" + j);
-					double price = savedInstanceState.getInt("price_" + i + "" + j);
-					String description = savedInstanceState.getString("description_" + i + "" + j);
-	
-					// create new item with stored fields (see above) and add it
-					uw.cse.dineon.library.MenuItem item = 
-							new uw.cse.dineon.library.MenuItem(productID, price, description);
-					  
-					itemList.add(item);
-				}
-				// set MenuItems for current order and add the order to the session's list
-				order.setMenuItems(itemList);
-				orderList.add(order);
-			}
-			mDiningSession.setOrders(orderList);
-		} // TODO else set session to default?
+		mDiningSession.unbundle(savedInstanceState.getBundle("diningSession"));
 	}
 }
