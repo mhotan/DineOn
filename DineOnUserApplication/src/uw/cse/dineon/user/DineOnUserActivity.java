@@ -24,6 +24,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 import com.parse.ParseUser;
 import com.parse.PushService;
@@ -41,9 +43,9 @@ public class DineOnUserActivity extends FragmentActivity {
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
 
 	protected DiningSession mDiningSession;
-	
+
 	private DineOnReceiver rec;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,26 +58,26 @@ public class DineOnUserActivity extends FragmentActivity {
 					this.getClass(), 
 					"uw.cse.dineon.user.CONFIRM_DINING_SESSION", 
 					"uw.cse.dineon.user." + ParseUser.getCurrentUser().getUsername()); // restaurant name
-			
+
 		} catch (NoSuchMethodException e) {
 			// print out error msg
 			Log.d(TAG, "Error: " + e.getMessage());
 		}
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-//		IntentFilter iff = new IntentFilter("uw.cse.dineon.user.REQUEST_DINING_SESSION");
-//		PushService.subscribe(this, "push", DineOnUserActivity.class);
-//		this.registerReceiver(rec, iff);
+
+		//		IntentFilter iff = new IntentFilter("uw.cse.dineon.user.REQUEST_DINING_SESSION");
+		//		PushService.subscribe(this, "push", DineOnUserActivity.class);
+		//		this.registerReceiver(rec, iff);
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onStop();
-//		this.unregisterReceiver(rec);
+		//		this.unregisterReceiver(rec);
 	}
 
 	@Override
@@ -85,14 +87,42 @@ public class DineOnUserActivity extends FragmentActivity {
 		//  UI Menu is updated this is done manually
 		//  See basic_menu under res/menu for ids
 		inflater.inflate(R.menu.basic_menu, menu);
-
-		MenuItem item = menu.findItem(R.id.option_view_bill);
+		//Hides the 
+		final MenuItem item = menu.findItem(R.id.option_bill);
 		item.setEnabled(false);
 		item.setVisible(false);
+
+		final Menu m = menu;
+
+		//Sets the necessary onClickListeners for the menu
+		//items with an action layout.
+		List<MenuItem> customActionBarButtons = new ArrayList<MenuItem>();
+		customActionBarButtons.add(menu.findItem(R.id.option_bill));
+		customActionBarButtons.add(menu.findItem(R.id.option_check_in));
+		
+		setOnClick(m, customActionBarButtons);
 
 		return true;
 	}
 
+	/**
+	 * Creates the onClick listeners for the specified menu items.
+	 * 
+	 * @param m the parent menu
+	 * @param items the list of MenuItems to create listeners for
+	 */
+	private void setOnClick(final Menu m, List<MenuItem> items) {
+		for (final MenuItem item : items) {
+			item.getActionView().setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {   
+					m.performIdentifierAction(item.getItemId(), 0);
+				}
+			});
+		}
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent i = null;
@@ -107,11 +137,16 @@ public class DineOnUserActivity extends FragmentActivity {
 			IntentIntegrator integrator = new IntentIntegrator(this);
 			integrator.initiateScan();
 			break;
-		case R.id.option_view_bill:
+		case R.id.option_bill:
 			i = new Intent(getApplicationContext(), CurrentOrderActivity.class);
 			// Count all the elements that the user has currently selected
 			startActivityForResult(i, DineOnConstants.REQUEST_VIEW_CURRENT_ORDER);
 			break;
+		case R.id.option_logout:
+			// TODO: implement logout
+			break;
+		default:
+			//Unknown
 		}
 		if (i != null) {
 			startActivity(i);
@@ -133,7 +168,7 @@ public class DineOnUserActivity extends FragmentActivity {
 	public void onCheckInCallback(Map<String, String> session) {
 		try {
 			Log.d("CONFIRM_DINING_SESSION_FROM_REST", "");
-			
+
 			// Extract the object ID from the return map
 			String objID = session.get(DineOnConstants.OBJ_ID);
 
@@ -143,7 +178,7 @@ public class DineOnUserActivity extends FragmentActivity {
 				// Handle the fail case where no dining session
 				// was created
 			}
-			
+
 			List<Storable> list = new ArrayList<Storable>();
 			// Then Bundle the Dining Session Instance into
 			Method m = null;
@@ -173,10 +208,10 @@ public class DineOnUserActivity extends FragmentActivity {
 			throw new IllegalArgumentException("List returned is not valid: " + list);
 		}
 		mDiningSession = (DiningSession) list.get(0);
-		
+
 		// DEBUG:
 		Log.d("GOT_DINING_SESSION_FROM_CLOUD", mDiningSession.getTableID() + "");
-		
+
 		// TODO Extract channel for push
 		// TODO Register for the channel and start listening for updates
 		// TODO Extract object id for restaurant
@@ -195,10 +230,10 @@ public class DineOnUserActivity extends FragmentActivity {
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		// bundle mDiningSession w/ our bundle method
-//		Bundle diningBundle = mDiningSession.bundle();
-		
+		//		Bundle diningBundle = mDiningSession.bundle();
+
 		// save entire bundle w/ key value, retrieve using this string
-//		savedInstanceState.putBundle("diningSession", diningBundle);
+		//		savedInstanceState.putBundle("diningSession", diningBundle);
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
@@ -212,6 +247,6 @@ public class DineOnUserActivity extends FragmentActivity {
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-//		mDiningSession.unbundle(savedInstanceState.getBundle("diningSession"));
+		//		mDiningSession.unbundle(savedInstanceState.getBundle("diningSession"));
 	}
 }

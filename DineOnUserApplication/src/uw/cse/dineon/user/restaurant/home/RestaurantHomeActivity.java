@@ -33,7 +33,7 @@ RestaurantHomeMainFragment.ReferenceDataListener
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		
-		MenuItem item = menu.findItem(R.id.option_view_bill);
+		MenuItem item = menu.findItem(R.id.option_bill);
 		item.setEnabled(true);
 		item.setVisible(true);
 		
