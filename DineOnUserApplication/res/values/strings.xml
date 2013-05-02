@@ -33,5 +33,18 @@
     <string name="option_forgot_password">Forgot password?</string>
     <string name="content_description_huskysoft_logo">HuskySoft Logo</string>
     <string name="actionbar_title_restaurant_selection">Pick a Spot</string>
+    <string name="image_menu_item">Menu Item Image</string>
+    <string name="image_restaurant">Restaurant Image</string>
+    <string name="label_address_header">Address</string>
+    <string name="label_address_placeholder">Address goes here</string>
+    <string name="label_hours_header">Hours</string>
+    <string name="label_hours_placeholder">Hours goes here</string>
+    <string name="label_phone_placeholder">Call (425) 555&#8211;5555</string>
+    <string name="label_make_reservation">Make A Reservation</string>
+    <string name="image_profile_picture_placeholder">Address goes here</string>
+    <string name="label_name_placeholder">Name goes here</string>
+    <string name="label_menu_item_description_placeholder">This is a short description of a menu item at a restaurant.</string>
+    <string name="label_allergen_header">Allergens</string>
+    <string name="label_allergen_placeholder">Allergens go here</string>
 
 </resources>

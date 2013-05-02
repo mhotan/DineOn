@@ -1,22 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <Button
-        android:id="@+id/button_make_reservation"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Make A reservation" />
+        android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/label_restaurant_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textIsSelectable="true"
-        android:ems="10">
-        <requestFocus />
-    </TextView>
-    
-</LinearLayout>
+        <TextView
+            android:id="@+id/label_restaurant_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" >
+
+            <requestFocus />
+        </TextView>
+
+        <RatingBar
+            android:id="@+id/ratingbar_restaurant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="0.5" />
+
+        <ImageView
+            android:id="@+id/image_restaurant"
+            android:layout_width="fill_parent"
+            android:contentDescription="@string/image_restaurant"
+            android:layout_height="150dp"
+            android:src="@drawable/restaurant_photo_placeholder" />
+        
+        <TextView
+            android:id="@+id/label_restaurant_address_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/label_address_header"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#000000" />
+
+        <TextView
+            android:id="@+id/label_restaurant_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_address_placeholder"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/label_restaurant_hours_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/label_hours_header"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="true" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#000000" />
+
+        <TextView
+            android:id="@+id/label_restaurant_hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_hours_placeholder"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textIsSelectable="true" />
+
+        <Button
+            android:id="@+id/button_call_restaurant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/call"
+            android:drawableRight="@drawable/next_item"
+            android:layout_marginTop="20dp"
+            android:gravity="center|center_vertical"
+            android:text="@string/label_phone_placeholder" />
+
+        <Button
+            android:id="@+id/button_make_reservation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/label_make_reservation" />
+    </LinearLayout>
+
+</ScrollView>

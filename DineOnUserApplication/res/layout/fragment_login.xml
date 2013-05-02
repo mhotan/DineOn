@@ -64,7 +64,7 @@
             android:text="@string/button_twitter" />
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/huskysoftlogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"

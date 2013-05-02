@@ -24,7 +24,7 @@ public class RestaurantInfoFragment extends Fragment {
 	public void setRestaurantForDisplay(/*TODO Change to Restaurant data type*/
 			String restaurantName) {
 		TextView view = (TextView) getView().findViewById(R.id.label_restaurant_info);
-		view.setText("Restaurant Name: " + restaurantName);
+		view.setText(restaurantName);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class RestaurantInfoFragment extends Fragment {
 			mListener = (RestaurantInfoListener) activity;
 		} else {
 			throw new ClassCastException(activity.toString()
-					+ " must implemenet MyListFragment.OnItemSelectedListener");
+					+ " must implement MyListFragment.OnItemSelectedListener");
 		}
 	}
 	

@@ -27,7 +27,7 @@ public class MenuItemDetailFragment extends Fragment {
 	 * @param item
 	 */
 	public void setMenuItem(/*Replace with MenuItem*/String item) {
-		TextView view = (TextView) getView().findViewById(R.id.label_menuitem_details);
+		TextView view = (TextView) getView().findViewById(R.id.label_menu_item_name);
 		view.setText(item);
 	}
 

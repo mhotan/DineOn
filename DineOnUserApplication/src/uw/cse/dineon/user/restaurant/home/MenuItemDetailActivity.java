@@ -26,7 +26,7 @@ public class MenuItemDetailActivity extends DineOnUserActivity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			String s = extras.getString(EXTRA_MENUITEM);
-			TextView view = (TextView) findViewById(R.id.label_menuitem_details);
+			TextView view = (TextView) findViewById(R.id.label_menu_item_name);
 			view.setText(s);
 		}
 	}
