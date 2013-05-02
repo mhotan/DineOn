@@ -1,12 +1,18 @@
 package uw.cse.dineon.user.checkin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import uw.cse.dineon.library.util.ParseUtil;
 import android.content.Intent;
 import android.util.Log;
 
 public class QRCheckin {
+	
+	private static String userInfo = "{ objID:\"xyz123\", name:\"mark\", phone:12, email:\"m@aol.com\" }";
 	
 	/**
 	 * Processes the information gathered from a QR scan and sends the checkin
@@ -24,9 +30,14 @@ public class QRCheckin {
 			  // TODO Handle Correct log in
 			  try {
 				  JSONObject data = new JSONObject(contents);
-				  Log.d("ZXing", data.toString());
-				  
-				  
+				  //Log.d("ZXing", data.toString());
+				  Map<String, String> attr = new HashMap<String, String>();
+				  attr.put("userInfo", userInfo.toString()); 
+				  attr.put("tableID", data.getInt("TABLE_NUM") + "");
+				  ParseUtil.notifyApplication(
+						  "uw.cse.dineon.user.REQUEST_DINING_SESSION", 
+						  attr, 
+						  "uw.cse.dineon." + data.getString("RESTAURANT"));
 			  } catch (JSONException e) {
 				  Log.d("ZXing", "Error: " + e.getMessage());
 			  }

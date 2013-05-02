@@ -4,23 +4,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.parse.ParseInstallation;
-import com.parse.PushService;
-
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.TextView;
+
+import com.parse.PushService;
 
 public class DineOnReceiver extends BroadcastReceiver {
 
@@ -46,7 +42,7 @@ public class DineOnReceiver extends BroadcastReceiver {
 	 * @return Constructed DineOnReceiver given arguments
 	 */
 	public static DineOnReceiver createDineOnRecevier(
-			Method h, Context ctx, Class<Activity> act, String action, String channel) {
+			Method h, Context ctx, Class<? extends FragmentActivity> act, String action, String channel) {
 		
 		DineOnReceiver rec = new DineOnReceiver(h);
 		IntentFilter iff = new IntentFilter(action);

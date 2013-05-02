@@ -1,8 +1,19 @@
 package uw.cse.dineon.user.checkin;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.parse.ParseUser;
+import com.parse.PushService;
+
+import uw.cse.dineon.library.util.DineOnReceiver;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -25,7 +36,7 @@ implements CheckInFragment.CheckInListener{
 		setContentView(R.layout.activity_checkin);
 		mCheckedIn = false;
 		
-		// Set up the broadcast receiver for push notifications
+		
 		
 	}
 
