@@ -1,7 +1,5 @@
 package uw.cse.dineon.library;
 
-import android.os.Bundle;
-
 import com.parse.ParseObject;
 
 /**
@@ -20,20 +18,6 @@ public abstract class Storable {
 
 
 	private String objId;
-
-	/**
-	 * Inserts this objects fields and returns the Bundle
-	 * representation.
-	 * @return Bundle that represents this.
-	 */
-	public abstract Bundle bundle();
-
-	/**
-	 * Takes Bundle and sets the appropriate fields of the
-	 * instance of storable.
-	 * @param b Bundle that you want to convert to a Storable
-	 */
-	public abstract void unbundle(Bundle b);
 
 	/**
 	 * Inserts this objects fields and returns the ParseObject

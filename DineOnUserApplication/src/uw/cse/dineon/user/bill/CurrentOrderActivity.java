@@ -26,7 +26,7 @@ CurrentOrderFragment.OrderUpdateListener
 	}
 	
 	@Override
-	public boolean onPrepareOptionsMenu (Menu menu){
+	public boolean onPrepareOptionsMenu (Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		
 		// TODO If in landscape mode then user already sees the bill

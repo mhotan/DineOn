@@ -144,7 +144,7 @@ public class IntentIntegrator {
   private String buttonYes;
   private String buttonNo;
   private List<String> targetApplications;
-  private final Map<String,Object> moreExtras;
+  private final Map<String, Object> moreExtras;
   
   public IntentIntegrator(Activity activity) {
     this.activity = activity;
@@ -153,7 +153,7 @@ public class IntentIntegrator {
     buttonYes = DEFAULT_YES;
     buttonNo = DEFAULT_NO;
     targetApplications = TARGET_ALL_KNOWN;
-    moreExtras = new HashMap<String,Object>(3);
+    moreExtras = new HashMap<String, Object>(3);
   }
   
   public String getTitle() {
@@ -219,7 +219,7 @@ public class IntentIntegrator {
     this.targetApplications = Collections.singletonList(targetApplication);
   }
 
-  public Map<String,?> getMoreExtras() {
+  public Map<String, ?> getMoreExtras() {
     return moreExtras;
   }
 
@@ -394,7 +394,7 @@ public class IntentIntegrator {
   }
 
   private void attachMoreExtras(Intent intent) {
-    for (Map.Entry<String,Object> entry : moreExtras.entrySet()) {
+    for (Map.Entry<String, Object> entry : moreExtras.entrySet()) {
       String key = entry.getKey();
       Object value = entry.getValue();
       // Kind of hacky

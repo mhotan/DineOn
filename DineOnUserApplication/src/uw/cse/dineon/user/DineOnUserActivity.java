@@ -193,11 +193,6 @@ public class DineOnUserActivity extends FragmentActivity {
 	 */
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-		// bundle mDiningSession w/ our bundle method
-		Bundle diningBundle = mDiningSession.bundle();
-		
-		// save entire bundle w/ key value, retrieve using this string
-		savedInstanceState.putBundle("diningSession", diningBundle);
 		super.onSaveInstanceState(savedInstanceState);
 	}
 

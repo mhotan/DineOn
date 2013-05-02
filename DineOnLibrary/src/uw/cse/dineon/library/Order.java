@@ -4,30 +4,40 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.parse.ParseObject;
 
 /**
+ * Order object representing an order placed by a client at a restaurant.
  * 
  * @author zachr81
  *
  */
-public class Order extends Storable {
+public class Order extends Storable implements Parcelable {
 
-	private int tableID;
-	private int userID;
-	private int restID;
-	private int timestamp;
-	private List<MenuItem> menuItems;
+	// ID's used for easier parsing
+	public static final String TABLE_ID = "tableID";
+	public static final String USER_ID = "userID";
+	public static final String REST_ID = "restID";
+	public static final String TIME_STAMP = "timestamp";
+	public static final String MENU_ITEMS = "menuItems";
+	
+	private int tableID;		// ID for table the order is from
+	private int userID;			// ID of user who placed order
+	private int restID;			// ID of restaurant order was placed at
+	private int timestamp;		// time order was placed
+	private List<MenuItem> menuItems;	// list of items in this order
 	
 	/**
+	 * Creates a new Order object from the given parameters.
 	 * 
-	 * @param tableID
-	 * @param userID
-	 * @param restID
-	 * @param timestamp
-	 * @param menuItems
+	 * @param tableID int ID of the table the order was place from
+	 * @param userID int ID of user placing order
+	 * @param restID int ID of restaurant order is placed at
+	 * @param timestamp int time order was placed
+	 * @param menuItems List of items in the order
 	 */
 	public Order(int tableID, int userID, int restID, int timestamp, List<MenuItem> menuItems) {
 		super();
@@ -38,6 +48,17 @@ public class Order extends Storable {
 		this.menuItems = menuItems;
 	}
 	
+	/**
+	 * Creates a new Order in from the given Parcel.
+	 * 
+	 * @param source Parcel of information in:
+	 * 		int, int, int, int, List<MenuItem>
+	 * 		order.
+	 */
+	public Order(Parcel source) {
+		readFromParcel(source);
+	}
+
 	/**
 	 * @return the tableID
 	 */
@@ -110,27 +131,96 @@ public class Order extends Storable {
 		this.menuItems = menuItems;
 	}
 
-	@Override
-	public Bundle bundle() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void unbundle(Bundle b) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	/**
+	 * Packs this Order into a ParseObject to be stored.
+	 * 
+	 * @return ParseObject containing saved/packed data
+	 */
+	@SuppressWarnings("static-access")
 	@Override
 	public ParseObject packObject() {
-		// TODO Auto-generated method stub
-		return null;
+		ParseObject pobj = new ParseObject(this.getClass().getSimpleName());
+		pobj.add(this.TABLE_ID, this.tableID);
+		pobj.add(this.USER_ID, this.userID);
+		pobj.add(this.REST_ID, this.restID);
+		pobj.add(this.TIME_STAMP, this.timestamp);
+		pobj.add(this.MENU_ITEMS, this.menuItems);
+		//in case this storable is going to be used after the pack.
+		this.setObjId(pobj.getObjectId());
+		
+		return pobj;
+	}
+
+	/**
+	 * Unpacks the given ParseObject into this Order setting
+	 * field values to the given data.
+	 * 
+	 * @param pobj ParseObject to be unpacked into an Order
+	 */
+	@SuppressWarnings({ "unchecked", "static-access" })
+	@Override
+	public void unpackObject(ParseObject pobj) {
+		this.setObjId(pobj.getObjectId());
+		this.setTableID(pobj.getInt(this.TABLE_ID));
+		this.setUserID(pobj.getInt(this.USER_ID));
+		this.setRestID(pobj.getInt(this.REST_ID));
+		this.setTimestamp(pobj.getInt(this.TIME_STAMP));
+		this.menuItems.addAll((List<MenuItem>) pobj.get(this.MENU_ITEMS));
 	}
 
 	@Override
-	public void unpackObject(ParseObject pobj) {
-		// TODO Auto-generated method stub
-		
+	public int describeContents() {
+		return 0;
 	}
+
+	
+	/**
+	 * Writes this Order to Parcel dest in the order:
+	 * int, int, int, int, List<MenuItem>
+	 * to be retrieved at a later time.
+	 * 
+	 * @param dest Parcel to write Order data to.
+	 * @param flags int
+	 */
+	// NOTE: if you change the write order you must change the read order
+	// below.
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(tableID);
+		dest.writeInt(userID);
+		dest.writeInt(restID);
+		dest.writeInt(timestamp);
+		dest.writeTypedList(menuItems);
+	}
+	
+	/**
+	 * Helper method for updating Order with the data from a Parcel.
+	 * @param source Parcel containing data in the order:
+	 * 		List<User>, long, long, (boolean stored as an) int, List<Order>, int, int
+	 */
+	private void readFromParcel(Parcel source) {
+		tableID = source.readInt();
+		userID = source.readInt();
+		restID = source.readInt();
+		timestamp = source.readInt();
+		source.readTypedList(menuItems, MenuItem.CREATOR);
+	}
+	
+	/**
+	 * Parcelable creator object of a Order.
+	 * Can create a Order from a Parcel.
+	 */
+	public static final Parcelable.Creator<Order> CREATOR = 
+			new Parcelable.Creator<Order>() {
+
+				@Override
+				public Order createFromParcel(Parcel source) {
+					return new Order(source);
+				}
+
+				@Override
+				public Order[] newArray(int size) {
+					return new Order[size];
+				}
+			};
 }

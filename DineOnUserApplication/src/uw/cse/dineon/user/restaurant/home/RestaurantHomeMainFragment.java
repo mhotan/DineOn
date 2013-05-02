@@ -104,7 +104,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			position = Math.max(Math.min(position, CONTENT.length-1), 0);
+			position = Math.max(Math.min(position, CONTENT.length - 1), 0);
 			return CONTENT[position];
 		}
 
