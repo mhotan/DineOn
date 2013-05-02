@@ -38,15 +38,16 @@ public class OrderListFragment extends ListFragment {
 	private static final String KEY_LIST = "MY LIST";
 
 	/**
-	 * Creates a new customer list fragment
+	 * Creates a new customer list fragment.
 	 * @param orders TODO Change to order class
 	 * @return new fragment
 	 */
-	public static OrderListFragment newInstance(List<String> orders){
+	public static OrderListFragment newInstance(List<String> orders) {
 		OrderListFragment frag = new OrderListFragment();
 		ArrayList<String> mList = new ArrayList<String>();
-		if (orders != null) 
+		if (orders != null) {
 			mList.addAll(orders);
+		}
 
 		Bundle args = new Bundle();
 		args.putStringArrayList(KEY_LIST, mList);

@@ -3,6 +3,7 @@ package uw.cse.dineon.restaurant.active;
 import java.util.ArrayList;
 import java.util.List;
 
+import uw.cse.dineon.library.User;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import android.content.Intent;
@@ -78,7 +79,7 @@ CustomerListFragment.CustomerListener
 			mCustomers.add(s);
 		}
 	}
-
+	
 	/**
 	 * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
 	 * sequence.
@@ -166,6 +167,15 @@ CustomerListFragment.CustomerListener
 			frag.addRequest(request);
 		}
 		mRequests.add(request);
+	}
+
+	//Testing method to populate an array full of fake users
+	private User[] populateUsers(){
+		User[] u = new User[5];
+		u[0] = new User();
+		
+		return null;
+		
 	}
 
 	//////////////////////////////////////////////////////////////////////

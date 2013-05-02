@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Gallery
+        android:id="@+id/gallery_restaurant_images"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gallery_restaurant_images"
+        android:layout_centerHorizontal="true" >
+
+        <CheckBox
+            android:id="@+id/checkbox_is_default_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Default" />
+
+        <ImageButton
+            android:id="@+id/button_add_new_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_input_add" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/discard_content" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:text="Save Changes" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_marginTop="58dp"
+        android:text="Address"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignLeft="@+id/editText2"
+        android:layout_alignParentRight="true"
+        android:ems="10"
+        android:inputType="textPostalAddress" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="18dp"
+        android:text="Phone"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/TextView01"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/TextView01"
+        android:ems="10"
+        android:inputType="phone" />
+
+</RelativeLayout>

@@ -5,6 +5,7 @@ package uw.cse.dineon.user.restaurantselection;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -45,6 +46,13 @@ RestaurantInfoFragment.RestaurantInfoListener
 
 		mUser = ParseUser.getCurrentUser();
 		Toast.makeText(this, "User: " + mUser.getUsername() + " logged in!", Toast.LENGTH_SHORT).show();
+		
+		// Replace the Action bar title with a message letting the 
+		// user know this is the restaurant selection page
+		final ActionBar actionBar = getActionBar();
+		if (actionBar != null) {
+			actionBar.setTitle(R.string.actionbar_title_restaurant_selection);
+		}
 		
 	}
 	

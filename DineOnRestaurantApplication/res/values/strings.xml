@@ -15,6 +15,7 @@
     <string name="content_description_dismiss">Dismiss the current request</string>
     <string name="label_request_blank">Request Title Goes here</string>
     <string name="label_order_blank">Order Title goes here</string>
+    <string name="label_customer_blank">Customer Name goes here</string>
     <string name="content_description_complete_order">Click to instantly fulfill this order</string>
     <string name="hint_send_message">Message the customer</string>
     <string name="label_radio_urgency_normal">Normal</string>
@@ -22,4 +23,9 @@
     <string name="label_urgency_priority">Do it NOW!</string>
     <string name="tablabel_profile">Profile</string>
     <string name="tablabel_menuitems">Menu Items</string>
+    <string name="debug1">Test Message</string>
+    <string name="debug2">Another Test Message</string>
+    <string name="debug3">YANT (Yet Another Test Message)</string>
+    <string name="tab_actionbar_restaurant_profile">Profile</string>
+    <string name="tab_actionbar_restaurant_menuitems">The Menu</string>
 </resources>

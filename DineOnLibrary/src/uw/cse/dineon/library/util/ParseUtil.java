@@ -125,9 +125,13 @@ public class ParseUtil {
 	 * 
 	 * @param obj the java object that will be saved to the cloud
 	 */
-	public static void saveDataToCloud(Storable obj) {
+	public static void saveDataToCloud(Storable obj, Method handler) {
+		final Method h = handler;
+		
 		ParseObject pObj = obj.packObject();
 		obj.setObjId(pObj.getObjectId());
+		final String objID = pObj.getObjectId();
+		final Storable s = obj;
 		pObj.saveInBackground( new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
@@ -137,6 +141,20 @@ public class ParseUtil {
 				} else {
 					// Error occured
 					Log.d(TAG, "Error: " + e.getMessage());
+				}
+				
+				try {
+					if (h != null)
+						h.invoke(null, (e == null) ? true : false, objID, s);
+				} catch (IllegalArgumentException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvocationTargetException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			}
 		});
