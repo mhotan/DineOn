@@ -8,5 +8,6 @@ package uw.cse.dineon.library;
 public enum RequestType {
 	ORDER,
 	BILL,
-	REFILL
+	REFILL,
+	NONE
 }
