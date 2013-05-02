@@ -54,7 +54,8 @@ public class DineOnUserActivity extends FragmentActivity {
 					this,
 					this.getClass(), 
 					"uw.cse.dineon.user.CONFIRM_DINING_SESSION", 
-					"uw.cse.dineon.user." + ParseUser.getCurrentUser().getUsername()); // restaurant name
+					"uw.cse.dineon.user." + ParseUser.getCurrentUser().getUsername()); 
+						// restaurant name
 			
 		} catch (NoSuchMethodException e) {
 			// print out error msg
@@ -193,6 +194,8 @@ public class DineOnUserActivity extends FragmentActivity {
 	 */
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
+
+		savedInstanceState.putParcelable("DiningSession", mDiningSession);
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
@@ -206,6 +209,6 @@ public class DineOnUserActivity extends FragmentActivity {
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		mDiningSession.unbundle(savedInstanceState.getBundle("diningSession"));
+		mDiningSession = savedInstanceState.getParcelable("DiningSession");
 	}
 }
