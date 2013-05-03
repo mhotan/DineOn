@@ -51,5 +51,8 @@
     <string name="label_nearby">Sort By Nearby Restaurants</string>
     <string name="label_friends_favorites">Sort By Friends\' Favorites</string>
     <string name="label_my_favorites">Sort By My Favorites </string>
+    <string name="label_call">Call Restaurant</string>
+    <string name="label_add_to_favorites">Add to Favorites</string>
+    <string name="label_make_reservation">Make Reservation</string>
 
 </resources>
