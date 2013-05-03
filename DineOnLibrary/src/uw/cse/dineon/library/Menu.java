@@ -20,17 +20,21 @@ public class Menu extends Storable implements Parcelable {
 
 	// ID used for easier parsing
 	public static final String ITEMS = "items";
+	public static final String NAME = "name";
 	
+	private String name;
 	private List<MenuItem> items;	// list of items on the menu
+	
 
 	/**
 	 * Creates a new Menu object containing MenuItems.
 	 * 
 	 * @param items list of MenuItems that populate a Menu.
 	 */
-	public Menu(List<MenuItem> items) {
+	public Menu(String name, List<MenuItem> items) {
 		super();
 		this.items = items;
+		this.name = name;
 		
 	}
 	
@@ -44,6 +48,20 @@ public class Menu extends Storable implements Parcelable {
 	public Menu(Parcel source) {
 		super();
 		readFromParcel(source);
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -89,6 +107,7 @@ public class Menu extends Storable implements Parcelable {
 	@Override
 	public ParseObject packObject() {
 		ParseObject pobj = new ParseObject(this.getClass().getSimpleName());
+		pobj.add(Menu.NAME, this.name);
 		pobj.add(this.ITEMS, this.items);
 		// in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
@@ -106,6 +125,7 @@ public class Menu extends Storable implements Parcelable {
 	@Override
 	public void unpackObject(ParseObject pobj) {
 		this.setObjId(pobj.getObjectId());
+		this.setName(pobj.getString(Menu.NAME));
 		this.items.addAll((List<MenuItem>) pobj.get(this.ITEMS));
 	}
 
@@ -116,7 +136,7 @@ public class Menu extends Storable implements Parcelable {
 
 	/**
 	 * Writes this Menu to Parcel dest in the order:
-	 * List<MenuItem>
+	 * String, List<MenuItem>
 	 * to be retrieved at a later time.
 	 * 
 	 * @param dest Parcel to write Menu data to.
@@ -125,15 +145,17 @@ public class Menu extends Storable implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		// dest.writeInt(productID);
+		dest.writeString(name);
 		dest.writeTypedList(items);
 	}
 	
 	/**
 	 * Helper method for updating Menu with the data from a Parcel.
 	 * @param source Parcel containing data in the order:
-	 * 		List<MenuItem>
+	 * 		String, List<MenuItem>
 	 */
 	private void readFromParcel(Parcel source) {
+		this.name = source.readString();
 		source.readTypedList(items, MenuItem.CREATOR); // default class load used
 	}
 	
