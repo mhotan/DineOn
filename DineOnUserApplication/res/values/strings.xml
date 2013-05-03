@@ -47,5 +47,9 @@
     <string name="label_allergen_header">Allergens</string>
     <string name="label_allergen_placeholder">Allergens go here</string>
     <string name="option_logout">Logout</string>
+    <string name="label_sort_by">Sort By:</string>
+    <string name="label_nearby">Sort By Nearby Restaurants</string>
+    <string name="label_friends_favorites">Sort By Friends\' Favorites</string>
+    <string name="label_my_favorites">Sort By My Favorites </string>
 
 </resources>

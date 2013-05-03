@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 /**
  * TODO
@@ -28,7 +29,7 @@ implements View.OnClickListener {
 	/**
 	 * References to Buttons on this display
 	 */
-	private Button _NearbyButton, _FriendsFavoritesButton, _UserFavoritesButton;
+	private ImageButton _NearbyButton, _FriendsFavoritesButton, _UserFavoritesButton;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,9 +38,9 @@ implements View.OnClickListener {
 				container, false);
 		
 		// Assign buttons
-		_NearbyButton = (Button) view.findViewById(R.id.button_nearby_restaurants);
-		_FriendsFavoritesButton = (Button) view.findViewById(R.id.button_friends_favorites);
-		_UserFavoritesButton = (Button) view.findViewById(R.id.button_user_favorites);
+		_NearbyButton = (ImageButton) view.findViewById(R.id.button_nearby_restaurants);
+		_FriendsFavoritesButton = (ImageButton) view.findViewById(R.id.button_friends_favorites);
+		_UserFavoritesButton = (ImageButton) view.findViewById(R.id.button_user_favorites);
 		
 		// Add listeners
 		_NearbyButton.setOnClickListener(this);
