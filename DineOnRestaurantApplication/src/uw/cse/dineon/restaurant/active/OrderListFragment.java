@@ -73,15 +73,6 @@ public class OrderListFragment extends ListFragment {
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-
-//		List<String> requests = mListener.getCurrentOrders();
-//		mAdapter = new OrderListAdapter(this.getActivity(), requests);
-//		setListAdapter(mAdapter);
-	}
-
-	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		if (activity instanceof OrderItemListener) {
@@ -141,36 +132,36 @@ public class OrderListFragment extends ListFragment {
 	//////////////////////////////////////////////////////
 
 	/**
-	 * Mandatory interface for this fragment
+	 * Mandatory interface for this fragment.
 	 * @author mhotan
 	 */
 	public interface OrderItemListener {
 
 		/**
-		 * Notifies the progress of this order has changed
+		 * Notifies the progress of this order has changed.
 		 * @param order order to reference
 		 * @param progress progress of this order
 		 */
-		public void onProgressChanged(String order, int progress);
+		void onProgressChanged(String order, int progress);
 
 		/**
-		 * User(Restaurant Employee) wants to see details pertaining this order
+		 * User(Restaurant Employee) wants to see details pertaining this order.
 		 * @param order order to reference
 		 */
-		public void onRequestOrderDetail(String order);
+		void onRequestOrderDetail(String order);
 
 		/**
-		 * Restaurant wants to notify customer that the order is complete
+		 * Restaurant wants to notify customer that the order is complete.
 		 * @param order order to reference
 		 */
-		public void onOrderComplete(String order);
+		void onOrderComplete(String order);
 
 		/**
-		 * Used to get the most recent up to date list of items to show
+		 * Used to get the most recent up to date list of items to show.
 		 * Cannot return null
 		 * @return List of items to show
 		 */
-		public List<String> getCurrentOrders();
+		List<String> getCurrentOrders();
 
 	}
 
@@ -233,9 +224,6 @@ public class OrderListFragment extends ListFragment {
 			buttonCompleteOrder.setOnClickListener(mItemListener);
 			buttonGetDetails.setOnClickListener(mItemListener);
 			progressBar.setOnSeekBarChangeListener(mProgessListener);
-
-
-
 			return view;
 		}
 

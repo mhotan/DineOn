@@ -1,73 +1,130 @@
 package uw.cse.dineon.user.login;
 
-import java.lang.reflect.Method;
-
-import uw.cse.dineon.library.util.ParseUtil;
+import uw.cse.dineon.library.User;
+import uw.cse.dineon.library.util.CredentialValidator;
+import uw.cse.dineon.library.util.CredentialValidator.Resolution;
+import uw.cse.dineon.library.util.DevelopTools;
+import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.R;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
+import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
+/**
+ * Create account activity that allows the user to create an account or call
+ * decide to do a third party login
+ * @author mhotan
+ */
 public class CreateNewAccountActivity extends FragmentActivity 
 implements CreateNewAccountFragment.onCreateNewAccountListener {
 
 	public static final String TAG = CreateNewAccountActivity.class.getSimpleName();
-	
+
+	private User mUser;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_account);
-
-		// TODO Complete Initialization
 	}
 
 	@Override
-	public void onCreateNewAccount(String email, String password) {
-		// TODO Auto-generated method stub
-		// Attempt to create a new 
-		try {
-			Method m = this.getClass().getMethod("createNewAccountCallback", Boolean.class);
-			ParseUtil.createDineOnUser(email, password, m);
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void onCreateNewAccount(String username, String email,
+			String password, String passwordRepeat) {
+		// Handle the validation
+		Resolution completeRes = CredentialValidator.validateAll(username, 
+				email, password, passwordRepeat);
+
+		if (completeRes.isValid()) {
+			ParseUser user = new ParseUser();
+			user.setUsername(username);
+			user.setPassword(password);
+			user.setEmail(email);
+			user.signUpInBackground(new SignUpCallback() {
+
+				@Override
+				public void done(ParseException e) {
+					if (e == null) {
+						// Hooray! Let them use the app now.
+						// TODO Create a new User object and save it to the
+						// cloud and associate it with the actual user
+						// possibly by user name
+
+						if (DineOnConstants.DEBUG) {
+							returnResult(null);
+						}
+					} 
+					else {
+						// Sign up didn't succeed. Look at the ParseException
+						// to figure out what went wrong
+						showFailAlertDialog(e.getMessage());
+					}
+				}
+			});
 		}
-		
-		finish();
+		else {
+			showFailAlertDialog(completeRes.getMessage());
+		}
+	}
+
+	/**
+	 * Finish the activity but associate the user to it before 
+	 * we finish
+	 * @param u
+	 */
+	private void returnResult(User u) {
+		mUser = u;
+		this.finish();
 	}
 
 	@Override
-	public void onLoginThirdParty(String loginCredentials) {
-		// TODO Auto-generated method stub
-		finish();
-	}
-
-	@Override
-	public void finish() {
-		
-		// TODO Pass back the correct values
-		
-		// Prepare data intent 
-		Intent data = new Intent();
-		data.putExtra(UserLoginActivity.RETURN_CODE_LOGIN_CREDENTIALS, "JohDoe@gmail.com:password");
-		data.putExtra(UserLoginActivity.RETURN_CODE_LOGIN_3RDPARTY, "facebook");
-		// Activity finished ok, return the data
-		setResult(RESULT_OK, data);
+	public void finish(){
+		// Send restaurant instance back
+		if (!DineOnConstants.DEBUG) {
+			Intent retIntent = new Intent();
+			retIntent.putExtra(DineOnConstants.KEY_USER, mUser);
+			setResult(RESULT_OK, retIntent);
+		}
 		super.finish();
-	} 
-
-	public static void createNewAccountCallback(Boolean success){
-		if (success) {
-			ParseUser me = ParseUser.getCurrentUser();
-			Log.v(TAG, "NEW ACCOUNT CREATED! : " + me.getUsername());
-			
-			// Start Restaurant selection
-			
-		} else 
-			Log.v(TAG, "Create new account failed");
 	}
-	
+
+	@Override
+	public void onLoginWithFacebook() {
+		// TODO Later phase
+		DevelopTools.getUnimplementedDialog(this, null);
+	}
+
+	@Override
+	public void onLoginWithTwitter() {
+		// TODO Later phase
+		DevelopTools.getUnimplementedDialog(this, null);		
+	}
+
+	/**
+	 * Just shows general failure dialog with this message
+	 * @param error
+	 */
+	private void showFailAlertDialog(String error){
+		AlertDialog.Builder builder = new Builder(this);
+		builder.setTitle("Failed to create account");
+		builder.setMessage(error);
+		builder.setCancelable(true);
+		builder.setPositiveButton("Try Again", new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		builder.create().show();
+	}
+
 }

@@ -1,5 +1,8 @@
 package uw.cse.dineon.library;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.parse.ParseObject;
 
 /**
@@ -14,7 +17,7 @@ import com.parse.ParseObject;
  * @author Jordan
  *
  */
-public abstract class Storable {
+public abstract class Storable implements Parcelable {
 
 
 	private String objId;
@@ -48,4 +51,17 @@ public abstract class Storable {
 	public void setObjId(String objId) {
 		this.objId = objId;
 	}
+	
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(this.getObjId());
+	}
+	
+	/**
+	 * Fills this instance with the values found in this parcel
+	 * @param source
+	 */
+//	protected void readFromParcel(Parcel source) {
+//		this.setObjId(source.readString());
+//	} 
 }

@@ -1,8 +1,16 @@
 package uw.cse.dineon.user.login;
 
+import uw.cse.dineon.library.User;
+import uw.cse.dineon.library.util.CredentialValidator;
+import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DevelopTools;
+import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -11,6 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.parse.LogInCallback;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 /**
@@ -34,7 +44,7 @@ LoginFragment.OnLoginListener {
 	 * Return code for  
 	 */
 	public static final String RETURN_CODE_LOGIN_CREDENTIALS = TAG + ":LOGIN_NEW_CREDENTIALS";
-	
+
 	/**
 	 * 
 	 */
@@ -44,41 +54,22 @@ LoginFragment.OnLoginListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-
-		// TODO Complete Initialization
-		// check internet connection
 	}
 
 	@Override
 	protected void onResume(){
-		super.onResume();
-		
-		
-		ParseUser me = ParseUser.getCurrentUser();
-		if (me != null) {
-			startRestSelectionAct();
-		}
+		super.onResume();	
 	}
-	
-	private void startRestSelectionAct(){
-		Intent i = new Intent(this, RestaurantSelectionActivity.class);
-//		i.putExtra(RestaurantSelectionActivity.EXTRA_USER, loginCredentials);
-		startActivity(i);
-	}
-	
-	// TODO Static Callback
-	@Override
-	public void onLogin(String username, String password) {
-		// TODO Auto-generated method stub
-		
-	} 
-	
-	@Override
-	public void onLogin(String loginCredentials) {
-		// TODO Auto-generated method stub
-		// Check credentials
 
-		startRestSelectionAct();
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK && requestCode == REQUEST_CREATE_NEW_ACCOUNT) {
+
+			User user;
+			if ((user = data.getParcelableExtra(DineOnConstants.KEY_USER)) != null) {
+				startRestSelectionAct(user);
+			}
+		}
 	}
 
 	@Override
@@ -99,39 +90,101 @@ LoginFragment.OnLoginListener {
 			// TODO Implement
 			DevelopTools.getUnimplementedDialog(this, null).show();
 		case R.id.option_create_new_account:
-			Intent i = new Intent(this.getApplicationContext(), CreateNewAccountActivity.class);
-			startActivity(i);
+			onCreateNewAccount();
 			break;
 		}
 		return true;
 	}
 
+	// User interaction methods
+
 	@Override
+	public void onLogin(String username, String password) {
+		Resolution unResolution = CredentialValidator.isValidUserName(username);
+		Resolution pwResolution = CredentialValidator.isValidPassword(password);
+
+		StringBuffer buf = new StringBuffer();
+		if (!unResolution.isValid()) {
+			buf.append(unResolution.getMessage() + "\n");
+		}
+		if (!pwResolution.isValid()) {
+			buf.append(pwResolution.getMessage() + "\n");
+		}
+
+		if (buf.length() > 0) {
+			showAlertBadInput(buf.toString());
+			return;
+		}
+
+		ParseUser.logInInBackground(username, password, new LogInCallback() {
+
+			@Override
+			public void done(ParseUser user, ParseException e) {
+				if (user != null) {
+					// Successfuly logged in
+					if (DineOnConstants.DEBUG) {
+						// TODO Change to asyncronous call to get the User instance
+						startRestSelectionAct(null);
+					}
+					// TODO Download the current restaurant associated
+					// with this user from Parse.
+					// when complete call goToRestaurantMain(Restaurant) 
+				} else {
+					// Signup failed. Look at the ParseException to see what happened.
+					showAlertBadInput(e.getMessage());
+				}
+			}
+		});
+	} 
+
+	@Override
+	public void onLoginWithFacebook() {
+		// TODO Auto-generated method stub
+		DevelopTools.getUnimplementedDialog(this, null).show();
+	}
+
+	@Override
+	public void onLoginWithTwitter() {
+		// TODO Auto-generated method stub
+		DevelopTools.getUnimplementedDialog(this, null).show();
+	}
+
+
+	/**
+	 * Starts an activity for a result to allow the user to start a new account
+	 */
 	public void onCreateNewAccount() {
 		// TODO Auto-generated method stub
 		Intent creatAccountIntent = new Intent(this, CreateNewAccountActivity.class);
 		startActivityForResult(creatAccountIntent, REQUEST_CREATE_NEW_ACCOUNT);
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == RESULT_OK && requestCode == REQUEST_CREATE_NEW_ACCOUNT) {
-			if (data.hasExtra(RETURN_CODE_LOGIN_CREDENTIALS)) {
-
-				// TODO Remove this and place actual implementation
-				// Verify account actually exist
-				// automatically proceed once account is verified
-				Toast.makeText(this, "User " + data.getExtras().getString(RETURN_CODE_LOGIN_CREDENTIALS)
-						+ " created!",
-						Toast.LENGTH_SHORT).show();
-			} else if (data.hasExtra(RETURN_CODE_LOGIN_3RDPARTY)) {
-
-				Toast.makeText(this, "Login using " + data.getExtras().getString(RETURN_CODE_LOGIN_3RDPARTY)
-						+ " requested",
-						Toast.LENGTH_SHORT).show();
-			}
-		}
+	/**
+	 * 
+	 * @param user
+	 */
+	private void startRestSelectionAct(User user){
+		Intent i = new Intent(this, RestaurantSelectionActivity.class);
+		//		i.putExtra(RestaurantSelectionActivity.EXTRA_USER, loginCredentials);
+		startActivity(i);
 	}
 
+	/**
+	 * Show bad input alert message for logging in.
+	 * @param message
+	 */
+	public void showAlertBadInput(String message){
+		AlertDialog.Builder b = new Builder(this);
+		b.setTitle("Failed to login");
+		b.setMessage(message);
+		b.setCancelable(true);
+		b.setPositiveButton("Try Again", new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		}).show();
+	}
 
 }

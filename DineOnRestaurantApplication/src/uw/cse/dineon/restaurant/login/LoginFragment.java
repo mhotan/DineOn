@@ -11,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+/**
+ * Fragment view for logging into application
+ * @author mhotan
+ */
 public class LoginFragment extends Fragment implements OnClickListener {
 
 	private OnLoginListener mListener;
@@ -35,13 +39,15 @@ public class LoginFragment extends Fragment implements OnClickListener {
 		super.onAttach(activity);
 		if (activity instanceof OnLoginListener) {
 			mListener = (OnLoginListener) activity;
-		} else {
+		} 
+		else {
 			throw new ClassCastException(activity.toString()
 					+ " must implemenet " + this.getClass().getSimpleName() + ".OnLoginListener");
 		}
 	}
 	
 	/**
+	 * Activity use listener.
 	 * Listener that is intended to allow any owning context of an 
 	 * LoginFragment instance to react and communicate Login related request
 	 * All activities that uses a LoginFragment MUST implement this listener
@@ -53,10 +59,11 @@ public class LoginFragment extends Fragment implements OnClickListener {
 		// This is how login listener communicates back to the activity
 		
 		/**
-		 * Login with certain credentials
-		 * @param loginCredentials TODO 
+		 * Attempt to login with input credentials.
+		 * @param username username to use password
+		 * @param password password to use
 		 */
-		public void onLogin(String loginCredentials);
+		void onLogin(String username, String password);
 	}
 
 	@Override
@@ -65,7 +72,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
 		String pw = mPasswordInput.getText().toString();
 		
 		// Combine into a valid login credential instance
-		mListener.onLogin(email + ":" + pw);
+		mListener.onLogin(email, pw);
 		
 	}
 

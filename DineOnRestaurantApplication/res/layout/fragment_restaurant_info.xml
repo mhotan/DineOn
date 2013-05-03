@@ -3,18 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <Gallery
-        android:id="@+id/gallery_restaurant_images"
+    <HorizontalScrollView
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/gallery_restaurant_images"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/gallery_restaurant_images"
+        android:layout_below="@+id/scrollview"
         android:layout_centerHorizontal="true" >
 
         <CheckBox
@@ -32,7 +37,7 @@
             android:src="@android:drawable/ic_input_add" />
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/button_delete_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -40,7 +45,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/button_save"
+        android:id="@+id/button_save_restaurant_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -49,7 +54,7 @@
         android:text="Save Changes" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/label_price_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -59,11 +64,11 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/edittext_restaurant_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView1"
-        android:layout_alignLeft="@+id/editText2"
+        android:layout_alignBottom="@+id/label_price_description"
+        android:layout_alignLeft="@+id/edittext_phone_number"
         android:layout_alignParentRight="true"
         android:ems="10"
         android:inputType="textPostalAddress" >
@@ -76,13 +81,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
+        android:layout_below="@+id/label_price_description"
         android:layout_marginTop="18dp"
         android:text="Phone"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/edittext_phone_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/TextView01"

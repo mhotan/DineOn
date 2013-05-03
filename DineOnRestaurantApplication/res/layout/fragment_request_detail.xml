@@ -18,7 +18,7 @@
         android:textColor="#46C4F2" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/label_price_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -29,10 +29,10 @@
         android:id="@+id/text_details_request"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignBottom="@+id/label_price_description"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/label_request_title_detail"
-        android:layout_toRightOf="@+id/textView1"
+        android:layout_toRightOf="@+id/label_price_description"
         android:text="DETAILS GO HERE!" />
 
     <TableLayout

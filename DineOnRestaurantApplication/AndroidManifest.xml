@@ -37,6 +37,8 @@
         <activity android:name=".active.OrderDetailActivity"></activity>
         <activity android:name=".active.RequestDetailActivity"></activity>
         <activity android:name=".active.RestauarantMainActivity"></activity>
+        <activity android:name=".profile.ProfileActivity"></activity>
+        <activity android:name=".login.CreateNewRestaurantAccountActivity"></activity>
         
     </application>
 

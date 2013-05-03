@@ -2,7 +2,6 @@ package uw.cse.dineon.restaurant.active;
 
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 /**

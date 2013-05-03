@@ -28,4 +28,14 @@
     <string name="debug3">YANT (Yet Another Test Message)</string>
     <string name="tab_actionbar_restaurant_profile">Profile</string>
     <string name="tab_actionbar_restaurant_menuitems">The Menu</string>
+    <string name="hint_description">Description</string>
+    <string name="hint_menuitem_title">title</string>
+    <string name="item_logout">Log Out</string>
+    <string name="item_forgot_password">Forgot Password?</string>
+    <string name="item_create_account">Create Account</string>
+    <string name="activity_start_login">startLoginActivity</string>
+    <string name="create_new_account">Create new Account</string>
+    <string name="hint_email_address">Email Address</string>
+    <string name="hint_password_repeat">Repeat Password</string>
+    <string name="hint_restaurant_name">Your Restaurant Name</string>
 </resources>

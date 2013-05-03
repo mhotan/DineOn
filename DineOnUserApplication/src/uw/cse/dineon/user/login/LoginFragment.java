@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 /**
- * TODO
+ * Login View presented to users to use Facebook, Twitter, email and password credentials to log in.
  * @author mhotan
  */
 public class LoginFragment extends android.support.v4.app.Fragment {
@@ -46,35 +46,16 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 		facebookLoginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Implement accessing facebook credentials
-				String facebookCred = "Facebook Credentials";
-				attemptLogin(facebookCred);
+				mListener.onLoginWithFacebook();
 			}
 		});
 		Button twitterLoginButton = (Button) view.findViewById(R.id.button_twitter_login);
 		twitterLoginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Implement accessing facebook credentials
-				String twitterCred = "Twitter Credentials";
-				attemptLogin(twitterCred);
+				mListener.onLoginWithTwitter();
 			}
 		});
-//		Button createNewAccountButton = (Button) view.findViewById(R.id.button_create_new_account);
-//		createNewAccountButton.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				createNewAccount();
-//			}
-//		});
-//		Button forgotPasswordButton = (Button) view.findViewById(R.id.button_forgot_password);
-//		forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				forgotPassword(email_input.getText().toString());
-//			}
-//
-//		});
 		return view;
 	}
 
@@ -90,28 +71,10 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 	}
 	
 	/**
-	 * Create new account
-	 */
-	private void createNewAccount() {
-		// TODO Auto-generated method stub
-		mListener.onCreateNewAccount();
-	}
-	
-	/**
 	 * @return The email address that was forgotten
 	 */
 	public String getCurrentEmail(){
 		return email_input.getText().toString();
-	}
-
-	/**
-	 *TODO further define
-	 * Attempt to login through facebook somehow
-	 * @param facebookCred
-	 */
-	private void attemptLogin(String facebookOrTwitterCredentials) {
-		// TODO Fix instead of string to other
-		mListener.onLogin(facebookOrTwitterCredentials);
 	}
 
 	/**
@@ -122,7 +85,7 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 	 */
 	public void attemptLogin(String username, String password) {
 		// TODO Translate email and password to a single login credential
-		mListener.onLogin(username);
+		mListener.onLogin(username, password);
 	}
 
 	/**
@@ -137,11 +100,11 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 		// This is how login listener communicates back to the activity
 		
 		// TODO Perhaps create a login credential class and pass that back to the activity
-		public void onLogin(String loginCredentials);
+		void onLogin(String username, String password);
 		
-		public void onLogin(String username, String password);
-
-		public void onCreateNewAccount();
+		void onLoginWithFacebook();
+		
+		void onLoginWithTwitter();
 	}
 
 }

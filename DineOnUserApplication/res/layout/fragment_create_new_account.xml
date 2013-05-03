@@ -13,17 +13,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
-        android:id="@+id/input_createnewaccount_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/label_create_new_account"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="@string/hint_email_address"
-        android:inputType="textEmailAddress" />
-
-    <EditText
         android:id="@+id/input_createnewaccount_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -90,5 +79,26 @@
         android:layout_alignRight="@+id/button_createnewaccount_facebook"
         android:layout_below="@+id/label_or2"
         android:text="@string/button_twitter" />
+
+    <EditText
+        android:id="@+id/input_createnewaccount_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/intput_createnewaccount_username"
+        android:layout_below="@+id/intput_createnewaccount_username"
+        android:ems="10"
+        android:hint="@string/hint_email_address"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/intput_createnewaccount_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/label_create_new_account"
+        android:layout_below="@+id/label_create_new_account"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="@string/hint_username"
+        android:inputType="textEmailAddress" />
 
 </RelativeLayout>

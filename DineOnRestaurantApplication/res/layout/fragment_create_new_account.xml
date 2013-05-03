@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText
+        android:id="@+id/input_createnewaccount_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:hint="@string/hint_password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/input_createnewaccount_repeat_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/input_createnewaccount_password"
+        android:layout_below="@+id/input_createnewaccount_password"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="@string/hint_password_repeat"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/button_create_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/input_createnewaccount_repeat_password"
+        android:layout_alignRight="@+id/input_createnewaccount_repeat_password"
+        android:layout_below="@+id/input_createnewaccount_repeat_password"
+        android:layout_marginTop="20dp"
+        android:text="@string/option_create_new_account" />
+
+    <EditText
+        android:id="@+id/input_createnewaccount_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/input_createnewaccount_password"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:ems="10"
+        android:hint="@string/hint_email_address"
+        android:inputType="textEmailAddress" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/input_createnewaccount_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/input_createnewaccount_email"
+        android:layout_alignLeft="@+id/input_createnewaccount_email"
+        android:layout_marginBottom="14dp"
+        android:ems="10"
+        android:hint="@string/hint_restaurant_name"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:id="@+id/label_create_new_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/input_createnewaccount_username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="21dp"
+        android:text="@string/create_new_account"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>

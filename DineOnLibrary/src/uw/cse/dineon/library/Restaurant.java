@@ -29,6 +29,10 @@ public class Restaurant extends Storable implements Parcelable {
 	private List<DiningSession> sessions;
 	private List<CustomerRequest> customerRequests;
 	
+	public Restaurant(String name) {
+		
+	}
+	
 	/**
 	 * @param Menu
 	 * @param reservationList
@@ -287,8 +291,7 @@ public class Restaurant extends Storable implements Parcelable {
 		dest.writeTypedList(orders);
 		dest.writeTypedList(sessions);
 		dest.writeTypedList(customerRequests);
-		dest.writeString(this.getObjId());
-						
+		dest.writeString(this.getObjId());		
 	}
 	
 	/**
@@ -310,7 +313,7 @@ public class Restaurant extends Storable implements Parcelable {
 	};
 			
 	//read an object back out of parcel
-	private void readFromParcel(Parcel source) {
+	protected void readFromParcel(Parcel source) {
 		source.readTypedList(menus, Menu.CREATOR);
 		source.readTypedList(reservationList, Reservation.CREATOR);
 		this.setInfo((RestaurantInfo)source.readParcelable(

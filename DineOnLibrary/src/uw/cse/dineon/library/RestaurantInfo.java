@@ -1,6 +1,7 @@
 
 package uw.cse.dineon.library;
 
+import java.util.ArrayList;
 import java.util.List;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -32,7 +33,6 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	 *
 	 */
 	public RestaurantInfo() {
-		// TODO
 	}
 	
 	public RestaurantInfo(String name, String addr, int phone, int imageMain, List<Integer> imageList, Menu menu) {

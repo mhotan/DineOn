@@ -5,5 +5,9 @@
         android:id="@+id/item_restaurant_profile"
         android:title="@string/item_rest_profile" android:showAsAction="never">
     </item>
+    <item
+        android:id="@+id/item_logout"
+        android:title="@string/item_logout" android:showAsAction="never">
+    </item>
 
 </menu>

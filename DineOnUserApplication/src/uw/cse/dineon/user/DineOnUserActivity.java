@@ -16,8 +16,8 @@ import uw.cse.dineon.user.checkin.IntentIntegrator;
 import uw.cse.dineon.user.checkin.QRCheckin;
 import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.general.UserPreferencesActivity;
+import uw.cse.dineon.user.login.UserLoginActivity;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -28,7 +28,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.parse.ParseUser;
-import com.parse.PushService;
 
 /**
  * Generl Fragment Activity class that pertains to a specific user.
@@ -64,6 +63,8 @@ public class DineOnUserActivity extends FragmentActivity {
 			Log.d(TAG, "Error: " + e.getMessage());
 		}
 	}
+	
+	
 
 	@Override
 	protected void onResume() {
@@ -103,6 +104,11 @@ public class DineOnUserActivity extends FragmentActivity {
 		setOnClick(m, customActionBarButtons);
 
 		return true;
+	}
+	
+	public void startLoginActivity() {
+		Intent i = new Intent(this, UserLoginActivity.class);
+		startActivity(i);
 	}
 
 	/**

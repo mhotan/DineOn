@@ -21,6 +21,7 @@ public class MenuItem extends Storable implements Parcelable {
 	private int productID;		// ID of this product
 	private double price;		// price of this product
 	private String description;	// description of this product
+	// TODO Image id;
 	
 	/**
 	 * Creates a new MenuItem with the given parameters.
