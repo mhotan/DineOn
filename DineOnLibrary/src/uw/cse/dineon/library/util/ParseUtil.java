@@ -191,7 +191,7 @@ public class ParseUtil {
 		        		try {
 		        			Storable s;
 		        			for (ParseObject p : list) {
-		        				s = (Storable) Class.forName(className).newInstance();
+		        				s = (Storable) Class.forName("uw.cse.dineon.library."+ className).newInstance();
 		        				s.unpackObject(p);
 		        				classList.add(s);
 		        			}		   

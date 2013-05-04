@@ -18,6 +18,7 @@ import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.parse.ParseUser;
+import com.parse.PushService;
 
 /**
  * Generl Fragment Activity class that pertains to a specific user.
@@ -40,8 +42,9 @@ import com.parse.ParseUser;
 public class DineOnUserActivity extends FragmentActivity {
 
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
-
-	protected DiningSession mDiningSession;
+	private static final String CHANNEL = "uw_cse_dineon_" + ParseUser.getCurrentUser().getUsername();
+	private static final String ACTION = "uw.cse.dineon.user.CONFIRM_DINING_SESSION"; 
+	protected static DiningSession mDiningSession;
 
 	private DineOnReceiver rec;
 
@@ -50,14 +53,7 @@ public class DineOnUserActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		try {
 			// Set up the broadcast receiver for push notifications
-			Map<String, String> m = new HashMap<String, String>();
-			rec = DineOnReceiver.createDineOnRecevier(
-					this.getClass().getMethod("onCheckInCallback", m.getClass()), 
-					this,
-					this.getClass(), 
-					"uw.cse.dineon.user.CONFIRM_DINING_SESSION", 
-					"uw.cse.dineon.user." + ParseUser.getCurrentUser().getUsername()); // restaurant name
-
+			rec = DineOnReceiver.createDineOnRecevier(this.getClass().getMethod("onCheckInCallback", Map.class));
 		} catch (NoSuchMethodException e) {
 			// print out error msg
 			Log.d(TAG, "Error: " + e.getMessage());
@@ -69,16 +65,22 @@ public class DineOnUserActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		//		IntentFilter iff = new IntentFilter("uw.cse.dineon.user.REQUEST_DINING_SESSION");
-		//		PushService.subscribe(this, "push", DineOnUserActivity.class);
-		//		this.registerReceiver(rec, iff);
+		IntentFilter iff = new IntentFilter(ACTION);
+		PushService.subscribe(this, CHANNEL,this.getClass());
+		this.registerReceiver(rec, iff);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		//		this.unregisterReceiver(rec);
+		
+	}
+	
+	@Override
+	protected void onPause(){
+		super.onPause();
+		this.unregisterReceiver(rec);
+		PushService.unsubscribe(this, CHANNEL);
 	}
 
 	@Override
@@ -171,12 +173,12 @@ public class DineOnUserActivity extends FragmentActivity {
 	 * @param session is a mapping from the arguments returned from the call
 	 * 	DineOnConstants.OBJ_ID => Parse Object ID for Dining Session
 	 */
-	public void onCheckInCallback(Map<String, String> session) {
+	public static void onCheckInCallback(Map<String, String> session) {
 		try {
 			Log.d("CONFIRM_DINING_SESSION_FROM_REST", "");
 
 			// Extract the object ID from the return map
-			String objID = session.get(DineOnConstants.OBJ_ID);
+			String objID = session.get("objectId");
 
 			// Use Utility to call Parse and get the Dining Session instance
 			if (objID == null || objID.isEmpty()) {
@@ -185,15 +187,14 @@ public class DineOnUserActivity extends FragmentActivity {
 				// was created
 			}
 
-			List<Storable> list = new ArrayList<Storable>();
 			// Then Bundle the Dining Session Instance into
 			Method m = null;
 
 			m = DineOnUserActivity.class.getMethod("onDiningSessionRecievedCallback",
-					list.getClass());
+					List.class);
 
 			Map<String, String> attr = new HashMap<String, String>();
-			attr.put(DineOnConstants.OBJ_ID, objID);
+			attr.put("objectId", objID);
 
 			ParseUtil.getDataFromCloud(DiningSession.class, m, attr);
 		} catch (NoSuchMethodException e) {
@@ -207,7 +208,7 @@ public class DineOnUserActivity extends FragmentActivity {
 	 * caching or.
 	 * @param list List<Storable>
 	 */
-	public void onDiningSessionRecievedCallback(List<Storable> list) {
+	public static void onDiningSessionRecievedCallback(List<Storable> list) {
 		// Assert that the first item in the list is
 		// is a DiningSession
 		if (list != null && list.size() == 1) {

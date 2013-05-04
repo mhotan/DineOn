@@ -38,6 +38,12 @@ public class DiningSession extends Storable implements Parcelable {
 	private int tableID;			// ID of table the dining is taking place at
 	private RequestType waiterRequest;	// type of request being made (if any)
 	
+	public DiningSession(){
+		super();
+		this.users = new ArrayList<UserInfo>();
+		this.orders = new ArrayList<Order>();
+	}
+	
 	/**
 	 * Creates a new DiningSession object with a particular table
 	 * and ID (sessToken).
@@ -167,7 +173,7 @@ public class DiningSession extends Storable implements Parcelable {
 		this.setOrders((List<Order>) pobj.get(this.ORDERS));
 		this.setSessToken(pobj.getInt(this.SESS_TOKEN));
 		this.setTableID(pobj.getInt(this.TABLE_ID));
-		this.setWaiterRequest((RequestType) pobj.get(this.WAITER_REQUEST));
+		//this.setWaiterRequest((RequestType) pobj.get(this.WAITER_REQUEST));
 	}
 	
 	/**

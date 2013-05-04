@@ -6,6 +6,9 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.parse.ParseUser;
+
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.ParseUtil;
 import android.app.Activity;
 import android.content.Context;
@@ -14,8 +17,8 @@ import android.util.Log;
 
 public class QRCheckin {
 	
-	private static String userInfo = "{ objID:\"xyz123\", name:\"mark\", phone:12, email:\"m@aol.com\" }";
-	
+	private static JSONObject userInfo = new JSONObject();
+	private static String TAG = "QRCheckin";
 	/**
 	 * Processes the information gathered from a QR scan and sends the checkin
 	 * request to the restaurant expecting a DiningSession as a result
@@ -35,6 +38,11 @@ public class QRCheckin {
 			  String contents = scanResult.getContents();
 			  // TODO Handle Correct log in
 			  try {
+				  Log.d(TAG, contents);
+				  userInfo.put("objID", ParseUser.getCurrentUser().getObjectId());
+				  userInfo.put(UserInfo.NAME, ParseUser.getCurrentUser().getUsername());
+				  userInfo.put(UserInfo.PHONE, 1234567890);
+				  userInfo.put(UserInfo.EMAIL, ParseUser.getCurrentUser().getEmail());
 				  JSONObject data = new JSONObject(contents);
 				  //Log.d("ZXing", data.toString());
 				  Map<String, String> attr = new HashMap<String, String>();
@@ -43,7 +51,7 @@ public class QRCheckin {
 				  ParseUtil.notifyApplication(
 						  "uw.cse.dineon.user.REQUEST_DINING_SESSION", 
 						  attr, 
-						  "uw.cse.dineon." + data.getString("RESTAURANT"));
+						  "uw_cse_dineon_" + data.getString("RESTAURANT"));
 			  } catch (JSONException e) {
 				  Log.d("ZXing", "Error: " + e.getMessage());
 			  }
