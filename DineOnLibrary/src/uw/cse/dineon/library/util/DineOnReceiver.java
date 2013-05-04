@@ -37,7 +37,7 @@ public class DineOnReceiver extends BroadcastReceiver {
 	 * notifications
 	 * @return Constructed DineOnReceiver given arguments
 	 */
-	public static DineOnReceiver createDineOnRecevier(Method h) {
+	public static DineOnReceiver createDineOnReceiver(Method h) {
 		
 		DineOnReceiver rec = new DineOnReceiver(h);
 		

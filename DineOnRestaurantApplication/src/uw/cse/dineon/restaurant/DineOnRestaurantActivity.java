@@ -67,7 +67,7 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		try {
 			// Set up the broadcast receiver for push notifications
 			Map<String, String> m = new HashMap<String, String>();
-			rec = DineOnReceiver.createDineOnRecevier(
+			rec = DineOnReceiver.createDineOnReceiver(
 					this.getClass().getMethod("onDiningSessionRequest", Map.class));
 			
 		} catch (NoSuchMethodException e) {

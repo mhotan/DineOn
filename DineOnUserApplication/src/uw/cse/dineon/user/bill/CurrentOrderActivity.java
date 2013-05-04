@@ -26,9 +26,7 @@ CurrentOrderFragment.OrderUpdateListener
 	}
 	
 	@Override
-	public boolean onPrepareOptionsMenu (Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		
+	public boolean onPrepareOptionsMenu (Menu menu) {		
 		// TODO If in landscape mode then user already sees the bill
 		// So hide the fragments
 		CurrentBillFragment fragment = (CurrentBillFragment)

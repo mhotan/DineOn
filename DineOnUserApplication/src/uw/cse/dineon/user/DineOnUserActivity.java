@@ -8,6 +8,7 @@ import java.util.Map;
 
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Storable;
+import uw.cse.dineon.library.User;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.DineOnReceiver;
 import uw.cse.dineon.library.util.ParseUtil;
@@ -17,6 +18,9 @@ import uw.cse.dineon.user.checkin.QRCheckin;
 import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -44,7 +48,7 @@ public class DineOnUserActivity extends FragmentActivity {
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
 	private static final String CHANNEL = "uw_cse_dineon_" + ParseUser.getCurrentUser().getUsername();
 	private static final String ACTION = "uw.cse.dineon.user.CONFIRM_DINING_SESSION"; 
-	protected static DiningSession mDiningSession;
+	protected static User mUser;
 
 	private DineOnReceiver rec;
 
@@ -53,14 +57,14 @@ public class DineOnUserActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		try {
 			// Set up the broadcast receiver for push notifications
-			rec = DineOnReceiver.createDineOnRecevier(this.getClass().getMethod("onCheckInCallback", Map.class));
+			rec = DineOnReceiver.createDineOnReceiver(this.getClass().getMethod("onCheckInCallback", Map.class));
 		} catch (NoSuchMethodException e) {
 			// print out error msg
 			Log.d(TAG, "Error: " + e.getMessage());
 		}
 	}
-	
-	
+
+
 
 	@Override
 	protected void onResume() {
@@ -73,9 +77,9 @@ public class DineOnUserActivity extends FragmentActivity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		
+
 	}
-	
+
 	@Override
 	protected void onPause(){
 		super.onPause();
@@ -102,12 +106,70 @@ public class DineOnUserActivity extends FragmentActivity {
 		List<MenuItem> customActionBarButtons = new ArrayList<MenuItem>();
 		customActionBarButtons.add(menu.findItem(R.id.option_bill));
 		customActionBarButtons.add(menu.findItem(R.id.option_check_in));
-		
+
 		setOnClick(m, customActionBarButtons);
 
 		return true;
 	}
-	
+
+	/**
+	 * Dynamically prepares the options menu.
+	 * @param menu the specified menu to prepare
+	 * @return true if the options menu is successfully prepared
+	 */
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+
+		//Mock empty user to get the app to compile
+		if(DineOnConstants.DEBUG) {
+			mUser = new User();
+		}
+		
+		if(mUser.getDiningSession() != null) {
+			disableMenuItem(menu, R.id.option_check_in);
+			enableMenuItem(menu, R.id.option_bill);
+		} 
+		else {
+			enableMenuItem(menu, R.id.option_check_in);
+			disableMenuItem(menu, R.id.option_bill);
+		}
+		return true;
+	}
+
+	/**
+	 * Disables and hides the specified menu item.
+	 * 
+	 * @param menu The specified menu
+	 * @param rID The id of the specified menu item
+	 */
+	private void disableMenuItem(Menu menu, int rID) {
+		MenuItem item = menu.findItem(rID);
+		if(item != null) {
+			item.setEnabled(false);
+			item.setVisible(false);
+		}
+	}
+
+	/**
+	 * Enables and shows the specified menu item.
+	 * @precondition the rID is an actual valid rID for the menu
+	 * item to enable.
+	 * @param menu The specified menu
+	 * @param rID The id of the specified menu item
+	 */
+	private void enableMenuItem(Menu menu, int rID) {
+		MenuItem item = menu.findItem(rID);
+		if(item == null) {
+			menu.add(rID);
+		}
+		item.setEnabled(true);
+		item.setVisible(true);
+	}
+
+
+	/**
+	 * Sends the user back to the login page.
+	 */
 	public void startLoginActivity() {
 		Intent i = new Intent(this, UserLoginActivity.class);
 		startActivity(i);
@@ -130,7 +192,7 @@ public class DineOnUserActivity extends FragmentActivity {
 			});
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent i = null;
@@ -214,7 +276,7 @@ public class DineOnUserActivity extends FragmentActivity {
 		if (list != null && list.size() == 1) {
 			throw new IllegalArgumentException("List returned is not valid: " + list);
 		}
-		mDiningSession = (DiningSession) list.get(0);
+		DiningSession mDiningSession = (DiningSession) list.get(0);
 
 		// DEBUG:
 		Log.d("GOT_DINING_SESSION_FROM_CLOUD", mDiningSession.getTableID() + "");
@@ -256,4 +318,26 @@ public class DineOnUserActivity extends FragmentActivity {
 		super.onRestoreInstanceState(savedInstanceState);
 		//		mDiningSession.unbundle(savedInstanceState.getBundle("diningSession"));
 	}
+
+	/**
+	 * Show alert message when user isn't logged in.
+	 * @param message
+	 */
+	public void showAlertNotLoggedIn() {
+		AlertDialog.Builder b = new Builder(this);
+		b.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				startLoginActivity();
+			}
+		});
+
+		b.setTitle("Not Logged in");
+		b.setMessage("User is not logged in.");
+		b.setCancelable(false);
+		b.create().show();
+	}
+
 }
