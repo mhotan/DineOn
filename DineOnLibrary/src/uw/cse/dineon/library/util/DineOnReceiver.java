@@ -33,21 +33,13 @@ public class DineOnReceiver extends BroadcastReceiver {
 	 * push notifications specific to the context and call-back function provided.
 	 * 
 	 * @param h Call-back function for push notifications received
-	 * @param ctx Context of the activity that this receiver is connected to
-	 * @param act The activity associated with the receiver
-	 * @param action The action specifying the type of push notifications received 
 	 * by the receiver
-	 * @param channel The channel the receiver subscribes to for intercepting 
 	 * notifications
 	 * @return Constructed DineOnReceiver given arguments
 	 */
-	public static DineOnReceiver createDineOnRecevier(
-			Method h, Context ctx, Class<? extends FragmentActivity> act, String action, String channel) {
+	public static DineOnReceiver createDineOnRecevier(Method h) {
 		
 		DineOnReceiver rec = new DineOnReceiver(h);
-		IntentFilter iff = new IntentFilter(action);
-		PushService.subscribe(ctx, channel, act);
-		ctx.registerReceiver(rec, iff);
 		
 		rec.handler = h;
 		

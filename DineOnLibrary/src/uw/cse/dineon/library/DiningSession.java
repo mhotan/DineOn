@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import uw.cse.dineon.library.util.ParseUtil;
+
 import android.annotation.SuppressLint;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -136,13 +138,13 @@ public class DiningSession extends Storable implements Parcelable {
 	@Override
 	public ParseObject packObject() {
 		ParseObject pobj = new ParseObject(this.getClass().getSimpleName());
-		pobj.add(this.USERS, this.users);
+		pobj.add(this.USERS, ParseUtil.packListOfStorables(this.users));
 		pobj.add(this.START_TIME, new Long(this.startTime));
 		pobj.add(this.END_TIME, new Long(this.endTime));
-		pobj.add(this.ORDERS, this.orders);
-		pobj.addUnique(this.SESS_TOKEN, new Integer(this.sessToken));
+		pobj.add(this.ORDERS, ParseUtil.packListOfStorables(this.orders));
+		pobj.add(this.SESS_TOKEN, new Integer(this.sessToken));
 		pobj.add(this.TABLE_ID, new Integer(this.tableID));
-		pobj.add(this.WAITER_REQUEST, this.waiterRequest);
+		pobj.add(this.WAITER_REQUEST, this.waiterRequest.ordinal());
 		//in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
 		
@@ -179,8 +181,9 @@ public class DiningSession extends Storable implements Parcelable {
 	 * @return the users
 	 */
 	public List<UserInfo> getUsers() {
-		List<UserInfo> copy = new ArrayList<UserInfo>(this.users.size());
-		Collections.copy(copy, this.users);
+		List<UserInfo> copy = new ArrayList<UserInfo>();
+		for (int i = 0; i < this.users.size(); i++)
+			copy.add(this.users.get(i));
 		return copy;
 	}
 

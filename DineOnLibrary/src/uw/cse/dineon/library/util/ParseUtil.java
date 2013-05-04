@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import uw.cse.dineon.library.Storable;
-
 import android.util.Log;
 
 import com.parse.FindCallback;
@@ -128,9 +128,7 @@ public class ParseUtil {
 	public static void saveDataToCloud(Storable obj, Method handler) {
 		final Method h = handler;
 		
-		ParseObject pObj = obj.packObject();
-		obj.setObjId(pObj.getObjectId());
-		final String objID = pObj.getObjectId();
+		final ParseObject pObj = obj.packObject();
 		final Storable s = obj;
 		pObj.saveInBackground( new SaveCallback() {
 			@Override
@@ -138,6 +136,7 @@ public class ParseUtil {
 				if (e == null) {
 					// save was successful so send push
 					Log.d(TAG, "Successfully saved object.");
+					s.setObjId(pObj.getObjectId());
 				} else {
 					// Error occured
 					Log.d(TAG, "Error: " + e.getMessage());
@@ -145,7 +144,7 @@ public class ParseUtil {
 				
 				try {
 					if (h != null)
-						h.invoke(null, (e == null) ? true : false, objID, s);
+						h.invoke(null, (e == null) ? Boolean.TRUE : Boolean.FALSE, pObj.getObjectId(), s);
 				} catch (IllegalArgumentException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -242,4 +241,40 @@ public class ParseUtil {
 			Log.d(TAG, e.getMessage());
 		}
 	}
+	
+	/**
+	 * Pack a Storable List into an array of ParseObjects
+	 * 
+	 * @param list
+	 * @return
+	 */
+	public static ParseObject packListOfStorables(List<? extends Storable> list) {
+		ParseObject container = new ParseObject("Container");
+		
+		for (int i = 0; i < list.size(); i++) {
+			container.put("c" + i, list.get(i).packObject());
+		}
+		
+		return container;
+	}
+	
+	public static List<Storable> unpackListOfStorables(ParseObject container) {
+		if (!container.getClassName().equals("Container"))
+			throw new IllegalArgumentException();
+		
+		List<Storable> list = new LinkedList<Storable>();
+		try {
+			for (String k : container.keySet()) {
+				ParseObject p = container.getParseObject(k);
+				Storable s = (Storable) Class.forName(p.getClassName()).newInstance();
+				s.unpackObject(p);
+				list.add(s);
+			}
+		} catch(Exception e) {
+			Log.d(TAG, "Error: " + e.getMessage());
+		}
+		
+		return list;
+	}
+	
 }

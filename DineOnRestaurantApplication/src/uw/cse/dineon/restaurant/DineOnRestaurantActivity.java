@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
@@ -66,12 +68,8 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 			// Set up the broadcast receiver for push notifications
 			Map<String, String> m = new HashMap<String, String>();
 			rec = DineOnReceiver.createDineOnRecevier(
-					this.getClass().getMethod("onDiningSessionRequest", m.getClass()), 
-					this,
-					this.getClass(), 
-					"uw.cse.dineon.user.REQUEST_DINING_SESSION", 
-					"uw.cse.dineon." + ParseUser.getCurrentUser().getUsername()); // restaurant name
-
+					this.getClass().getMethod("onDiningSessionRequest", Map.class));
+			
 		} catch (NoSuchMethodException e) {
 			// print out error msg
 			Log.d(TAG, "Error: " + e.getMessage());
@@ -108,16 +106,23 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
+		
 		IntentFilter iff = new IntentFilter("uw.cse.dineon.user.REQUEST_DINING_SESSION");
-		PushService.subscribe(this, "push", DineOnRestaurantActivity.class);
-		//		this.registerReceiver(rec, iff);
+		PushService.subscribe(this, "uw_cse_dineon_" + ParseUser.getCurrentUser().getUsername(), this.getClass());
+		this.registerReceiver(rec, iff);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		PushService.unsubscribe(this, "uw_cse_dineon_" + ParseUser.getCurrentUser().getUsername());
+		this.unregisterReceiver(rec);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		//		this.unregisterReceiver(rec);
 	}
 
 	@Override
@@ -265,6 +270,13 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param dSess
+	 */
+	protected static void diningSessionAcquired(DiningSession dSess) {
+		// Use in the UI.
+	}
 
 	/*
 	 * Brodcast receiver callback specific methods 
@@ -275,26 +287,33 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	//		- tableNum : int
 	public static void onDiningSessionRequest(Map<String, String> attr) {
 		Log.d("GOT_DINING_SESSION_REQUEST", "");
-
-		// create a dining session
-		ParseObject user = new ParseObject(attr.get("userInfo"));
-
-		DiningSession newDS = new DiningSession(
-				new LinkedList<Order>(), 
-				0, 
-				Integer.parseInt(attr.get("tableID")));
-		UserInfo info = new UserInfo();
-		info.unpackObject(user);
-		newDS.addUser(info);
-
-		// save to cloud
 		try {
+			// create a dining session
+			JSONObject jObj = new JSONObject(attr.get("userInfo"));
+			ParseObject user = new ParseObject("UserInfo");
+			user.setObjectId(jObj.getString("objID"));
+			user.put(UserInfo.NAME,jObj.getString(UserInfo.NAME));
+			user.put(UserInfo.EMAIL, jObj.getString(UserInfo.EMAIL));
+			user.put(UserInfo.PHONE, jObj.getString(UserInfo.PHONE));
+	
+			DiningSession newDS = new DiningSession(
+					new LinkedList<Order>(), 
+					0, 
+					Integer.parseInt(attr.get("tableID")));
+			UserInfo info = new UserInfo();
+			info.unpackObject(user);
+			newDS.addUser(info);
+	
+			// save to cloud
+		
 			ParseUtil.saveDataToCloud(newDS, 
 					DineOnRestaurantActivity.class.
-					getMethod("onSavedDiningSession", Boolean.class, String.class));
+					getMethod("onSavedDiningSession", Boolean.class, String.class, Storable.class));
 		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e) {
+			Log.d(TAG, "Error: " + e.getMessage());
 		}
 	}
 
@@ -306,18 +325,23 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	 */
 	public static void onSavedDiningSession(Boolean success, String objID, Storable obj) {
 		Log.d("SAVED_NEW_DINING_SESSION_REST", "");
-
+		try {
 		if (success) {
 			// push notification for user
 			DiningSession session = ((DiningSession)obj);
 			Map<String, String> attr = new HashMap<String, String>();
-			attr.put("objID", objID);
+			attr.put(DineOnConstants.OBJ_ID, objID);
 			ParseUtil.notifyApplication(
-					"w.cse.dineon.user.CONFIRM_DINING_SESSION", 
+					"uw.cse.dineon.user.CONFIRM_DINING_SESSION", 
 					attr, 
-					"uw.cse.dineon.user." + session.getUsers().get(0).getName());
+					"uw_cse_dineon_" + session.getUsers().get(0).getName());
+			
+			diningSessionAcquired(session);
 		} else {
 			Log.d(TAG, "Error: A dining session couldn't be saved.");
+		}
+		} catch (Exception e) {
+			Log.d(TAG, "Error: " + e.getMessage());
 		}
 	}
 

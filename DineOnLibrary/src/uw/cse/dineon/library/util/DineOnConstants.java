@@ -53,5 +53,5 @@ public class DineOnConstants {
 	public static final String KEY_USER = "USER";
 	
 	// Callback Key for braodcast receiver callbacks
-	public static final String OBJ_ID = "OBJ_ID";
+	public static final String OBJ_ID = "objectId";
 }
