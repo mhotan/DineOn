@@ -46,9 +46,9 @@ public class ParseUtil {
 	 * Must not be already used by another user. 
 	 * @param passwd - The password to use with the new user will login
 	 * @param callback - the static method to call once the response returns from Parse Cloud
-	 * @throws IllegalArgumentException if any param is null.
+	 * @throws IllegalArgumentException if any param is nu
 	 */
-	public static void createDineOnUser(String uname, String passwd, Method callback){
+	public static void createDineOnUser(String uname, String passwd, Method callback) {
 		//TODO handle exception cases.
 		if(uname == null || passwd == null || callback == null)
 			throw new IllegalArgumentException();
@@ -56,7 +56,7 @@ public class ParseUtil {
 		pu.setUsername(uname);
 		pu.setPassword(passwd);
 		final Method m = callback;
-		pu.signUpInBackground(new SignUpCallback(){
+		pu.signUpInBackground(new SignUpCallback() {
 
 			@Override
 			public void done(ParseException e) {
@@ -97,21 +97,21 @@ public class ParseUtil {
 	 * to call once the response is heard from the Parse Cloud.
 	 * @throws IllegalArgumentException if any param is null.
 	 */
-	public static void logInDineOnCreds(String uname, String passwd, Method callback){
+	public static void logInDineOnCreds(String uname, String passwd, Method callback) {
 		if(uname == null || passwd == null || callback == null)
 			throw new IllegalArgumentException();
 
 		final Method m = callback;
-		ParseUser.logInInBackground(uname, passwd, new LogInCallback(){
+		ParseUser.logInInBackground(uname, passwd, new LogInCallback() {
 
 			@Override
 			public void done(ParseUser user, ParseException err) {
-				if(err == null && user != null){
+				if(err == null && user != null) {
 					//TODO setup default user and call callback with 
 					//Storable User object.
 					Log.d(TAG, "Log in success, user returned with no error");
-				}
-				else{
+				} 
+				else {
 					Log.d(TAG, "Log in error");
 				} 
 				// TODO
@@ -123,7 +123,7 @@ public class ParseUtil {
 		});
 	}
 	/**
-	 * Save obj into the cloud and store the acquired objID into obj
+	 * Save obj into the cloud and store the acquired objID into obj.
 	 * 
 	 * @param obj the java object that will be saved to the cloud
 	 */
@@ -132,7 +132,7 @@ public class ParseUtil {
 
 		final ParseObject pObj = obj.packObject();
 		final Storable s = obj;
-		pObj.saveInBackground( new SaveCallback() {
+		pObj.saveInBackground(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
 				if (e == null) {
@@ -145,8 +145,10 @@ public class ParseUtil {
 				}
 
 				try {
-					if (h != null)
-						h.invoke(null, (e == null) ? Boolean.TRUE : Boolean.FALSE, pObj.getObjectId(), s);
+					if (h != null) {
+						h.invoke(null, (e == null) ? Boolean.TRUE : Boolean.FALSE, 
+								pObj.getObjectId(), s);
+					}
 				} catch (IllegalArgumentException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -174,7 +176,8 @@ public class ParseUtil {
 	 * 
 	 * Note: Returns a List<Storable> to the handler.
 	 */
-	public static void getDataFromCloud(Class<? extends Storable> c, Method handle, Map<String, String> attr) {
+	public static void getDataFromCloud(Class<? extends Storable> c, Method handle, 
+			Map<String, String> attr) {
 
 		ParseQuery query = new ParseQuery(c.getSimpleName());
 		Set<String> kSet = attr.keySet();
@@ -223,28 +226,28 @@ public class ParseUtil {
 		final Activity act = activity;
 		final Method h = handle;
 		query.findInBackground(new FindCallback() {
-			public void done(List<ParseObject> list, ParseException e) {
-				if (e == null) {
-					if (list.size() > 0) {
-						String className = list.get(0).getClassName();
-						List<Storable> classList = new LinkedList<Storable>();
-
-						try {
-							Storable s;
-							for (ParseObject p : list) {
-								s = (Storable) Class.forName("uw.cse.dineon.library."+ className).newInstance();
-								s.unpackObject(p);
-								classList.add(s);
-							}
-							if (act != null)
-								h.invoke(act, classList);
-						} catch (Exception ex) {
-							Log.d(TAG, "Error: " + ex.getMessage());
-						}
-					}
-				} else {
-					Log.d(TAG, "Error: " + e.getMessage());
-				}// TODO
+		    public void done(List<ParseObject> list, ParseException e) {
+		        if (e == null) {
+		        	if (list.size() > 0) {
+		        		String className = list.get(0).getClassName();
+		        		List<Storable> classList = new LinkedList<Storable>();
+		        		
+		        		try {
+		        			Storable s;
+		        			for (ParseObject p : list) {
+		        				s = (Storable) Class.forName("uw.cse.dineon.library."
+		        						+ className).newInstance();
+		        				s.unpackObject(p);
+		        				classList.add(s);
+		        			}		   
+		        			h.invoke(null, classList);
+		        		} catch (Exception ex) {
+		        			Log.d(TAG, "Error: " + ex.getMessage());
+		        		}
+		        	}
+		        } else {
+		            Log.d(TAG, "Error: " + e.getMessage());
+		        } // TODO
 				// Invoke our method with null notifying 
 				// User create account failed
 			}
@@ -278,17 +281,16 @@ public class ParseUtil {
 			push.setChannel(channel);
 			push.setData(data);
 			push.sendInBackground();
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			Log.d(TAG, e.getMessage());
 		}
 	}
 
 	/**
-	 * Pack a Storable List into an array of ParseObjects
+	 * Pack a Storable List into an array of ParseObjects.
 	 * 
-	 * @param list
-	 * @return
+	 * @param list of Storable objects
+	 * @return ParseObject
 	 */
 	public static ParseObject packListOfStorables(List<? extends Storable> list) {
 		ParseObject container = new ParseObject("Container");
@@ -300,9 +302,15 @@ public class ParseUtil {
 		return container;
 	}
 
+	/**
+	 * 
+	 * @param container ParseObject
+	 * @return List<Storable>
+	 */
 	public static List<Storable> unpackListOfStorables(ParseObject container) {
-		if (!container.getClassName().equals("Container"))
+		if (!container.getClassName().equals("Container")) {
 			throw new IllegalArgumentException();
+		}
 
 		List<Storable> list = new LinkedList<Storable>();
 		try {
@@ -312,7 +320,7 @@ public class ParseUtil {
 				s.unpackObject(p);
 				list.add(s);
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			Log.d(TAG, "Error: " + e.getMessage());
 		}
 

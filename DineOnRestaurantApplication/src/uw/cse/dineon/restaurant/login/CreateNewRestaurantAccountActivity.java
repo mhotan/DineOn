@@ -2,6 +2,7 @@ package uw.cse.dineon.restaurant.login;
 
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.CredentialValidator;
+import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.R;
@@ -54,15 +55,24 @@ implements CreateNewAccountListener {
 				public void done(ParseException e) {
 					if (e == null) {
 						// Hooray! Let them use the app now.
-						// TODO Create a new Restaurant object and save it to Parse.
-						// Then return the Restaurant object to Login Activty for processing
+
+						// default new restaurant creation
+						Restaurant rest = new Restaurant(null, null, null, null, null, null);
 						
-						
-						if (DineOnConstants.DEBUG) {
-							returnResult(null);
+						try {
+							ParseUtil.saveDataToCloud(rest, 
+									Restaurant.class.getMethod("onSaveInstanceState", 
+											new Class[]{Bundle.class}));
+						} catch (NoSuchMethodException me) {
+							me.printStackTrace();
 						}
-					} 
-					else {
+						
+						if (DineOnConstants.DEBUG) { // debug mode on
+							returnResult(null);
+						} else {
+							returnResult(rest);
+						}
+					} else {
 						// Sign up didn't succeed. Look at the ParseException
 						// to figure out what went wrong
 						showFailAlertDialog(e.getMessage());
@@ -77,15 +87,16 @@ implements CreateNewAccountListener {
 
 	/**
 	 * Finish this activity and return to login.
-	 * @param success
+	 * 
+	 * @param restaurant to be returned
 	 */
-	private void returnResult(Restaurant restaurant){
+	private void returnResult(Restaurant restaurant) {
 		mRestaurant = restaurant;
 		this.finish();
 	}
 
 	@Override
-	public void finish(){
+	public void finish() {
 		// Send restaurant instance back
 		if (!DineOnConstants.DEBUG) {
 			Intent retIntent = new Intent();
@@ -95,7 +106,12 @@ implements CreateNewAccountListener {
 		super.finish();
 	}
 
-	private void showFailAlertDialog(String error){
+	/**
+	 * Displays an alert message if the account failed to create.
+	 * 
+	 * @param error String dialog to display
+	 */
+	private void showFailAlertDialog(String error) {
 		AlertDialog.Builder builder = new Builder(this);
 		builder.setTitle("Failed to create account");
 		builder.setMessage(error);

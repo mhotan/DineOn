@@ -48,7 +48,8 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	 * authenticating and creating an account.
 	 * 
 	 * Abstract Function
-	 * 		thisRestaurant != null if and only if this user is logged in with a proper Restaurant account
+	 * 		thisRestaurant != null if and only if this user is logged in 
+	 * 		with a proper Restaurant account
 	 */
 	private Restaurant thisRestaurant;
 
@@ -109,7 +110,7 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		
 		IntentFilter iff = new IntentFilter("uw.cse.dineon.user.REQUEST_DINING_SESSION");
 		PushService.subscribe(this, "uw_cse_dineon_" 
-		+ ParseUser.getCurrentUser().getUsername(), this.getClass());
+				+ ParseUser.getCurrentUser().getUsername(), this.getClass());
 		this.registerReceiver(rec, iff);
 	}
 	
@@ -126,8 +127,12 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		super.onStop();
 	}
 
+	/**
+	 * @param menu to display
+	 * @return true
+	 */
 	@Override
-	public boolean onPrepareOptionsMenu (Menu menu) {
+	public boolean onPrepareOptionsMenu(Menu menu) {
 		// TODO Adjust dynamic attributes of the menu
 		// Depending on the state of the current application
 		// Adjust what is presented to the user		
@@ -142,9 +147,9 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	}
 	
 	/**
-	 * Given a menu set set this menu to show
+	 * Given a menu set set this menu to show.
 	 * that the user is not logged in
-	 * @param menu
+	 * @param menu to display
 	 */
 	private void setMenuToNonUser(Menu menu) {
 		MenuItem itemProfile = menu.findItem(R.id.item_restaurant_profile);
@@ -192,14 +197,13 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.item_restaurant_profile:
-			// TODO Create Bundle with Restaurant inside
+			Bundle b = new Bundle();
+			b.putParcelable(DineOnConstants.KEY_RESTAURANT, thisRestaurant);
 			startProfileActivity(null);
 			break;
 		case R.id.item_logout:
-			// TODO Save the current restaurant
-			// TODO Log out via Parse
-			// TODO When we are done logging out of parse
-			
+			saveRestaurant();
+			ParseUser.logOut();
 			break;
 		default:
 
@@ -208,9 +212,11 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	}
 	
 	/**
-	 * Starts restaurant profile activity.
+	 * Starts profile activity.
+	 * 
+	 * @param rest current Restaurant for the activity
 	 */
-	public void startProfileActivity(Restaurant rest){
+	public void startProfileActivity(Restaurant rest) {
 		Intent i = new Intent(this, ProfileActivity.class);
 		if (rest != null) {
 			i.putExtra(DineOnConstants.KEY_RESTAURANT, rest);
@@ -220,11 +226,10 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-		// TODO Save state of all the fields of this activity
-		// mRestaurant
-		// Save to Parse then reference later
 		savedInstanceState.putParcelable(DineOnConstants.KEY_RESTAURANT, thisRestaurant);
-
+		
+		// Save to Parse
+		saveRestaurant();
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
@@ -232,7 +237,7 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	 * Sets the current state of this restaurant to the input.
 	 * @param rest updated restaurant to set as this
 	 */
-	protected void setRestaurant(Restaurant rest){
+	protected void setRestaurant(Restaurant rest) {
 		if (rest == null) {
 			String message =  "Illegal Restaurant attempted to be set";
 			Log.w(TAG, message);
@@ -240,7 +245,8 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		}	
 		thisRestaurant = rest;
 
-		// TODO Update the Cloud with the updated restaurant instance
+		// Update the Cloud with the updated restaurant instance
+		saveRestaurant();
 		// Perform asyncronous save to cloud of the updated state 
 		// not very precedent
 	}
@@ -250,7 +256,7 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	 * 
 	 * @return restaurant associated with this
 	 */
-	protected Restaurant getRestaurant(){
+	protected Restaurant getRestaurant() {
 		return thisRestaurant;
 	}
 
@@ -262,8 +268,19 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	 */
 	protected boolean isLoggedIn() {
 		// TODO Sync with Parse User to ensure
-		// That the user is logged in via Parse
-		// Then check if we have a associated restaurant
+		/*
+		 * Here's the "code" for checking log in, will need to pass user/pass
+		 * to this method
+		 * 
+		 * ParseUser.logInInBackground("Marty", "booyah", new LogInCallback() {
+  		 *	public void done(ParseUser user, ParseException e) {
+    	 *		if (user == null) {
+      	 *			// Not logged in look at ParseException.
+    	 *		} // else successful log in
+  		 *	}
+		 *	});
+		 */
+		// Then check if we have an associated restaurant
 		if (thisRestaurant != null) {
 			return true;
 		}
@@ -284,13 +301,13 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		
 	}
 
-	/*
-	 * Brodcast receiver callback specific methods 
-	 ************************************************************************/
-
-	// attr :
-	//		- userInfo : UserInfo.JSON
-	//		- tableNum : int
+	/**
+	 * Broadcast reciever callback specific methods.
+	 * 
+	 * @param attr String-String Map
+	 * 		- userInfo : UserInfo.JSON
+	 * 		- tableNum : int
+	 */
 	public static void onDiningSessionRequest(Map<String, String> attr) {
 		Log.d("GOT_DINING_SESSION_REQUEST", "");
 		try {
@@ -298,7 +315,7 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 			JSONObject jObj = new JSONObject(attr.get("userInfo"));
 			ParseObject user = new ParseObject("UserInfo");
 			user.setObjectId(jObj.getString("objID"));
-			user.put(UserInfo.NAME,jObj.getString(UserInfo.NAME));
+			user.put(UserInfo.NAME, jObj.getString(UserInfo.NAME));
 			user.put(UserInfo.EMAIL, jObj.getString(UserInfo.EMAIL));
 			user.put(UserInfo.PHONE, jObj.getString(UserInfo.PHONE));
 	
@@ -310,13 +327,12 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 			info.unpackObject(user);
 			newDS.addUser(info);
 	
-			// save to cloud
 		
+			// save to cloud
 			ParseUtil.saveDataToCloud(newDS, 
 					DineOnRestaurantActivity.class.
 					getMethod("onSavedDiningSession", Boolean.class, String.class, Storable.class));
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
 			Log.d(TAG, "Error: " + e.getMessage());
@@ -324,10 +340,11 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	}
 
 	/**
+	 * Save DiningSession.
 	 * 
-	 * @param success
-	 * @param objID
-	 * @param obj
+	 * @param success Boolean
+	 * @param objID String ID of obj
+	 * @param obj Storable object to be saved
 	 */
 	public static void onSavedDiningSession(Boolean success, String objID, Storable obj) {
 		Log.d("SAVED_NEW_DINING_SESSION_REST", "");
@@ -351,5 +368,17 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		}
 	}
 
-
+	/**
+	 * Helper to save/update Restaurant associated with this activity.
+	 */
+	private void saveRestaurant() {
+		try {
+			ParseUtil.saveDataToCloud(thisRestaurant, 
+					Restaurant.class.getMethod("onSaveInstanceState", 
+							new Class[]{Bundle.class}));
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

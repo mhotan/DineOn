@@ -5,6 +5,7 @@ import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
@@ -35,7 +36,9 @@ implements LoginFragment.OnLoginListener {
 	// Request code to create a new account
 	private static final int REQUEST_CREATE_NEW_ACCOUNT = 0x1;
 
-	/** Called when the activity is first created. */
+	/** Called when the activity is first created.
+	 *  @param savedInstanceState Bundle to store created activity.
+	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
@@ -43,7 +46,7 @@ implements LoginFragment.OnLoginListener {
 	
 	/**
 	 * Given a valid restaurant, proceed to next activity.
-	 * @param thisRest
+	 * @param thisRest Restaurant
 	 */
 	private void goToRestaurantMain(Restaurant thisRest) {
 		Intent i = new Intent(this, RestauarantMainActivity.class);
@@ -64,7 +67,7 @@ implements LoginFragment.OnLoginListener {
 
 	/**
 	 * Attempts to create new account. 
-	 * Uses another activity to creat this account.
+	 * Uses another activity to create this account.
 	 */
 	private void createNewAccount() {
 		Intent i = new Intent(this, CreateNewRestaurantAccountActivity.class);
@@ -86,11 +89,10 @@ implements LoginFragment.OnLoginListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.option_create_new_account) {
-			//TODO Implement
 			createNewAccount();
 		} 
 		else if (id == R.id.option_forgot_password) {
-			//TODO Implement
+			//TODO Implement - Beta Phase?
 			DevelopTools.getUnimplementedDialog(this, null).show();
 		}
 		return true;
@@ -140,13 +142,15 @@ implements LoginFragment.OnLoginListener {
 			@Override
 			public void done(ParseUser user, ParseException e) {
 				if (user != null) {
-					// Successfuly logged in
+					// Successfully logged in
 					if (DineOnConstants.DEBUG) {
 						goToRestaurantMain(null);
 					}
-					// TODO Download the current restaurant associated
-					// with this user from Parse.
-					// when complete call goToRestaurantMain(Restaurant) 
+					// TODO get cloud data and go to main
+					// Not entirely sure how this should look so that the handle
+					// returns a Restaurant that can then be used for goToRestaurantMain
+					// ParseUtil.getDataFromCloud(Restaurant.class, handle, attr);
+					// goToRestaurantMain(rest);
 				} else {
 					// Signup failed. Look at the ParseException to see what happened.
 					showAlertBadInput(e.getMessage());
@@ -157,9 +161,9 @@ implements LoginFragment.OnLoginListener {
 
 	/**
 	 * Show bad input alert message for logging in.
-	 * @param message
+	 * @param message to pring if login failed
 	 */
-	public void showAlertBadInput(String message){
+	public void showAlertBadInput(String message) {
 		AlertDialog.Builder b = new Builder(this);
 		b.setTitle("Failed to login");
 		b.setMessage(message);

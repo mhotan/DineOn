@@ -1,8 +1,10 @@
 package uw.cse.dineon.library;
 
-import java.util.*;
 
-import android.os.Bundle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -29,16 +31,21 @@ public class Restaurant extends Storable implements Parcelable {
 	private List<DiningSession> sessions;
 	private List<CustomerRequest> customerRequests;
 	
+	/**
+	 * Basic constructor.
+	 * @param name of Restaurant
+	 */
 	public Restaurant(String name) {
 		
 	}
 	
 	/**
-	 * @param Menu
-	 * @param reservationList
-	 * @param info
-	 * @param orders
-	 * @Param sessions
+	 * @param menus list for the restaurant
+	 * @param reservationList held at the restaurant
+	 * @param info RestaurantInfo
+	 * @param orders list of current orders
+	 * @param sessions list of DiningSessions at the restaurant
+	 * @param customerRequests list of requests at the restaurant
 	 */
 	public Restaurant(List<Menu> menus, List<Reservation> reservationList,
 			RestaurantInfo info, List<Order> orders, List<DiningSession> sessions,
@@ -103,8 +110,7 @@ public class Restaurant extends Storable implements Parcelable {
 	}
 	
 	/**
-	 * @param menu: A Menu object to set as the new menu
-	 * 
+	 * @param menus A Menu object to set as the new menu
 	 */
 	public void setMenus(List<Menu> menus) {
 		this.menus = menus;
@@ -120,8 +126,7 @@ public class Restaurant extends Storable implements Parcelable {
 	}
 	
 	/**
-	 * @param reservationList: A List of Reservations to set as the new reservation list
-	 * 
+	 * @param newReservationList A List of Reservations to set as the new reservation list
 	 */
 	public void setReservationList(List<Reservation> newReservationList) {
 		this.reservationList = newReservationList;
@@ -136,7 +141,7 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Sets info to the param value.
-	 * @param RestaurantInfo
+	 * @param newInfo to set
 	 */
 	public void setInfo(RestaurantInfo newInfo) {
 		this.info = newInfo;
@@ -153,7 +158,7 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Sets orders to the parameter value.
-	 * @param List<Order>
+	 * @param newOrders to set
 	 */
 	public void setOrders(List<Order> newOrders) {
 		orders = newOrders;
@@ -170,15 +175,15 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Sets sessions to the parameter value.
-	 * @param List<DiningSession>
+	 * @param newSessions to set
 	 */
 	public void setSessions(List<DiningSession> newSessions) {
 		sessions = newSessions;
 	}
 	
 	/**
-	 * Adds the given menu to the menu list
-	 * @param Menu to add
+	 * Adds the given menu to the menu list.
+	 * @param newMenu to add
 	 */
 	public void addMenu(Menu newMenu) {
 		menus.add(newMenu);
@@ -186,7 +191,7 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Remove the specified menu.
-	 * @param menu
+	 * @param menu to remove from the restaurant
 	 */
 	public void removeMenu(Menu menu) {
 		menus.remove(menu);
@@ -195,7 +200,7 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Adds the given reservation to the reservation list.
-	 * @param Reservation
+	 * @param newReservation to add
 	 */
 	public void addReservation(Reservation newReservation) {
 		reservationList.add(newReservation);
@@ -203,7 +208,7 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Remove the specified reservation.
-	 * @param Reservation
+	 * @param removeReservation from restaurant
 	 */
 	public void removeReservation(Reservation removeReservation) {
 		reservationList.remove(removeReservation);
@@ -211,7 +216,7 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Adds given order to orders.
-	 * @param Order
+	 * @param order to add
 	 */
 	public void addOrder(Order order) {
 		orders.add(order);
@@ -219,7 +224,7 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Remove given order from orders.
-	 * @param Order
+	 * @param order to remove
 	 */
 	public void removeOrder(Order order) {
 		orders.remove(order);
@@ -227,7 +232,7 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Adds given DiningSession to sessions.
-	 * @param DiningSession
+	 * @param session to add
 	 */
 	public void addDiningSession(DiningSession session) {
 		sessions.add(session);
@@ -235,7 +240,7 @@ public class Restaurant extends Storable implements Parcelable {
 	
 	/**
 	 * Removes given DiningSession from sessions.
-	 * @param DiningSession
+	 * @param session to remove
 	 */
 	public void removeDiningSession(DiningSession session) {
 		sessions.remove(session);
@@ -275,13 +280,13 @@ public class Restaurant extends Storable implements Parcelable {
 	 */
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	/**
 	 * Write the object to a parcel object.
-	 * @param the Parcel to write to and any set flags
+	 * @param dest the Parcel to write to
+	 * @param flags to set
 	 */
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -312,7 +317,12 @@ public class Restaurant extends Storable implements Parcelable {
 				}
 	};
 			
-	//read an object back out of parcel
+	/**
+	 * Helper method for updating Restaurant with the data from a Parcel.
+	 * @param source Parcel containing data in the order:
+	 * 		Menu, Reservation, RestaurantInfo, List<Order>, List<DiningSession, 
+	 * 		List<CustomerRequests>, String
+	 */
 	protected void readFromParcel(Parcel source) {
 		source.readTypedList(menus, Menu.CREATOR);
 		source.readTypedList(reservationList, Reservation.CREATOR);

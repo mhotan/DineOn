@@ -29,6 +29,7 @@ public class Menu extends Storable implements Parcelable {
 	/**
 	 * Creates a new Menu object containing MenuItems.
 	 * 
+	 * @param name of menu
 	 * @param items list of MenuItems that populate a Menu.
 	 */
 	public Menu(String name, List<MenuItem> items) {
