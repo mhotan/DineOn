@@ -1,9 +1,11 @@
 package uw.cse.dineon.restaurant;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import uw.cse.dineon.library.DiningSession;
@@ -17,6 +19,8 @@ import uw.cse.dineon.library.util.DineOnReceiver;
 import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -39,8 +43,6 @@ import com.parse.PushService;
  */
 public class DineOnRestaurantActivity extends FragmentActivity {
 
-	protected static final String TAG = DineOnRestaurantActivity.class.getSimpleName();
-
 	/**
 	 * member that defines this restaurant user
 	 * This encapsulated this user with this restaurant instance only
@@ -48,12 +50,12 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	 * authenticating and creating an account.
 	 * 
 	 * Abstract Function
-	 * 		thisRestaurant != null if and only if this user is logged in 
-	 * 		with a proper Restaurant account
+	 * 		mRestaurant != null if and only if this user is logged in with a proper Restaurant account
 	 */
-	private Restaurant thisRestaurant;
-
-	private DineOnReceiver rec;
+	protected static final String TAG = DineOnRestaurantActivity.class.getSimpleName();
+	
+	private DiningSessionRequestReceiver mDSRequestReceiver;	
+	private Restaurant mRestaurant;
 
 	/*
 	 * FragmentActivity specific methods
@@ -62,20 +64,7 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// Create a broadcast receiver 
-		// for listening for specific  
-		try {
-			// Set up the broadcast receiver for push notifications
-			Map<String, String> m = new HashMap<String, String>();
-			rec = DineOnReceiver.createDineOnReceiver(
-					this.getClass().getMethod("onDiningSessionRequest", Map.class));
-			
-		} catch (NoSuchMethodException e) {
-			// print out error msg
-			Log.d(TAG, "Error: " + e.getMessage());
-		}
-
+		mDSRequestReceiver = new DiningSessionRequestReceiver(ParseUser.getCurrentUser());
 		// Grab reference to the extras
 		Bundle extras = getIntent().getExtras();
 
@@ -107,19 +96,13 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		IntentFilter iff = new IntentFilter("uw.cse.dineon.user.REQUEST_DINING_SESSION");
-		PushService.subscribe(this, "uw_cse_dineon_" 
-				+ ParseUser.getCurrentUser().getUsername(), this.getClass());
-		this.registerReceiver(rec, iff);
+		mDSRequestReceiver.register(this);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
-		PushService.unsubscribe(this, "uw_cse_dineon_" + ParseUser.getCurrentUser().getUsername());
-		this.unregisterReceiver(rec);
+		mDSRequestReceiver.unRegister(this);
 	}
 
 	@Override
@@ -138,12 +121,12 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		// Adjust what is presented to the user		
 		if (DineOnConstants.DEBUG) {
 			return true;
+		}else{
+			if (!isLoggedIn()){
+				setMenuToNonUser(menu);
+			}
+			return true;
 		}
-		
-		if (!isLoggedIn()) {
-			setMenuToNonUser(menu);
-		}
-		return true;
 	}
 	
 	/**
@@ -198,7 +181,7 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		switch (item.getItemId()) {
 		case R.id.item_restaurant_profile:
 			Bundle b = new Bundle();
-			b.putParcelable(DineOnConstants.KEY_RESTAURANT, thisRestaurant);
+			b.putParcelable(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 			startProfileActivity(null);
 			break;
 		case R.id.item_logout:
@@ -226,10 +209,10 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-		savedInstanceState.putParcelable(DineOnConstants.KEY_RESTAURANT, thisRestaurant);
-		
-		// Save to Parse
-		saveRestaurant();
+		// TODO Save state of all the fields of this activity
+		// mRestaurant
+		// Save to Parse then reference later
+		savedInstanceState.putParcelable(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
@@ -243,7 +226,7 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 			Log.w(TAG, message);
 			throw new IllegalArgumentException(message);
 		}	
-		thisRestaurant = rest;
+		mRestaurant = rest;
 
 		// Update the Cloud with the updated restaurant instance
 		saveRestaurant();
@@ -256,8 +239,8 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	 * 
 	 * @return restaurant associated with this
 	 */
-	protected Restaurant getRestaurant() {
-		return thisRestaurant;
+	protected Restaurant getRestaurant(){
+		return mRestaurant;
 	}
 
 	/**
@@ -268,20 +251,9 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	 */
 	protected boolean isLoggedIn() {
 		// TODO Sync with Parse User to ensure
-		/*
-		 * Here's the "code" for checking log in, will need to pass user/pass
-		 * to this method
-		 * 
-		 * ParseUser.logInInBackground("Marty", "booyah", new LogInCallback() {
-  		 *	public void done(ParseUser user, ParseException e) {
-    	 *		if (user == null) {
-      	 *			// Not logged in look at ParseException.
-    	 *		} // else successful log in
-  		 *	}
-		 *	});
-		 */
-		// Then check if we have an associated restaurant
-		if (thisRestaurant != null) {
+		// That the user is logged in via Parse
+		// Then check if we have a associated restaurant
+		if (mRestaurant != null) {
 			return true;
 		}
 		Log.w(TAG, "Restaurant instance associated with this user is null");
@@ -301,38 +273,38 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		
 	}
 
-	/**
-	 * Broadcast reciever callback specific methods.
-	 * 
-	 * @param attr String-String Map
-	 * 		- userInfo : UserInfo.JSON
-	 * 		- tableNum : int
-	 */
-	public static void onDiningSessionRequest(Map<String, String> attr) {
+	/*
+	 * Brodcast receiver callback specific methods 
+	 ************************************************************************/
+
+	// jobj :
+	//		- userInfo : UserInfo.JSON
+	//		- tableNum : int
+	public  void onDiningSessionRequest(JSONObject jobj) {
 		Log.d("GOT_DINING_SESSION_REQUEST", "");
 		try {
 			// create a dining session
-			JSONObject jObj = new JSONObject(attr.get("userInfo"));
-			ParseObject user = new ParseObject("UserInfo");
-			user.setObjectId(jObj.getString("objID"));
-			user.put(UserInfo.NAME, jObj.getString(UserInfo.NAME));
-			user.put(UserInfo.EMAIL, jObj.getString(UserInfo.EMAIL));
-			user.put(UserInfo.PHONE, jObj.getString(UserInfo.PHONE));
+			JSONObject juserInfo = new JSONObject(jobj.getString("userInfo"));
+			ParseObject user = new ParseObject(UserInfo.class.getSimpleName());
+			user.setObjectId(juserInfo.getString("objID"));
+			user.put(UserInfo.NAME,juserInfo.getString(UserInfo.NAME));
+			user.put(UserInfo.EMAIL, juserInfo.getString(UserInfo.EMAIL));
+			user.put(UserInfo.PHONE, juserInfo.getString(UserInfo.PHONE));
 	
 			DiningSession newDS = new DiningSession(
 					new LinkedList<Order>(), 
 					0, 
-					Integer.parseInt(attr.get("tableID")));
+					jobj.getInt("tableID"));
 			UserInfo info = new UserInfo();
 			info.unpackObject(user);
 			newDS.addUser(info);
-	
-		
 			// save to cloud
-			ParseUtil.saveDataToCloud(newDS, 
-					DineOnRestaurantActivity.class.
-					getMethod("onSavedDiningSession", Boolean.class, String.class, Storable.class));
+			Method m = DineOnRestaurantActivity.class.getMethod("onSavedDiningSession", Boolean.class, String.class, Storable.class); 
+			ParseUtil.saveDataToCloud(this, newDS, m);
+			
 		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			Log.d(TAG, "Error: " + e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
 			Log.d(TAG, "Error: " + e.getMessage());
@@ -351,15 +323,22 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		try {
 		if (success) {
 			// push notification for user
-			DiningSession session = ((DiningSession)obj);
+			DiningSession session = (DiningSession) obj;
 			Map<String, String> attr = new HashMap<String, String>();
 			attr.put(DineOnConstants.OBJ_ID, objID);
-			ParseUtil.notifyApplication(
-					"uw.cse.dineon.user.CONFIRM_DINING_SESSION", 
-					attr, 
-					"uw_cse_dineon_" + session.getUsers().get(0).getName());
+			if(session.getUsers() != null && 
+					!session.getUsers().isEmpty()){
+				ParseUtil.notifyApplication(
+						"uw.cse.dineon.user.CONFIRM_DINING_SESSION", 
+						attr, 
+						"uw_cse_dineon_" + session.getUsers().get(0).getName());
 			
-			diningSessionAcquired(session);
+				diningSessionAcquired(session);
+			}
+			else{
+				Log.d(TAG, "Error[invalid state]: " + 
+			"A dining session saved, but no user associated.");
+			}
 		} else {
 			Log.d(TAG, "Error: A dining session couldn't be saved.");
 		}
@@ -367,13 +346,85 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 			Log.d(TAG, "Error: " + e.getMessage());
 		}
 	}
+	
+	/**
+	 * Handles the result of requesting a Dining session
+	 * @author mhotan
+	 *
+	 */
+	private class DiningSessionRequestReceiver extends BroadcastReceiver {
+		private final String ACTION = "uw.cse.dineon.user.REQUEST_DINING_SESSION";
+		private final String CHANNEL_PREFIX = "uw_cse_dineon_";
+		private final ParseUser mParseRestaurant;
+		private final IntentFilter mIF;
+		private final String mRestaurantChannel;
+		private DineOnRestaurantActivity mCurrentActivity;
+		
+		private String mRestaurantSessionChannel;
+		
+		public DiningSessionRequestReceiver(ParseUser restaurant) {
+			mIF = new IntentFilter(ACTION);
+			mParseRestaurant = restaurant;
+			mRestaurantChannel = CHANNEL_PREFIX 
+					+ mParseRestaurant.getUsername();
+			mRestaurantSessionChannel = null;
+			
+		}
+		
+		public void register(DineOnRestaurantActivity dineOnRestaurantActivity){
+			mCurrentActivity = dineOnRestaurantActivity;
+			dineOnRestaurantActivity.registerReceiver(this, mIF);
+			PushService.subscribe(dineOnRestaurantActivity, 
+					mRestaurantChannel, 
+					dineOnRestaurantActivity.getClass());
+		}
+		
+		/**
+		 * Invalidates this receiver.
+		 */
+		public void unRegister(DineOnRestaurantActivity dineOnRestaurantActivity) {
+			dineOnRestaurantActivity.unregisterReceiver(this);
+			PushService.unsubscribe(dineOnRestaurantActivity, 
+					mRestaurantChannel);
+			mCurrentActivity = null;
+		}
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			String theirChannel = intent.getExtras() == null ? null :  
+				intent.getExtras().getString("com.parse.Channel");
+			
+			if (theirChannel == null || mCurrentActivity == null) {
+				return;
+			}
+			
+			if (theirChannel.equals(mRestaurantChannel)) {
+				try {
+				
+					JSONObject jobj = new JSONObject(intent.getExtras().getString("com.parse.Data"));
+					mCurrentActivity.onDiningSessionRequest(jobj);
+				} 
+				catch (JSONException e) {
+				      Log.d(TAG, "JSONException: " + e.getMessage());
+			    } 
+			} 
+			else if (mRestaurantSessionChannel != null && 
+					mRestaurantSessionChannel.equals(theirChannel)) {
+				// TODO Do something here that updates the state of the current Dining Session 
+				
+			}
+		}
+		
+		
+	}
 
 	/**
 	 * Helper to save/update Restaurant associated with this activity.
 	 */
 	private void saveRestaurant() {
 		try {
-			ParseUtil.saveDataToCloud(thisRestaurant, 
+			ParseUtil.saveDataToCloud(mRestaurant, 
 					Restaurant.class.getMethod("onSaveInstanceState", 
 							new Class[]{Bundle.class}));
 		} catch (NoSuchMethodException e) {

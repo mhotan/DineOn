@@ -51,31 +51,19 @@ public class DineOnUserActivity extends FragmentActivity {
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
 	 
 	
-	protected User mUser;
-
-	private DineOnReceiver rec;
-	
-	private MikeDiningSessionReceiver mikeReceiver;
-	
-	private final DineOnUserActivity thisInstance = this; 
+	protected User mUser;	
+	private DiningSessionResponseReceiver mDSResponseReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		try {
-//			// Set up the broadcast receiver for push notifications
-//			rec = DineOnReceiver.createDineOnRecevier(this.getClass().getMethod("onCheckInCallback", Map.class));
-//		} catch (NoSuchMethodException e) {
-//			// print out error msg
-//			Log.d(TAG, "Error: " + e.getMessage());
-//		}
-		mikeReceiver = new MikeDiningSessionReceiver(ParseUser.getCurrentUser());
+		mDSResponseReceiver = new DiningSessionResponseReceiver(ParseUser.getCurrentUser());
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mikeReceiver.register(this);
+		mDSResponseReceiver.register(this);
 	}
 
 	@Override
@@ -87,7 +75,7 @@ public class DineOnUserActivity extends FragmentActivity {
 	@Override
 	protected void onPause(){
 		super.onPause();
-		mikeReceiver.unRegister(this);
+		mDSResponseReceiver.unRegister(this);
 	}
 
 	@Override
@@ -240,32 +228,30 @@ public class DineOnUserActivity extends FragmentActivity {
 	 * @param session is a mapping from the arguments returned from the call
 	 * 	DineOnConstants.OBJ_ID => Parse Object ID for Dining Session
 	 */
-	public static void onCheckInCallback(Map<String, String> session) {
+	public void onCheckInCallback(JSONObject jobj) {
 		try {
 			Log.d("CONFIRM_DINING_SESSION_FROM_REST", "");
 
-			// Extract the object ID from the return map
-			String objID = session.get("objectId");
-
 			// Use Utility to call Parse and get the Dining Session instance
-			if (objID == null || objID.isEmpty()) {
+			if (jobj == null || !jobj.has(DineOnConstants.OBJ_ID)) {
+				Log.d(TAG, "The receiver did not return a valid response for checkin.");
 				// TODO Update the UI
 				// Handle the fail case where no dining session
 				// was created
 			}
-
-			// Then Bundle the Dining Session Instance into
-			Method m = null;
-
-			m = DineOnUserActivity.class.getMethod("onDiningSessionRecievedCallback",
+			String objId = jobj.getString(DineOnConstants.OBJ_ID);
+			Map<String, String> attr = new HashMap<String, String>();
+			attr.put(DineOnConstants.OBJ_ID, objId);
+			
+			// Then Bundle the Dining Session Instance into		
+			Method m = DineOnUserActivity.class.getMethod("onDiningSessionRecievedCallback",
 					List.class);
 
-			Map<String, String> attr = new HashMap<String, String>();
-			attr.put(DineOnConstants.OBJ_ID, objID);
-
-			ParseUtil.getDataFromCloud(DiningSession.class, m, attr);
+			ParseUtil.getDataFromCloud(this, DiningSession.class, m, attr);
 		} catch (NoSuchMethodException e) {
 			Log.e(TAG, "Failed to invocate method onDiningSessionRecievedCallback()");
+		}catch(JSONException e){
+			Log.e(TAG, "JSON error in checkin callback");
 		}
 
 	}
@@ -340,19 +326,19 @@ public class DineOnUserActivity extends FragmentActivity {
 	 * @author mhotan
 	 *
 	 */
-	private class MikeDiningSessionReceiver extends BroadcastReceiver {
+	private class DiningSessionResponseReceiver extends BroadcastReceiver {
 
-		private final ParseUser mUser;
+		private final ParseUser mParseUser;
 		private final IntentFilter mIF;
 		private final String mUserChannel;
 		private DineOnUserActivity mCurrentActivity;
 		
 		private String mRestaurantSessionChannel;
 		
-		public MikeDiningSessionReceiver(ParseUser user) {
+		public DiningSessionResponseReceiver(ParseUser user) {
 			mIF = new IntentFilter(ACTION);
-			mUser = user;
-			mUserChannel = "uw_cse_dineon_" + mUser.getUsername();
+			mParseUser = user;
+			mUserChannel = "uw_cse_dineon_" + mParseUser.getUsername();
 			mRestaurantSessionChannel = null;
 			
 		}
@@ -384,26 +370,14 @@ public class DineOnUserActivity extends FragmentActivity {
 			
 			if (theirChannel.equals(mUserChannel)) {
 				try {
-				
-				JSONObject json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
-				String objId = json.getString(DineOnConstants.OBJ_ID);
-				
-				Map<String, String> attr = new HashMap<String, String>();
-				attr.put(DineOnConstants.OBJ_ID, objId);
-				
-				Method m = DineOnUserActivity.class.getMethod("onDiningSessionRecievedCallback",
-							List.class);
-				// Download the Dining Session
-				ParseUtil.getDataFromCloud(mCurrentActivity, DiningSession.class, m, attr);
+					JSONObject jobj = new JSONObject(intent.getExtras().getString("com.parse.Data"));
+					mCurrentActivity.onCheckInCallback(jobj);
 				
 				} 
 				catch (JSONException e) {
 				      Log.d(TAG, "JSONException: " + e.getMessage());
 			    } 
-				catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
 			} 
 			else if (mRestaurantSessionChannel != null && mRestaurantSessionChannel.equals(theirChannel)) {
 				// TODO Do something here that updates the state of the current Dining Session 

@@ -126,6 +126,7 @@ public class ParseUtil {
 	 * Save obj into the cloud and store the acquired objID into obj.
 	 * 
 	 * @param obj the java object that will be saved to the cloud
+	 * @param m The static callback to execute on completion of the save.
 	 */
 	public static void saveDataToCloud(Storable obj, Method handler) {
 		final Method h = handler;
@@ -166,6 +167,59 @@ public class ParseUtil {
 	}
 
 	/**
+	 * Save obj into the cloud and store the acquired objID into obj
+	 *   -For example, a call to this function may looks like this:
+	 * 		
+	 * 		Method m = MyActivity.class.getMethod("callback", 
+	 *                                            Boolean.class,
+	 *                                            String.class,
+	 *                                            Storable.class);
+	 * 		saveDataToCloud(this, DiningSession, m);
+	 * 
+	 * @param activity the activity this call originated from and
+	 * associated with handler.
+	 * @param obj the java object that will be saved to the cloud
+	 * @param handler an instance method of activity for callback.
+	 */
+	public static void saveDataToCloud(Activity activity,
+									   Storable obj,
+									   Method handler){
+		final Method h = handler;
+		final Activity act = activity;
+		final ParseObject pObj = obj.packObject();
+		final Storable s = obj;
+		pObj.saveInBackground( new SaveCallback() {
+			@Override
+			public void done(ParseException e) {
+				if (e == null) {
+					// save was successful so send push
+					Log.d(TAG, "Successfully saved object.");
+					s.setObjId(pObj.getObjectId());
+				} else {
+					// Error occured
+					Log.d(TAG, "Error: " + e.getMessage());
+				}
+
+				try {
+					if (h != null && act != null)
+						h.invoke(act, (e == null) ? Boolean.TRUE : Boolean.FALSE, pObj.getObjectId(), s);
+				} catch (IllegalArgumentException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvocationTargetException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		// TODO
+		// Handle failure
+	}
+
+	/**
 	 * Query for object in the cloud given a list of attributes. On return the
 	 * call-back provided will be invoked with the list of results.
 	 * 
@@ -180,10 +234,12 @@ public class ParseUtil {
 			Map<String, String> attr) {
 
 		ParseQuery query = new ParseQuery(c.getSimpleName());
-		Set<String> kSet = attr.keySet();
-		for (String k : kSet) {
-			String val = attr.get(k);
-			query.whereEqualTo(k, val);
+		if(attr != null){
+			Set<String> kSet = attr.keySet();
+			for (String k : kSet) {
+				String val = attr.get(k);
+				query.whereEqualTo(k, val);
+			}
 		}
 		final Method h = handle;
 		query.findInBackground(new FindCallback() {
@@ -214,40 +270,62 @@ public class ParseUtil {
 		});
 	}
 
+	/**
+	 * Retrieve data from the cloud based on the class name of the storable
+	 * and a set of attributes. Attributes can be empty or null if you do not 
+	 * need them. The attributes are a relation that must be true for the item/s
+	 * that you receive. In SQL terms, this would the WHERE table.attribute = value
+	 * clause.
+	 * 	-getting a call back before te call example:
+	 * 		Method m = MyActivity.class.getMethod("callback", List.class)
+	 * 
+	 * where callback is the name of the method, and List<Storable>	is the parameter
+	 * 
+	 * @param activity The instance the handle belongs to
+	 * @param c class of storable you expect to get back
+	 * @param handle An instance method with List<Storable> parameter
+	 * @param attr Relation attributes that will be true for all data you
+	 * receive.
+	 */
 	public static void getDataFromCloud(Activity activity, 
-			Class<? extends Storable> c, Method handle, Map<String, String> attr) {
+										Class<? extends Storable> c, 
+										Method handle, 
+										Map<String, String> attr) {
 
 		ParseQuery query = new ParseQuery(c.getSimpleName());
-		Set<String> kSet = attr.keySet();
-		for (String k : kSet) {
-			String val = attr.get(k);
-			query.whereEqualTo(k, val);
+		if(attr != null){
+			Set<String> kSet = attr.keySet();
+			for (String k : kSet) {
+				String val = attr.get(k);
+				query.whereEqualTo(k, val);
+			}
 		}
 		final Activity act = activity;
 		final Method h = handle;
 		query.findInBackground(new FindCallback() {
-		    public void done(List<ParseObject> list, ParseException e) {
-		        if (e == null) {
-		        	if (list.size() > 0) {
-		        		String className = list.get(0).getClassName();
-		        		List<Storable> classList = new LinkedList<Storable>();
-		        		
-		        		try {
-		        			Storable s;
-		        			for (ParseObject p : list) {
-		        				s = (Storable) Class.forName("uw.cse.dineon.library."
-		        						+ className).newInstance();
-		        				s.unpackObject(p);
-		        				classList.add(s);
-		        			}		   
-		        			h.invoke(null, classList);
-		        		} catch (Exception ex) {
-		        			Log.d(TAG, "Error: " + ex.getMessage());
-		        		}
-		        	}
-		        } else {
-		            Log.d(TAG, "Error: " + e.getMessage());
-		        } // TODO
+			public void done(List<ParseObject> list, ParseException e) {
+				if (e == null) {
+					if (list.size() > 0) {
+						String className = list.get(0).getClassName();
+						List<Storable> classList = new LinkedList<Storable>();
+
+						try {
+							Storable s;
+							for (ParseObject p : list) {
+								s = (Storable) Class.forName("uw.cse.dineon.library."+ className).newInstance();
+								s.unpackObject(p);
+								classList.add(s);
+							}
+							if (h != null && act != null)
+								h.invoke(act, classList);
+						} catch (Exception ex) {
+							Log.d(TAG, "Error: " + ex.getMessage());
+						}
+					}
+				} else {
+					Log.d(TAG, "Error: " + e.getMessage());
+				}// TODO
+
 				// Invoke our method with null notifying 
 				// User create account failed
 			}
