@@ -55,12 +55,14 @@
             android:layout_height="wrap_content"
             android:text="Or" />
 
-        <com.facebook.widget.LoginButton
+        <Button
             android:id="@+id/button_facebook_login"
             android:layout_width="215dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/button_facebook" />
+            android:textColor="#FFFFFF"
+            android:background="@drawable/com_facebook_loginbutton_blue_normal"
+            android:text="@string/button_login" />
 
         <ImageView
             android:id="@+id/huskysoftlogo"

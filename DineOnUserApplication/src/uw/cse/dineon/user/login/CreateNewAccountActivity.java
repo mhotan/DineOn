@@ -30,14 +30,17 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 
 	public static final String TAG = CreateNewAccountActivity.class.getSimpleName();
 
+	private boolean mLoginWithFacebook = false;
+
 	private User mUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_account);
+		
 	}
-	
+
 	/**
 	 * 
 	 * @param user
@@ -73,11 +76,12 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 						// TODO Create a new User object and save it to the
 						// cloud and associate it with the actual user
 						// possibly by user name
-						createNewUser(user);
+						User u = null;
 						
-						if (DineOnConstants.DEBUG) {
-							returnResult(null);
-						}
+						if (!DineOnConstants.DEBUG) {
+							u = createNewUser(user);
+						} 
+						returnResult(u);
 					} 
 					else {
 						// Sign up didn't succeed. Look at the ParseException
@@ -104,19 +108,23 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 
 	@Override
 	public void finish(){
+		Intent retIntent = new Intent();
+		// Specify the user of facebook
+		retIntent.putExtra(UserLoginActivity.EXTRA_FACEBOOK, mLoginWithFacebook);
+
 		// Send restaurant instance back
 		if (!DineOnConstants.DEBUG) {
-			Intent retIntent = new Intent();
 			retIntent.putExtra(DineOnConstants.KEY_USER, mUser);
-			setResult(RESULT_OK, retIntent);
 		}
+		setResult(RESULT_OK, retIntent);
 		super.finish();
 	}
 
 	@Override
 	public void onLoginWithFacebook() {
 		// TODO Later phase
-		DevelopTools.getUnimplementedDialog(this, null);
+		mLoginWithFacebook = true;
+		finish();
 	}
 
 	@Override

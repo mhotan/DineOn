@@ -182,10 +182,13 @@ public class User extends Storable implements Parcelable {
 		ParseObject pobj = new ParseObject(this.getClass().getSimpleName());
 		pobj.add(User.FAVS, ParseUtil.packListOfStorables(favs));
 		pobj.add(User.FB_TOKEN, this.fbToken);
-		pobj.add(User.USER_INFO, this.userInfo);
+		pobj.add(User.USER_INFO, this.userInfo.packObject());
 		pobj.add(User.FRIEND_LIST, ParseUtil.packListOfStorables(friendList));
 		pobj.add(User.RESERVES, ParseUtil.packListOfStorables(reserves));
-		pobj.add(User.DINING_SESSION, this.diningSession);
+		if (this.diningSession != null)
+			pobj.add(User.DINING_SESSION, this.diningSession.packObject());
+		else
+			pobj.add(User.DINING_SESSION, null);
 		//in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
 
@@ -198,9 +201,26 @@ public class User extends Storable implements Parcelable {
 //		this.setFavs(ParseUtil.unpackListOfStorables(pobj.getParseObject(User.FAVS)));
 		this.setFbToken(pobj.getInt(User.FB_TOKEN));
 //		this.setReserves((List<Reservation>) pobj.get(User.RESERVES));
-		this.setUserInfo((UserInfo) pobj.get(User.USER_INFO));
+		UserInfo info = new UserInfo();
+		info.unpackObject((ParseObject) pobj.get(User.USER_INFO));
+		this.setUserInfo(info);
+		
+		// TODO FIX ME
+		List<Storable> storable = ParseUtil.unpackListOfStorables(pobj.getParseObject(User.FRIEND_LIST));
+		List<UserInfo> friends = new ArrayList<UserInfo>(storable.size());
+		for (Storable friend : storable) {
+			friends.add((UserInfo) friend);
+		}
+		
+		storable = ParseUtil.unpackListOfStorables(pobj.getParseObject(User.RESERVES));
+		List<Reservation> reservations = new ArrayList<Reservation>(storable.size());
+		for (Storable reserve : storable) {
+			reservations.add((Reservation) reserve);
+		}
+		
 //		this.setFriendList((List<UserInfo>) pobj.get(User.FRIEND_LIST));
-		this.setDiningSession((DiningSession) pobj.get(User.DINING_SESSION));
+		Object ds = pobj.get(User.DINING_SESSION);
+		this.setDiningSession((DiningSession)ds);
 	}
 
 

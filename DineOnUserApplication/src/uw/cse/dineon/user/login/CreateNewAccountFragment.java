@@ -51,15 +51,6 @@ public class CreateNewAccountFragment extends Fragment {
 				mListener.onLoginWithFacebook();
 			}
 		});
-		
-		Button twitterButton = (Button) view.findViewById(R.id.button_createnewaccount_twitter);
-		twitterButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Fix
-				mListener.onLoginWithTwitter();
-			}
-		});
 
 		return view;
 	}

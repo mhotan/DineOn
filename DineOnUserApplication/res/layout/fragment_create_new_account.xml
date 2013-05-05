@@ -59,26 +59,10 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/button_create_account"
         android:layout_alignRight="@+id/button_create_account"
+        android:background="@drawable/com_facebook_loginbutton_blue_normal"
+        android:textColor="#FFFFFF"
         android:layout_below="@+id/label_or1"
-        android:text="@string/button_facebook" />
-
-    <TextView
-        android:id="@+id/label_or2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/label_or1"
-        android:layout_below="@+id/button_createnewaccount_facebook"
-        android:text="@string/or"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Button
-        android:id="@+id/button_createnewaccount_twitter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button_createnewaccount_facebook"
-        android:layout_alignRight="@+id/button_createnewaccount_facebook"
-        android:layout_below="@+id/label_or2"
-        android:text="@string/button_twitter" />
+        android:text="@string/button_login" />
 
     <EditText
         android:id="@+id/input_createnewaccount_email"
