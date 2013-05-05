@@ -10,6 +10,7 @@ import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -44,6 +45,8 @@ LoginFragment.OnLoginListener {
 	private static final int REQUEST_CREATE_NEW_ACCOUNT = 0x1;
 	private static final int REQUEST_LOGIN_FACEBOOK = 0x2;
 
+	private ProgressDialog mProgressDialog;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -101,18 +104,22 @@ LoginFragment.OnLoginListener {
 
 	@Override
 	public void onLogin(String username, String password) {
+		createProgressDialog();
 		Resolution unResolution = CredentialValidator.isValidUserName(username);
 		Resolution pwResolution = CredentialValidator.isValidPassword(password);
 
 		StringBuffer buf = new StringBuffer();
 		if (!unResolution.isValid()) {
+			destroyProgressDialog();
 			buf.append(unResolution.getMessage() + "\n");
 		}
 		if (!pwResolution.isValid()) {
+			destroyProgressDialog();
 			buf.append(pwResolution.getMessage() + "\n");
 		}
 
 		if (buf.length() > 0) {
+			destroyProgressDialog();
 			showAlertBadInput(buf.toString());
 			return;
 		}
@@ -134,6 +141,7 @@ LoginFragment.OnLoginListener {
 				} 
 				else {
 					// Signup failed. Look at the ParseException to see what happened.
+					destroyProgressDialog();
 					showAlertBadInput(e.getMessage());
 				}
 			}
@@ -144,43 +152,43 @@ LoginFragment.OnLoginListener {
 	public void onLoginWithFacebook() {
 		// TODO Disable all the buttons so user does not
 		// Monkey it
-		
+		createProgressDialog();
 		// Replace actionbar with menu
-		
+
 		// Process the face book application
 		ParseFacebookUtils.logIn(this, REQUEST_LOGIN_FACEBOOK, new LogInCallback() {
 			@Override
 			public void done(ParseUser user, ParseException e) {
 				if (user == null) {
 					Log.d(TAG, "Uh oh. The user cancelled the Facebook login.");
-					
-					
+
+
 					// TODO Re enable the screen
 					// TODO Stop any progress bar					
 					// TODO Toast the user that login was cancelled
 				} 
 				else if (user.isNew()) {
 					Log.d(TAG, "User signed up and logged in through Facebook!");
-					
+
 					// Now we just need a user object
 					User duser = CreateNewAccountActivity.createNewUser(user);
-					
+
 					// TODO Create a new User ParseObject and send to next activity
 					// Associate that user to the cloud
 					startRestSelectionAct(null);// Change null to valid User object
 				} 
 				else {
 					Log.d(TAG, "User logged in through Facebook!");
-					
+
 					startRestSelectionAct(null);// Change null to valid User object
 					// TODO Extract the user's User ParseObject and send to next activity
 				}
 			}
 		});
 
-//		DevelopTools.getUnimplementedDialog(this, null).show();
+		//		DevelopTools.getUnimplementedDialog(this, null).show();
 	}
-	
+
 
 	@Override
 	public void onLoginWithTwitter() {
@@ -204,12 +212,36 @@ LoginFragment.OnLoginListener {
 	 * TODO send a user instance through this bundle
 	 * @param user
 	 */
-	private void startRestSelectionAct(User user){
+	private void startRestSelectionAct(User user) {
 		Intent i = new Intent(this, RestaurantSelectionActivity.class);
 		//		i.putExtra(RestaurantSelectionActivity.EXTRA_USER, loginCredentials);
+		destroyProgressDialog();
 		startActivity(i);
 	}
 
+	/**
+	 * Instantiates a new progress dialog and shows it on the screen.
+	 */
+	private void createProgressDialog() {
+		destroyProgressDialog();
+		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setTitle("DineOn Login");
+	    mProgressDialog.setMessage("Logging in...");       
+	    mProgressDialog.setIndeterminate(true);
+	    mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+	    mProgressDialog.show();
+	    
+	}
+
+	/**
+	 * Hides the progress dialog if there is one.
+	 */
+	private void destroyProgressDialog() {
+		if(mProgressDialog != null && mProgressDialog.isShowing()){
+			mProgressDialog.dismiss();
+		}
+	}
+	
 	/**
 	 * Show bad input alert message for logging in.
 	 * @param message
