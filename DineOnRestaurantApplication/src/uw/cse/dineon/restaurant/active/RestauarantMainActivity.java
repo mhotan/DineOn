@@ -3,7 +3,9 @@ package uw.cse.dineon.restaurant.active;
 import java.util.ArrayList;
 import java.util.List;
 
+import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.User;
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import android.content.Intent;
@@ -45,7 +47,9 @@ CustomerListFragment.CustomerListener
 	 */
 	private ScreenSlidePagerAdapter mPagerAdapter;
 
-	private List<String> mOrders, mRequests, mCustomers;
+	private List<String> mOrders, mRequests;
+
+	List<DiningSession> mCustomers;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,7 @@ CustomerListFragment.CustomerListener
 		// TODO Fill and update appropiately
 		mOrders = new ArrayList<String>();
 		mRequests = new ArrayList<String>();
-		mCustomers = new ArrayList<String>();
+		mCustomers = new ArrayList<DiningSession>();
 
 		// TODO remove default values
 
@@ -76,7 +80,7 @@ CustomerListFragment.CustomerListener
 
 		String[] customers = {"Batman", "Robin", "Superman", "Wonderwoman"};
 		for (String s: customers) {
-			mCustomers.add(s);
+			mCustomers.add(makeDummySession(s));
 		}
 	}
 	
@@ -90,7 +94,7 @@ CustomerListFragment.CustomerListener
 
 		/**
 		 * 
-		 * @param fragmentManager Fragement manager of this activity
+		 * @param fragmentManager Fragment manager of this activity
 		 */
 		public ScreenSlidePagerAdapter(FragmentManager fragmentManager) {
 			super(fragmentManager);
@@ -143,13 +147,14 @@ CustomerListFragment.CustomerListener
 	 * 
 	 * @param customer
 	 */
+	//TODO Make this take a diningsession
 	private void addCustomer(String customer){
 		Fragment f = mPagerAdapter.getCurrentFragment();
 		if (f != null && f instanceof CustomerListFragment) {
 			CustomerListFragment frag = (CustomerListFragment) f;
-			frag.addCustomer(customer);
+			frag.addCustomer(makeDummySession(customer)); 
 		}
-		mCustomers.add(customer);
+		mCustomers.add(makeDummySession(customer));
 	}
 	
 	/**
@@ -178,13 +183,22 @@ CustomerListFragment.CustomerListener
 		mRequests.add(request);
 	}
 
-	//Testing method to populate an array full of fake users
-	private User[] populateUsers(){
-		User[] u = new User[5];
-		u[0] = new User();
-		
-		return null;
-		
+	/**
+	 * Wrapper to convert a string (user's name) into a
+	 * DiningSession. Debug purposes only, should not
+	 * use in production.
+	 * 
+	 * @param name Name of fake user to create inside session
+	 * @return A dining session with one user
+	 */
+	private DiningSession makeDummySession(String name){
+		DiningSession d = new DiningSession();
+		UserInfo ui = new UserInfo();
+		ui.setName(name);
+		ui.setEmail("user@example.com");
+		ui.setPhone("(123) 555-5050");
+		d.addUser(ui);
+		return d;
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -193,7 +207,7 @@ CustomerListFragment.CustomerListener
 	//////////////////////////////////////////////////////////////////////
 
 	@Override
-	public List<String> getCurrentUsers() {
+	public List<DiningSession> getCurrentUsers() {
 		return mCustomers;
 	}
 
