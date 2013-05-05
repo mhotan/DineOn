@@ -88,13 +88,17 @@ CustomerListFragment.CustomerListener
 
 		private Fragment mCurrent;
 
+		/**
+		 * 
+		 * @param fragmentManager Fragement manager of this activity
+		 */
 		public ScreenSlidePagerAdapter(FragmentManager fragmentManager) {
 			super(fragmentManager);
 		}
 
 		@Override
 		public Fragment getItem(int position) {
-			position = Math.min(Math.max(position, 0), CONTENT.length -1);
+			position = Math.min(Math.max(position, 0), CONTENT.length - 1);
 
 			Bundle args = new Bundle();
 			Fragment f;
@@ -109,8 +113,9 @@ CustomerListFragment.CustomerListener
 			default:
 				f = CustomerListFragment.newInstance(mCustomers);
 			}
-
-			return f;
+			
+			mCurrent = f;
+			return mCurrent;
 		}
 
 		@Override
@@ -120,10 +125,14 @@ CustomerListFragment.CustomerListener
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			position = Math.max(Math.min(position, CONTENT.length-1), 0);
+			position = Math.max(Math.min(position, CONTENT.length - 1), 0);
 			return CONTENT[position];
 		}
 		
+		/**
+		 * Returns the a reference to the current fragment in focus. 
+		 * @return Fragment user is looking at
+		 */
 		public Fragment getCurrentFragment(){
 			return mCurrent;
 		}
@@ -144,7 +153,7 @@ CustomerListFragment.CustomerListener
 	}
 	
 	/**
-	 * Updates the current fragment if it is in focus
+	 * Updates the current fragment if it is in focus.
 	 * @param order
 	 */
 	private void addOrder(String order){
@@ -157,7 +166,7 @@ CustomerListFragment.CustomerListener
 	}
 	
 	/**
-	 * Updates the current fragment if it is in focus
+	 * Updates the current fragment if it is in focus.
 	 * @param request
 	 */
 	private void addRequest(String request){
@@ -244,6 +253,10 @@ CustomerListFragment.CustomerListener
 		// TODO Auto-generated method stub
 
 	}
+	
+	//////////////////////////////////////////////////////////////////////
+	////	Methods overriden from DineOnRestaurantActivity
+	//////////////////////////////////////////////////////////////////////
 
 
 }

@@ -25,7 +25,7 @@
             android:layout_marginTop="8dp"
             android:ems="10"
             android:gravity="center"
-            android:hint="@string/hint_email_address"
+            android:hint="@string/hint_username"
             android:inputType="textEmailAddress" />
 
         <EditText
@@ -43,33 +43,34 @@
 
         <Button
             android:id="@+id/button_login"
-            android:layout_width="wrap_content"
+            android:layout_width="215dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="@string/button_login" />
 
-        <Button
-            android:id="@+id/button_facebook_login"
+        <TextView
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Or" />
+
+        <com.facebook.widget.LoginButton
+            android:id="@+id/button_facebook_login"
+            android:layout_width="215dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/button_facebook" />
-
-        <Button
-            android:id="@+id/button_twitter_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/button_twitter" />
 
         <ImageView
             android:id="@+id/huskysoftlogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
+            android:layout_marginTop="30dp"
             android:contentDescription="@string/content_description_huskysoft_logo"
             android:src="@drawable/husky_soft_logo" />
+
     </LinearLayout>
 
 </ScrollView>

@@ -108,7 +108,8 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 		super.onResume();
 		
 		IntentFilter iff = new IntentFilter("uw.cse.dineon.user.REQUEST_DINING_SESSION");
-		PushService.subscribe(this, "uw_cse_dineon_" + ParseUser.getCurrentUser().getUsername(), this.getClass());
+		PushService.subscribe(this, "uw_cse_dineon_" 
+		+ ParseUser.getCurrentUser().getUsername(), this.getClass());
 		this.registerReceiver(rec, iff);
 	}
 	
@@ -207,7 +208,7 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	}
 	
 	/**
-	 * Starts profile activity
+	 * Starts restaurant profile activity.
 	 */
 	public void startProfileActivity(Restaurant rest){
 		Intent i = new Intent(this, ProfileActivity.class);
@@ -271,11 +272,16 @@ public class DineOnRestaurantActivity extends FragmentActivity {
 	}
 
 	/**
-	 * 
-	 * @param dSess
+	 * A new dining sessin has been acquired.
+	 * The restaurant must then update its state. 
+	 * @param dSess Dining session to update our state with
 	 */
 	protected static void diningSessionAcquired(DiningSession dSess) {
-		// Use in the UI.
+		// TODO How to 
+		// TODO Null check, Log error if null.
+		// TODO Update our state
+		// TODO Update UI
+		
 	}
 
 	/*

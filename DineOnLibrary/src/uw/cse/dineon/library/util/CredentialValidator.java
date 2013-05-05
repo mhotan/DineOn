@@ -22,19 +22,17 @@ public final class CredentialValidator {
 			"Password can't contain spaces");
 	//TODO etc..
 
-
 	private static final Resolution NULL_UN = new Resolution(false, "Can't have a null username");
 	private static final Resolution EMPTY_UN = new Resolution(false, 
 			"Can't have a username with no characters");
 	private static final Resolution SHORT_UN = new Resolution(false,
 			"Username is to short");
-	private static final Resolution SPACEIN_UN = new Resolution(false, 
-			"Username can't contain spaces");
 	//TODO etc..
 
 	private static final Resolution NULL_EMAIL = new Resolution(false, "Can't have a null email");
 	private static final Resolution INVALID_EMAIL = new Resolution(false, "Invalid email"); 
 
+	
 	private static final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
 			"[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" 
 					+ "\\@"
@@ -114,9 +112,6 @@ public final class CredentialValidator {
 		}
 		if (username.length() < MIN_LENGTH) {
 			return SHORT_UN;
-		}
-		if (username.contains(" ")) {
-			return SPACEIN_UN;
 		}
 
 		return RESOLVED_INSTANCE;

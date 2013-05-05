@@ -21,15 +21,15 @@ implements View.OnClickListener {
 	private static final String TAG = RestaurantSelectionButtonsFragment.class.getSimpleName();
 	
 	/**
-	 * Activity that will called when user selects buttons
+	 * Activity that will called when user selects buttons.
 	 * on this fragments view 
 	 */
 	private OnClickListener mListener;
 	
 	/**
-	 * References to Buttons on this display
+	 * References to Buttons on this display.
 	 */
-	private ImageButton _NearbyButton, _FriendsFavoritesButton, _UserFavoritesButton;
+	private ImageButton mNearbyButton, mFriendsFavoritesButton, mUserFavoritesButton;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,14 +38,14 @@ implements View.OnClickListener {
 				container, false);
 		
 		// Assign buttons
-		_NearbyButton = (ImageButton) view.findViewById(R.id.button_nearby_restaurants);
-		_FriendsFavoritesButton = (ImageButton) view.findViewById(R.id.button_friends_favorites);
-		_UserFavoritesButton = (ImageButton) view.findViewById(R.id.button_user_favorites);
+		mNearbyButton = (ImageButton) view.findViewById(R.id.button_nearby_restaurants);
+		mFriendsFavoritesButton = (ImageButton) view.findViewById(R.id.button_friends_favorites);
+		mUserFavoritesButton = (ImageButton) view.findViewById(R.id.button_user_favorites);
 		
 		// Add listeners
-		_NearbyButton.setOnClickListener(this);
-		_FriendsFavoritesButton.setOnClickListener(this);
-		_UserFavoritesButton.setOnClickListener(this);
+		mNearbyButton.setOnClickListener(this);
+		mFriendsFavoritesButton.setOnClickListener(this);
+		mUserFavoritesButton.setOnClickListener(this);
 		
 		return view;
 	}
@@ -84,7 +84,7 @@ implements View.OnClickListener {
 	}
 	
 	/**
-	 * TODO
+	 * Listener for Activity Callbacks.
 	 * @author mhotan
 	 */
 	public interface OnClickListener {

@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Storable;
 import uw.cse.dineon.library.User;
@@ -18,9 +21,8 @@ import uw.cse.dineon.user.checkin.QRCheckin;
 import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -31,6 +33,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import com.parse.ParseUser;
 import com.parse.PushService;
@@ -46,32 +49,33 @@ import com.parse.PushService;
 public class DineOnUserActivity extends FragmentActivity {
 
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
-	private static final String CHANNEL = "uw_cse_dineon_" + ParseUser.getCurrentUser().getUsername();
-	private static final String ACTION = "uw.cse.dineon.user.CONFIRM_DINING_SESSION"; 
-	protected static User mUser;
+	 
+	
+	protected User mUser;
 
 	private DineOnReceiver rec;
+	
+	private MikeDiningSessionReceiver mikeReceiver;
+	
+	private final DineOnUserActivity thisInstance = this; 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		try {
-			// Set up the broadcast receiver for push notifications
-			rec = DineOnReceiver.createDineOnReceiver(this.getClass().getMethod("onCheckInCallback", Map.class));
-		} catch (NoSuchMethodException e) {
-			// print out error msg
-			Log.d(TAG, "Error: " + e.getMessage());
-		}
+//		try {
+//			// Set up the broadcast receiver for push notifications
+//			rec = DineOnReceiver.createDineOnRecevier(this.getClass().getMethod("onCheckInCallback", Map.class));
+//		} catch (NoSuchMethodException e) {
+//			// print out error msg
+//			Log.d(TAG, "Error: " + e.getMessage());
+//		}
+		mikeReceiver = new MikeDiningSessionReceiver(ParseUser.getCurrentUser());
 	}
-
-
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		IntentFilter iff = new IntentFilter(ACTION);
-		PushService.subscribe(this, CHANNEL,this.getClass());
-		this.registerReceiver(rec, iff);
+		mikeReceiver.register(this);
 	}
 
 	@Override
@@ -83,8 +87,7 @@ public class DineOnUserActivity extends FragmentActivity {
 	@Override
 	protected void onPause(){
 		super.onPause();
-		this.unregisterReceiver(rec);
-		PushService.unsubscribe(this, CHANNEL);
+		mikeReceiver.unRegister(this);
 	}
 
 	@Override
@@ -121,7 +124,7 @@ public class DineOnUserActivity extends FragmentActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 
 		//Mock empty user to get the app to compile
-		if(DineOnConstants.DEBUG) {
+		if(DineOnConstants.DEBUG && mUser == null) {
 			mUser = new User();
 		}
 		
@@ -133,6 +136,8 @@ public class DineOnUserActivity extends FragmentActivity {
 			enableMenuItem(menu, R.id.option_check_in);
 			disableMenuItem(menu, R.id.option_bill);
 		}
+		
+		
 		return true;
 	}
 
@@ -256,7 +261,7 @@ public class DineOnUserActivity extends FragmentActivity {
 					List.class);
 
 			Map<String, String> attr = new HashMap<String, String>();
-			attr.put("objectId", objID);
+			attr.put(DineOnConstants.OBJ_ID, objID);
 
 			ParseUtil.getDataFromCloud(DiningSession.class, m, attr);
 		} catch (NoSuchMethodException e) {
@@ -270,17 +275,26 @@ public class DineOnUserActivity extends FragmentActivity {
 	 * caching or.
 	 * @param list List<Storable>
 	 */
-	public static void onDiningSessionRecievedCallback(List<Storable> list) {
+	public void onDiningSessionRecievedCallback(List<Storable> list) {
 		// Assert that the first item in the list is
 		// is a DiningSession
-		if (list != null && list.size() == 1) {
+		if (list == null || list.size() != 1) {
 			throw new IllegalArgumentException("List returned is not valid: " + list);
 		}
 		DiningSession mDiningSession = (DiningSession) list.get(0);
 
+		Toast.makeText(this, "Dining Session Started", Toast.LENGTH_SHORT).show();
+		
 		// DEBUG:
 		Log.d("GOT_DINING_SESSION_FROM_CLOUD", mDiningSession.getTableID() + "");
 
+		if (DineOnConstants.DEBUG && mUser == null) {
+			mUser = new User();
+		}
+		mUser.setDiningSession(mDiningSession);
+		
+		invalidateOptionsMenu();
+		
 		// TODO Extract channel for push
 		// TODO Register for the channel and start listening for updates
 		// TODO Extract object id for restaurant
@@ -318,26 +332,85 @@ public class DineOnUserActivity extends FragmentActivity {
 		super.onRestoreInstanceState(savedInstanceState);
 		//		mDiningSession.unbundle(savedInstanceState.getBundle("diningSession"));
 	}
-
+	
+	private static final String ACTION = "uw.cse.dineon.user.CONFIRM_DINING_SESSION";
+	
 	/**
-	 * Show alert message when user isn't logged in.
-	 * @param message
+	 * Handles the result of requesting a Dining session
+	 * @author mhotan
+	 *
 	 */
-	public void showAlertNotLoggedIn() {
-		AlertDialog.Builder b = new Builder(this);
-		b.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+	private class MikeDiningSessionReceiver extends BroadcastReceiver {
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				startLoginActivity();
+		private final ParseUser mUser;
+		private final IntentFilter mIF;
+		private final String mUserChannel;
+		private DineOnUserActivity mCurrentActivity;
+		
+		private String mRestaurantSessionChannel;
+		
+		public MikeDiningSessionReceiver(ParseUser user) {
+			mIF = new IntentFilter(ACTION);
+			mUser = user;
+			mUserChannel = "uw_cse_dineon_" + mUser.getUsername();
+			mRestaurantSessionChannel = null;
+			
+		}
+		
+		public void register(DineOnUserActivity dineOnUserActivity){
+			mCurrentActivity = dineOnUserActivity;
+			dineOnUserActivity.registerReceiver(this, mIF);
+			PushService.subscribe(dineOnUserActivity, mUserChannel, dineOnUserActivity.getClass());
+		}
+		
+		/**
+		 * Invalidates this receiver.
+		 */
+		public void unRegister(DineOnUserActivity dineOnUserActivity) {
+			dineOnUserActivity.unregisterReceiver(this);
+			PushService.unsubscribe(dineOnUserActivity, mUserChannel);
+			mCurrentActivity = null;
+		}
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			String theirChannel = intent.getExtras() == null ? null :  
+				intent.getExtras().getString("com.parse.Channel");
+			
+			if (theirChannel == null || mCurrentActivity == null) {
+				return;
 			}
-		});
-
-		b.setTitle("Not Logged in");
-		b.setMessage("User is not logged in.");
-		b.setCancelable(false);
-		b.create().show();
+			
+			if (theirChannel.equals(mUserChannel)) {
+				try {
+				
+				JSONObject json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
+				String objId = json.getString(DineOnConstants.OBJ_ID);
+				
+				Map<String, String> attr = new HashMap<String, String>();
+				attr.put(DineOnConstants.OBJ_ID, objId);
+				
+				Method m = DineOnUserActivity.class.getMethod("onDiningSessionRecievedCallback",
+							List.class);
+				// Download the Dining Session
+				ParseUtil.getDataFromCloud(mCurrentActivity, DiningSession.class, m, attr);
+				
+				} 
+				catch (JSONException e) {
+				      Log.d(TAG, "JSONException: " + e.getMessage());
+			    } 
+				catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} 
+			else if (mRestaurantSessionChannel != null && mRestaurantSessionChannel.equals(theirChannel)) {
+				// TODO Do something here that updates the state of the current Dining Session 
+				
+			}
+		}
+		
+		
 	}
-
 }

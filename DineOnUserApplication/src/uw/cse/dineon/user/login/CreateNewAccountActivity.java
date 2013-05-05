@@ -1,10 +1,12 @@
 package uw.cse.dineon.user.login;
 
 import uw.cse.dineon.library.User;
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.user.R;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -35,6 +37,20 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_account);
 	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @return
+	 */
+	public static User createNewUser(ParseUser user){
+		//TODO Make sure this works
+		UserInfo info = new UserInfo(user);
+		User dineOnUser = new User();
+		dineOnUser.setUserInfo(info);
+		ParseUtil.saveDataToCloud(dineOnUser, null);
+		return dineOnUser;
+	}
 
 	@Override
 	public void onCreateNewAccount(String username, String email,
@@ -44,7 +60,7 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 				email, password, passwordRepeat);
 
 		if (completeRes.isValid()) {
-			ParseUser user = new ParseUser();
+			final ParseUser user = new ParseUser();
 			user.setUsername(username);
 			user.setPassword(password);
 			user.setEmail(email);
@@ -57,7 +73,8 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 						// TODO Create a new User object and save it to the
 						// cloud and associate it with the actual user
 						// possibly by user name
-
+						createNewUser(user);
+						
 						if (DineOnConstants.DEBUG) {
 							returnResult(null);
 						}

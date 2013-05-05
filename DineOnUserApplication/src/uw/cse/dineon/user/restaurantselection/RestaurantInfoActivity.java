@@ -6,14 +6,16 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * Activity that presents information about this particular restaurant.
+ */
 public class RestaurantInfoActivity extends DineOnUserActivity implements
-RestaurantInfoFragment.RestaurantInfoListener
-{
+RestaurantInfoFragment.RestaurantInfoListener {
 
 	private final String TAG = this.getClass().getSimpleName();
 
 	/**
-	 * Extra used as key for passing values to 
+	 * Extra used as key for passing values to .
 	 */
 	public static final String EXTRA_RESTAURANT = "RESTAURANT";
 
