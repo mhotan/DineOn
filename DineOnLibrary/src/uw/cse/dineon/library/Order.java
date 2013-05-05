@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import uw.cse.dineon.library.util.ParseUtil;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -144,7 +146,7 @@ public class Order extends Storable implements Parcelable {
 		pobj.add(this.USER_ID, this.userID);
 		pobj.add(this.REST_ID, this.restID);
 		pobj.add(this.TIME_STAMP, this.timestamp);
-		pobj.add(this.MENU_ITEMS, this.menuItems);
+		pobj.add(this.MENU_ITEMS, ParseUtil.packListOfStorables(this.menuItems));
 		//in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
 		
@@ -157,15 +159,20 @@ public class Order extends Storable implements Parcelable {
 	 * 
 	 * @param pobj ParseObject to be unpacked into an Order
 	 */
-	@SuppressWarnings({ "unchecked", "static-access" })
 	@Override
 	public void unpackObject(ParseObject pobj) {
 		this.setObjId(pobj.getObjectId());
-		this.setTableID(pobj.getInt(this.TABLE_ID));
-		this.setUserID(pobj.getInt(this.USER_ID));
-		this.setRestID(pobj.getInt(this.REST_ID));
-		this.setTimestamp(pobj.getInt(this.TIME_STAMP));
-		this.menuItems.addAll((List<MenuItem>) pobj.get(this.MENU_ITEMS));
+		this.setTableID(pobj.getInt(Order.TABLE_ID));
+		this.setUserID(pobj.getInt(Order.USER_ID));
+		this.setRestID(pobj.getInt(Order.REST_ID));
+		this.setTimestamp(pobj.getInt(Order.TIME_STAMP));
+		
+		List<Storable> storable = ParseUtil.unpackListOfStorables(pobj.getParseObject(Menu.ITEMS));
+		List<MenuItem> items = new ArrayList<MenuItem>(storable.size());
+		for (Storable item : storable) {
+			items.add((MenuItem) item);
+		}
+		setMenuItems(items);
 	}
 
 	@Override

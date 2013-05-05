@@ -23,7 +23,9 @@ public class UserInfo extends Storable implements Parcelable {
 	 * Default constructor.
 	 */
 	public UserInfo() {
-		//TODO
+		name = "";
+		phone = "";
+		email = "";
 	}
 	
 	/**
@@ -36,7 +38,11 @@ public class UserInfo extends Storable implements Parcelable {
 		readFromParcel(source);
 	}
 	
-	public UserInfo(ParseUser pu){
+	/**
+	 * Creates a new UserInfo based on a ParseUser.
+	 * @param pu ParseUser to copy data from
+	 */
+	public UserInfo(ParseUser pu) {
 		setEmail(pu.getEmail());
 		setName(pu.getUsername());
 		setPhone(""); // TODO
@@ -45,15 +51,13 @@ public class UserInfo extends Storable implements Parcelable {
 	
 	
 	/**
-	 *
-	 * @return String
+	 * @return String user name
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 *
 	 * @param n String name
 	 */
 	public void setName(String n) {
@@ -61,15 +65,13 @@ public class UserInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
-	 * @return int
+	 * @return int user phone number
 	 */
 	public String getPhone() {
 		return phone;
 	}
 
 	/**
-	 *
 	 * @param number int Phone number
 	 */
 	public void setPhone(String number) {
@@ -77,15 +79,13 @@ public class UserInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
-	 * @return String
+	 * @return String user email
 	 */
 	public String getEmail() {
 		return email;
 	}
 
 	/**
-	 *
 	 * @param e String email
 	 */
 	public void setEmail(String e) {
@@ -109,25 +109,15 @@ public class UserInfo extends Storable implements Parcelable {
 	public void unpackObject(ParseObject pobj) {
 		this.setObjId(pobj.getObjectId());
 		this.setName(pobj.getString(UserInfo.NAME));
-		this.setEmail(pobj.getString(UserInfo.EMAIL));
 		this.setPhone(pobj.getString(UserInfo.PHONE));
+		this.setEmail(pobj.getString(UserInfo.EMAIL));
 	}
 	
-	/**
-	 * A Parcel method to describe the contents of the object.
-	 * @return an int describing contents
-	 */
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/**
-	 * Write the object to a parcel object.
-	 * @param dest Parcel to write to
-	 * @param flags to change write settings
-	 */
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(name);
@@ -156,10 +146,9 @@ public class UserInfo extends Storable implements Parcelable {
 			
 
 	/**
-	 * 
+	 * Read an object back out of parcel.
 	 * @param source parcel to read from.
 	 */
-	//read an object back out of parcel
 	private void readFromParcel(Parcel source) {
 		this.setName(source.readString());
 		this.setPhone(source.readString());

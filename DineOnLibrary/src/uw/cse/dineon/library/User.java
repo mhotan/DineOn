@@ -31,7 +31,7 @@ public class User extends Storable implements Parcelable {
 	private DiningSession diningSession;
 
 	/**
-	 *
+	 * Default constructor.
 	 */
 	public User() {
 		super();
@@ -185,10 +185,11 @@ public class User extends Storable implements Parcelable {
 		pobj.add(User.USER_INFO, this.userInfo.packObject());
 		pobj.add(User.FRIEND_LIST, ParseUtil.packListOfStorables(friendList));
 		pobj.add(User.RESERVES, ParseUtil.packListOfStorables(reserves));
-		if (this.diningSession != null)
+		if (this.diningSession != null) {
 			pobj.add(User.DINING_SESSION, this.diningSession.packObject());
-		else
+		} else {
 			pobj.add(User.DINING_SESSION, null);
+		}
 		//in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
 
@@ -206,33 +207,31 @@ public class User extends Storable implements Parcelable {
 		this.setUserInfo(info);
 		
 		// TODO FIX ME
-		List<Storable> storable = ParseUtil.unpackListOfStorables(pobj.getParseObject(User.FRIEND_LIST));
+		List<Storable> storable = 
+				ParseUtil.unpackListOfStorables(pobj.getParseObject(User.FRIEND_LIST));
 		List<UserInfo> friends = new ArrayList<UserInfo>(storable.size());
 		for (Storable friend : storable) {
 			friends.add((UserInfo) friend);
 		}
+		setFriendList(friends);
 		
 		storable = ParseUtil.unpackListOfStorables(pobj.getParseObject(User.RESERVES));
 		List<Reservation> reservations = new ArrayList<Reservation>(storable.size());
 		for (Storable reserve : storable) {
 			reservations.add((Reservation) reserve);
 		}
+		setReserves(reservations);
 		
-//		this.setFriendList((List<UserInfo>) pobj.get(User.FRIEND_LIST));
 		Object ds = pobj.get(User.DINING_SESSION);
 		this.setDiningSession((DiningSession)ds);
 	}
 
 
-	/**
-	 * A Parcel method to describe the contents of the object
-	 */
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
-//
+
 //	private List<RestaurantInfo> favs;
 //	private UserInfo userInfo;
 //	private List<Reservation> reserves;
@@ -240,10 +239,6 @@ public class User extends Storable implements Parcelable {
 //	private List<UserInfo> friendList;
 //	private DiningSession diningSession;
 	
-	/**
-	 * Write the object to a parcel object
-	 * @param the Parcel to write to and any set flags
-	 */
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(this.getObjId());
@@ -281,22 +276,17 @@ public class User extends Storable implements Parcelable {
 	};
 
 
-	//read an object back out of parcel
+	/**
+	 * Read object out of Parcel.
+	 * @param source to read from
+	 */
 	private void readFromParcel(Parcel source) {
 		this.setObjId(source.readString());
 		this.setUserInfo((UserInfo)source.readParcelable(UserInfo.class.getClassLoader()));
 		source.readTypedList(favs, RestaurantInfo.CREATOR);
 		source.readTypedList(reserves, Reservation.CREATOR);
 		source.readTypedList(friendList, UserInfo.CREATOR);
-		this.setDiningSession((DiningSession)source.readParcelable(DiningSession.class.getClassLoader()));
-		//TODO make sure consistent
-//		source.readTypedList(favs, RestaurantInfo.CREATOR);
-//		this.setUserInfo((UserInfo)source.readParcelable(UserInfo.class.getClassLoader()));
-//		source.readTypedList(reserves, Reservation.CREATOR);
-//		this.setFbToken(source.readInt());
-//		source.readTypedList(friendList, UserInfo.CREATOR);
-//		this.setObjId(source.readString());
-//		this.setDiningSession((DiningSession)source.
-//				readParcelable(DiningSession.class.getClassLoader()));
+		this.setDiningSession((DiningSession)source.readParcelable(
+				DiningSession.class.getClassLoader()));
 	}
 }

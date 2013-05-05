@@ -1,9 +1,7 @@
 
 package uw.cse.dineon.library;
 
-import java.util.ArrayList;
 import java.util.List;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -30,13 +28,24 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	private Menu menu;
 
 	/**
-	 *
+	 * Default constructor.
 	 */
 	public RestaurantInfo() {
+		name = "";
+		addr = "";
+		phone = 0; // TODO inconsistent w/ UserInfo phone (String)
 	}
 	
-	public RestaurantInfo(String name, String addr, int phone, int imageMain, List<Integer> imageList, Menu menu) {
-		// TODO
+	/**
+	 * @param name String of Restaurant
+	 * @param addr String address of Restaurant
+	 * @param phone int phone number of Restaurant
+	 * @param imageMain int image ID
+	 * @param imageList List of images
+	 * @param menu Restaurant's default menu
+	 */
+	public RestaurantInfo(String name, String addr, int phone, int imageMain, 
+			List<Integer> imageList, Menu menu) {
 		this.name = name;
 		this.addr = addr;
 		this.phone = phone;
@@ -57,15 +66,13 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
-	 * @return String
+	 * @return String Restaurant name
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 *
 	 * @param n String name
 	 */
 	public void setName(String n) {
@@ -73,15 +80,13 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
-	 * @return addr
+	 * @return addr String Restaurant address
 	 */
 	public String getAddr() {
 		return addr;
 	}
 
 	/**
-	 *
 	 * @param a String
 	 */
 	public void setAddr(String a) {
@@ -89,15 +94,13 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
-	 * @return phone
+	 * @return phone number of Restaurant
 	 */
 	public int getPhone() {
 		return phone;
 	}
 
 	/**
-	 *
 	 * @param number int phone number
 	 */
 	public void setPhone(int number) {
@@ -105,7 +108,6 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
 	 * @return imageMain
 	 */
 	public int getImageMain() {
@@ -113,7 +115,6 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
 	 * @param imageM int
 	 */
 	public void setImageMain(int imageM) {
@@ -121,7 +122,6 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
 	 * @return list of integers
 	 */
 	public List<Integer> getImageList() {
@@ -129,7 +129,6 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
 	 * @param images list of Integers
 	 */
 	public void setImageList(List<Integer> images) {
@@ -137,15 +136,13 @@ public class RestaurantInfo extends Storable implements Parcelable {
 	}
 
 	/**
-	 *
-	 * @return Menu
+	 * @return Menu of Restaurant
 	 */
 	public Menu getMenu() {
 		return menu;
 	}
 
 	/**
-	 *
 	 * @param m Menu
 	 */
 	public void setMenu(Menu m) {
@@ -162,13 +159,14 @@ public class RestaurantInfo extends Storable implements Parcelable {
 		pobj.add(RestaurantInfo.PHONE, this.phone);
 		pobj.add(RestaurantInfo.IMAGE_MAIN, this.imageMain);
 		pobj.add(RestaurantInfo.IMAGE_LIST, this.imageList);
-		pobj.add(RestaurantInfo.MENU, this.menu);
+		pobj.add(RestaurantInfo.MENU, this.menu.packObject());
 		//in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
 				
 		return pobj;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void unpackObject(ParseObject pobj) {
 		this.setObjId(pobj.getObjectId());
@@ -177,22 +175,17 @@ public class RestaurantInfo extends Storable implements Parcelable {
 		this.setPhone(pobj.getInt(RestaurantInfo.PHONE));
 		this.setImageMain(pobj.getInt(RestaurantInfo.IMAGE_MAIN));
 		this.setImageList((List<Integer>) pobj.get(RestaurantInfo.IMAGE_LIST));
-		this.setMenu((Menu)pobj.get(RestaurantInfo.MENU));
+
+		Menu menu = new Menu("", null);
+		menu.unpackObject((ParseObject) pobj.get(RestaurantInfo.MENU));
+		this.setMenu(menu);
 	}
 
-	/**
-	 * A Parcel method to describe the contents of the object
-	 */
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/**
-	 * Write the object to a parcel object
-	 * @param the Parcel to write to and any set flags
-	 */
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(name);
@@ -223,7 +216,10 @@ public class RestaurantInfo extends Storable implements Parcelable {
 				}
 	};
 			
-	//read an object back out of parcel
+	/**
+	 * Read an object back out of parcel.
+	 * @param source parcel to read from.
+	 */
 	private void readFromParcel(Parcel source) {
 		this.setName(source.readString());
 		this.setAddr(source.readString());

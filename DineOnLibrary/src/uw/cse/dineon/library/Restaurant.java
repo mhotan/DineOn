@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import uw.cse.dineon.library.util.ParseUtil;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -250,12 +252,13 @@ public class Restaurant extends Storable implements Parcelable {
 	@Override
 	public ParseObject packObject() {
 		ParseObject pobj = new ParseObject(this.getClass().getSimpleName());
-		pobj.add(Restaurant.MENUS, this.menus);
-		pobj.add(Restaurant.INFO, this.info);
-		pobj.add(Restaurant.RESERVATION_LIST, this.reservationList);
-		pobj.add(Restaurant.ORDERS, this.orders);
-		pobj.add(Restaurant.SESSIONS, this.sessions);
-		pobj.add(Restaurant.CUSTOMER_REQUESTS, this.customerRequests);
+		pobj.add(Restaurant.MENUS, ParseUtil.packListOfStorables(this.menus));
+		pobj.add(Restaurant.INFO, this.info.packObject());
+		pobj.add(Restaurant.RESERVATION_LIST, ParseUtil.packListOfStorables(this.reservationList));
+		pobj.add(Restaurant.ORDERS, ParseUtil.packListOfStorables(this.orders));
+		pobj.add(Restaurant.SESSIONS, ParseUtil.packListOfStorables(this.sessions));
+		pobj.add(Restaurant.CUSTOMER_REQUESTS, 
+				ParseUtil.packListOfStorables(this.customerRequests));
 		//in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
 				
@@ -265,13 +268,47 @@ public class Restaurant extends Storable implements Parcelable {
 	@Override
 	public void unpackObject(ParseObject pobj) {
 		this.setObjId(pobj.getObjectId());
-		this.setMenus((List<Menu>) pobj.get(Restaurant.MENUS));
-		this.setInfo((RestaurantInfo)pobj.get(Restaurant.INFO));
-		this.setReservationList((List<Reservation>) pobj.get(Restaurant.RESERVATION_LIST));
-		this.setOrders((List<Order>) pobj.get(Restaurant.ORDERS));
-		this.setSessions((List<DiningSession>) pobj.get(Restaurant.SESSIONS));
-		this.setCustomerRequests((List<CustomerRequest>) pobj.get(Restaurant.CUSTOMER_REQUESTS));
 		
+		List<Storable> storable = 
+				ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.MENUS));
+		List<Menu> menus = new ArrayList<Menu>(storable.size());
+		for (Storable menu : storable) {
+			menus.add((Menu) menu);
+		}
+		setMenus(menus);
+		
+		RestaurantInfo info = new RestaurantInfo();
+		info.unpackObject((ParseObject) pobj.get(Restaurant.INFO));
+		this.setInfo(info);
+		
+		storable = 
+				ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.RESERVATION_LIST));
+		List<Reservation> reserves = new ArrayList<Reservation>(storable.size());
+		for (Storable res : storable) {
+			reserves.add((Reservation) res);
+		}
+		setReservationList(reserves);
+		
+		storable = ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.ORDERS));
+		for (Storable order : storable) {
+			addOrder((Order) order);
+		}
+		
+		storable = 
+				ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.SESSIONS));
+		List<DiningSession> sessions = new ArrayList<DiningSession>(storable.size());
+		for (Storable sess : storable) {
+			sessions.add((DiningSession) sess);
+		}
+		setSessions(sessions);
+		
+		storable = 
+				ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.CUSTOMER_REQUESTS));
+		List<CustomerRequest> requests = new ArrayList<CustomerRequest>(storable.size());
+		for (Storable request : storable) {
+			requests.add((CustomerRequest) request);
+		}
+		setCustomerRequests(requests);
 	}
 
 	/**

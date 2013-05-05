@@ -114,14 +114,13 @@ public class Reservation extends Storable implements Parcelable {
 	 * @return ParseObject containing saved/packed data
 	 */
 	@SuppressLint("UseValueOf")
-	@SuppressWarnings("static-access")
 	@Override
 	public ParseObject packObject() {
 		ParseObject pobj = new ParseObject(this.getClass().getSimpleName());
-		pobj.add(this.USER_INFO, this.userInfo);
-		pobj.add(this.REST_INFO, this.restInfo);
-		pobj.add(this.START_TIME, this.startTime);
-		pobj.add(this.CURR_SESSION, this.currSession);
+		pobj.add(Reservation.USER_INFO, this.userInfo.packObject());
+		pobj.add(Reservation.REST_INFO, this.restInfo.packObject());
+		pobj.add(Reservation.START_TIME, this.startTime);
+		pobj.add(Reservation.CURR_SESSION, this.currSession.packObject());
 
 		//in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
@@ -135,15 +134,23 @@ public class Reservation extends Storable implements Parcelable {
 	 * 
 	 * @param pobj ParseObject to be unpacked into a Reservation
 	 */
-	@SuppressWarnings({ "unchecked", "static-access" })
 	@Override
-	public void unpackObject(ParseObject pobj){
+	public void unpackObject(ParseObject pobj) {
 		this.setObjId(pobj.getObjectId());
-		this.setUserInfo((UserInfo) pobj.get(this.USER_INFO));
-		this.setRestInfo((RestaurantInfo) pobj.get(this.REST_INFO));
-		this.setStartTime((Time) pobj.get(this.START_TIME));
-		this.setCurrSession((DiningSession) pobj.get(this.CURR_SESSION));
+		
+		UserInfo info = new UserInfo();
+		info.unpackObject((ParseObject) pobj.get(Reservation.USER_INFO));
+		this.setUserInfo(info);
+		
+		RestaurantInfo rInfo = new RestaurantInfo();
+		rInfo.unpackObject((ParseObject) pobj.getParseObject(Reservation.REST_INFO));
+		this.setRestInfo(rInfo);
+		
+		this.setStartTime((Time) pobj.get(Reservation.START_TIME));
 
+		DiningSession sess = new DiningSession();
+		sess.unpackObject((ParseObject) pobj.getParseObject(Reservation.CURR_SESSION));
+		this.setCurrSession(sess);
 	}
 
 	@Override

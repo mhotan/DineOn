@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import uw.cse.dineon.library.util.ParseUtil;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -104,12 +106,11 @@ public class Menu extends Storable implements Parcelable {
 	 * 
 	 * @return ParseObject containing saved/packed data
 	 */
-	@SuppressWarnings("static-access")
 	@Override
 	public ParseObject packObject() {
 		ParseObject pobj = new ParseObject(this.getClass().getSimpleName());
-		pobj.add(Menu.NAME, this.name);
-		pobj.add(this.ITEMS, this.items);
+		pobj.add(Menu.NAME, this.getName());
+		pobj.add(Menu.ITEMS, ParseUtil.packListOfStorables(this.items));
 		// in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
 		
@@ -122,12 +123,17 @@ public class Menu extends Storable implements Parcelable {
 	 * 
 	 * @param pobj ParseObject to be unpacked into a Menu
 	 */
-	@SuppressWarnings({ "unchecked", "static-access" })
 	@Override
 	public void unpackObject(ParseObject pobj) {
 		this.setObjId(pobj.getObjectId());
 		this.setName(pobj.getString(Menu.NAME));
-		this.items.addAll((List<MenuItem>) pobj.get(this.ITEMS));
+		
+		List<Storable> storable = ParseUtil.unpackListOfStorables(pobj.getParseObject(Menu.ITEMS));
+		List<MenuItem> items = new ArrayList<MenuItem>(storable.size());
+		for (Storable item : storable) {
+			items.add((MenuItem) item);
+		}
+		setItems(items);
 	}
 
 	@Override

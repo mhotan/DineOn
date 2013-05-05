@@ -133,7 +133,7 @@ public class MenuItem extends Storable implements Parcelable {
 	 * int, double, String to be retrieved at a later time.
 	 * 
 	 * @param dest Parcel to write MenuItem data to.
-	 * @param flags
+	 * @param flags int
 	 */
 	// NOTE: if you change the write order you must change the read order
 	// below.

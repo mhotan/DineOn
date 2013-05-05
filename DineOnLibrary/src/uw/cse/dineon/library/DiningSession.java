@@ -38,7 +38,10 @@ public class DiningSession extends Storable implements Parcelable {
 	private int tableID;			// ID of table the dining is taking place at
 	private RequestType waiterRequest;	// type of request being made (if any)
 	
-	public DiningSession(){
+	/**
+	 * Default constructor.
+	 */
+	public DiningSession() {
 		super();
 		this.users = new ArrayList<UserInfo>();
 		this.orders = new ArrayList<Order>();
@@ -138,19 +141,17 @@ public class DiningSession extends Storable implements Parcelable {
 	 * 
 	 * @return ParseObject containing saved/packed data
 	 */
-	// TODO decided whether these warnings should be suppressed
 	@SuppressLint("UseValueOf")
-	@SuppressWarnings("static-access")
 	@Override
 	public ParseObject packObject() {
 		ParseObject pobj = new ParseObject(this.getClass().getSimpleName());
-		pobj.add(this.USERS, ParseUtil.packListOfStorables(this.users));
-		pobj.add(this.START_TIME, new Long(this.startTime));
-		pobj.add(this.END_TIME, new Long(this.endTime));
-		pobj.add(this.ORDERS, ParseUtil.packListOfStorables(this.orders));
-		pobj.add(this.SESS_TOKEN, new Integer(this.sessToken));
-		pobj.add(this.TABLE_ID, new Integer(this.tableID));
-		pobj.add(this.WAITER_REQUEST, this.waiterRequest.ordinal());
+		pobj.add(DiningSession.USERS, ParseUtil.packListOfStorables(this.users));
+		pobj.add(DiningSession.START_TIME, new Long(this.startTime));
+		pobj.add(DiningSession.END_TIME, new Long(this.endTime));
+		pobj.add(DiningSession.ORDERS, ParseUtil.packListOfStorables(this.orders));
+		pobj.add(DiningSession.SESS_TOKEN, new Integer(this.sessToken));
+		pobj.add(DiningSession.TABLE_ID, new Integer(this.tableID));
+		pobj.add(DiningSession.WAITER_REQUEST, this.waiterRequest.ordinal());
 		//in case this storable is going to be used after the pack.
 		this.setObjId(pobj.getObjectId());
 		
@@ -188,8 +189,9 @@ public class DiningSession extends Storable implements Parcelable {
 	 */
 	public List<UserInfo> getUsers() {
 		List<UserInfo> copy = new ArrayList<UserInfo>();
-		for (int i = 0; i < this.users.size(); i++)
+		for (int i = 0; i < this.users.size(); i++) {
 			copy.add(this.users.get(i));
+		}
 		return copy;
 	}
 
