@@ -19,6 +19,8 @@ public class DineOnConstants {
 	
 	public static final String FACEBOOK_APP_ID = "505185672873933";
 	
+	public static final String DINING_SESSION = "DiningSession";
+	
 	// Request Code for multiple Activity use
 	public final static int REQUEST_CHECK_IN = 0x1;
 	public final static int REQUEST_VIEW_CURRENT_ORDER = 0x2;

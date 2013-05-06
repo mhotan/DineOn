@@ -21,6 +21,7 @@ import uw.cse.dineon.user.checkin.QRCheckin;
 import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
+import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -236,8 +237,7 @@ public class DineOnUserActivity extends FragmentActivity {
 			if (jobj == null || !jobj.has(DineOnConstants.OBJ_ID)) {
 				Log.d(TAG, "The receiver did not return a valid response for checkin.");
 				// TODO Update the UI
-				// Handle the fail case where no dining session
-				// was created
+				Toast.makeText(this, "No DiningSession returned", Toast.LENGTH_SHORT);
 			}
 			String objId = jobj.getString(DineOnConstants.OBJ_ID);
 			Map<String, String> attr = new HashMap<String, String>();
@@ -282,11 +282,16 @@ public class DineOnUserActivity extends FragmentActivity {
 		invalidateOptionsMenu();
 		
 		// TODO Extract channel for push
+		//Shouldn't we already have the channel and be registered at this point via onCreate/onResume?
 		// TODO Register for the channel and start listening for updates
 		// TODO Extract object id for restaurant
 
 		// Bundle up dining session
 		// Start RestaurantMainActivity with bundle
+		Intent i = new Intent(this, RestaurantHomeActivity.class);
+
+		i.putExtra(DineOnConstants.DINING_SESSION, mDiningSession);
+		startActivity(i);
 	}
 
 	/**

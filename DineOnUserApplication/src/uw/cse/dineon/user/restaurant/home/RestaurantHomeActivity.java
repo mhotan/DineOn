@@ -1,10 +1,15 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import java.util.ArrayList;
+
+import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -24,6 +29,7 @@ RestaurantHomeMainFragment.ReferenceDataListener
 	public final static String EXTRA_RESTAURANT = "restaurant"; 
 
 	private String /*Change to restaurant datatype*/ mRestaurant;
+	private DiningSession mDiningSession;
 
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
@@ -47,7 +53,12 @@ RestaurantHomeMainFragment.ReferenceDataListener
 		// Attempt to get the restaurant name
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			mRestaurant = extras.getString(EXTRA_RESTAURANT);
+			mDiningSession = (DiningSession) extras.get(DineOnConstants.DINING_SESSION);
+			
+			if (mDiningSession != null) {
+				//TODO uncomment when DiningSession has RestaurantInfo
+				//mRestaurant = mDiningSession.getRestaurantInfo();
+			}
 		}
 
 		setContentView(R.layout.activity_restaurant_home);
