@@ -289,9 +289,8 @@ public class DineOnUserActivity extends FragmentActivity {
 		// Bundle up dining session
 		// Start RestaurantMainActivity with bundle
 		Intent i = new Intent(this, RestaurantHomeActivity.class);
-		ArrayList<Storable> mDSList = new ArrayList<Storable>();
-		mDSList.add(mDiningSession);
-		i.putParcelableArrayListExtra(DineOnConstants.DINING_SESSION, mDSList);
+
+		i.putExtra(DineOnConstants.DINING_SESSION, mDiningSession);
 		startActivity(i);
 	}
 

@@ -29,6 +29,7 @@ RestaurantHomeMainFragment.ReferenceDataListener
 	public final static String EXTRA_RESTAURANT = "restaurant"; 
 
 	private String /*Change to restaurant datatype*/ mRestaurant;
+	private DiningSession mDiningSession;
 
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
@@ -50,9 +51,14 @@ RestaurantHomeMainFragment.ReferenceDataListener
 		super.onCreate(savedInstanceState);
 
 		// Attempt to get the restaurant name
-		ArrayList<Parcelable> extras = getIntent().getParcelableArrayListExtra(DineOnConstants.DINING_SESSION);
+		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			DiningSession mDiningSession = (DiningSession) extras.get(0);
+			mDiningSession = (DiningSession) extras.get(DineOnConstants.DINING_SESSION);
+			
+			if (mDiningSession != null) {
+				//TODO uncomment when DiningSession has RestaurantInfo
+				//mRestaurant = mDiningSession.getRestaurantInfo();
+			}
 		}
 
 		setContentView(R.layout.activity_restaurant_home);
