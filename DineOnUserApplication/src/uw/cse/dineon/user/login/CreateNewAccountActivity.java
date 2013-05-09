@@ -1,12 +1,10 @@
 package uw.cse.dineon.user.login;
 
-import uw.cse.dineon.library.User;
-import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.library.util.DineOnConstants;
-import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.user.R;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -32,27 +30,13 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 
 	private boolean mLoginWithFacebook = false;
 
-	private User mUser;
+	private DineOnUser mUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_account);
 		
-	}
-
-	/**
-	 * 
-	 * @param user
-	 * @return
-	 */
-	public static User createNewUser(ParseUser user){
-		//TODO Make sure this works
-		UserInfo info = new UserInfo(user);
-		User dineOnUser = new User();
-		dineOnUser.setUserInfo(info);
-		ParseUtil.saveDataToCloud(dineOnUser, null);
-		return dineOnUser;
 	}
 
 	@Override
@@ -76,12 +60,7 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 						// TODO Create a new User object and save it to the
 						// cloud and associate it with the actual user
 						// possibly by user name
-						User u = null;
-						
-						if (!DineOnConstants.DEBUG) {
-							u = createNewUser(user);
-						} 
-						returnResult(u);
+						mUser = new DineOnUser(ParseUser.getCurrentUser());
 					} 
 					else {
 						// Sign up didn't succeed. Look at the ParseException
@@ -96,16 +75,6 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 		}
 	}
 
-	/**
-	 * Finish the activity but associate the user to it before 
-	 * we finish
-	 * @param u
-	 */
-	private void returnResult(User u) {
-		mUser = u;
-		this.finish();
-	}
-
 	@Override
 	public void finish(){
 		Intent retIntent = new Intent();
@@ -113,8 +82,8 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 		retIntent.putExtra(UserLoginActivity.EXTRA_FACEBOOK, mLoginWithFacebook);
 
 		// Send restaurant instance back
-		if (!DineOnConstants.DEBUG) {
-			retIntent.putExtra(DineOnConstants.KEY_USER, mUser);
+		if (mUser != null) {
+			retIntent.putExtra(DineOnConstants.KEY_USER, mUser.getObjId());
 		}
 		setResult(RESULT_OK, retIntent);
 		super.finish();

@@ -42,7 +42,7 @@ public class RestaurantInfoFragment extends Fragment {
 		// for starting an activity with
 		RestaurantInfoFragment frag = new RestaurantInfoFragment();
 		Bundle args = new Bundle();
-		args.putParcelable(DineOnConstants.KEY_RESTAURANTINFO, info);
+//		args.putParcelable(DineOnConstants.KEY_RESTAURANTINFO, info);
 		frag.setArguments(args);
 		return frag;
 	}

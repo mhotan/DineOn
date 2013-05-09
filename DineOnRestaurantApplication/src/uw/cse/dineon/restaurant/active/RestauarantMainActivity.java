@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.DiningSession;
-import uw.cse.dineon.library.User;
-import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import android.content.Intent;
@@ -80,7 +78,7 @@ CustomerListFragment.CustomerListener
 
 		String[] customers = {"Batman", "Robin", "Superman", "Wonderwoman"};
 		for (String s: customers) {
-			mCustomers.add(makeDummySession(s));
+//			mCustomers.add(makeDummySession(s));
 		}
 	}
 	
@@ -152,9 +150,9 @@ CustomerListFragment.CustomerListener
 		Fragment f = mPagerAdapter.getCurrentFragment();
 		if (f != null && f instanceof CustomerListFragment) {
 			CustomerListFragment frag = (CustomerListFragment) f;
-			frag.addCustomer(makeDummySession(customer)); 
+//			frag.addCustomer(makeDummySession(customer)); 
 		}
-		mCustomers.add(makeDummySession(customer));
+//		mCustomers.add(makeDummySession(customer));
 	}
 	
 	/**
@@ -191,15 +189,15 @@ CustomerListFragment.CustomerListener
 	 * @param name Name of fake user to create inside session
 	 * @return A dining session with one user
 	 */
-	private DiningSession makeDummySession(String name){
-		DiningSession d = new DiningSession();
-		UserInfo ui = new UserInfo();
-		ui.setName(name);
-		ui.setEmail("user@example.com");
-		ui.setPhone("(123) 555-5050");
-		d.addUser(ui);
-		return d;
-	}
+//	private DiningSession makeDummySession(String name){
+//		DiningSession d = new DiningSession();
+//		UserInfo ui = new UserInfo();
+//		ui.setName(name);
+//		ui.setEmail("user@example.com");
+//		ui.setPhone("(123) 555-5050");
+//		d.addUser(ui);
+//		return d;
+//	}
 
 	//////////////////////////////////////////////////////////////////////
 	////	Listener for OrderDetailFragment.OrderDetailListener

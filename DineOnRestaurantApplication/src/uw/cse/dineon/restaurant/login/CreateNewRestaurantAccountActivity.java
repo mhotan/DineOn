@@ -2,22 +2,27 @@ package uw.cse.dineon.restaurant.login;
 
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.CredentialValidator;
-import uw.cse.dineon.library.util.ParseUtil;
+import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.R;
+import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.CreateNewAccountFragment.CreateNewAccountListener;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 /**
@@ -30,106 +35,134 @@ implements CreateNewAccountListener {
 
 	private static final String TAG = CreateNewRestaurantAccountActivity.class.getSimpleName();
 
-	private Restaurant mRestaurant;
+	/**
+	 * String representation of restaurant id
+	 */
+	private String mRestaurantID;
+
+	/**
+	 * Progress bar dialog for showing user progress.
+	 */
+	private ProgressDialog mProgressDialog;
+
+	/**
+	 * Instance to myself
+	 */
+	private Context This;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_account);
+
+		This = this;
+	}
+
+	/**
+	 * This automates the addition of the User Intent. Should never be called
+	 * when mUser is null.
+	 */
+	@Override
+	public void startActivity(Intent intent) {
+		if (DineOnConstants.DEBUG && mRestaurantID == null) {
+			Toast.makeText(this, "Need to create or download a User",
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurantID);
+		super.startActivity(intent);
 	}
 
 	@Override
 	public void submitNewAccount(String username, String email, String pw,
 			String pwRepeat) {
 		// Handle the validation
+		createProgressDialog();
+
 		Resolution completeRes = CredentialValidator.validateAll(username, email, pw, pwRepeat);
 
 		if (completeRes.isValid()) { // Valid passwords
-			ParseUser user = new ParseUser();
-			user.setUsername(username);
-			user.setPassword(pw);
-			user.setEmail(email);
-			user.signUpInBackground(new SignUpCallback() {
+			final ParseUser USER = new ParseUser();
+			USER.setUsername(username);
+			USER.setPassword(pw);
+			USER.setEmail(email);
+			USER.signUpInBackground(new SignUpCallback() {
 
 				@Override
 				public void done(ParseException e) {
-					if (e == null) {
-						// Hooray! Let them use the app now.
 
-						// default new restaurant creation
-						Restaurant rest = new Restaurant(null, null, null, null, null, null);
-						
-						try {
-							ParseUtil.saveDataToCloud(rest, 
-									Restaurant.class.getMethod("onSaveInstanceState", 
-											new Class[]{Bundle.class}));
-						} catch (NoSuchMethodException me) {
-							me.printStackTrace();
-						}
-						
-						if (DineOnConstants.DEBUG) { // debug mode on
-							returnResult(null);
-						} else {
-							returnResult(rest);
-						}
+					// stop the alert dialog
+					destroyProgressDialog();
+
+					if (e == null) {
+						// They are logged in as a ParseUser
+						final Restaurant REST = new Restaurant(USER);
+						// Callback within a callback egh...
+						// Save our new restaurant in the backgrounf
+						REST.saveInBackGround(new SaveCallback() {
+							@Override
+							public void done(ParseException e) {
+								if (e == null) { // Success
+									// There exist a restaurant instance for this 
+									mRestaurantID = REST.getObjId();
+									startMainActivity();
+								} else { // Fail to save
+									// Alert dialog notifying user of exceptional case
+									// Unable to save restaurant
+									Utility.getFailedToCreateAccountDialog(
+											e.getMessage(), This).show();
+								}
+							}
+						});
 					} else {
 						// Sign up didn't succeed. Look at the ParseException
 						// to figure out what went wrong
-						showFailAlertDialog(e.getMessage());
+						Utility.getFailedToCreateAccountDialog(e.getMessage(), This).show();
 					}
+
+					// Stop the alert dialog
+
 				}
 			});
 		} 
 		else {
-			showFailAlertDialog(completeRes.getMessage());
+			Utility.getFailedToCreateAccountDialog(completeRes.getMessage(), This).show();
 		}
 	}
 
 	/**
-	 * Finish this activity and return to login.
-	 * 
-	 * @param restaurant to be returned
+	 * Starts the Main activity for this restaurant.
 	 */
-	private void returnResult(Restaurant restaurant) {
-		mRestaurant = restaurant;
-		this.finish();
+	private void startMainActivity() {
+		Intent i = new Intent(this, RestauarantMainActivity.class);
+		startActivity(i);
 	}
 
-	@Override
-	public void finish() {
-		// Send restaurant instance back
-		if (!DineOnConstants.DEBUG) {
-			Intent retIntent = new Intent();
-			retIntent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
-			setResult(RESULT_OK, retIntent);
+	// //////////////////////////////////////////////////////////////////////
+	// /// UI Specific methods
+	// //////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Instantiates a new progress dialog and shows it on the screen.
+	 */
+	protected void createProgressDialog() {
+		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+			return;
 		}
-		super.finish();
+		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setTitle("Getting you ready to DineOn!");
+		mProgressDialog.setMessage("Logging in...");
+		mProgressDialog.setIndeterminate(true);
+		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		mProgressDialog.show();
 	}
 
 	/**
-	 * Displays an alert message if the account failed to create.
-	 * 
-	 * @param error String dialog to display
+	 * Hides the progress dialog if there is one.
 	 */
-	private void showFailAlertDialog(String error) {
-		AlertDialog.Builder builder = new Builder(this);
-		builder.setTitle("Failed to create account");
-		builder.setMessage(error);
-		builder.setCancelable(true);
-		builder.setPositiveButton("Try Again", new OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-			}
-		});
-		builder.create().show();
+	protected void destroyProgressDialog() {
+		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+			mProgressDialog.dismiss();
+		}
 	}
-
-	@Override
-	public void onBackPressed() {
-		Log.d(TAG, "Check In Activity back pressed");
-		super.onBackPressed();
-	}
-
 }

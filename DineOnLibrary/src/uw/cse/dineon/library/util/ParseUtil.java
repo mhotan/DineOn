@@ -4,8 +4,10 @@
 package uw.cse.dineon.library.util;
 
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +15,11 @@ import java.util.Set;
 
 import org.json.JSONObject;
 
+import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.library.Restaurant;
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.Storable;
+import uw.cse.dineon.library.UserInfo;
 import android.app.Activity;
 import android.util.Log;
 
@@ -139,7 +145,9 @@ public class ParseUtil {
 				if (e == null) {
 					// save was successful so send push
 					Log.d(TAG, "Successfully saved object.");
-					s.setObjId(pObj.getObjectId());
+					// TODO
+//					s.setObjId(pObj.getObjectId());
+					// Notifify Success
 				} else {
 					// Error occured
 					Log.d(TAG, "Error: " + e.getMessage());
@@ -194,7 +202,7 @@ public class ParseUtil {
 				if (e == null) {
 					// save was successful so send push
 					Log.d(TAG, "Successfully saved object.");
-					s.setObjId(pObj.getObjectId());
+//					s.setObjId(pObj.getObjectId());
 				} else {
 					// Error occured
 					Log.d(TAG, "Error: " + e.getMessage());
@@ -252,9 +260,15 @@ public class ParseUtil {
 						try {
 							Storable s;
 							for (ParseObject p : list) {
-								s = (Storable) Class.forName("uw.cse.dineon.library."+ className).newInstance();
-								s.unpackObject(p);
-								classList.add(s);
+								Class<?> clazz = 
+										Class.forName("uw.cse.dineon.library." + className);
+								Constructor<?> ctor = clazz.getConstructor(ParseObject.class);
+								Object object = ctor.newInstance(new Object[] {p});
+								classList.add((Storable) object);
+								
+//								s = (Storable) Class.forName("uw.cse.dineon.library."+ className).newInstance();
+//								s.unpackObject(p);
+//								classList.add(s);
 							}		   
 							h.invoke(null, classList);
 						} catch (Exception ex) {
@@ -312,9 +326,11 @@ public class ParseUtil {
 						try {
 							Storable s;
 							for (ParseObject p : list) {
-								s = (Storable) Class.forName("uw.cse.dineon.library."+ className).newInstance();
-								s.unpackObject(p);
-								classList.add(s);
+								Class<?> clazz = 
+										Class.forName("uw.cse.dineon.library." + className);
+								Constructor<?> ctor = clazz.getConstructor(ParseObject.class);
+								Object object = ctor.newInstance(new Object[] {p});
+								classList.add((Storable) object);
 							}
 							if (h != null && act != null)
 								h.invoke(act, classList);
@@ -379,30 +395,119 @@ public class ParseUtil {
 
 		return container;
 	}
-
+	
+//	/**
+//	 * 
+//	 * @param container ParseObject
+//	 * @return List<Storable>
+//	 */
+//	public static List<Storable> unpackListOfStorables(ParseObject container) {
+//		if (!container.getClassName().equals("Container")) {
+//			throw new IllegalArgumentException();
+//		}
+//
+//		List<Storable> list = new LinkedList<Storable>();
+//		try {
+//			for (String k : container.keySet()) {
+//				ParseObject p = container.getParseObject(k);
+//				Storable s = (Storable) Class.forName(p.getClassName()).newInstance();
+//				s.unpackObject(p);
+//				list.add(s);
+//			}
+//		} catch (Exception e) {
+//			Log.d(TAG, "Error: " + e.getMessage());
+//		}
+//
+//		return list;
+//	}
+	
 	/**
+	 * Given a storable class definition produce an instance of the Class based
+	 * off the ParseObject.
 	 * 
-	 * @param container ParseObject
-	 * @return List<Storable>
+	 * @param clazz Class to instantiate
+	 * @param po Parse object representation of the Class
+	 * @return null on failure, instance of T otherwise
 	 */
-	public static List<Storable> unpackListOfStorables(ParseObject container) {
-		if (!container.getClassName().equals("Container")) {
-			throw new IllegalArgumentException();
-		}
-
-		List<Storable> list = new LinkedList<Storable>();
+	public static <T extends Storable> T parseObjectToClass(Class<T> clazz, ParseObject po) {
+		Constructor<T> ctor = null;
+		Object object = null;
 		try {
-			for (String k : container.keySet()) {
-				ParseObject p = container.getParseObject(k);
-				Storable s = (Storable) Class.forName(p.getClassName()).newInstance();
-				s.unpackObject(p);
-				list.add(s);
-			}
-		} catch (Exception e) {
-			Log.d(TAG, "Error: " + e.getMessage());
+			ctor = clazz.getConstructor(ParseObject.class);
+			object = ctor.newInstance(new Object[] {po});	
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException("Constructor for: " + clazz.getSimpleName() 
+					+ " that takes one ParseObject not found!");
+		} catch (IllegalArgumentException e) {
+			throw e;
+		} catch (InstantiationException e) {
+			throw new RuntimeException("Instantiation Exception for: " + clazz.getSimpleName() 
+					+ " constructor that takes one ParseObject not found!");
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException("Illegal Access Exception for: " + clazz.getSimpleName() 
+					+ " constructor that takes one ParseObject not found!");
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException("Invocation Exception for: " + clazz.getSimpleName() 
+					+ " constructor that takes one ParseObject not found!");
 		}
-
-		return list;
+		if (object != null) {
+			return (T)object;
+		}
+		return null;
+	}
+	
+	/**
+	 * Retrieves a list of parse objects that represent storable list.
+	 * 
+	 * @requires storables not equal null
+	 * @param storables list of storable objects to obtain parse objects from
+	 * @return List of ParseObject that represents storables
+	 */
+	public static List<ParseObject> toListOfParseObjects(List<? extends Storable> storables) {
+		List<ParseObject> pObjects = new ArrayList<ParseObject>(storables.size());
+		for (Storable s: storables) {
+			pObjects.add(s.packObject());
+		}
+		return pObjects;
+	}
+	
+	/**
+	 * Retrieves a list of Class instances from a associated relation of the parseObjects
+	 * NOTE: All items in objects must have dynamic types of ParseObject or a class cast exception
+	 * will be thrown
+	 * 
+	 * @param clazz Class definition of the particular instance
+	 * @param objects List of Objects that must have dynamic tyoes if ParseObjects
+	 * @return List of storables from ParesObjects
+	 * @throws ParseException 
+	 */
+	public static <T extends Storable> List<T> toListOfStorables(
+			Class<T> clazz, List<Object> objects) {
+		List<T> storables = new ArrayList<T>(objects.size());
+		for (Object o: objects) {
+			ParseObject p = (ParseObject) o;
+			T storable = (T) parseObjectToClass(clazz, p);
+			storables.add(storable);
+		}
+		return storables;
+	}
+	
+	/**
+	 * Returns the channel identifier for this Restaurant
+	 * @param rest Restaurant to find channel identifier for
+	 * @return Channel as string
+	 */
+	public static String getChannel(RestaurantInfo rest){
+		return DineOnConstants.CHANNEL_PREFIX + rest.getName();
+	}
+	
+	/**
+	 * Returns the channel identifier for this Restaurant
+	 * @param rest Restaurant to find channel identifier for
+	 * @return Channel as string
+	 */
+	public static String getChannel(UserInfo user){
+		return DineOnConstants.CHANNEL_PREFIX + user.getName();
 	}
 
 }

@@ -53,7 +53,8 @@ MenuItemsFragment.MenuItemListener {
 			}
 
 			// Obtain the most recently used Restaurant via intent or call
-			frag = RestaurantInfoFragment.newInstance(new RestaurantInfo());
+			// TODO Fix Fragment instantiation issues
+//			frag = RestaurantInfoFragment.newInstance(new RestaurantInfo());
 		} 
 		else {
 			Log.w(TAG, "User not logged in cant show profile");
@@ -63,7 +64,7 @@ MenuItemsFragment.MenuItemListener {
 		android.support.v4.app.FragmentTransaction ft = 
 				getSupportFragmentManager().beginTransaction();
 		ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-		ft.add(R.id.container_profile_fragment, frag);
+//		ft.add(R.id.container_profile_fragment, frag);
 		ft.commit();
 	}
 

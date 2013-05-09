@@ -19,6 +19,8 @@ public class DineOnConstants {
 	
 	public static final String FACEBOOK_APP_ID = "505185672873933";
 	
+	public static final String DINING_SESSION = "DiningSession";
+	
 	// Request Code for multiple Activity use
 	public final static int REQUEST_CHECK_IN = 0x1;
 	public final static int REQUEST_VIEW_CURRENT_ORDER = 0x2;
@@ -54,4 +56,36 @@ public class DineOnConstants {
 	
 	// Callback Key for braodcast receiver callbacks
 	public static final String OBJ_ID = "objectId";
+	public static final String TABLE_NUM = "TABLE_NUM";
+	
+	// Actions for broadcast resceivers
+	private static final String ACTION_PREFIX = "uw.cse.dineon.user.";
+	
+	// For Restaurant
+	public static final String ACTION_REQUEST_DINING_SESSION = ACTION_PREFIX + "REQUEST_DINING_SESSION";
+	public static final String ACTION_ORDER_PLACED = ACTION_PREFIX + "ORDER_PLACED";
+	public static final String ACTION_CHECK_OUT = ACTION_PREFIX + "CHECK_OUT";
+	public static final String ACTION_CHANGE_USER_INFO = ACTION_PREFIX + "CHANGE_USER_INFO";
+	public static final String ACTION_CUSTOMER_REQUEST = ACTION_PREFIX + "CUSTOMER_REQUEST";
+
+	// For Customer
+	public static final String ACTION_CONFIRM_DINING_SESSION = ACTION_PREFIX + "CONFIRM_DINING_SESSION";
+	public static final String ACTION_CHANGE_RESTAURANT_INFO = ACTION_PREFIX + "CHANGE_RESTAURANT_INFO";
+
+	/**
+	 * Constant key for Parse extracting channel.
+	 */
+	public static final String PARSE_CHANNEL = "com.parse.Channel";
+	
+	/**
+	 * Constant key for data of push notification.
+	 */
+	public static final String PARSE_DATA = "com.parse.Data";
+	
+	/**
+	 * This is a channel prefix for Push Channels
+	 * IE channel for receiving a broadcast from a particular restaurant would be 
+	 * 
+	 */
+	final static String CHANNEL_PREFIX = "uw_cse_dineon_";
 }

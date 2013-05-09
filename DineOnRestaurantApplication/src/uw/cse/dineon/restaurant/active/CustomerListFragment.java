@@ -56,7 +56,7 @@ public class CustomerListFragment extends ListFragment {
 
 		//Store list in arguments for future retrieval
 		Bundle args = new Bundle();
-		args.putParcelableArrayList(KEY_LIST, mList);
+//		args.putParcelableArrayList(KEY_LIST, mList);
 		frag.setArguments(args);
 		return frag;
 	}

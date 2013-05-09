@@ -40,9 +40,9 @@ public class QRCheckin {
 			  try {
 				  Log.d(TAG, contents);
 				  userInfo.put("objID", ParseUser.getCurrentUser().getObjectId());
-				  userInfo.put(UserInfo.NAME, ParseUser.getCurrentUser().getUsername());
-				  userInfo.put(UserInfo.PHONE, 1234567890);
-				  userInfo.put(UserInfo.EMAIL, ParseUser.getCurrentUser().getEmail());
+//				  userInfo.put(UserInfo.NAME, ParseUser.getCurrentUser().getUsername());
+//				  userInfo.put(UserInfo.PHONE, 1234567890);
+//				  userInfo.put(UserInfo.EMAIL, ParseUser.getCurrentUser().getEmail());
 				  JSONObject data = new JSONObject(contents);
 				  //Log.d("ZXing", data.toString());
 				  Map<String, String> attr = new HashMap<String, String>();
