@@ -52,13 +52,14 @@ public class CurrentBillFragment extends Fragment implements OnSeekBarChangeList
 	}
 	
 	/**
-	 * Activities that own this fragment can use this to determine 
+	 * Activities that own this fragment can use this to determine.
 	 * TODO Replace the Dining Session string with instance 
-	 * @param restaurant
+	 * @param session to set
 	 */
 	public void setDiningSession(String session) {
-		if (session == null)
+		if (session == null) {
 			return;
+		}
 		
 		mSession = session;
 		// Use the Dining session to assign the values appropiately
@@ -70,7 +71,7 @@ public class CurrentBillFragment extends Fragment implements OnSeekBarChangeList
 		mSubTotal.setText(String.format("%.2f", subTotal));
 		mTotalTax.setText(String.format("%.2f", tax));
 		
-		double tipAmount = ((double)mCurTipPercent / 100.0) * (tax+subTotal);
+		double tipAmount = ((double)mCurTipPercent / 100.0) * (tax + subTotal);
 		double total = subTotal + tax + tipAmount;
 		mTip.setText(" " + mCurTipPercent + "%,  $" + String.format("%.2f", tipAmount));
 		mTotal.setText(String.format("%.2f", total));
@@ -79,7 +80,7 @@ public class CurrentBillFragment extends Fragment implements OnSeekBarChangeList
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
-		if (fromUser){
+		if (fromUser) {
 			mCurTipPercent = progress;
 			
 			setDiningSession(mSession);
@@ -87,9 +88,9 @@ public class CurrentBillFragment extends Fragment implements OnSeekBarChangeList
 	}
 
 	@Override
-	public void onStartTrackingTouch(SeekBar seekBar) {}
+	public void onStartTrackingTouch(SeekBar seekBar) { }
 
 	@Override
-	public void onStopTrackingTouch(SeekBar seekBar) {}
+	public void onStopTrackingTouch(SeekBar seekBar) { }
 
 }

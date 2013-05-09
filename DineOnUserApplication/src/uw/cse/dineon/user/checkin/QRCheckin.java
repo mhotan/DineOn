@@ -8,20 +8,24 @@ import org.json.JSONObject;
 
 import com.parse.ParseUser;
 
-import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.ParseUtil;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+/**
+ * 
+ * @author 
+ *
+ */
 public class QRCheckin {
 	
 	private static JSONObject userInfo = new JSONObject();
 	private static String TAG = "QRCheckin";
+	
 	/**
 	 * Processes the information gathered from a QR scan and sends the checkin
-	 * request to the restaurant expecting a DiningSession as a result
+	 * request to the restaurant expecting a DiningSession as a result.
 	 * 
 	 * @param requestCode QR format information
 	 * @param resultCode -1 if successful and failed otherwise
@@ -32,7 +36,8 @@ public class QRCheckin {
 			return; // TODO Handle failure
 		}
 		
-		IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+		IntentResult scanResult = 
+				IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 		  if (scanResult != null) {
 			  // handle scan result
 			  String contents = scanResult.getContents();

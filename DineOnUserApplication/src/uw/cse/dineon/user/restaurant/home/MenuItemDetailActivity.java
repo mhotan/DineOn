@@ -6,6 +6,11 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.widget.TextView;
 
+/**
+ * 
+ * @author 
+ *
+ */
 public class MenuItemDetailActivity extends DineOnUserActivity {
 
 	public static final String TAG = MenuItemDetailActivity.class.getSimpleName();

@@ -16,14 +16,13 @@ import android.widget.Toast;
 import com.parse.ParseUser;
 
 /**
- * TODO
+ * TODO finish.
  * @author mhotan
  */
 public class RestaurantSelectionActivity extends DineOnUserActivity implements 
 RestaurantSelectionButtonsFragment.OnClickListener, // Listening for button actions
 RestaurantListFragment.RestaurantListListener, //  Listening for List items
-RestaurantInfoFragment.RestaurantInfoListener
-{
+RestaurantInfoFragment.RestaurantInfoListener {
 	
 	private final String TAG = this.getClass().getSimpleName();
 
@@ -45,13 +44,14 @@ RestaurantInfoFragment.RestaurantInfoListener
 		setContentView(R.layout.activity_restaurant_selection);
 
 		mUser = ParseUser.getCurrentUser();
-		Toast.makeText(this, "User: " + mUser.getUsername() + " logged in!", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "User: " + mUser.getUsername() + " logged in!", 
+				Toast.LENGTH_SHORT).show();
 		
 		// Replace the Action bar title with a message letting the 
 		// user know this is the restaurant selection page
-		final ActionBar actionBar = getActionBar();
-		if (actionBar != null) {
-			actionBar.setTitle(R.string.actionbar_title_restaurant_selection);
+		final ActionBar ACTION_BAR = getActionBar();
+		if (ACTION_BAR != null) {
+			ACTION_BAR.setTitle(R.string.actionbar_title_restaurant_selection);
 		}
 		
 	}
@@ -64,9 +64,11 @@ RestaurantInfoFragment.RestaurantInfoListener
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()){
+		switch (item.getItemId()) {
 		case MENU_ITEM_FILTER:
 			// TODO
+			break;
+		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -96,9 +98,10 @@ RestaurantInfoFragment.RestaurantInfoListener
 		// TODO Auto-generated method stub
 		mCurRestaurant = restaurant;
 		FragmentManager fm = getSupportFragmentManager();
-		RestaurantInfoFragment frag = (RestaurantInfoFragment) fm.findFragmentById(R.id.restaurantInfo);
+		RestaurantInfoFragment frag = 
+				(RestaurantInfoFragment) fm.findFragmentById(R.id.restaurantInfo);
 		// If the fragment already exists then just update its value
-		if (frag != null && frag.isInLayout()){
+		if (frag != null && frag.isInLayout()) {
 			frag.setRestaurantForDisplay(restaurant);
 		} else {
 			Intent i = new Intent(getApplicationContext(), RestaurantInfoActivity.class);	

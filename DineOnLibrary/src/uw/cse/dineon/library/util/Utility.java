@@ -13,14 +13,19 @@ import android.net.NetworkInfo;
  * Utility class to hold a lot of reusable method and procedures.
  * @author mhotan
  */
-public class Utility {
-
+public final class Utility {
+	
+	/**
+	 * Prevents construction of a utility class.
+	 */
+	private Utility() { }
+	
 	/**
 	 * Returns whether the screen can be split horizontally into two panes
 	 * for optimal user interaction.  Currently the restriction is 
 	 * that if the screen is very large 
-	 * <b>Currently: XLarge screen layout
-	 * <b><b>OR if the screen is large and in landscape
+	 * <b>Currently: XLarge screen layout</b>
+	 * <b>OR if the screen is large and in landscape</b>
 	 * @param context Context of the activity
 	 * @return true if it is able to split, false otherwise
 	 */
@@ -56,7 +61,7 @@ public class Utility {
 	 * @return AlertDialog Dialog box to show user
 	 */
 	public static AlertDialog getFailedToCreateAccountDialog(
-			String message, Context context){
+			String message, Context context) {
 		return getGeneralAlertDialog("Failed to Create Account", message, context);
 	}
 	
@@ -69,7 +74,7 @@ public class Utility {
 	 * @return Alert Dialog box with one option
 	 */
 	public static AlertDialog getGeneralAlertDialog(
-			String title, String message, Context context){
+			String title, String message, Context context) {
 		AlertDialog.Builder b = new Builder(context);
 		b.setTitle(title);
 		b.setMessage(message);

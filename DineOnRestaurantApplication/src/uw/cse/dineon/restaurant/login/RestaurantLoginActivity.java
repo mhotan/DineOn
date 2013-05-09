@@ -48,7 +48,7 @@ LoginFragment.OnLoginListener {
 	/**
 	 * Reference to this Activity instance for anonymous inner classes.
 	 */
-	private Context This;
+	private Context thisCxt;
 
 
 	// //////////////////////////////////////////////////////////////////////
@@ -65,13 +65,14 @@ LoginFragment.OnLoginListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		This = this;
+		thisCxt = this;
 		// TODO Attempt to get the last ParseUser
 	}
 
 	/**
 	 * This automates the addition of the User Intent. Should never be called
 	 * when mUser is null.
+	 * @param intent Intent
 	 */
 	@Override
 	public void startActivity(Intent intent) {
@@ -143,10 +144,10 @@ LoginFragment.OnLoginListener {
 					
 				} else if (user == null) {
 					destroyProgressDialog();
-					Utility.getFailedToCreateAccountDialog("Invalid Credentials", This).show();
+					Utility.getFailedToCreateAccountDialog("Invalid Credentials", thisCxt).show();
 				} else {
 					destroyProgressDialog();
-					Utility.getGeneralAlertDialog("Server Error", e.getMessage(), This).show();
+					Utility.getGeneralAlertDialog("Server Error", e.getMessage(), thisCxt).show();
 				}
 			}
 		});
@@ -194,7 +195,7 @@ LoginFragment.OnLoginListener {
 		/**
 		 * Finds a restaurant associated with this ParseUser.
 		 */
-		public void findRestaurant(){
+		public void findRestaurant() {
 			// TODO we need to test these queries
 			ParseQuery inner = new ParseQuery(RestaurantInfo.class.getSimpleName());
 			inner.whereEqualTo(RestaurantInfo.PARSEUSER, user);
@@ -214,7 +215,7 @@ LoginFragment.OnLoginListener {
 				startMainActivity();
 			} else {
 				Utility.getGeneralAlertDialog("Server Failure", 
-						"Failed to get your information", This).show();
+						"Failed to get your information", thisCxt).show();
 			}
 		}
 	}

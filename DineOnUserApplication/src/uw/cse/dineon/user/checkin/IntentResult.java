@@ -29,10 +29,21 @@ public final class IntentResult {
   private final Integer orientation;
   private final String errorCorrectionLevel;
 
+  /**
+   * Constructor.
+   */
   IntentResult() {
     this(null, null, null, null, null);
   }
 
+  /**
+   * Constructor.
+   * @param contents String
+   * @param formatName String
+   * @param rawBytes array of bytes
+   * @param orientation Integer
+   * @param errorCorrectionLevel String
+   */
   IntentResult(String contents,
                String formatName,
                byte[] rawBytes,
@@ -53,7 +64,8 @@ public final class IntentResult {
   }
 
   /**
-   * @return name of format, like "QR_CODE", "UPC_A". See {@code BarcodeFormat} for more format names.
+   * @return name of format, 
+   * like "QR_CODE", "UPC_A". See {@code BarcodeFormat} for more format names.
    */
   public String getFormatName() {
     return formatName;

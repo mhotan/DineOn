@@ -43,7 +43,7 @@ import com.parse.ParseUser;
 import com.parse.PushService;
 
 /**
- * Generl Fragment Activity class that pertains to a specific user.
+ * General Fragment Activity class that pertains to a specific user.
  * Once the User is logged in then they are allowed specific access to
  * different regions of the application.
  *
@@ -55,7 +55,7 @@ public class DineOnUserActivity extends FragmentActivity {
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
 
 	/**
-	 * The associated user 
+	 * The associated user .
 	 */
 	protected DineOnUser mUser;	
 	private DiningSessionResponseReceiver mDSResponseReceiver;
@@ -70,7 +70,7 @@ public class DineOnUserActivity extends FragmentActivity {
 		// 2. This activity is being restored
 
 		// 1. 
-		Bundle extras = getIntent() == null ? null: getIntent().getExtras();
+		Bundle extras = getIntent() == null ? null : getIntent().getExtras();
 		String userId;
 		if (extras != null) {
 			userId = extras.getString(DineOnConstants.KEY_USER);
@@ -91,9 +91,10 @@ public class DineOnUserActivity extends FragmentActivity {
 	/**
 	 * This automates the addition of the User Intent.
 	 * Should never be called when mUser is null.
+	 * @param intent Intent
 	 */
 	@Override
-	public void startActivity (Intent intent) {
+	public void startActivity(Intent intent) {
 		if (DineOnConstants.DEBUG && mUser == null) {
 			// TODO change to Dialog box
 			Toast.makeText(this, "Need to create or download a User", Toast.LENGTH_SHORT).show();
@@ -107,10 +108,10 @@ public class DineOnUserActivity extends FragmentActivity {
 	}
 
 	/**
-	 * A valid user found this allows the ability for the Userinterface to initialize
+	 * A valid user found this allows the ability for the Userinterface to initialize.
 	 * Any subclasses of this activity can use this as a sign that the user has been identified
 	 */
-	protected void intializeUI(){
+	protected void intializeUI() {
 
 		// Lets invalidate the options menu so it shows the correct 
 		// buttons
@@ -133,7 +134,7 @@ public class DineOnUserActivity extends FragmentActivity {
 	}
 
 	@Override
-	protected void onPause(){
+	protected void onPause() {
 		super.onPause();
 		mDSResponseReceiver.unRegister(this);
 	}
@@ -151,11 +152,11 @@ public class DineOnUserActivity extends FragmentActivity {
 		//  See basic_menu under res/menu for ids
 		inflater.inflate(R.menu.basic_menu, menu);
 		//Hides the 
-		final MenuItem item = menu.findItem(R.id.option_bill);
-		item.setEnabled(false);
-		item.setVisible(false);
+		final MenuItem ITEM = menu.findItem(R.id.option_bill);
+		ITEM.setEnabled(false);
+		ITEM.setVisible(false);
 
-		final Menu m = menu;
+		final Menu M = menu;
 
 		//Sets the necessary onClickListeners for the menu
 		//items with an action layout.
@@ -163,7 +164,7 @@ public class DineOnUserActivity extends FragmentActivity {
 		customActionBarButtons.add(menu.findItem(R.id.option_bill));
 		customActionBarButtons.add(menu.findItem(R.id.option_check_in));
 
-		setOnClick(m, customActionBarButtons);
+		setOnClick(M, customActionBarButtons);
 
 		return true;
 	}
@@ -190,12 +191,12 @@ public class DineOnUserActivity extends FragmentActivity {
 	 * @param items the list of MenuItems to create listeners for
 	 */
 	private void setOnClick(final Menu m, List<MenuItem> items) {
-		for (final MenuItem item : items) {
-			item.getActionView().setOnClickListener(new OnClickListener() {
+		for (final MenuItem ITEM : items) {
+			ITEM.getActionView().setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {   
-					m.performIdentifierAction(item.getItemId(), 0);
+					m.performIdentifierAction(ITEM.getItemId(), 0);
 				}
 			});
 		}
@@ -304,7 +305,7 @@ public class DineOnUserActivity extends FragmentActivity {
 		/**
 		 * Creates a callback to handle queries.
 		 * Specically handle downloading a UserObject
-		 * @param ctx
+		 * @param ctx Context to set
 		 */
 		public InitializeCallback(Context ctx) {
 			mContext = ctx;
@@ -335,8 +336,8 @@ public class DineOnUserActivity extends FragmentActivity {
 
 	/**
 	 * This is the defined call back method for when the
-	 * User attempts to check in to a restaurant.  Once the check
-	 * @param session is a mapping from the arguments returned from the call
+	 * User attempts to check in to a restaurant.
+	 * @param jobj JSONOBJECT used to check
 	 * 	DineOnConstants.OBJ_ID => Parse Object ID for Dining Session
 	 */
 	public void onCheckInCallback(JSONObject jobj) {
@@ -360,7 +361,7 @@ public class DineOnUserActivity extends FragmentActivity {
 			ParseUtil.getDataFromCloud(this, DiningSession.class, m, attr);
 		} catch (NoSuchMethodException e) {
 			Log.e(TAG, "Failed to invocate method onDiningSessionRecievedCallback()");
-		}catch(JSONException e){
+		} catch (JSONException e) {
 			Log.e(TAG, "JSON error in checkin callback");
 		}
 
@@ -389,7 +390,8 @@ public class DineOnUserActivity extends FragmentActivity {
 		invalidateOptionsMenu();
 
 		// TODO Extract channel for push
-		//Shouldn't we already have the channel and be registered at this point via onCreate/onResume?
+		// Shouldn't we already have the channel and be registered at this point 
+		// via onCreate/onResume?
 		// TODO Register for the channel and start listening for updates
 		// TODO Extract object id for restaurant
 
@@ -434,7 +436,7 @@ public class DineOnUserActivity extends FragmentActivity {
 	private static final String ACTION = "uw.cse.dineon.user.CONFIRM_DINING_SESSION";
 
 	/**
-	 * Handles the result of requesting a Dining session
+	 * Handles the result of requesting a Dining session.
 	 * @author mhotan
 	 *
 	 */
@@ -447,6 +449,10 @@ public class DineOnUserActivity extends FragmentActivity {
 
 		private String mRestaurantSessionChannel;
 
+		/**
+		 * Constructs a receiver from information stored in a ParseUser.
+		 * @param user ParseUser to construct from
+		 */
 		public DiningSessionResponseReceiver(ParseUser user) {
 			mIF = new IntentFilter(ACTION);
 			// TODO Add dining sessions
@@ -456,7 +462,11 @@ public class DineOnUserActivity extends FragmentActivity {
 
 		}
 
-		public void register(DineOnUserActivity dineOnUserActivity){
+		/**
+		 * Validates this receiver.
+		 * @param dineOnUserActivity to register.
+		 */
+		public void register(DineOnUserActivity dineOnUserActivity) {
 			mCurrentActivity = dineOnUserActivity;
 			dineOnUserActivity.registerReceiver(this, mIF);
 			PushService.subscribe(dineOnUserActivity, mUserChannel, dineOnUserActivity.getClass());
@@ -464,6 +474,7 @@ public class DineOnUserActivity extends FragmentActivity {
 
 		/**
 		 * Invalidates this receiver.
+		 * @param dineOnUserActivity to unregister.
 		 */
 		public void unRegister(DineOnUserActivity dineOnUserActivity) {
 			dineOnUserActivity.unregisterReceiver(this);
@@ -474,8 +485,8 @@ public class DineOnUserActivity extends FragmentActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 
-			String theirChannel = intent.getExtras() == null ? null :  
-				intent.getExtras().getString("com.parse.Channel");
+			String theirChannel = intent.getExtras() == null ? null 
+					: intent.getExtras().getString("com.parse.Channel");
 
 			if (theirChannel == null || mCurrentActivity == null) {
 				return;
@@ -483,7 +494,8 @@ public class DineOnUserActivity extends FragmentActivity {
 
 			if (theirChannel.equals(mUserChannel)) {
 				try {
-					JSONObject jobj = new JSONObject(intent.getExtras().getString("com.parse.Data"));
+					JSONObject jobj = 
+							new JSONObject(intent.getExtras().getString("com.parse.Data"));
 					mCurrentActivity.onCheckInCallback(jobj);
 
 				} 
@@ -492,12 +504,12 @@ public class DineOnUserActivity extends FragmentActivity {
 				} 
 
 			} 
-			else if (mRestaurantSessionChannel != null && mRestaurantSessionChannel.equals(theirChannel)) {
+			else if (mRestaurantSessionChannel != null 
+					&& mRestaurantSessionChannel.equals(theirChannel)) {
 				// TODO Do something here that updates the state of the current Dining Session 
 
 			}
 		}
-
 
 	}
 }

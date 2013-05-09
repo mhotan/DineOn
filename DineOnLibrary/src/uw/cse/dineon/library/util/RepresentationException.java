@@ -12,10 +12,10 @@ public class RepresentationException extends RuntimeException {
 	private static final long serialVersionUID = -5271796675140963419L;
 
 	/**
-	 * Creates representation exception with message
-	 * @param message
+	 * Creates representation exception with message.
+	 * @param message to display if a Representation failed
 	 */
-	public RepresentationException(String message){
+	public RepresentationException(String message) {
 		super("Representation Failure occured " + message);
 	}
 	
@@ -23,7 +23,7 @@ public class RepresentationException extends RuntimeException {
 	 * Creates default representation exception.
 	 * Doesn't provide any details
 	 */
-	public RepresentationException(){
+	public RepresentationException() {
 		this("");
 	}
 	

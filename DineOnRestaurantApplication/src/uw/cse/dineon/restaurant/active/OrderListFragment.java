@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 /**
  * Fragment represents a List of Orders that are pending
- * for this restaurant
+ * for this restaurant.
  * @author mhotan
  */
 public class OrderListFragment extends ListFragment {
@@ -58,13 +58,14 @@ public class OrderListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		List<String> mOrders = getArguments() != null ? 
-				getArguments().getStringArrayList(KEY_LIST) : null;
-		if (mOrders == null){
-			if (mListener != null)
+		List<String> mOrders = getArguments() != null 
+				? getArguments().getStringArrayList(KEY_LIST) : null;
+		if (mOrders == null) {
+			if (mListener != null) {
 				mOrders = mListener.getCurrentOrders();
-			else
+			} else {
 				mOrders = new ArrayList<String>(); // Empty
+			}
 		}
 
 		//TODO Create custom adapter to handle custom layoutss
@@ -90,37 +91,38 @@ public class OrderListFragment extends ListFragment {
 	//////////////////////////////////////////////////////
 
 	/**
-	 * Adds order to this view
-	 * @param order
+	 * Adds order to this view.
+	 * @param order String
 	 */
-	public void addOrder(String order){
+	public void addOrder(String order) {
 		mAdapter.add(order);
 		mAdapter.notifyDataSetChanged();
 	}
 
 	/**
-	 * Adds all the orders to this view
-	 * @param orders
+	 * Adds all the orders to this view.
+	 * @param orders Collection of Strings
 	 */
-	public void addAll(Collection<String> orders){
-		for (String o: orders)
+	public void addAll(Collection<String> orders) {
+		for (String o: orders) {
 			mAdapter.add(o);
+		}
 		mAdapter.notifyDataSetChanged();
 	}
 
 	/**
-	 * Deletes this order if it finds it
-	 * @param order
+	 * Deletes this order if it finds it.
+	 * @param order String
 	 */
-	public void deleteOrder(String order){
+	public void deleteOrder(String order) {
 		mAdapter.remove(order);
 		mAdapter.notifyDataSetChanged();
 	}
 
 	/**
-	 * Clears all orders
+	 * Clears all orders.
 	 */
-	public void clearOrder(){
+	public void clearOrder() {
 		mAdapter.clear();
 		mAdapter.notifyDataSetChanged();
 	}
@@ -171,7 +173,7 @@ public class OrderListFragment extends ListFragment {
 	//////////////////////////////////////////////////////
 
 	/**
-	 * Adapter to handle
+	 * Adapter to handle.
 	 * @author mhotan
 	 */
 	private class OrderListAdapter extends ArrayAdapter<String> {
@@ -184,11 +186,11 @@ public class OrderListFragment extends ListFragment {
 
 		/**
 		 * Creates an adapter that manages the addition and layout of
-		 * Orders
-		 * @param ctx
-		 * @param items
+		 * Orders.
+		 * @param ctx Context
+		 * @param orders List of strings
 		 */
-		public OrderListAdapter(Context ctx, List<String> orders){
+		public OrderListAdapter(Context ctx, List<String> orders) {
 			super(ctx, R.layout.listitem_restaurant_order, orders);
 			this.mContext = ctx;
 			this.mOrders = orders;
@@ -198,7 +200,7 @@ public class OrderListFragment extends ListFragment {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent){
+		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view = inflater.inflate(R.layout.listitem_restaurant_order, parent, false);
@@ -210,7 +212,8 @@ public class OrderListFragment extends ListFragment {
 			title.setText(order);
 
 			Button buttonCompleteOrder = (Button) view.findViewById(R.id.button_completed_order);
-			ImageButton buttonGetDetails = (ImageButton) view.findViewById(R.id.button_order_detail);
+			ImageButton buttonGetDetails = 
+					(ImageButton) view.findViewById(R.id.button_order_detail);
 			SeekBar progressBar = (SeekBar)view.findViewById(R.id.seekbar_order_progress);
 			progressBar.setMax(100);
 			progressBar.setProgress(0);
@@ -228,7 +231,7 @@ public class OrderListFragment extends ListFragment {
 		}
 
 		/**
-		 * Listener for certain item of an order item view
+		 * Listener for certain item of an order item view.
 		 * @author mhotan
 		 */
 		private class OrderItemListener implements View.OnClickListener {
@@ -248,15 +251,17 @@ public class OrderListFragment extends ListFragment {
 				case R.id.button_order_detail:
 					mListener.onRequestOrderDetail(order);
 					break;
+				default:
+					break;
 				}
 			}
 		}
 
 		/**
-		 * Listener for certain seekbar change regarding progress
+		 * Listener for certain seekbar change regarding progress.
 		 * @author mhotan
 		 */
-		private class OrderProgressListener implements SeekBar.OnSeekBarChangeListener{
+		private class OrderProgressListener implements SeekBar.OnSeekBarChangeListener {
 
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
@@ -273,10 +278,10 @@ public class OrderListFragment extends ListFragment {
 			}
 
 			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {}
+			public void onStartTrackingTouch(SeekBar seekBar) { }
 
 			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {}
+			public void onStopTrackingTouch(SeekBar seekBar) { }
 
 		}
 	}

@@ -7,7 +7,6 @@ import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
 
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -72,10 +71,10 @@ public class Restaurant extends Storable {
 	}
 
 	/**
-	 * Returns the name of this restaurant
+	 * Returns the name of this restaurant.
 	 * @return Name
 	 */
-	public String getName(){
+	public String getName() {
 		return mRestInfo.getName();
 	}
 	
@@ -275,7 +274,7 @@ public class Restaurant extends Storable {
 	//		this.setInfo(info);
 	//		
 	//		storable = 
-	//				ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.RESERVATION_LIST));
+	//			ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.RESERVATION_LIST));
 	//		List<Reservation> reserves = new ArrayList<Reservation>(storable.size());
 	//		for (Storable res : storable) {
 	//			reserves.add((Reservation) res);
@@ -296,7 +295,7 @@ public class Restaurant extends Storable {
 	//		setSessions(sessions);
 	//		
 	//		storable = 
-	//				ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.CUSTOMER_REQUESTS));
+	//			ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.CUSTOMER_REQUESTS));
 	//		List<CustomerRequest> requests = new ArrayList<CustomerRequest>(storable.size());
 	//		for (Storable request : storable) {
 	//			requests.add((CustomerRequest) request);

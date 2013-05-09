@@ -8,6 +8,11 @@ import com.parse.ParseACL;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
+/**
+ * 
+ * @author 
+ *
+ */
 public class DineOnRestaurantApplication extends Application {
 
 	@Override

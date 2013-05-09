@@ -1,34 +1,23 @@
 package uw.cse.dineon.user.checkin;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.parse.ParseUser;
-import com.parse.PushService;
-
-import uw.cse.dineon.library.util.DineOnReceiver;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 
 /**
- * TODO
  * @author mhotan
+ * TODO
  */
 public class CheckInActivity extends DineOnUserActivity 
-implements CheckInFragment.CheckInListener{
+implements CheckInFragment.CheckInListener {
 	
 	public static final String EXTRA_CHECKEDIN = "is checked in?";
 	
 	private boolean mCheckedIn;
 
-	private final static String TAG = CheckInActivity.class.getSimpleName();
+	private static final String TAG = CheckInActivity.class.getSimpleName();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +47,7 @@ implements CheckInFragment.CheckInListener{
 	}
 	
 	@Override
-	public void finish(){
+	public void finish() {
 		Intent retIntent = new Intent();
 		retIntent.putExtra(EXTRA_CHECKEDIN, mCheckedIn);
 		super.finish();
@@ -73,7 +62,8 @@ implements CheckInFragment.CheckInListener{
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-	  IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+	  IntentResult scanResult = 
+			  IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 	  if (scanResult != null) {
 		  // handle scan result
 		  String contents = scanResult.getContents();

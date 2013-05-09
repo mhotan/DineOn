@@ -17,11 +17,11 @@ import android.widget.EditText;
 public class LoginFragment extends android.support.v4.app.Fragment {
 
 	/**
-	 * Activity that reacts to user interactions
+	 * Activity that reacts to user interactions.
 	 */
 	private OnLoginListener mListener;
 
-	private EditText email_input, password_input;
+	private EditText emailInput, passwordInput;
 	
 	private static ProgressDialog mProgressDialog;
 	
@@ -32,16 +32,16 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 				container, false);
 
 		// Associate the values of the input text boxes
-		email_input = (EditText) view.findViewById(R.id.input_login_email);
-		password_input = (EditText) view.findViewById(R.id.input_login_password);
+		emailInput = (EditText) view.findViewById(R.id.input_login_email);
+		passwordInput = (EditText) view.findViewById(R.id.input_login_password);
 
 		// Assign login listener
 		Button loginButton = (Button) view.findViewById(R.id.button_login);
 		loginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String email = email_input.getText().toString();
-				String password = password_input.getText().toString();
+				String email = emailInput.getText().toString();
+				String password = passwordInput.getText().toString();
 				attemptLogin(email, password);
 			}
 		});
@@ -80,13 +80,13 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 	/**
 	 * @return The email address that was forgotten
 	 */
-	public String getCurrentEmail(){
-		return email_input.getText().toString();
+	public String getCurrentEmail() {
+		return emailInput.getText().toString();
 	}
 
 	/**
 	 * Attempt to login that can be accessed by external activities
-	 * to login
+	 * to login.
 	 * @param username email of user
 	 * @param password password of user
 	 */
@@ -97,7 +97,7 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 
 	/**
 	 * Listener that is intended to allow any owning context of an 
-	 * LoginFragment instance to react and communicate Login related request
+	 * LoginFragment instance to react and communicate Login related request.
 	 * All activities that uses a LoginFragment MUST implement this listener
 	 *   
 	 * @author mhotan

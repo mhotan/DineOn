@@ -3,20 +3,21 @@ package uw.cse.dineon.restaurant.active;
 import java.util.ArrayList;
 import java.util.List;
 
-import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 
+/**
+ * 
+ * @author 
+ *
+ */
 public class ActiveOrderListActivity extends DineOnRestaurantActivity
 implements OrderDetailFragment.OrderDetailListener,
 RequestDetailFragment.RequestDetailListener,
 OrderListFragment.OrderItemListener,
-RequestListFragment.RequestItemListener
-{
+RequestListFragment.RequestItemListener {
 
 	private static final String FRAG_TAG = "Tag for finding fragment for details";
 
@@ -103,7 +104,8 @@ RequestListFragment.RequestItemListener
 
 	@Override
 	public List<String> getCurrentOrders() {
-		String[] orders = {"Fried Chicken", "Peanut butter and Jelly", "Fried Rice", "Chicken Noodle Soup", "Butte Balls"};
+		String[] orders = {"Fried Chicken", "Peanut butter and Jelly", "Fried Rice", 
+				"Chicken Noodle Soup", "Butte Balls"};
 		List<String> ordList = new ArrayList<String>();
 		for (String s: orders) {
 			ordList.add(s);

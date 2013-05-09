@@ -17,9 +17,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 /**
- * TODO
  * @author mhotan
- *
+ * TODO
  */
 public class CheckInFragment extends Fragment {
 
@@ -73,18 +72,18 @@ public class CheckInFragment extends Fragment {
 	}
 
 	/**
-	 * TODO
 	 * @author mhotan
+	 * TODO
 	 */
 	public interface CheckInListener {
 
 		/**
-		 * TODO
+		 * TODO implement.
 		 */
 		public void onCheckInSuccess();
 
 		/**
-		 * TODO
+		 * TODO implement.
 		 */
 		public void onCheckInFail();
 
@@ -99,7 +98,10 @@ public class CheckInFragment extends Fragment {
 
 		private String mRestaurant;
 		
-		public CheckInClickListener(){
+		/**
+		 * Defalut constructor.
+		 */
+		public CheckInClickListener() {
 			mRestaurant = null;
 		}
 		
@@ -117,6 +119,8 @@ public class CheckInFragment extends Fragment {
 				mListener.onCheckInSuccess();
 				break;
 			*/
+			default:
+				break;
 			}
 		}
 

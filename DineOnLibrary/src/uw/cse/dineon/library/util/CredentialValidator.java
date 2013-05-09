@@ -44,11 +44,11 @@ public final class CredentialValidator {
 
 	/**
 	 * Validates a complete set of attributes.
-	 * @param username
-	 * @param email
-	 * @param pw
-	 * @param pwRepeat
-	 * @return
+	 * @param username non-null String to validate.
+	 * @param email non-null String to validate. 
+	 * @param pw String password to validate.
+	 * @param pwRepeat String password to validate (should be the same as pw)
+	 * @return Resolution
 	 */
 	public static Resolution validateAll(String username, String email, String pw,
 			String pwRepeat) {
@@ -123,7 +123,7 @@ public final class CredentialValidator {
 	 * @param password Password to validate as a "Good" password
 	 * @return A resolution instance stating the result of validifying the password 
 	 */
-	public static Resolution isValidPassword(String password){
+	public static Resolution isValidPassword(String password) {
 		if (password == null) {
 			return NULL_PW;
 		} 
@@ -195,7 +195,7 @@ public final class CredentialValidator {
 		 * Returns whether the password is valid.
 		 * @return true if valid
 		 */
-		public boolean isValid(){
+		public boolean isValid() {
 			return isResolved;
 		}
 
@@ -203,7 +203,7 @@ public final class CredentialValidator {
 		 * Returns the message associated with this resolution.
 		 * @return message as string literal
 		 */
-		public String getMessage(){
+		public String getMessage() {
 			return message;
 		}
 	}

@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 /**
- * TODO
+ * TODO finish.
  * @author mhotan
  */
 public class RestaurantListFragment extends ListFragment {
@@ -34,10 +34,12 @@ public class RestaurantListFragment extends ListFragment {
 		// TODO make Parse queries
 		// Or load from local data base
 		// TODO Change String to a new data type (Restaurant)
-		String[] values = new String[] { "Marty's" , "Burger King", "Some other stupid restaurant"  };
+		String[] values = 
+				new String[] {"Marty's" , "Burger King", "Some other stupid restaurant" };
 		List<String> tediousList = new ArrayList<String>();
-		for (String s:values)
+		for (String s : values) {
 			tediousList.add(s);
+		}
 
 		ArrayAdapter<String> adapter = new RestaurantListAdapter(
 				this.getActivity(), tediousList);
@@ -56,31 +58,31 @@ public class RestaurantListFragment extends ListFragment {
 	}
 
 	/**
-	 * TODO
+	 * TODO finish.
 	 * @author mhotan
 	 */
 	public interface RestaurantListListener {
 
-		/*
-		 * TODO: Place parameter preferable a "Restaurant" Instance
-		 * */
+
+		// TODO Place parameter preferable a "Restaurant" Instance
+
 
 		/**
-		 * TODO
-		 * @param restaurant
+		 * TODO finish.
+		 * @param restaurant String
 		 */
 		public void onRestaurantSelected(String restaurant);
 
 		/**
-		 * TODO
-		 * @param restaurant
+		 * TODO finish.
+		 * @param restaurant String
 		 */
 		public void onRestaurantFocusedOn(String restaurant);
 
 	}
 
 	/**
-	 * Class that will help display custom list view items
+	 * Class that will help display custom list view items.
 	 * TODO Change generic type from String to Restaurant
 	 * @author mhotan
 	 */
@@ -91,7 +93,7 @@ public class RestaurantListFragment extends ListFragment {
 
 		/**
 		 * This is a runtime mapping between "More Info buttons"
-		 * and there respective restaurants
+		 * and there respective restaurants.
 		 * TODO Change String to restaurant;
 		 * NOTE (MH): Not exactly sure if this works
 		 */
@@ -99,6 +101,11 @@ public class RestaurantListFragment extends ListFragment {
 
 		private final View.OnClickListener mButtonListener, mItemSelectedListener;
 
+		/**
+		 * 
+		 * @param context Context
+		 * @param values List of Strings
+		 */
 		public RestaurantListAdapter(Context context, List<String> values) {
 			super(context, R.layout.listitem_restaurant, values); // Use our custom row layout
 			this.mContext = context;
@@ -114,7 +121,8 @@ public class RestaurantListFragment extends ListFragment {
 						// Make sure the mapping has the right value
 						String name = mMapping.get(v);
 						if (name == null) {
-							Log.w(TAG, "Unable to find restaurant that is attached to this view: " + v);
+							Log.w(TAG, "Unable to find restaurant " 
+									+ "that is attached to this view: " + v);
 							return; //FAIL
 						}
 						
@@ -132,14 +140,15 @@ public class RestaurantListFragment extends ListFragment {
 				public void onClick(View v) {
 					TextView restaurantView = (TextView) v.findViewById(R.id.label_restaurant_name);
 					String restName = restaurantView.getText().toString();
-					if (mListener != null)
+					if (mListener != null) {
 						mListener.onRestaurantSelected(restName);
+					}
 				}
 			};
 		}
 
 		@Override
-		public View getView(int position, View covnertView, ViewGroup parent){
+		public View getView(int position, View covnertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.listitem_restaurant, parent, false);

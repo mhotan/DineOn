@@ -6,7 +6,6 @@ import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
 
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -33,7 +32,7 @@ public class RestaurantInfo extends Storable {
 	private List<Menu> mMenus; // All menus
 
 	/**
-	 * Creates a bare restaurant info using the inputted name
+	 * Creates a bare restaurant info using the inputted name.
 	 * @param name name of the restaurant
 	 */
 	public RestaurantInfo(ParseUser name) {
@@ -117,10 +116,10 @@ public class RestaurantInfo extends Storable {
 	}
 
 	/**
-	 * @param imageM int
+	 * @param pos int
 	 */
 	public void setImageMain(int pos) {
-		pos = Math.min(Math.max(0, pos), mImageList.size()-1);
+		pos = Math.min(Math.max(0, pos), mImageList.size() - 1);
 		if (pos == -1) {
 			//TODO Handle no images
 		}

@@ -67,17 +67,17 @@ public class CreateNewAccountFragment extends Fragment {
 	}
 	
 	/**
-	 * Attempts to create an account with current state of the view
+	 * Attempts to create an account with current state of the view.
 	 */
-	private void createAccout(){
+	private void createAccout() {
 		String username = mUsername.getText().toString();
 		String email = mEmail.getText().toString();
 		String password = mPassword.getText().toString();
-		String password_repeat = mPasswordRepeat.getText().toString();
+		String passwordRepeat = mPasswordRepeat.getText().toString();
 		
 		// TODO Probably can check here fir snakk
 		// TODO Check password
-		mListener.onCreateNewAccount(username, email, password, password_repeat);
+		mListener.onCreateNewAccount(username, email, password, passwordRepeat);
 	}
 
 	/**
@@ -87,11 +87,11 @@ public class CreateNewAccountFragment extends Fragment {
 	public interface onCreateNewAccountListener {
 
 		/**
-		 * Attempts to create a new password
-		 * @param username
-		 * @param email
-		 * @param password
-		 * @param passwordRepeat
+		 * Attempts to create a new password.
+		 * @param username String
+		 * @param email String
+		 * @param password String
+		 * @param passwordRepeat String
 		 */
 		void onCreateNewAccount(String username, String email, 
 				String password, String passwordRepeat);

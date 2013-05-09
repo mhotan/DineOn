@@ -42,7 +42,7 @@ public class MenuItemsFragment extends ListFragment {
 	 * @param info Restaurant that contains a group of menus that each contain menu items
 	 * @return A MenuItemsFragment that is ready to display all the items of the restaurant
 	 */
-	public static MenuItemsFragment newInstance(RestaurantInfo info){
+	public static MenuItemsFragment newInstance(RestaurantInfo info) {
 		// Prepare a Bundle argument
 		// for starting an activity with
 		MenuItemsFragment frag = new MenuItemsFragment();
@@ -149,12 +149,12 @@ public class MenuItemsFragment extends ListFragment {
 	private class RestaurantMenuItemAdapter extends ArrayAdapter<MenuItem> {
 
 		/**
-		 * Context to use this adapter
+		 * Context to use this adapter.
 		 */
 		private final Context mContext;
 
 		/**
-		 * list of items to show
+		 * list of items to show.
 		 */
 		private final List<MenuItem> mItems;
 
@@ -171,7 +171,7 @@ public class MenuItemsFragment extends ListFragment {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent){
+		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view = inflater.inflate(R.layout.listitem_menuitem_editable, parent, false);
@@ -190,6 +190,11 @@ public class MenuItemsFragment extends ListFragment {
 		}
 	}
 
+	/**
+	 * 
+	 * @author mhotan
+	 *
+	 */
 	private class ItemListener implements View.OnClickListener {
 
 		private final MenuItem mItem;
@@ -199,13 +204,13 @@ public class MenuItemsFragment extends ListFragment {
 		private final EditText mDescription;
 
 		/**
-		 * Implicitly adds listeners
-		 * @param item
-		 * @param image
-		 * @param title
-		 * @param delete
-		 * @param save
-		 * @param description
+		 * Implicitly adds listeners.
+		 * @param item MenuItem
+		 * @param image ImageView
+		 * @param title TextView
+		 * @param delete ImageButton
+		 * @param save ImageButton
+		 * @param description EditText
 		 */
 		public ItemListener(MenuItem item, ImageView image, TextView title, ImageButton delete,
 				ImageButton save, EditText description) {
@@ -228,8 +233,7 @@ public class MenuItemsFragment extends ListFragment {
 				// Use alert dialog
 				// delete mItem
 
-			}
-			else if (v == mDelete) {
+			} else if (v == mDelete) {
 				// TODO User listener to delete this menu item
 				// use alert dialog
 				// delete mItem

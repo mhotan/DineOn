@@ -9,6 +9,9 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
+/**
+ * Application for DineOn user side.
+ */
 public class DineOnUserApplication extends Application {
 
 	@Override

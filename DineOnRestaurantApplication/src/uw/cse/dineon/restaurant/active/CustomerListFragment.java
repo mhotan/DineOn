@@ -9,7 +9,6 @@ import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,16 +20,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * For displaying current restaurant customers
+ * For displaying current restaurant customers.
  * TODO Improve and complete
  * @author mhotan
  * @author blasv
  */
-@SuppressWarnings("unused")
 public class CustomerListFragment extends ListFragment {
 
 	/**
-	 * For Use with Log functions
+	 * For Use with Log functions.
 	 */
 	private final String TAG = this.getClass().getSimpleName();
 
@@ -44,7 +42,7 @@ public class CustomerListFragment extends ListFragment {
 
 	/**
 	 * Creates a new customer list fragment.
-	 * @param customers
+	 * @param customers List of DiningSessions
 	 * @return New CustomerListFragment
 	 */
 	public static CustomerListFragment newInstance(List<DiningSession> customers) {
@@ -67,12 +65,14 @@ public class CustomerListFragment extends ListFragment {
 		super.onCreate(savedInstanceState);
 		//Retrieve customer list from stored arguments if available
 		@SuppressWarnings("rawtypes") //XXX SO UNSAFE
-		List mCustomers = getArguments() != null ? getArguments().getParcelableArrayList(KEY_LIST) : null;
-		if (mCustomers == null){
-			if (mListener != null)
+		List mCustomers = getArguments() != null 
+				? getArguments().getParcelableArrayList(KEY_LIST) : null;
+		if (mCustomers == null) {
+			if (mListener != null) {
 				mCustomers = mListener.getCurrentUsers();
-			else
+			} else {
 				mCustomers = new ArrayList<String>(); // Empty
+			}
 		}
 
 		mAdapter = new UserListAdapter(getActivity(), mCustomers);
@@ -91,34 +91,38 @@ public class CustomerListFragment extends ListFragment {
 	}
 
 	/**
-	 * @param customer
+	 * @param customer DiningSession
 	 */
 	public void addCustomer(DiningSession customer) {
 		if (mAdapter != null) {
 			mAdapter.add(customer);
-		} 
-		else
+		} else {
 			Log.d(TAG, "Attempted to add customer to nonexistent list!");
-		
-	}
-
-	public void removeCustomer(DiningSession customer){
-		if (mAdapter != null) {
-			mAdapter.remove(customer);
-		} else
-			Log.d(TAG, "Attempted to remove customer from nonexistent list!");
+		}
 	}
 
 	/**
-	 * Mandatory interface for this fragment
+	 * 
+	 * @param customer DiningSession
+	 */
+	public void removeCustomer(DiningSession customer) {
+		if (mAdapter != null) {
+			mAdapter.remove(customer);
+		} else {
+			Log.d(TAG, "Attempted to remove customer from nonexistent list!");
+		}
+	}
+
+	/**
+	 * Mandatory interface for this fragment.
 	 * @author mhotan
 	 */
 	public interface CustomerListener {
 
 		/**
-		 * Retrieves the current diningsessions 
+		 * Retrieves the current diningsessions.
 		 * 
-		 * @return
+		 * @return list of DiningSessions
 		 */
 		public List<DiningSession> getCurrentUsers();
 
@@ -132,6 +136,11 @@ public class CustomerListFragment extends ListFragment {
 		 */
 	}
 	
+	/**
+	 * 
+	 * @author 
+	 *
+	 */
 	private class UserListAdapter extends BaseAdapter {
 		
 		private List<DiningSession> users;
@@ -139,12 +148,12 @@ public class CustomerListFragment extends ListFragment {
 		private Context mContext;
 		
 		/**
-		 * Constructs a new UserList Adapter
+		 * Constructs a new UserList Adapter.
 		 * 
 		 * @param context The current context
 		 * @param userlist The list of users to display
 		 */
-		public UserListAdapter(Context context, List<DiningSession> userlist){
+		public UserListAdapter(Context context, List<DiningSession> userlist) {
 			mContext = context;
 			users = userlist;
 		}
@@ -173,8 +182,8 @@ public class CustomerListFragment extends ListFragment {
 		 * Currently only one item can be expanded at a time
 		 * @param position The position of the list item to toggle
 		 */
-		public void expand(int position){
-			if(expanded == position){//Already expanded, collapse it
+		public void expand(int position) {
+			if(expanded == position) { //Already expanded, collapse it
 				expanded = -1;
 			} else {
 				expanded = position;
@@ -182,12 +191,20 @@ public class CustomerListFragment extends ListFragment {
 			notifyDataSetChanged();
 		}
 		
+		/**
+		 * 
+		 * @param customer DiningSession
+		 */
 		public void add(DiningSession customer) {
 			users.add(customer);
 			Log.v(TAG, "Added customer " + customer);
 			notifyDataSetChanged();
 		}
 		
+		/**
+		 * 
+		 * @param customer DiningSession
+		 */
 		public void remove(DiningSession customer) {
 			users.remove(customer);
 			Log.v(TAG, "Removed customer " + customer);
@@ -201,27 +218,28 @@ public class CustomerListFragment extends ListFragment {
 			LinearLayout vw;
 			//use vw.findViewById(R.id.whatever) to get children views
 			
-			View vw_top;
-			View vw_bot;
-			if (convertView == null){
+			View vwTop;
+			View vwBot;
+			if (convertView == null) {
 				//Initialize and verticalize parent container viewgroup
 				vw = new LinearLayout(mContext);
 				vw.setOrientation(LinearLayout.VERTICAL);
 				
 				//inflate views from xml and add to parent view
-				LayoutInflater inflater = (LayoutInflater)mContext.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
-				vw_top = inflater.inflate(R.layout.listitem_restaurant_user_top, null, true);
-				vw_bot = inflater.inflate(R.layout.listitem_restaurant_user_bot, null, true);
-				vw.addView(vw_top);
-				vw.addView(vw_bot);
+				LayoutInflater inflater = 
+						(LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				vwTop = inflater.inflate(R.layout.listitem_restaurant_user_top, null, true);
+				vwBot = inflater.inflate(R.layout.listitem_restaurant_user_bot, null, true);
+				vw.addView(vwTop);
+				vw.addView(vwBot);
 			} else {
 				//Everything already created, just find them
 				vw = (LinearLayout) convertView;
-				vw_top = vw.findViewById(R.id.listitem_user_top);
-				vw_bot = vw.findViewById(R.id.listitem_user_bot);
+				vwTop = vw.findViewById(R.id.listitem_user_top);
+				vwBot = vw.findViewById(R.id.listitem_user_bot);
 			}
 			//Set up expand button
-			ImageButton expand = (ImageButton) vw_top.findViewById(R.id.button_expand_user);
+			ImageButton expand = (ImageButton) vwTop.findViewById(R.id.button_expand_user);
 			
 			expand.setOnClickListener(new View.OnClickListener() {
 	             public void onClick(View v) {
@@ -231,19 +249,20 @@ public class CustomerListFragment extends ListFragment {
 	             }
 	         });
 			
-			if(expanded != position)
-				vw_bot.setVisibility(View.GONE);
-			else
-				vw_bot.setVisibility(View.VISIBLE);
+			if(expanded != position) {
+				vwBot.setVisibility(View.GONE);
+			} else {
+				vwBot.setVisibility(View.VISIBLE);
+			}
 			
 			//TODO Pull actual info from a UserInfo object
-			TextView cust_name = (TextView) vw_top.findViewById(R.id.label_user_name);
+			TextView custName = (TextView) vwTop.findViewById(R.id.label_user_name);
 			
 			String name;
 			String phone;
 			
 			List<UserInfo> infolist = users.get(position).getUsers();
-			if(infolist != null && infolist.size() > 0 && infolist.get(0) != null){
+			if(infolist != null && infolist.size() > 0 && infolist.get(0) != null) {
 				UserInfo ui = infolist.get(0);
 				name = ui.getName();
 				phone = ui.getPhone();
@@ -253,9 +272,9 @@ public class CustomerListFragment extends ListFragment {
 				phone = "No phone?";
 			}
 	
-			cust_name.setText(name);
+			custName.setText(name);
 			
-			TextView infotext = (TextView) vw_bot.findViewById(R.id.label_user_info);
+			TextView infotext = (TextView) vwBot.findViewById(R.id.label_user_info);
 			infotext.setText(phone);
 			
 			

@@ -8,16 +8,11 @@ import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.CreateNewAccountFragment.CreateNewAccountListener;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -36,7 +31,7 @@ implements CreateNewAccountListener {
 	private static final String TAG = CreateNewRestaurantAccountActivity.class.getSimpleName();
 
 	/**
-	 * String representation of restaurant id
+	 * String representation of restaurant id.
 	 */
 	private String mRestaurantID;
 
@@ -46,21 +41,22 @@ implements CreateNewAccountListener {
 	private ProgressDialog mProgressDialog;
 
 	/**
-	 * Instance to myself
+	 * Instance to myself.
 	 */
-	private Context This;
+	private Context thisCxt;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_account);
 
-		This = this;
+		thisCxt = this;
 	}
 
 	/**
 	 * This automates the addition of the User Intent. Should never be called
 	 * when mUser is null.
+	 * @param intent Intent
 	 */
 	@Override
 	public void startActivity(Intent intent) {
@@ -110,14 +106,14 @@ implements CreateNewAccountListener {
 									// Alert dialog notifying user of exceptional case
 									// Unable to save restaurant
 									Utility.getFailedToCreateAccountDialog(
-											e.getMessage(), This).show();
+											e.getMessage(), thisCxt).show();
 								}
 							}
 						});
 					} else {
 						// Sign up didn't succeed. Look at the ParseException
 						// to figure out what went wrong
-						Utility.getFailedToCreateAccountDialog(e.getMessage(), This).show();
+						Utility.getFailedToCreateAccountDialog(e.getMessage(), thisCxt).show();
 					}
 
 					// Stop the alert dialog
@@ -126,7 +122,7 @@ implements CreateNewAccountListener {
 			});
 		} 
 		else {
-			Utility.getFailedToCreateAccountDialog(completeRes.getMessage(), This).show();
+			Utility.getFailedToCreateAccountDialog(completeRes.getMessage(), thisCxt).show();
 		}
 	}
 

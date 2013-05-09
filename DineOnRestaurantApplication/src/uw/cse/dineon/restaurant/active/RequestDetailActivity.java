@@ -4,10 +4,15 @@ import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import android.os.Bundle;
 
+/**
+ * 
+ * @author 
+ *
+ */
 public class RequestDetailActivity extends DineOnRestaurantActivity implements
 RequestDetailFragment.RequestDetailListener {
 
-public final static String EXTRA_REQUEST = "request";
+public static final String EXTRA_REQUEST = "request";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

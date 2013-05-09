@@ -8,11 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 /**
- * TODO
+ * TODO finish.
  * @author mhotan
  */
 public class RestaurantSelectionButtonsFragment extends Fragment 
@@ -62,7 +61,7 @@ implements View.OnClickListener {
 	}
 
 	/**
-	 * 
+	 * @param v View
 	 */
 	@Override
 	public void onClick(View v) {
@@ -90,19 +89,19 @@ implements View.OnClickListener {
 	public interface OnClickListener {
 		
 		/**
-		 * TODO
+		 * TODO finish.
 		 */
-		public void onShowNearbyRestaurants(/*TODO: Potentially add Filter parameters*/);
+		public void onShowNearbyRestaurants(/*TODO Potentially add Filter parameters*/);
 		
 		/**
-		 * TODO
+		 * TODO finish.
 		 */
-		public void onShowFriendsFavoriteRestaurants(/*TODO: Potentially and Filter parameters*/);
+		public void onShowFriendsFavoriteRestaurants(/*TODO Potentially and Filter parameters*/);
 		
 		/**
-		 * TODO
+		 * TODO finish.
 		 */
-		public void onShowUserFavorites(/*TODO: Potentially add Filter parameters*/);
+		public void onShowUserFavorites(/*TODO Potentially add Filter parameters*/);
 		
 	}
 

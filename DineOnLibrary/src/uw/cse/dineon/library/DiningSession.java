@@ -50,11 +50,11 @@ public class DiningSession extends TimeableStorable {
 
 	/**
 	 * Creates a dining session that is associated with a particular
-	 * start date
+	 * start date.
 	 * @param tableId Table ID to associate to
-	 * @param startDate 
+	 * @param startDate of session
 	 */
-	public DiningSession(int tableId, Date startDate){
+	public DiningSession(int tableId, Date startDate) {
 		super(DiningSession.class, startDate);
 		resetTableID(tableId);
 		mUsers = new ArrayList<UserInfo>();
@@ -68,7 +68,6 @@ public class DiningSession extends TimeableStorable {
 	 * and ID (sessToken).
 	 * 
 	 * @param po ParseObject to 
-	 * @throws ParseException 
 	 */
 	public DiningSession(ParseObject po) {
 		super(po);
@@ -102,25 +101,26 @@ public class DiningSession extends TimeableStorable {
 	}
 
 	/**
-	 * In order to keep track of what the 
+	 * In order to keep track of what orders have been completed.
 	 * @return A list of currently completed orders for this dining session
 	 */
-	public List<Order> getCompletedOrders(){
+	public List<Order> getCompletedOrders() {
 		List<Order> copy = new ArrayList<Order>(mCompletedOrders.size());
 		Collections.copy(copy, mCompletedOrders);
 		return copy;
 	}
 
 	/**
-	 * Adds a order to be pending for this session
+	 * Adds a order to be pending for this session.
+	 * @param order to add
 	 */
-	public void addPendingOrder(Order order){
+	public void addPendingOrder(Order order) {
 		//TODO
 	}
 
 	/**
-	 * Order has completed preparation and is served to the customer
-	 * @param order
+	 * Order has completed preparation and is served to the customer.
+	 * @param order that is served
 	 */
 	public void orderServed(Order order) {
 		// Order has left the kitchen and served to the table
@@ -128,10 +128,9 @@ public class DiningSession extends TimeableStorable {
 	}
 
 	/**
-	 * 
-	 * @param order
+	 * @param order to pay/that is paid
 	 */
-	public void paidOrder(Order order){
+	public void paidOrder(Order order) {
 
 	}
 
@@ -143,10 +142,10 @@ public class DiningSession extends TimeableStorable {
 	}
 
 	/**
-	 * Resets the current table ID to the inputted one
-	 * @param newId
+	 * Resets the current table ID to the inputed one.
+	 * @param newId to set to 
 	 */
-	public void resetTableID(int newId){
+	public void resetTableID(int newId) {
 		//TODO validate table number
 		// Throw illegal argument exception if needed
 		mTableID = newId;

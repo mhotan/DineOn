@@ -41,8 +41,8 @@ public class ProfileFragment extends Fragment {
 	}
 
 	/**
-	 * Sets profile name
-	 * @param n
+	 * Sets profile name.
+	 * @param n String to set
 	 */
 	public void mProfileName(String n) {
 		mProfileName.setText(n);

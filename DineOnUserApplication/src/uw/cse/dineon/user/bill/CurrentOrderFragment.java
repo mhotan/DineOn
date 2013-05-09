@@ -30,18 +30,18 @@ extends Fragment implements OnClickListener {
 	private static final String TAG = CurrentBillFragment.class.getSimpleName();
 
 	/**
-	 * an argument that can be used to pass this bundle explicit
+	 * an argument that can be used to pass this bundle explicit.
 	 * order as a list of Strings that currently represent Menu items
 	 */
 	public static final String ARGUMENT_ORDER = "Order";
 
 	/**
-	 * Current adapter for holding values to store on our list
+	 * Current adapter for holding values to store on our list.
 	 */
 	private OrderArrayAdapter mAdapter;
 
 	/**
-	 * Activty which serves as a Listener 
+	 * Activity which serves as a Listener. 
 	 */
 	private OrderUpdateListener mListener;
 
@@ -57,10 +57,12 @@ extends Fragment implements OnClickListener {
 
 		// Attempt to extract argument if this fragment was created with them
 		List<String> order;
-		if (getArguments() != null && (order = getArguments().getStringArrayList(ARGUMENT_ORDER)) != null) 
+		if (getArguments() != null && (order = getArguments().getStringArrayList(ARGUMENT_ORDER)) 
+				!= null) {
 			order = getArguments().getStringArrayList(ARGUMENT_ORDER);
-		else
+		} else {
 			order = new ArrayList<String>();
+		}
 
 			ListView listview = (ListView)view.findViewById(R.id.list_order);
 
@@ -94,16 +96,14 @@ extends Fragment implements OnClickListener {
 	}
 
 	/**
-	 * 
 	 * @param newItem TODO Replace with OrderItem
 	 */
-	public void addNewItem(String newItem){
+	public void addNewItem(String newItem) {
 		mAdapter.add(newItem);
 
 	}
 
 	/**
-	 * 
 	 * @param item MenuItem to remove from this
 	 */
 	public void removeItem(String item) {
@@ -119,41 +119,44 @@ extends Fragment implements OnClickListener {
 	/**
 	 * Listener associated with this containing fragment.
 	 * <b>This allows any containing activity to receive
-	 * messages from this interface's Fragment.
+	 * messages from this interface's Fragment.</b>
 	 * TODO Add modify as see fit to communicate back to activity
 	 * @author mhotan
 	 */
 	public interface OrderUpdateListener {
 
 		/**
-		 * User wishes place current order
-		 * @param order
+		 * User wishes place current order.
+		 * @param order to place
 		 */
 		public void onPlaceOrder(/*Replace with order class*/String order);
 
 		/**
-		 * User wishes to increment the quantity of a particular item on their order
-		 * TODO: Enforce assertion that item is actually placed in that order
-		 * @item item Menu item to increment
-		 * @order Order to increment item on
+		 * User wishes to increment the quantity of a particular item on their order.
+		 * TODO Enforce assertion that item is actually placed in that order
+		 * @param item Menu item to increment
+		 * @param order to increment item on
 		 */
-		public void onIncrementItemOrder(/*Replace with item order class*/String item, String order);
+		public void onIncrementItemOrder(/*Replace with item order class*/String item, 
+				String order);
 
 		/**
-		 * User wishes to decrement the quantity of a particular item on their order
-		 * TODO: Enforce assertion that item is actually placed in that order
-		 * @item item Menu item to decrement
-		 * @order Order to increment item on
+		 * User wishes to decrement the quantity of a particular item on their order.
+		 * TODO Enforce assertion that item is actually placed in that order
+		 * @param item Menu item to decrement
+		 * @param order to increment item on
 		 */
-		public void onDecrementItemOrder(/*Replace with item order class*/String item, String order);
+		public void onDecrementItemOrder(/*Replace with item order class*/String item, 
+				String order);
 
 		/**
-		 * User wishes to remove a particular item on their order
-		 * TODO: Enforce assertion that item is actually placed in that order
-		 * @item item Menu item to remove
-		 * @order Order to have the item removed from
+		 * User wishes to remove a particular item on their order.
+		 * TODO Enforce assertion that item is actually placed in that order
+		 * @param item Menu item to remove
+		 * @param order to have the item removed from
 		 */
-		public void onRemoveItemFromOrder(/*Replace with item order class*/String item, String order);
+		public void onRemoveItemFromOrder(/*Replace with item order class*/String item, 
+				String order);
 
 	}
 
@@ -167,19 +170,19 @@ extends Fragment implements OnClickListener {
 	private class OrderArrayAdapter extends ArrayAdapter<String> {
 
 		/**
-		 * Owning context
+		 * Owning context.
 		 */
 		private final Context mContext;
 
 		/**
-		 * List of menu items
+		 * List of menu items.
 		 * TODO Change String to MenuItem
 		 */
 		private final List<String> mItems;
 
 		/**
 		 * This is a runtime mapping between "More Info buttons"
-		 * and there respective restaurants
+		 * and there respective restaurants.
 		 * TODO Change String to restaurant;
 		 * NOTE (MH): Not exactly sure if this works
 		 */
@@ -187,16 +190,16 @@ extends Fragment implements OnClickListener {
 
 		/**
 		 * Mapping to increment and decrement button
-		 * to the text view it alters
+		 * to the text view it alters.
 		 */
 		private final Map<Button, TextView> mButtonToTextView;
 
-		private final OnItemClickListener _PrivateListener;
+		private final OnItemClickListener privateListener;
 
 		/**
-		 * Creates an array adapter to display a Order
+		 * Creates an array adapter to display a Order.
 		 * @param ctx Context of owning activity
-		 * @param menuItems List of menu items to display TODO Change type String to MenuItem
+		 * @param order List of menu items to display TODO Change type String to MenuItem
 		 */
 		public OrderArrayAdapter(Context ctx, List<String> order) {
 			super(ctx, R.layout.listitem_orderitem, order);
@@ -207,11 +210,11 @@ extends Fragment implements OnClickListener {
 			mViewToItem = new HashMap<View, String>();
 			mButtonToTextView = new HashMap<Button, TextView>();
 
-			_PrivateListener = new OnItemClickListener();
+			privateListener = new OnItemClickListener();
 		}
 
 		@Override
-		public View getView(int position, View covnertView, ViewGroup parent){
+		public View getView(int position, View covnertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.listitem_orderitem, parent, false);
@@ -250,17 +253,17 @@ extends Fragment implements OnClickListener {
 			mButtonToTextView.put(decButton, itemQuantity);
 
 			// Set the listeners for the buttons that alter the order state
-			incButton.setOnClickListener(_PrivateListener);
-			decButton.setOnClickListener(_PrivateListener);
-			deleteButton.setOnClickListener(_PrivateListener);
+			incButton.setOnClickListener(privateListener);
+			decButton.setOnClickListener(privateListener);
+			deleteButton.setOnClickListener(privateListener);
 			// Set the listener when the user selects the item in the current order
-			label.setOnClickListener(_PrivateListener);
+			label.setOnClickListener(privateListener);
 
 			return rowView;
 		}
 
 		/**
-		 * Private click listener for this list items
+		 * Private click listener for this list items.
 		 * TODO Can also be used by having a this object hold references for 
 		 * all the Item
 		 * @author mhotan
@@ -278,7 +281,7 @@ extends Fragment implements OnClickListener {
 					toAdd = 1;
 				case R.id.button_decrement_item:
 					TextView curValStr = mButtonToTextView.get(v);
-					assert(curValStr != null);
+					assert (curValStr != null);
 
 					// Obtain the potential new Value
 					Integer curVal = Integer.parseInt(curValStr.getText().toString());
@@ -300,6 +303,8 @@ extends Fragment implements OnClickListener {
 					break;
 				case R.id.label_order_item:
 					// TODO Add some way to show focus
+					break;
+				default:
 					break;
 				}
 			}

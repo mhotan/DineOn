@@ -5,6 +5,9 @@ import uw.cse.dineon.user.R;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+/**
+ * Activity to maintain current user bill.
+ */
 public class CurrentBillActivity extends DineOnUserActivity {
 
 	public static final String EXTRA_DININGSESSION = "DININGSESSION";

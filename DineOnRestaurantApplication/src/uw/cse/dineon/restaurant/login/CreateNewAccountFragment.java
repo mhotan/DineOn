@@ -58,6 +58,7 @@ public class CreateNewAccountFragment extends Fragment implements OnClickListene
 
 	/**
 	 * Handles the main click.
+	 * @param v View
 	 */
 	@Override
 	public void onClick(View v) {

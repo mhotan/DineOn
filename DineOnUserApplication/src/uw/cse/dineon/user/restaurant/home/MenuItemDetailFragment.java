@@ -8,6 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+/**
+ * 
+ * @author 
+ *
+ */
 public class MenuItemDetailFragment extends Fragment {
 
 	public static final String KEY_MENU = "menu";
@@ -23,8 +28,8 @@ public class MenuItemDetailFragment extends Fragment {
 	}
 
 	/**
-	 * TODO
-	 * @param item
+	 * TODO finish.
+	 * @param item String
 	 */
 	public void setMenuItem(/*Replace with MenuItem*/String item) {
 		TextView view = (TextView) getView().findViewById(R.id.label_menu_item_name);

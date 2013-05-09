@@ -1,8 +1,5 @@
 package uw.cse.dineon.restaurant.active;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import uw.cse.dineon.restaurant.R;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,7 +12,7 @@ import android.view.ViewGroup;
 
 /**
  * Shows a swipable user interface for the restaurant to
- * view their orders and request
+ * view their orders and request.
  * @author mhotan
  */
 public class OrderAndRequestFragment extends Fragment {
@@ -49,11 +46,15 @@ public class OrderAndRequestFragment extends Fragment {
 	}
 
 	/**
-	 * Adapter that handles the fragments within the view pager
+	 * Adapter that handles the fragments within the view pager.
 	 * @author mhotan
 	 */
 	private class OrderAndRequestAdapter extends FragmentPagerAdapter {
 
+		/**
+		 * 
+		 * @param fm FragmentManager
+		 */
 		public OrderAndRequestAdapter(FragmentManager fm) {
 			super(fm);
 		}
@@ -78,7 +79,7 @@ public class OrderAndRequestFragment extends Fragment {
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			position = Math.max(Math.min(position, CONTENT.length-1), 0);
+			position = Math.max(Math.min(position, CONTENT.length - 1), 0);
 			return CONTENT[position];
 		}
 	}

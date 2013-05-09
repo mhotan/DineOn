@@ -6,10 +6,6 @@ import java.util.Collections;
 
 import uw.cse.dineon.library.util.ParseUtil;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.parse.ParseException;
 import com.parse.ParseObject;
 
 /**

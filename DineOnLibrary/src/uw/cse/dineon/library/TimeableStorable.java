@@ -44,7 +44,7 @@ public abstract class TimeableStorable extends Storable {
 	 * @param clazz Classname to instantiate to
 	 * @param startDate Start date of this instance
 	 */
-	public TimeableStorable(Class<?> clazz, Date startDate){
+	public TimeableStorable(Class<?> clazz, Date startDate) {
 		super(clazz);
 		if (startDate == null) {
 			startDate = new Date();

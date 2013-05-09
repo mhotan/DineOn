@@ -28,7 +28,7 @@ public class DineOnUser extends Storable {
 	private List<RestaurantInfo> mFavRestaurants;
 
 	/**
-	 * List of current pending reservations
+	 * List of current pending reservations.
 	 */
 	private List<Reservation> mReservations;
 
@@ -38,17 +38,18 @@ public class DineOnUser extends Storable {
 	private List<UserInfo> mFriendsLists;
 
 	/**
-	 * Information associated with the User
+	 * Information associated with the User.
 	 */
 	private UserInfo mUserInfo;
 
 	/**
-	 * This is the dining session the team is currently involved in
+	 * This is the dining session the team is currently involved in.
 	 */
 	private DiningSession mDiningSession;
 
 	/**
-	 * Default constructor.
+	 * Constructs a DineOnUser from a ParseUser.
+	 * @param user to get data from.
 	 */
 	public DineOnUser(ParseUser user) {
 		super(DineOnUser.class); 
@@ -62,7 +63,6 @@ public class DineOnUser extends Storable {
 	/**
 	 * Creates a user from a parse object.
 	 * @param po Parse Object to use to build
-	 * @throws ParseException  If there was an error fetching the required data
 	 */
 	public DineOnUser(ParseObject po) {
 		super(po);
@@ -95,8 +95,7 @@ public class DineOnUser extends Storable {
 
 
 	/**
-	 *
-	 * @param restInfo RestaurantInfo
+	 * @param restInfo RestaurantInfo to add if not null
 	 */
 	public void addFavorite(RestaurantInfo restInfo) {
 		if (restInfo != null) {
@@ -105,19 +104,17 @@ public class DineOnUser extends Storable {
 	}
 
 	/**
-	 *
-	 * @param restInfo RestaurantInfo
+	 * @param restInfo RestaurantInfo to remove
 	 */
 	public void removeFavorite(RestaurantInfo restInfo) {
 		mFavRestaurants.remove(restInfo);
 	}
 
 	/**
-	 *
 	 * @param res Reservation
 	 */
 	public void addReservation(Reservation res) {
-		if (res != null){
+		if (res != null) {
 			mReservations.add(res);
 		}
 	}
@@ -209,6 +206,9 @@ public class DineOnUser extends Storable {
 		this.mDiningSession = diningSession;
 	}
 
+	/**
+	 * @return String name of User
+	 */
 	public String getName() {
 		return mUserInfo.getName();
 	}

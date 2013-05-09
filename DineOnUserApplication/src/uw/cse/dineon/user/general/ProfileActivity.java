@@ -5,7 +5,7 @@ import uw.cse.dineon.user.R;
 import android.os.Bundle;
 
 /**
- * Activity that manages the profile and settings fragments
+ * Activity that manages the profile and settings fragments.
  * 
  * @author mhotan
  */

@@ -1,10 +1,16 @@
 package uw.cse.dineon.library.util;
 
 /**
- * Generalized wrapper class to hold constants that pertain to multiple modules with the applications
+ * Generalized wrapper class to hold constants that pertain to multiple modules 
+ * with the applications.
  * @author mhotan
  */
-public class DineOnConstants {
+public final class DineOnConstants {
+	
+	/**
+	 * Hidden constructor.
+	 */
+	private DineOnConstants() { }
 	
 	/**
 	 * Global constant that determines certain procedure flows.
@@ -22,9 +28,9 @@ public class DineOnConstants {
 	public static final String DINING_SESSION = "DiningSession";
 	
 	// Request Code for multiple Activity use
-	public final static int REQUEST_CHECK_IN = 0x1;
-	public final static int REQUEST_VIEW_CURRENT_ORDER = 0x2;
-	public final static int REQUEST_PAY_BILL = 0x2;
+	public static final int REQUEST_CHECK_IN = 0x1;
+	public static final int REQUEST_VIEW_CURRENT_ORDER = 0x2;
+	public static final int REQUEST_PAY_BILL = 0x2;
 	// some change
 	
 	/**
@@ -62,15 +68,18 @@ public class DineOnConstants {
 	private static final String ACTION_PREFIX = "uw.cse.dineon.user.";
 	
 	// For Restaurant
-	public static final String ACTION_REQUEST_DINING_SESSION = ACTION_PREFIX + "REQUEST_DINING_SESSION";
+	public static final String ACTION_REQUEST_DINING_SESSION = 
+			ACTION_PREFIX + "REQUEST_DINING_SESSION";
 	public static final String ACTION_ORDER_PLACED = ACTION_PREFIX + "ORDER_PLACED";
 	public static final String ACTION_CHECK_OUT = ACTION_PREFIX + "CHECK_OUT";
 	public static final String ACTION_CHANGE_USER_INFO = ACTION_PREFIX + "CHANGE_USER_INFO";
 	public static final String ACTION_CUSTOMER_REQUEST = ACTION_PREFIX + "CUSTOMER_REQUEST";
 
 	// For Customer
-	public static final String ACTION_CONFIRM_DINING_SESSION = ACTION_PREFIX + "CONFIRM_DINING_SESSION";
-	public static final String ACTION_CHANGE_RESTAURANT_INFO = ACTION_PREFIX + "CHANGE_RESTAURANT_INFO";
+	public static final String ACTION_CONFIRM_DINING_SESSION = 
+			ACTION_PREFIX + "CONFIRM_DINING_SESSION";
+	public static final String ACTION_CHANGE_RESTAURANT_INFO = 
+			ACTION_PREFIX + "CHANGE_RESTAURANT_INFO";
 
 	/**
 	 * Constant key for Parse extracting channel.
@@ -83,9 +92,9 @@ public class DineOnConstants {
 	public static final String PARSE_DATA = "com.parse.Data";
 	
 	/**
-	 * This is a channel prefix for Push Channels
+	 * This is a channel prefix for Push Channels.
 	 * IE channel for receiving a broadcast from a particular restaurant would be 
 	 * 
 	 */
-	final static String CHANNEL_PREFIX = "uw_cse_dineon_";
+	static final String CHANNEL_PREFIX = "uw_cse_dineon_";
 }

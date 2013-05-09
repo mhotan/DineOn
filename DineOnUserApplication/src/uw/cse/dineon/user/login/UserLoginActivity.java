@@ -35,9 +35,9 @@ import com.parse.SaveCallback;
 /**
  * Initial activity that user is brought to in order to gain admittance.  
  * Activity that allows users to login via Email and Password, Facebook, or Twitter
- * <b>Application has the ability of connecting to facebook and twitter
- * <b>Once login is validated users will be taken to the restaurant selection activity
- * <b>User also have the ability to create a new account  
+ * <b>Application has the ability of connecting to facebook and twitter. </b>
+ * <b>Once login is validated users will be taken to the restaurant selection activity. </b>
+ * <b>User also have the ability to create a new account.  </b>
  * 
  * @author mhotan
  */
@@ -52,7 +52,7 @@ LoginFragment.OnLoginListener {
 
 	public static final String EXTRA_FACEBOOK = "Login with facebook";
 
-	private Context This;
+	private Context thisCxt;
 	
 	/**
 	 * Reference to User object that is created or downloaded.
@@ -78,15 +78,16 @@ LoginFragment.OnLoginListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		mLoginCallback = new DineOnLoginCallback(this);
-		This = this;
+		thisCxt = this;
 	}
 	
 	/**
 	 * This automates the addition of the User Intent.
 	 * Should never be called when mUser is null.
+	 * @param intent Intent
 	 */
 	@Override
-	public void startActivity (Intent intent) {
+	public void startActivity(Intent intent) {
 		if (DineOnConstants.DEBUG && mUserID == null) {
 			Toast.makeText(this, "Need to create or download a User", Toast.LENGTH_SHORT).show();
 			return;
@@ -232,7 +233,7 @@ LoginFragment.OnLoginListener {
 	 * Hides the progress dialog if there is one.
 	 */
 	protected void destroyProgressDialog() {
-		if(mProgressDialog != null && mProgressDialog.isShowing()){
+		if(mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
 		}
 	}
@@ -287,21 +288,21 @@ LoginFragment.OnLoginListener {
 			if (user == null) {
 				destroyProgressDialog();
 				Utility.getGeneralAlertDialog("Login Failed", 
-						"Invalid Login Credentials", This).show();
+						"Invalid Login Credentials", thisCxt).show();
 				return;
 			} 
 			
 			if (e != null) {
 				destroyProgressDialog();
-				Utility.getGeneralAlertDialog("Login Failed", e.getMessage(), This).show();
+				Utility.getGeneralAlertDialog("Login Failed", e.getMessage(), thisCxt).show();
 				return;
 			}
 
 			// This method at this point needs to produce a User Instance 
 			if (user.isNew()) {
 				destroyProgressDialog();
-				final DineOnUser mUser = new DineOnUser(user);
-				mUser.saveInBackGround(new SaveCallback() {
+				final DineOnUser M_USER = new DineOnUser(user);
+				M_USER.saveInBackGround(new SaveCallback() {
 
 					/**
 					 * Start an activity Restaurant selection
@@ -311,11 +312,11 @@ LoginFragment.OnLoginListener {
 					public void done(ParseException e) {
 						destroyProgressDialog();
 						if (e == null) { // Success
-							mUserID = mUser.getObjId();
+							mUserID = M_USER.getObjId();
 							startRestSelectionAct();
 						} else {
 							Utility.getGeneralAlertDialog("Login Failed", 
-									e.getMessage(), This).show();
+									e.getMessage(), thisCxt).show();
 						}
 					}
 				});
@@ -348,8 +349,7 @@ LoginFragment.OnLoginListener {
 		}
 		
 		/**
-		 * Attempts to find the User associated with this Finder
-		 * @param user
+		 * Attempts to find the User associated with this Finder.
 		 */
 		public void findUser() {
 			// TODO use inner queries to find the right UserInfo
@@ -375,7 +375,7 @@ LoginFragment.OnLoginListener {
 				}
 			} else {
 				Utility.getGeneralAlertDialog("Server Failure", 
-						"Failed to get your information", This).show();
+						"Failed to get your information", thisCxt).show();
 			}
 		}
 	} 

@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Blank fragment for just space filling purposes
+ * Blank fragment for just space filling purposes.
  * @author mhotan
  */
 public class ContainerFragment extends DialogFragment {

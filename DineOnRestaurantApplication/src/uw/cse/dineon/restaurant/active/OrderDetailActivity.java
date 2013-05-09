@@ -5,13 +5,13 @@ import uw.cse.dineon.restaurant.R;
 import android.os.Bundle;
 
 /**
- * An Activity that just shows the detail of an Order
+ * An Activity that just shows the detail of an Order.
  * @author mhotan
  */
 public class OrderDetailActivity extends DineOnRestaurantActivity implements
 OrderDetailFragment.OrderDetailListener {
 
-	public final static String EXTRA_ORDER = "order";
+	public static final String EXTRA_ORDER = "order";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

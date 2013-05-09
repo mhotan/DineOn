@@ -20,7 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 /**
- * A List fragment that contains pending Request
+ * A List fragment that contains pending Request.
  * @author mhotan
  */
 public class RequestListFragment extends ListFragment {
@@ -35,15 +35,16 @@ public class RequestListFragment extends ListFragment {
 	private static final String KEY_LIST = "MY LIST";
 	
 	/**
-	 * Creates a new customer list fragment
+	 * Creates a new customer list fragment.
 	 * @param requests TODO Change to request class
 	 * @return new fragment
 	 */
-	public static RequestListFragment newInstance(List<String> requests){
+	public static RequestListFragment newInstance(List<String> requests) {
 		RequestListFragment frag = new RequestListFragment();
 		ArrayList<String> mList = new ArrayList<String>();
-		if (requests != null) 
+		if (requests != null) {
 			mList.addAll(requests);
+		}
 
 		Bundle args = new Bundle();
 		args.putStringArrayList(KEY_LIST, mList);
@@ -54,12 +55,14 @@ public class RequestListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		List<String> mRequests = getArguments() != null ? getArguments().getStringArrayList(KEY_LIST) : null;
-		if (mRequests == null){
-			if (mListener != null)
+		List<String> mRequests = getArguments() != null 
+				? getArguments().getStringArrayList(KEY_LIST) : null;
+		if (mRequests == null) {
+			if (mListener != null) {
 				mRequests = mListener.getCurrentRequests();
-			else
+			} else {
 				mRequests = new ArrayList<String>(); // Empty
+			}
 		}
 
 		//TODO Create custom adapter to handle custom layoutss
@@ -68,7 +71,8 @@ public class RequestListFragment extends ListFragment {
 	}
 	
 	/**
-	 * Activity Created its on create
+	 * Activity Created its on create.
+	 * @param savedInstanceState Bundle
 	 */
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -98,37 +102,38 @@ public class RequestListFragment extends ListFragment {
 	//////////////////////////////////////////////////////
 
 	/**
-	 * Adds request to this view
-	 * @param request
+	 * Adds request to this view.
+	 * @param request String
 	 */
-	public void addRequest(String request){
+	public void addRequest(String request) {
 		mAdapter.add(request);
 		mAdapter.notifyDataSetChanged();
 	}
 
 	/**
-	 * Adds all the requests to this view
-	 * @param request
+	 * Adds all the requests to this view.
+	 * @param request Collection of Strings
 	 */
-	public void addAll(Collection<String> request){
-		for (String o: request)
+	public void addAll(Collection<String> request) {
+		for (String o: request) {
 			mAdapter.add(o);
+		}
 		mAdapter.notifyDataSetChanged();
 	}
 
 	/**
-	 * Deletes this request if it finds it
-	 * @param request
+	 * Deletes this request if it finds it.
+	 * @param request String
 	 */
-	public void deleteRequest(String request){
+	public void deleteRequest(String request) {
 		mAdapter.remove(request);
 		mAdapter.notifyDataSetChanged();
 	}
 
 	/**
-	 * Clears all requests
+	 * Clears all requests.
 	 */
-	public void clearRequest(){
+	public void clearRequest() {
 		mAdapter.clear();
 		mAdapter.notifyDataSetChanged();
 	}
@@ -140,20 +145,20 @@ public class RequestListFragment extends ListFragment {
 	//////////////////////////////////////////////////////
 
 	/**
-	 * Mandatory Listener for this Fragment class
+	 * Mandatory Listener for this Fragment class.
 	 * @author mhotan
 	 */
 	public interface RequestItemListener {
 
 		/**
 		 * Request detail information to be presented
-		 * about the specific request
+		 * about the specific request.
 		 * @param request request to get detail 
 		 */
 		public void onRequestRequestDetail(String request);
 
 		/**
-		 * Assign the staffmember to handle the request
+		 * Assign the staffmember to handle the request.
 		 * @param request request to handle 
 		 * @param staff staff member to assign to request
 		 */
@@ -168,12 +173,12 @@ public class RequestListFragment extends ListFragment {
 		/**
 		 * Removes a request. request is removed completely from this 
 		 * list.  This is a notification method 
-		 * @param request
+		 * @param request String
 		 */
 		public void onRemoveRequest(String request);
 
 		/**
-		 * Used to get the most recent up to date list of items to show
+		 * Used to get the most recent up to date list of items to show.
 		 * Cannot return null
 		 * @return List of requests to show
 		 */
@@ -187,7 +192,7 @@ public class RequestListFragment extends ListFragment {
 	//////////////////////////////////////////////////////
 
 	/**
-	 * Adpater to handle request management and layout
+	 * Adpater to handle request management and layout.
 	 * @author mhotan
 	 */
 	private class RequestListAdapter extends ArrayAdapter<String> {
@@ -198,11 +203,11 @@ public class RequestListFragment extends ListFragment {
 
 		/**
 		 * Creates an adapter that manages the addition and layout of
-		 * Orders
-		 * @param ctx
-		 * @param items
+		 * Orders.
+		 * @param ctx Context
+		 * @param orders List of orders
 		 */
-		public RequestListAdapter(Context ctx, List<String> orders){
+		public RequestListAdapter(Context ctx, List<String> orders) {
 			super(ctx, R.layout.listitem_restaurant_request, orders);
 			this.mContext = ctx;
 			this.mRequests = orders;
@@ -215,7 +220,7 @@ public class RequestListFragment extends ListFragment {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent){
+		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view = inflater.inflate(R.layout.listitem_restaurant_request, parent, false);
@@ -229,7 +234,8 @@ public class RequestListFragment extends ListFragment {
 			ImageButton sendToStaff = (ImageButton) view.findViewById(R.id.button_send_to_staff);
 			CheckBox dismissBox = (CheckBox) view.findViewById(R.id.checkBox_dismiss_request);
 			Spinner staff = (Spinner) view.findViewById(R.id.spinner_staff_to_assign);
-			staff.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mStaff));
+			staff.setAdapter(new ArrayAdapter<String>(getActivity(), 
+					android.R.layout.simple_list_item_1, mStaff));
 			
 			AllAroundListener listener = new AllAroundListener(request,
 					staff,
@@ -245,7 +251,7 @@ public class RequestListFragment extends ListFragment {
 		}
 
 		/**
-		 * Listener to handle the use of buttons on request items
+		 * Listener to handle the use of buttons on request items.
 		 * @author mhotan
 		 */
 		private class AllAroundListener implements 
@@ -257,12 +263,20 @@ public class RequestListFragment extends ListFragment {
 			private final CheckBox mDismiss;
 			private boolean mDelete;
 
+			/**
+			 * 
+			 * @param request String
+			 * @param staff Spinner
+			 * @param assignToStaff ImageButton
+			 * @param detailButton ImageButton
+			 * @param dismiss CheckBox
+			 */
 			public AllAroundListener(
 					String request,
 					Spinner staff,
 					ImageButton assignToStaff,
 					ImageButton detailButton,
-					CheckBox dismiss){
+					CheckBox dismiss) {
 
 				mRequest = request;
 				mStaff = staff;

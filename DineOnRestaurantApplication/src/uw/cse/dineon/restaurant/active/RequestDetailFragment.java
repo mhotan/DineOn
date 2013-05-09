@@ -22,7 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 /**
- * Shows the details of the request
+ * Shows the details of the request.
  * @author mhotan
  */
 public class RequestDetailFragment extends Fragment 
@@ -112,7 +112,7 @@ implements OnCheckedChangeListener, OnClickListener {
 	//////////////////////////////////////////////////////
 
 	/**
-	 * Sets the state of this fragment to this request
+	 * Sets the state of this fragment to this request.
 	 * @param request request to update the fragment to
 	 */
 	public void setRequest(String request) {
@@ -133,9 +133,9 @@ implements OnCheckedChangeListener, OnClickListener {
 	}
 
 	/**
-	 * Updates the state of the view pending the whether there is a request
+	 * Updates the state of the view pending the whether there is a request.
 	 */
-	private void updateState(){
+	private void updateState() {
 		if (mRequest == null) {
 			mSendMessage.setEnabled(false);
 			mSendTask.setEnabled(false);
@@ -152,13 +152,13 @@ implements OnCheckedChangeListener, OnClickListener {
 	//////////////////////////////////////////////////////
 
 	/**
-	 * Listener for this fragment
+	 * Listener for this fragment.
 	 * @author mhotan
 	 */
 	public interface RequestDetailListener {
 
 		/**
-		 * TODO Replace all of the argument data types appropiately
+		 * TODO Replace all of the argument data types appropiately.
 		 * @param request Request to reference
 		 * @param staff staff to assign to
 		 * @param urgency Urgency to accomplish task
@@ -166,7 +166,7 @@ implements OnCheckedChangeListener, OnClickListener {
 		public void onSendTaskToStaff(String request, String staff, String urgency);
 
 		/**
-		 * Send a message to the customer about their request
+		 * Send a message to the customer about their request.
 		 * @param request request to send
 		 * @param message message
 		 */

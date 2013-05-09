@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 /**
- * This Fragment describes the detail of an order
+ * This Fragment describes the detail of an order.
  * @author mhotan
  */
 public class OrderDetailFragment extends Fragment implements OnClickListener {
@@ -65,9 +65,9 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	}
 	
 	/**
-	 * Updates the state of the view pending the whether there is a request
+	 * Updates the state of the view pending the whether there is a request.
 	 */
-	private void updateState(){
+	private void updateState() {
 		if (mOrder == null) {
 			mSendMessageButton.setEnabled(false);
 		} else {
@@ -83,10 +83,10 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 
 	/**
 	 * Sets the current display of this fragment to that of the 
-	 * order requested
+	 * order requested.
 	 * @param order order to present
 	 */
-	public void setOrder(/*TODO Replace with Order class*/ String order){
+	public void setOrder(/*TODO Replace with Order class*/ String order) {
 		mOrder = order;
 		
 		// TODO Replace the fake the funk
@@ -103,8 +103,9 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		// Leave generally as is.
 		// Just change String to MenuItem or Convert Menu Item to a String
 		mAdapter.clear();
-		for (String item: items)
+		for (String item: items) {
 			mAdapter.add(item);
+		}
 		mAdapter.notifyDataSetChanged();
 		updateState();
 	}
@@ -117,14 +118,14 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 
 	/**
 	 * Any activity who wished to attach OrderDetailFragment
-	 * must implement this Listener
+	 * must implement this Listener.
 	 * @author mhotan
 	 */
 	public interface OrderDetailListener {
 
 		/**
 		 * Call back that shows that the user wishes to send a message 
-		 * to the customer pertaining that specific orders
+		 * to the customer pertaining that specific orders.
 		 * @param order Order to associate message to
 		 * @param message Message to send for this order
 		 */
@@ -139,8 +140,9 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		String message = mMessageInput.getText().toString();
-		if (message.length() == 0)
+		if (message.length() == 0) {
 			return;
+		}
 		// TODO Implement
 		mListener.sendMessage("ORDER GOES HERE", message);
 	}

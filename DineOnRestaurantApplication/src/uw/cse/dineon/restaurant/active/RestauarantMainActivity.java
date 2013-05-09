@@ -26,8 +26,7 @@ import android.support.v4.view.ViewPager;
 public class RestauarantMainActivity extends DineOnRestaurantActivity implements
 OrderListFragment.OrderItemListener,
 RequestListFragment.RequestItemListener,
-CustomerListFragment.CustomerListener 
-{
+CustomerListFragment.CustomerListener {
 
 	private static final String TAG = RestauarantMainActivity.class.getSimpleName(); 
 
@@ -135,18 +134,19 @@ CustomerListFragment.CustomerListener
 		 * Returns the a reference to the current fragment in focus. 
 		 * @return Fragment user is looking at
 		 */
-		public Fragment getCurrentFragment(){
+		public Fragment getCurrentFragment() {
 			return mCurrent;
 		}
 	}
 
 	/**
-	 * Updates the current fragment if it is in focus
+	 * Updates the current fragment if it is in focus.
 	 * 
-	 * @param customer
+	 * @param customer String
 	 */
 	//TODO Make this take a diningsession
-	private void addCustomer(String customer){
+	@SuppressWarnings({ "unused" })
+	private void addCustomer(String customer) {
 		Fragment f = mPagerAdapter.getCurrentFragment();
 		if (f != null && f instanceof CustomerListFragment) {
 			CustomerListFragment frag = (CustomerListFragment) f;
@@ -157,9 +157,9 @@ CustomerListFragment.CustomerListener
 	
 	/**
 	 * Updates the current fragment if it is in focus.
-	 * @param order
+	 * @param order String
 	 */
-	private void addOrder(String order){
+	private void addOrder(String order) {
 		Fragment f = mPagerAdapter.getCurrentFragment();
 		if (f != null && f instanceof OrderListFragment) {
 			OrderListFragment frag = (OrderListFragment) f;
@@ -170,9 +170,9 @@ CustomerListFragment.CustomerListener
 	
 	/**
 	 * Updates the current fragment if it is in focus.
-	 * @param request
+	 * @param request String
 	 */
-	private void addRequest(String request){
+	private void addRequest(String request) {
 		Fragment f = mPagerAdapter.getCurrentFragment();
 		if (f != null && f instanceof RequestListFragment) {
 			RequestListFragment frag = (RequestListFragment) f;

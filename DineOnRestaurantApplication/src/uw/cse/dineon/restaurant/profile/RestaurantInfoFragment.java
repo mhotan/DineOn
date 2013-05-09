@@ -37,7 +37,7 @@ public class RestaurantInfoFragment extends Fragment {
 	 * @param info Restaurant Info to be prepared to present
 	 * @return New image fragment.
 	 */
-	public static RestaurantInfoFragment newInstance(RestaurantInfo info){
+	public static RestaurantInfoFragment newInstance(RestaurantInfo info) {
 		// Prepare a Bundle argument
 		// for starting an activity with
 		RestaurantInfoFragment frag = new RestaurantInfoFragment();
@@ -47,6 +47,7 @@ public class RestaurantInfoFragment extends Fragment {
 		return frag;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -157,9 +158,9 @@ public class RestaurantInfoFragment extends Fragment {
 
 		/**
 		 * Create a listener associated with this Image Id.
-		 * @param imgId
+		 * @param imgId int
 		 */
-		public ImageSelectListener(int imgId){
+		public ImageSelectListener(int imgId) {
 			mImgID = imgId;
 		}
 
@@ -175,21 +176,21 @@ public class RestaurantInfoFragment extends Fragment {
 		}
 
 		/**
-		 * Gets the associated Image id for this restaurant image
-		 * @return
+		 * Gets the associated Image id for this restaurant image.
+		 * @return int
 		 */
-		public int getImageID(){
+		public int getImageID() {
 			return mImgID;
 		}
 
 	}
 
 	/**
-	 * This provides ONE method of decoding an image to that is 
+	 * This provides ONE method of decoding an image to that is.
 	 * @param path path of image file to download
-	 * @return
+	 * @return View
 	 */
-	View insertPhoto(String path){
+	View insertPhoto(String path) {
 		// Decode the image as a 220 x 220 image
 		//		Bitmap bm = decodeSampledBitmapFromUri(path, 220, 220);
 

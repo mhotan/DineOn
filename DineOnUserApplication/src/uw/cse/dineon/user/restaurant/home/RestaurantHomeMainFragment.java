@@ -69,19 +69,23 @@ public class RestaurantHomeMainFragment extends Fragment {
 	}
 
 	/**
-	 * Adapter class that manages the view 
+	 * Adapter class that manages the view.
 	 * @author mhotan
 	 *
 	 */
 	class RestaurantMenuCategoryAdapter extends FragmentPagerAdapter {
 
+		/**
+		 * 
+		 * @param fm FragmentManager
+		 */
 		public RestaurantMenuCategoryAdapter(FragmentManager fm) {
 			super(fm);
 		}
 
 		@Override
 		public Fragment getItem(int position) {
-			Fragment f =null;
+			Fragment f = null;
 			Bundle data = new Bundle();
 			// make sure position is within bounds
 			position = Math.min(Math.max(position, 0), CONTENT.length - 1);
@@ -89,7 +93,8 @@ public class RestaurantHomeMainFragment extends Fragment {
 			case 0: // Show restaurant info
 				String restaurant = "FIXME: Restaurant should be here!";
 				f = new RestaurantInfoFragment();
-				data.putString(RestaurantInfoActivity.EXTRA_RESTAURANT, mListener.getCurrentRestaurant());
+				data.putString(RestaurantInfoActivity.EXTRA_RESTAURANT, 
+						mListener.getCurrentRestaurant());
 				f.setArguments(data);
 				break;
 			default:
@@ -115,13 +120,14 @@ public class RestaurantHomeMainFragment extends Fragment {
 	}
 
 	/**
-	 * TODO
+	 * TODO implement.
 	 * @author mhotan
 	 */
 	public interface ReferenceDataListener {
 
 		/**
-		 * TODO change to Restaurant datatype
+		 * TODO change to Restaurant datatype.
+		 * @return String
 		 */
 		public String getCurrentRestaurant();
 

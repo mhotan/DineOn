@@ -9,9 +9,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+/**
+ * 
+ * @author 
+ */
 public class CurrentOrderActivity extends DineOnUserActivity implements
-CurrentOrderFragment.OrderUpdateListener
-{
+CurrentOrderFragment.OrderUpdateListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -26,7 +29,7 @@ CurrentOrderFragment.OrderUpdateListener
 	}
 	
 	@Override
-	public boolean onPrepareOptionsMenu (Menu menu) {		
+	public boolean onPrepareOptionsMenu(Menu menu) {		
 		// TODO If in landscape mode then user already sees the bill
 		// So hide the fragments
 		CurrentBillFragment fragment = (CurrentBillFragment)
@@ -51,8 +54,11 @@ CurrentOrderFragment.OrderUpdateListener
 		case R.id.option_paybill:
 			Intent intent = new Intent(getApplicationContext(),
 					CurrentBillActivity.class);
-			intent.putExtra(CurrentBillActivity.EXTRA_DININGSESSION, "Dining session with accrued orders goes here");
+			intent.putExtra(CurrentBillActivity.EXTRA_DININGSESSION, 
+					"Dining session with accrued orders goes here");
 			startActivityForResult(intent, DineOnConstants.REQUEST_PAY_BILL);
+			break;
+		default:
 			break;
 		}
 		

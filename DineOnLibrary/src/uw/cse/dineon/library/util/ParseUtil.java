@@ -41,9 +41,14 @@ import com.parse.SignUpCallback;
  * Class will wrap all functions that abstract interaction with
  * the Parse framework
  */
-public class ParseUtil {
+public final class ParseUtil {
 	private static final String TAG = "ParseUtil";
 
+	/**
+	 * Hidden constructor.
+	 */
+	private ParseUtil() { }
+	
 
 	/**
 	 * Create a user for the user side of the DineOn application.
@@ -52,34 +57,33 @@ public class ParseUtil {
 	 * Must not be already used by another user. 
 	 * @param passwd - The password to use with the new user will login
 	 * @param callback - the static method to call once the response returns from Parse Cloud
-	 * @throws IllegalArgumentException if any param is nu
+	 * @throws IllegalArgumentException if any param is null.
 	 */
 	public static void createDineOnUser(String uname, String passwd, Method callback) {
 		//TODO handle exception cases.
-		if(uname == null || passwd == null || callback == null)
+		if(uname == null || passwd == null || callback == null) {
 			throw new IllegalArgumentException();
+		}
 		ParseUser pu = new ParseUser();
 		pu.setUsername(uname);
 		pu.setPassword(passwd);
-		final Method m = callback;
+		final Method M = callback;
 		pu.signUpInBackground(new SignUpCallback() {
 
 			@Override
 			public void done(ParseException e) {
-				if(e == null){
+				if(e == null) {
 					Boolean params = true;
 					try {
-						if (m != null) {
-							m.invoke(null, params); 
+						if (M != null) {
+							M.invoke(null, params); 
 						}
-					}catch(NullPointerException e1){
+					} catch (NullPointerException e1) {
 						Log.d(TAG, "Error: " + e1.getMessage());
 					} catch (IllegalArgumentException e1) {
-						// TODO Auto-generated catch block
 						Log.d(TAG, "Error: " + e1.getMessage());
 						e1.printStackTrace();
 					} catch (IllegalAccessException e1) {
-						// TODO Auto-generated catch block
 						Log.d(TAG, "Error: " + e1.getMessage());
 						e1.printStackTrace();
 					} catch (InvocationTargetException e1) {
@@ -104,10 +108,11 @@ public class ParseUtil {
 	 * @throws IllegalArgumentException if any param is null.
 	 */
 	public static void logInDineOnCreds(String uname, String passwd, Method callback) {
-		if(uname == null || passwd == null || callback == null)
+		if(uname == null || passwd == null || callback == null) {
 			throw new IllegalArgumentException();
+		}
 
-		final Method m = callback;
+		final Method M = callback;
 		ParseUser.logInInBackground(uname, passwd, new LogInCallback() {
 
 			@Override
@@ -125,21 +130,21 @@ public class ParseUtil {
 				// User create account failed
 
 			}
-
 		});
 	}
+	
 	/**
 	 * Save obj into the cloud and store the acquired objID into obj.
 	 * 
 	 * @param obj the java object that will be saved to the cloud
-	 * @param m The static callback to execute on completion of the save.
+	 * @param handler The static callback to execute on completion of the save.
 	 */
 	public static void saveDataToCloud(Storable obj, Method handler) {
-		final Method h = handler;
+		final Method H = handler;
 
-		final ParseObject pObj = obj.packObject();
-		final Storable s = obj;
-		pObj.saveInBackground(new SaveCallback() {
+		final ParseObject P_OBJ = obj.packObject();
+		final Storable S = obj;
+		P_OBJ.saveInBackground(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
 				if (e == null) {
@@ -154,18 +159,16 @@ public class ParseUtil {
 				}
 
 				try {
-					if (h != null) {
-						h.invoke(null, (e == null) ? Boolean.TRUE : Boolean.FALSE, 
-								pObj.getObjectId(), s);
+					if (H != null) {
+						H.invoke(null, (e == null) ? Boolean.TRUE : Boolean.FALSE, 
+								P_OBJ.getObjectId(), S);
 					}
 				} catch (IllegalArgumentException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (InvocationTargetException e1) {
-					// TODO Auto-generated catch block
+					// TODO Auto-generated catch block (same as above)
 					e1.printStackTrace();
 				}
 			}
@@ -175,7 +178,7 @@ public class ParseUtil {
 	}
 
 	/**
-	 * Save obj into the cloud and store the acquired objID into obj
+	 * Save obj into the cloud and store the acquired objID into obj.
 	 *   -For example, a call to this function may looks like this:
 	 * 		
 	 * 		Method m = MyActivity.class.getMethod("callback", 
@@ -191,12 +194,12 @@ public class ParseUtil {
 	 */
 	public static void saveDataToCloud(Activity activity,
 									   Storable obj,
-									   Method handler){
-		final Method h = handler;
-		final Activity act = activity;
-		final ParseObject pObj = obj.packObject();
-		final Storable s = obj;
-		pObj.saveInBackground( new SaveCallback() {
+									   Method handler) {
+		final Method H = handler;
+		final Activity ACT = activity;
+		final ParseObject P_OBJ = obj.packObject();
+		final Storable S = obj;
+		P_OBJ.saveInBackground(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
 				if (e == null) {
@@ -209,16 +212,16 @@ public class ParseUtil {
 				}
 
 				try {
-					if (h != null && act != null)
-						h.invoke(act, (e == null) ? Boolean.TRUE : Boolean.FALSE, pObj.getObjectId(), s);
+					if (H != null && ACT != null) {
+						H.invoke(ACT, (e == null) ? Boolean.TRUE : Boolean.FALSE, 
+								P_OBJ.getObjectId(), S);
+					}
 				} catch (IllegalArgumentException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (InvocationTargetException e1) {
-					// TODO Auto-generated catch block
+					// TODO Auto-generated catch block (same as above)
 					e1.printStackTrace();
 				}
 			}
@@ -242,14 +245,14 @@ public class ParseUtil {
 			Map<String, String> attr) {
 
 		ParseQuery query = new ParseQuery(c.getSimpleName());
-		if(attr != null){
+		if(attr != null) {
 			Set<String> kSet = attr.keySet();
 			for (String k : kSet) {
 				String val = attr.get(k);
 				query.whereEqualTo(k, val);
 			}
 		}
-		final Method h = handle;
+		final Method H = handle;
 		query.findInBackground(new FindCallback() {
 			public void done(List<ParseObject> list, ParseException e) {
 				if (e == null) {
@@ -266,18 +269,19 @@ public class ParseUtil {
 								Object object = ctor.newInstance(new Object[] {p});
 								classList.add((Storable) object);
 								
-//								s = (Storable) Class.forName("uw.cse.dineon.library."+ className).newInstance();
+//								s = (Storable) Class.forName("uw.cse.dineon.library."
+//									+ className).newInstance();
 //								s.unpackObject(p);
 //								classList.add(s);
 							}		   
-							h.invoke(null, classList);
+							H.invoke(null, classList);
 						} catch (Exception ex) {
 							Log.d(TAG, "Error: " + ex.getMessage());
 						}
 					}
 				} else {
 					Log.d(TAG, "Error: " + e.getMessage());
-				}// TODO
+				} // TODO
 				// Invoke our method with null notifying 
 				// User create account failed
 			}
@@ -307,15 +311,15 @@ public class ParseUtil {
 										Map<String, String> attr) {
 
 		ParseQuery query = new ParseQuery(c.getSimpleName());
-		if(attr != null){
+		if(attr != null) {
 			Set<String> kSet = attr.keySet();
 			for (String k : kSet) {
 				String val = attr.get(k);
 				query.whereEqualTo(k, val);
 			}
 		}
-		final Activity act = activity;
-		final Method h = handle;
+		final Activity ACT = activity;
+		final Method H = handle;
 		query.findInBackground(new FindCallback() {
 			public void done(List<ParseObject> list, ParseException e) {
 				if (e == null) {
@@ -332,15 +336,16 @@ public class ParseUtil {
 								Object object = ctor.newInstance(new Object[] {p});
 								classList.add((Storable) object);
 							}
-							if (h != null && act != null)
-								h.invoke(act, classList);
+							if (H != null && ACT != null) {
+								H.invoke(ACT, classList);
+							}
 						} catch (Exception ex) {
 							Log.d(TAG, "Error: " + ex.getMessage());
 						}
 					}
 				} else {
 					Log.d(TAG, "Error: " + e.getMessage());
-				}// TODO
+				} // TODO
 
 				// Invoke our method with null notifying 
 				// User create account failed
@@ -425,10 +430,12 @@ public class ParseUtil {
 	 * Given a storable class definition produce an instance of the Class based
 	 * off the ParseObject.
 	 * 
+	 * @param <T> object extending Storable
 	 * @param clazz Class to instantiate
 	 * @param po Parse object representation of the Class
 	 * @return null on failure, instance of T otherwise
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T extends Storable> T parseObjectToClass(Class<T> clazz, ParseObject po) {
 		Constructor<T> ctor = null;
 		Object object = null;
@@ -472,10 +479,11 @@ public class ParseUtil {
 	}
 	
 	/**
-	 * Retrieves a list of Class instances from a associated relation of the parseObjects
+	 * Retrieves a list of Class instances from a associated relation of the parseObjects.
 	 * NOTE: All items in objects must have dynamic types of ParseObject or a class cast exception
 	 * will be thrown
 	 * 
+	 * @param <T> object extending Storable
 	 * @param clazz Class definition of the particular instance
 	 * @param objects List of Objects that must have dynamic tyoes if ParseObjects
 	 * @return List of storables from ParesObjects
@@ -493,11 +501,11 @@ public class ParseUtil {
 	}
 	
 	/**
-	 * Returns the channel identifier for this Restaurant
+	 * Returns the channel identifier for this Restaurant.
 	 * @param rest Restaurant to find channel identifier for
 	 * @return Channel as string
 	 */
-	public static String getChannel(RestaurantInfo rest){
+	public static String getChannel(RestaurantInfo rest) {
 		return DineOnConstants.CHANNEL_PREFIX + rest.getName();
 	}
 	
@@ -506,7 +514,7 @@ public class ParseUtil {
 	 * @param user User to extract channel from
 	 * @return Channel as string
 	 */
-	public static String getChannel(UserInfo user){
+	public static String getChannel(UserInfo user) {
 		return DineOnConstants.CHANNEL_PREFIX + user.getName();
 	}
 

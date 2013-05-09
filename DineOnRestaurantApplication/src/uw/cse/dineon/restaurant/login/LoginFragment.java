@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 /**
- * Fragment view for logging into application
+ * Fragment view for logging into application.
  * @author mhotan
  */
 public class LoginFragment extends Fragment implements OnClickListener {

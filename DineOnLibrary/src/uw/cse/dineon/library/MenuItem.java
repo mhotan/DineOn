@@ -27,6 +27,7 @@ public class MenuItem extends Storable {
 	 * 
 	 * @param productID is an int ID representing the product
 	 * @param price double value of this item
+	 * @param title of menu item
 	 * @param description of this item in String form
 	 */
 	public MenuItem(int productID, double price, String title, String description) {

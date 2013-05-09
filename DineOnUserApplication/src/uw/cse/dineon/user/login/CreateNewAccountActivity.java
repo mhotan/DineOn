@@ -20,7 +20,7 @@ import com.parse.SignUpCallback;
 
 /**
  * Create account activity that allows the user to create an account or call
- * decide to do a third party login
+ * decide to do a third party login.
  * @author mhotan
  */
 public class CreateNewAccountActivity extends FragmentActivity 
@@ -47,11 +47,11 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 				email, password, passwordRepeat);
 
 		if (completeRes.isValid()) {
-			final ParseUser user = new ParseUser();
-			user.setUsername(username);
-			user.setPassword(password);
-			user.setEmail(email);
-			user.signUpInBackground(new SignUpCallback() {
+			final ParseUser P_USER = new ParseUser();
+			P_USER.setUsername(username);
+			P_USER.setPassword(password);
+			P_USER.setEmail(email);
+			P_USER.signUpInBackground(new SignUpCallback() {
 
 				@Override
 				public void done(ParseException e) {
@@ -76,7 +76,7 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 	}
 
 	@Override
-	public void finish(){
+	public void finish() {
 		Intent retIntent = new Intent();
 		// Specify the user of facebook
 		retIntent.putExtra(UserLoginActivity.EXTRA_FACEBOOK, mLoginWithFacebook);
@@ -103,10 +103,10 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 	}
 
 	/**
-	 * Just shows general failure dialog with this message
-	 * @param error
+	 * Just shows general failure dialog with this message.
+	 * @param error String to display
 	 */
-	private void showFailAlertDialog(String error){
+	private void showFailAlertDialog(String error) {
 		AlertDialog.Builder builder = new Builder(this);
 		builder.setTitle("Failed to create account");
 		builder.setMessage(error);

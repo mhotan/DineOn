@@ -20,7 +20,7 @@ import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView;
 
 /**
- * A list of sub menu items
+ * A list of sub menu items.
  * TODO 
  * @author mhotan
  */
@@ -41,9 +41,6 @@ public class SubMenuFragment extends ListFragment {
 		super.onActivityCreated(savedInstanceState);
 	}
 
-	/**
-	 * When creating, retrieve this instance's number from its arguments.
-	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,8 +51,8 @@ public class SubMenuFragment extends ListFragment {
 		// Or load from local data base
 		// TODO Change String to a new data type (Restaurant)
 		List<String> tediousList = new ArrayList<String>();
-		for (int i = 0; i < 5; ++i){
-			tediousList.add(mMenuType + " Item " + (i+1));
+		for (int i = 0; i < 5; ++i) {
+			tediousList.add(mMenuType + " Item " + (i + 1));
 		}
 
 		ArrayAdapter<String> adapter = new MenuItemListAdapter(
@@ -77,7 +74,7 @@ public class SubMenuFragment extends ListFragment {
 	///
 
 	/**
-	 * TODO Adapter for MenuItems
+	 * TODO Adapter for MenuItems.
 	 * @author mhotan
 	 */
 	private class MenuItemListAdapter extends ArrayAdapter<String> {
@@ -87,7 +84,7 @@ public class SubMenuFragment extends ListFragment {
 
 		/**
 		 * This is a runtime mapping between "Increment and decrement button"
-		 * and there respective menu item
+		 * and there respective menu item.
 		 * TODO Change String to menuitem;
 		 * NOTE (MH): Not exactly sure if this is the best solution
 		 */
@@ -97,6 +94,11 @@ public class SubMenuFragment extends ListFragment {
 		private final NumberPicker.OnValueChangeListener mNumPickerListener;
 		private final View.OnClickListener mFocusListener;
 
+		/**
+		 * 
+		 * @param context Context
+		 * @param items List of strings
+		 */
 		public MenuItemListAdapter(Context context, List<String> items) {
 			super(context, R.layout.listitem_menuitem, items);
 			mContext = context;
@@ -109,7 +111,8 @@ public class SubMenuFragment extends ListFragment {
 				@Override
 				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
 					if (mMapping.get(picker) == null) {
-						Log.e(TAG, "Failed to initialize Number picker and associate with menu item");
+						Log.e(TAG, 
+								"Failed to initialize Number picker and associate with menu item");
 						return;
 					}
 					
@@ -143,7 +146,7 @@ public class SubMenuFragment extends ListFragment {
 		}
 		
 		@Override
-		public View getView(int position, View covnertView, ViewGroup parent){
+		public View getView(int position, View covnertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.listitem_menuitem, parent, false);
@@ -168,45 +171,46 @@ public class SubMenuFragment extends ListFragment {
 	}
 
 	/**
-	 * TODO
+	 * TODO implement.
 	 * @author mhotan
 	 */
 	public interface MenuItemListListener {
 
-		/*
-		 * TODO: Place parameter preferable a "Restaurant" Instance
-		 * */
+
+		// TODO Place parameter preferable a "Restaurant" Instance
+
 
 		/**
-		 * TODO
-		 * @param menuItem
+		 * TODO implement.
+		 * @param menuItem String
 		 */
 		public void onMenuItemFocusedOn(/*Replace with menuitem object*/String menuItem);
 
 		/**
-		 * TODO
-		 * @param menuItem
+		 * TODO implement.
+		 * @param menuItem String
 		 */
 		public void onMenuItemIncremented(/*Replace with menuitem object*/String menuItem);
 
 		/**
-		 * TODO
-		 * @param menuItem
+		 * TODO implement.
+		 * @param menuItem String
 		 */
 		public void onMenuItemDecremented(/*Replace with menuitem object*/String menuItem);
 
 		/**
-		 * TODO
+		 * TODO implement.
 		 */
 		public void onRestaurantInfoRequested();
 	
 		/**
-		 * TODO
+		 * TODO implement.
 		 */
 		public void onViewCurrentBill();
 		
 		/**
-		 * TODO change to Restaurant datatype
+		 * TODO change to Restaurant datatype.
+		 * @return String
 		 */
 		public String getCurrentRestaurant();
 	}

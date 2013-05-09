@@ -14,19 +14,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 /**
- * TODO
+ * TODO finish.
  * @author mhotan
  */
 public class RestaurantHomeActivity extends DineOnUserActivity
 // Implement all the fragments callbacks
 implements SubMenuFragment.MenuItemListListener, 
 RestaurantInfoFragment.RestaurantInfoListener,
-RestaurantHomeMainFragment.ReferenceDataListener
-{
+RestaurantHomeMainFragment.ReferenceDataListener {
 
 	private final String TAG = this.getClass().getSimpleName();
 
-	public final static String EXTRA_RESTAURANT = "restaurant"; 
+	public static final String EXTRA_RESTAURANT = "restaurant"; 
 
 	private String /*Change to restaurant datatype*/ mRestaurant;
 
@@ -50,7 +49,8 @@ RestaurantHomeMainFragment.ReferenceDataListener
 		super.onCreate(savedInstanceState);
 
 		// Attempt to get the restaurant name
-		ArrayList<Parcelable> extras = getIntent().getParcelableArrayListExtra(DineOnConstants.DINING_SESSION);
+		ArrayList<Parcelable> extras = 
+				getIntent().getParcelableArrayListExtra(DineOnConstants.DINING_SESSION);
 		if (extras != null) {
 			DiningSession mDiningSession = (DiningSession) extras.get(0);
 		}

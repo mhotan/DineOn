@@ -18,13 +18,20 @@ import android.util.Log;
 
 import com.parse.PushService;
 
-public class DineOnReceiver extends BroadcastReceiver {
+/**
+ * Custom receiver.
+ */
+public final class DineOnReceiver extends BroadcastReceiver {
 
 	private static final String TAG = "DineOnReceiver";
 	
 	private Method handler;
 	
-	private DineOnReceiver(Method h){
+	/**
+	 * Private constructor.
+	 * @param h Method handler
+	 */
+	private DineOnReceiver(Method h) {
 		this.handler = h;
 	}
 	
@@ -54,6 +61,7 @@ public class DineOnReceiver extends BroadcastReceiver {
 	 * @param intent Android Intent containing the data associated with the
 	 * push notification.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		try {

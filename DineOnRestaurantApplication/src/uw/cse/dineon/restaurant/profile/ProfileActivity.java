@@ -43,20 +43,19 @@ MenuItemsFragment.MenuItemListener {
 
 		Fragment frag;
 		if (isLoggedIn() || DineOnConstants.DEBUG) { // If logged in fill views appropriately
-			// Set the actiobar with associated tabs
-			final ActionBar actionBar = getActionBar();
-			if (actionBar != null) { // Support older builds
-				actionBar.addTab(actionBar.newTab().
+			// Set the actionbar with associated tabs
+			final ActionBar ACTION_BAR = getActionBar();
+			if (ACTION_BAR != null) { // Support older builds
+				ACTION_BAR.addTab(ACTION_BAR.newTab().
 						setText(R.string.tab_actionbar_restaurant_profile).setTabListener(this));
-				actionBar.addTab(actionBar.newTab().
+				ACTION_BAR.addTab(ACTION_BAR.newTab().
 						setText(R.string.tab_actionbar_restaurant_menuitems).setTabListener(this));
 			}
 
 			// Obtain the most recently used Restaurant via intent or call
 			// TODO Fix Fragment instantiation issues
 //			frag = RestaurantInfoFragment.newInstance(new RestaurantInfo());
-		} 
-		else {
+		} else {
 			Log.w(TAG, "User not logged in cant show profile");
 			frag = new NotLoggedInFragment();
 		}
@@ -69,7 +68,7 @@ MenuItemsFragment.MenuItemListener {
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu (Menu menu) {
+	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 
 		android.view.MenuItem itemProfile = menu.findItem(R.id.item_restaurant_profile);
