@@ -58,9 +58,9 @@ public class RestaurantSatellite extends BroadcastReceiver {
 	private DineOnRestaurantActivity mCurrentActivity;
 
 	/**
-	 * TODO ???
+	 * TODO What is this for ???
 	 */
-	private String mRestaurantSessionChannel;
+//	private String mRestaurantSessionChannel;
 
 	/**
 	 * Creates and prepares a receiver for listening to
@@ -73,7 +73,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 		mIF.addAction(DineOnConstants.ACTION_CHECK_OUT);
 		mIF.addAction(DineOnConstants.ACTION_CHANGE_USER_INFO);
 		mIF.addAction(DineOnConstants.ACTION_CUSTOMER_REQUEST);
-		mRestaurantSessionChannel = null;
+//		mRestaurantSessionChannel = null;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 	 * @param activity Activity that will be registered
 	 */
 	public void register(Restaurant restaurant, 
-			DineOnRestaurantActivity activity){
+			DineOnRestaurantActivity activity) {
 
 		// Check for null values
 		if (restaurant == null) {
@@ -163,8 +163,8 @@ public class RestaurantSatellite extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// Extract the channel they were sending to
-		String theirChannel = intent.getExtras() == null ? null :  
-			intent.getExtras().getString(DineOnConstants.PARSE_CHANNEL);
+		String theirChannel = intent.getExtras() == null ? null 
+				: intent.getExtras().getString(DineOnConstants.PARSE_CHANNEL);
 
 		// IF they don't have a channel are our activity died
 		// Then exit this method
@@ -189,7 +189,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 		catch (JSONException e) {
 			Log.d(TAG, "Customer sent fail case: " + e.getMessage());
 			mCurrentActivity.onFail(e.getMessage());
-			// TODO handle failure to extract id
+			// User has sent malformed data
 			// What does it mean when we fail like this?
 			return;
 		} 

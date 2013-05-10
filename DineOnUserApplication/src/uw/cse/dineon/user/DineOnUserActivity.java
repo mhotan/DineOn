@@ -80,7 +80,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		else if (savedInstanceState.containsKey(DineOnConstants.KEY_USER)) {
 			userId = savedInstanceState.getString(DineOnConstants.KEY_USER);
 		} else {
-			Log.e(TAG, "Unable to retrieve user isntance");
+			Log.e(TAG, "Unable to retrieve user instance");
 			return;
 		}
 

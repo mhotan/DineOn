@@ -36,7 +36,8 @@ import com.parse.ParseUser;
  * information related to the restaurant
  * @author mhotan
  */
-public class DineOnRestaurantActivity extends FragmentActivity implements SateliteListener {
+public class DineOnRestaurantActivity extends FragmentActivity 
+implements SateliteListener {
 
 	/**
 	 * member that defines this restaurant user
@@ -58,7 +59,8 @@ public class DineOnRestaurantActivity extends FragmentActivity implements Sateli
 	private Restaurant mRestaurant;
 	
 	/**
-	 * Just a variable for creation.
+	 * Just a variable for creation.  This helps us track the user
+	 * 
 	 */
 	private String mRestaurantId;
 	
@@ -362,7 +364,7 @@ public class DineOnRestaurantActivity extends FragmentActivity implements Sateli
 	}
 
 	////////////////////////////////////////////////
-	/////  Satelite Listener
+	/////  Satelite Listener Callbacks
 	/////////////////////////////////////////////////
 	
 	@Override
@@ -373,7 +375,10 @@ public class DineOnRestaurantActivity extends FragmentActivity implements Sateli
 
 	@Override
 	public void onUserCheckedIn(UserInfo user, int tableID) {
-		// TODO Auto-generated method stub
+		// Parameter check if user is null then 
+		// Something is wrong if user == null
+		// TODO Create a Dining Session
+		// 
 		
 	}
 

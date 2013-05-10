@@ -1,7 +1,6 @@
 package uw.cse.dineon.user;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -19,13 +18,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.PushService;
 import com.parse.ParseQuery.CachePolicy;
+import com.parse.PushService;
 
 /**
  * This class manages the communication between the Customer. 
@@ -123,11 +121,18 @@ public class UserSatellite extends BroadcastReceiver {
 	}
 
 	/**
-	 * User inputed is requesting to check in the current restaurant. 
+	 * User inputed is requesting to check in the current restaurant.
+	 * IE. General use case Restaurant customer "user" arrives at a restaurant "rest".
+	 * user then attempts to check in to restaurant and table identified at "tableNum".  
+	 * The user application will call this method requestCheckIn(user, tableNum, rest).  
+	 * Response should then  
+	 *  
 	 * NOTE: This method does not do any saving. That is if you want to update the
 	 * restaurant you must save your argument before you call this method
+	 * 
 	 * @param user User to associate check in request
 	 * @param tableNum Table number to associate check in request to
+	 * @param rest Restaurant 
 	 */
 	public void requestCheckIn(UserInfo user, int tableNum,  RestaurantInfo rest) {
 		Map<String, String> attr = new HashMap<String, String>();
@@ -168,7 +173,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param session Saved DiningSession that has been checked out.
 	 * @param rest Restaurant to send notification to.
 	 */
-	public void notifyCheckOut(DiningSession session, RestaurantInfo rest){
+	public void notifyCheckOut(DiningSession session, RestaurantInfo rest) {
 		notifyByAction(DineOnConstants.ACTION_CHECK_OUT, session.getObjId(), rest); 
 	}
 
@@ -180,7 +185,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param user User that has already been saved.
 	 * @param rest Restaurant to send notification to.
 	 */
-	public void notifyChangeUserInfo(UserInfo user, RestaurantInfo rest){
+	public void notifyChangeUserInfo(UserInfo user, RestaurantInfo rest) {
 		notifyByAction(DineOnConstants.ACTION_CHANGE_USER_INFO, user.getObjId(), rest);
 	}
 
@@ -233,8 +238,8 @@ public class UserSatellite extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// Extract the channel they were sending to
-		String theirChannel = intent.getExtras() == null ? null :  
-			intent.getExtras().getString(DineOnConstants.PARSE_CHANNEL);
+		String theirChannel = intent.getExtras() == null ? null 
+				: intent.getExtras().getString(DineOnConstants.PARSE_CHANNEL);
 
 		// IF they don't have a channel are our activity died
 		// Then exit this method
@@ -258,19 +263,24 @@ public class UserSatellite extends BroadcastReceiver {
 		} catch (JSONException e) {
 			Log.d(TAG, "Customer sent fail case: " + e.getMessage());
 			mCurrentActivity.onFail(e.getMessage());
-			// TODO handle failure to extract id
-			// What does it mean when we fail like this?
+			// Restaurant sent malformed data...
+			// NOTE (MH) : What does it mean when we fail like this?
 			return;
 		}
 
+		// Retrieve the action that the other satellite is requesting
 		String action = intent.getAction();
+
+		// Prepare the queries that we might need 
 		ParseQuery restInfo = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		ParseQuery dsQuery = new ParseQuery(DiningSession.class.getSimpleName());
 		restInfo.setCachePolicy(CachePolicy.NETWORK_ONLY);
 		dsQuery.setCachePolicy(CachePolicy.NETWORK_ONLY);
 
+		// Restaurant is confirming the dining session by returning a dining session.
 		if (DineOnConstants.ACTION_CONFIRM_DINING_SESSION.equals(action)) {
-			// WE received a dining session
+			
+			// Actually do the query knowing it is a Dining Session
 			ParseQuery query = new ParseQuery(DiningSession.class.getSimpleName());
 			query.getInBackground(id, new GetCallback() {
 				@Override
@@ -279,11 +289,14 @@ public class UserSatellite extends BroadcastReceiver {
 						mCurrentActivity.onInitialDiningSessionReceived(
 								new DiningSession(object));
 					} else {
+						// Some error possibly internet
 						mCurrentActivity.onFail(e.getMessage());
 					}
 				}
 			});
-		} else if (DineOnConstants.ACTION_CHANGE_RESTAURANT_INFO.equals(action)) {
+		} 
+		// Restaurant that we are currently associated to has changed some state
+		else if (DineOnConstants.ACTION_CHANGE_RESTAURANT_INFO.equals(action)) {
 			// WE received a dining session
 			ParseQuery query = new ParseQuery(DiningSession.class.getSimpleName());
 			query.getInBackground(id, new GetCallback() {
@@ -316,7 +329,9 @@ public class UserSatellite extends BroadcastReceiver {
 		/**
 		 * Notifies Customer user that a Dining session has been established
 		 * and returns it via this callback.
-		 * @param session Session created for user and now can user and update
+		 * 
+		 * @param session DiningSession instance on success, null on failure 
+		 * (null => Restaurant not accepting dining features)
 		 */
 		void onInitialDiningSessionReceived(DiningSession session);
 

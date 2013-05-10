@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 /**
- * Fragment view for logging into application.
+ * Fragment view for logging into the application.
  * @author mhotan
  */
 public class LoginFragment extends Fragment implements OnClickListener {
@@ -73,7 +73,6 @@ public class LoginFragment extends Fragment implements OnClickListener {
 		
 		// Combine into a valid login credential instance
 		mListener.onLogin(email, pw);
-		
 	}
 
 }
