@@ -14,6 +14,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,7 +32,7 @@ import com.parse.ParseUser;
  * 
  * @author mhotan
  */
-public class RestaurantLoginActivity extends DineOnRestaurantActivity implements
+public class RestaurantLoginActivity extends FragmentActivity implements
 LoginFragment.OnLoginListener {
 
 	/**

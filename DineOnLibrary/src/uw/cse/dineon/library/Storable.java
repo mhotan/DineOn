@@ -125,27 +125,6 @@ public abstract class Storable {
 		po.save();
 	}
 
-	//	/**
-	//	 *
-	//	 * @param objId String
-	//	 */
-	//	public void setObjId(String objId) {
-	//		this.objId = objId;
-	//	}
-
-	//	@Override
-	//	public void writeToParcel(Parcel dest, int flags) {
-	//		dest.writeString(this.getObjId());
-	//	}
-	//	
-	//	/**
-	//	 * Fills this instance with the values found in this parcel
-	//	 * @param source
-	//	 */
-	//	protected void readFromParcel(Parcel source) {
-	//		this.setObjId(source.readString());
-	//	} 
-
 	/**
 	 * Checks representation invariant.
 	 */
@@ -155,7 +134,43 @@ public abstract class Storable {
 		}
 	}
 	
-	public String toString(){
+	/**
+	 * Deletes this instance off of the cloud.
+	 * This deletion does not occur right away but instead 
+	 * to eventually occur.
+	 */
+	public void deleteFromCloud() {
+		mCompleteObject.deleteEventually();
+	}
+	
+	/**
+	 * Changes the string representation to ParseObejct rep.
+	 * @return String of ParseObject
+	 */
+	@Override
+	public String toString() {
 		return mCompleteObject.toString();
 	}
 }
+
+
+//	/**
+//	 *
+//	 * @param objId String
+//	 */
+//	public void setObjId(String objId) {
+//		this.objId = objId;
+//	}
+
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		dest.writeString(this.getObjId());
+//	}
+//	
+//	/**
+//	 * Fills this instance with the values found in this parcel
+//	 * @param source
+//	 */
+//	protected void readFromParcel(Parcel source) {
+//		this.setObjId(source.readString());
+//	} 

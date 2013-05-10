@@ -2,6 +2,7 @@ package uw.cse.dineon.library;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,21 +12,43 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 /**
- * 
+ * This class represents a Restaurant.  Where internally 
+ * the class can tracks its profile representation and List of current 
+ * and old restaurant transactions.
  * @author zachr81, mhotan
  */
-public class Restaurant extends Storable {
+public class Restaurant extends LocatableStorable {
 
+	// Parse used Keys
 	public static final String RESERVATION_LIST = "reservationList";
 	public static final String INFO = "info";
-	public static final String ORDERS = "orders";
+	public static final String PAST_ORDERS = "pastOrders";
+	public static final String PAST_USERS = "pastUsers";
 	public static final String SESSIONS = "sessions";
 	public static final String CUSTOMER_REQUESTS = "customerRequests";
 
+	/**
+	 * Restaurant information.
+	 */
 	private final RestaurantInfo mRestInfo;
+	
+	/**
+	 * Past Orders placed at this restaurant.
+	 */
+	private final List<Order> mPastOrders;
+	
+	/**
+	 * Past users that have visited the restaurant.
+	 */
+	private final List<UserInfo> mPastUsers;
+	
+	// Currently pending reservations
 	private final List<Reservation> mReservations;
-	private final List<Order> mOrders;
+	
+	// Currently Active Dining sessions
 	private final List<DiningSession> mSessions;
+	
+	// Customer request that is not associated with the restaurant.
 	private final List<CustomerRequest> mCustomerRequests;
 
 	/**
@@ -36,8 +59,11 @@ public class Restaurant extends Storable {
 	public Restaurant(ParseUser user) {
 		super(Restaurant.class);
 		mRestInfo = new RestaurantInfo(user);
+		
+		mPastOrders = new ArrayList<Order>();
+		mPastUsers = new ArrayList<UserInfo>();
+		
 		mReservations = new ArrayList<Reservation>();
-		mOrders = new ArrayList<Order>();
 		mSessions = new ArrayList<DiningSession>();
 		mCustomerRequests = new ArrayList<CustomerRequest>();
 	}
@@ -45,15 +71,17 @@ public class Restaurant extends Storable {
 	/**
 	 * Creates a Restaurant object from the given ParseObject.
 	 * 
-	 * @param po Parse object to build froms
-	 * @throws ParseException 
+	 * @param po Parse object to build from
 	 */
 	public Restaurant(ParseObject po) {
 		super(po);
 		mRestInfo = new RestaurantInfo(po.getParseObject(INFO));
+		
+		mPastOrders = ParseUtil.toListOfStorables(Order.class, po.getList(PAST_ORDERS));
+		mPastUsers = ParseUtil.toListOfStorables(UserInfo.class, po.getList(PAST_USERS));
+		
 		mReservations = ParseUtil.toListOfStorables(
 				Reservation.class, po.getList(RESERVATION_LIST)); 
-		mOrders = ParseUtil.toListOfStorables(Order.class, po.getList(ORDERS));
 		mSessions = ParseUtil.toListOfStorables(DiningSession.class, po.getList(SESSIONS));
 		mCustomerRequests = ParseUtil.toListOfStorables(
 				CustomerRequest.class, po.getList(CUSTOMER_REQUESTS));
@@ -63,12 +91,21 @@ public class Restaurant extends Storable {
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
 		po.put(INFO, mRestInfo.packObject());
+		
+		// Pack up old stuff
+		po.put(PAST_ORDERS, ParseUtil.toListOfParseObjects(mPastOrders));
+		po.put(PAST_USERS, ParseUtil.toListOfParseObjects(mPastUsers));
+		
+		// 
 		po.put(RESERVATION_LIST, ParseUtil.toListOfParseObjects(mReservations));
-		po.put(ORDERS, ParseUtil.toListOfParseObjects(mOrders));
 		po.put(SESSIONS, ParseUtil.toListOfParseObjects(mSessions));
 		po.put(CUSTOMER_REQUESTS, ParseUtil.toListOfParseObjects(mCustomerRequests));	
 		return po;
 	}
+
+	/////////////////////////////////////////////////////
+	////  Setter methods
+	/////////////////////////////////////////////////////
 
 	/**
 	 * Returns the name of this restaurant.
@@ -77,102 +114,45 @@ public class Restaurant extends Storable {
 	public String getName() {
 		return mRestInfo.getName();
 	}
-	
-	/**
-	 * @return the customerRequests
-	 */
-	public List<CustomerRequest> getCustomerRequests() {
-		return mCustomerRequests;
-	}
-
-	//	/**
-	//	 * @param customerRequests the customerRequests to set
-	//	 */
-	//	public void setCustomerRequests(List<CustomerRequest> customerRequests) {
-	//		this.mCustomerRequests = customerRequests;
-	//	}
 
 	/**
-	 * Add a new customer request.
-	 * @param newReq request to add
-	 */
-	public void addCustomerRequest(CustomerRequest newReq) {
-		mCustomerRequests.add(newReq);
-	}
-
-	/**
-	 * Remove the specified CustomerRequest.
-	 * @param oldReq request to remove
-	 */
-	public void removeCustomerRequest(CustomerRequest oldReq) {
-		mCustomerRequests.remove(oldReq);
-	}
-
-	//	/**
-	//	 * @return a copy of the Menu list
-	//	 */
-	//	public List<Menu> getMenus() {
-	//		List<Menu> copy = new ArrayList<Menu>(menus.size());
-	//		Collections.copy(copy, menus);
-	//		return copy;
-	//	}
-	//	
-	//	/**
-	//	 * @param menus A Menu object to set as the new menu
-	//	 */
-	//	public void setMenus(List<Menu> menus) {
-	//		this.menus = menus;
-	//	}
-
-	/**
-	 * @return List<Reservation>
-	 */
-	public List<Reservation> getReservationList() {
-		List<Reservation> copy = new ArrayList<Reservation>(mReservations.size());
-		Collections.copy(copy, mReservations);
-		return copy;
-	}
-
-	//	/**
-	//	 * @param newReservationList A List of Reservations to set as the new reservation list
-	//	 */
-	//	public void setReservationList(List<Reservation> newReservationList) {
-	//		this.mReservations = newReservationList;
-	//	}
-	//	
-	/**
+	 * Returns reference to Restaurant Info Object.
+	 * NOTE: Permissions to change Information is not protected 
 	 * @return RestaurantInfo
 	 */
 	public RestaurantInfo getInfo() {
 		return mRestInfo;
 	}
 
-	//	/**
-	//	 * Sets info to the param value.
-	//	 * @param newInfo to set
-	//	 */
-	//	public void setInfo(RestaurantInfo newInfo) {
-	//		this.mRestInfo = newInfo;
-	//	}
+	/**
+	 * Returns a list copy of Customer Requests.
+	 * @return the customerRequests that this restaurant is aware of
+	 */
+	public List<CustomerRequest> getCustomerRequests() {
+		return new ArrayList<CustomerRequest>(mCustomerRequests);
+	}
 
 	/**
-	 * @return List<Order>
+	 * Returns a list of all current reservations that the Restaurant has tracked.
+	 * 
+	 * @return List<Reservation>
 	 */
-	public List<Order> getOrders() {
-		List<Order> copy = new ArrayList<Order>(mOrders.size());
-		Collections.copy(copy, mOrders);
+	public List<Reservation> getReservationList() {
+		return new ArrayList<Reservation>(mReservations);
+	}
+
+	/**
+	 * Returns the current list of past orders placed at the restaurant.
+	 * @return List<Order> of past orders placed at the restaurant.
+	 */
+	public List<Order> getPastOrders() {
+		List<Order> copy = new ArrayList<Order>(mPastOrders.size());
+		Collections.copy(copy, mPastOrders);
 		return copy;
 	}
-	//	
-	//	/**
-	//	 * Sets orders to the parameter value.
-	//	 * @param newOrders to set
-	//	 */
-	//	public void setOrders(List<Order> newOrders) {
-	//		mOrders = newOrders;
-	//	}
-	//	
+
 	/**
+	 * List of current running dining sessions.
 	 * @return List<DiningSession>
 	 */
 	public List<DiningSession> getSessions() {
@@ -181,31 +161,18 @@ public class Restaurant extends Storable {
 		return copy;
 	}
 
-	//	/**
-	//	 * Sets sessions to the parameter value.
-	//	 * @param newSessions to set
-	//	 */
-	//	public void setSessions(List<DiningSession> newSessions) {
-	//		mSessions = newSessions;
-	//	}
-	//	
-	//	/**
-	//	 * Adds the given menu to the menu list.
-	//	 * @param newMenu to add
-	//	 */
-	//	public void addMenu(Menu newMenu) {
-	//		menus.add(newMenu);
-	//	}
-	//	
-	//	/**
-	//	 * Remove the specified menu.
-	//	 * @param menu to remove from the restaurant
-	//	 */
-	//	public void removeMenu(Menu menu) {
-	//		menus.remove(menu);
-	//	}
+	/////////////////////////////////////////////////////
+	////  Setter methods
+	/////////////////////////////////////////////////////
 
-
+	/**
+	 * Add a new customer request.
+	 * @param newReq request to add
+	 */
+	public void addCustomerRequest(CustomerRequest newReq) {
+		mCustomerRequests.add(newReq);
+	}
+	
 	/**
 	 * Adds the given reservation to the reservation list.
 	 * @param newReservation to add
@@ -213,31 +180,15 @@ public class Restaurant extends Storable {
 	public void addReservation(Reservation newReservation) {
 		mReservations.add(newReservation);
 	}
-
+	
 	/**
-	 * Remove the specified reservation.
-	 * @param removeReservation from restaurant
+	 * Adds all the orders in to past orders. 
+	 * @param orders Completed orders
 	 */
-	public void removeReservation(Reservation removeReservation) {
-		mReservations.remove(removeReservation);
+	public void addToPastOrders(Collection<Order> orders) {
+		mPastOrders.addAll(orders);
 	}
-
-	/**
-	 * Adds given order to orders.
-	 * @param order to add
-	 */
-	public void addOrder(Order order) {
-		mOrders.add(order);
-	}
-
-	/**
-	 * Remove given order from orders.
-	 * @param order to remove
-	 */
-	public void removeOrder(Order order) {
-		mOrders.remove(order);
-	}
-
+	
 	/**
 	 * Adds given DiningSession to sessions.
 	 * @param session to add
@@ -247,15 +198,43 @@ public class Restaurant extends Storable {
 	}
 
 	/**
-	 * Removes given DiningSession from sessions.
-	 * @param session to remove
+	 * Remove the specified CustomerRequest.
+	 * @param oldReq request to remove
 	 */
-	public void removeDiningSession(DiningSession session) {
-		mSessions.remove(session);
+	public void removeCustomerRequest(CustomerRequest oldReq) {
+		mCustomerRequests.remove(oldReq);
+		// TODO Delete the customer request if it existed
 	}
 
+	/**
+	 * Remove the specified reservation.
+	 * @param removeReservation from restaurant
+	 */
+	public void removeReservation(Reservation removeReservation) {
+		mReservations.remove(removeReservation);
+		// TODO Delete the reservation from parse
+	}
 
+	/**
+	 * Clears all the past orders from this restaurant.
+	 */
+	public void clearPastOrders() {
+		// TODO For each of the Orders delete
+		// from parse
+		
+		mPastOrders.clear();
+	}
 
+	/**
+	 * Permanently deletes the dining session of this.
+	 * @param session to remove
+	 */
+	public void delete(DiningSession session) {
+		mSessions.remove(session);
+		session.deleteFromCloud();
+	}
+	
+	
 
 	//	@Override
 	//	public void unpackObject(ParseObject pobj) {
