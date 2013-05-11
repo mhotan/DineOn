@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
-import uw.cse.dineon.library.util.RepresentationException;
 
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -22,10 +21,10 @@ public class Restaurant extends LocatableStorable {
 
 	// Parse used Keys
 	public static final String RESERVATION_LIST = "reservationList";
-	public static final String INFO = "info";
+	public static final String INFO = "restaurantInfo";
 	public static final String PAST_ORDERS = "pastOrders";
 	public static final String PAST_USERS = "pastUsers";
-	public static final String SESSIONS = "sessions";
+	public static final String SESSIONS = "restaurantDiningSessions";
 	public static final String CUSTOMER_REQUESTS = "customerRequests";
 
 	/**

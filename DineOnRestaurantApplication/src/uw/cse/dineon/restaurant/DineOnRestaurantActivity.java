@@ -1,18 +1,14 @@
 package uw.cse.dineon.restaurant;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.Storable;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
-import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.RestaurantSatellite.SateliteListener;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -26,7 +22,6 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 
@@ -65,6 +60,7 @@ implements SateliteListener {
 	private String mRestaurantId;
 
 	private DineOnRestaurantActivity thisResActivity;
+
 
 	/**
 	 * Updates the UI based on the state of this activity.
@@ -110,8 +106,6 @@ implements SateliteListener {
 					DineOnConstants.KEY_RESTAURANT);
 		}
 
-		updateUI();
-
 		if (mRestaurantId == null) {
 			Utility.getGeneralAlertDialog("Uh OH!", "Doesn't look like your logged in"
 					, this).show();
@@ -129,10 +123,16 @@ implements SateliteListener {
 		query.getInBackground(mRestaurantId, new GetCallback() {
 			@Override
 			public void done(ParseObject object, ParseException e) {
-				mRestaurant = new Restaurant(object);
-				mSatellite.register(mRestaurant, thisResActivity);
+				if (e == null) {
+					mRestaurant = new Restaurant(object);
+					mSatellite.register(mRestaurant, thisResActivity);
+				} else {
+					Utility.getBackToLoginAlertDialog(
+							thisResActivity, RestaurantLoginActivity.class).show();
+				}
 			}
 		});
+		updateUI();
 	}
 
 	@Override

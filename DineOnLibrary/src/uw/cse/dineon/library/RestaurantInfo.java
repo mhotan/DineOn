@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
+import android.util.Log;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -15,14 +17,18 @@ import com.parse.ParseUser;
  *
  */
 public class RestaurantInfo extends Storable {
-	public static final String PARSEUSER = "user";
-	public static final String ADDR = "addr";
-	public static final String PHONE = "phone";
-	public static final String IMAGE_MAIN = "imageMain";
-	public static final String IMAGE_LIST = "imageList";
-	public static final String MENUS = "menu";
+	
+	private static final String TAG = RestaurantInfo.class.getSimpleName();
+	
+	public static final String PARSEUSER = "parseUser";
+	public static final String ADDR = "restaurantAddr";
+	public static final String PHONE = "restaurantPhone";
+	public static final String IMAGE_MAIN = "restaurantImageMain";
+	public static final String IMAGE_LIST = "restaurantImageList";
+	public static final String MENUS = "restaurantMenu";
 	
 	private static final String UNDETERMINED = "Undetermined";
+	
 	
 	private final ParseUser mUser;
 	private String mAddress;
@@ -37,6 +43,11 @@ public class RestaurantInfo extends Storable {
 	 */
 	public RestaurantInfo(ParseUser name) {
 		super(RestaurantInfo.class);
+		try {
+			name.fetchIfNeeded();
+		} catch (ParseException e) {
+			Log.w(TAG, "Unable to fetch Parse User");
+		}
 		mUser = name;
 		mAddress = UNDETERMINED;
 		mPhone = UNDETERMINED;
