@@ -27,10 +27,6 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	private final String TAG = this.getClass().getSimpleName();
 
 	public static final String EXTRA_USER = "USER";
-
-	private ParseUser /*Change to ParseUser*/ mUser;
-
-	private String mCurRestaurant;
 	
 	private static final int MENU_ITEM_FILTER = 1234;
 
@@ -43,10 +39,6 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_restaurant_selection);
 
-		mUser = ParseUser.getCurrentUser();
-		Toast.makeText(this, "User: " + mUser.getUsername() + " logged in!", 
-				Toast.LENGTH_SHORT).show();
-		
 		// Replace the Action bar title with a message letting the 
 		// user know this is the restaurant selection page
 		final ActionBar ACTION_BAR = getActionBar();
@@ -84,19 +76,16 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	public void onRestaurantSelected(String restaurant) {
 		// TODO Auto-generated method stub
 		// Continue on to next activity
-		mCurRestaurant = restaurant;
+		
 		Toast.makeText(this, "Restaurant \"" + restaurant + "\" Selected", 
 				Toast.LENGTH_SHORT).show();
 
-		Intent i = new Intent(getApplicationContext(), RestaurantHomeActivity.class);	
-		i.putExtra(RestaurantHomeActivity.EXTRA_RESTAURANT, mCurRestaurant);
-		startActivity(i);
 	}
 
 	@Override
 	public void onRestaurantFocusedOn(String restaurant) {
 		// TODO Auto-generated method stub
-		mCurRestaurant = restaurant;
+		
 		FragmentManager fm = getSupportFragmentManager();
 		RestaurantInfoFragment frag = 
 				(RestaurantInfoFragment) fm.findFragmentById(R.id.restaurantInfo);
@@ -137,10 +126,6 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	@Override
 	public String getCurrentRestaurant() {
 		// TODO Auto-generated method stub
-		return mCurRestaurant;
+		return null;
 	}
-
-
-
-
 }

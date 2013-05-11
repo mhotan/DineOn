@@ -24,10 +24,8 @@ import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -43,7 +41,6 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.PushService;
 
 /**
  * General Fragment Activity class that pertains to a specific user.
@@ -150,11 +147,9 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 				} else { 
 					Utility.getBackToLoginAlertDialog(This, UserLoginActivity.class).show();
 				}
-				
+				intializeUI();
 			}
 		});
-		
-		intializeUI();
 	}
 
 	@Override
