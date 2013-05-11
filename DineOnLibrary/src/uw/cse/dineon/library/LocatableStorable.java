@@ -3,6 +3,7 @@ package uw.cse.dineon.library;
 import uw.cse.dineon.library.util.RepresentationException;
 import android.location.Location;
 
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
@@ -59,8 +60,9 @@ public abstract class LocatableStorable extends Storable {
 	 * Creates locatable object around a parse object that
 	 * was packed by using packobject on a locatableStorabl instance.
 	 * @param parseObject object to extract storable instance
+	 * @throws ParseException 
 	 */
-	public LocatableStorable(ParseObject parseObject) {
+	public LocatableStorable(ParseObject parseObject) throws ParseException {
 		super(parseObject);
 		mLocation = parseObject.getParseGeoPoint(LOCATION);
 	}

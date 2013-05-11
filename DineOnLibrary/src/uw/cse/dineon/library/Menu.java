@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import uw.cse.dineon.library.util.ParseUtil;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 
@@ -47,7 +48,7 @@ public class Menu extends Storable {
 	 * @param po parse object to extract menu
 	 * @throws ParseException 
 	 */
-	public Menu(ParseObject po) {
+	public Menu(ParseObject po) throws ParseException {
 		super(po);
 		this.mName = po.getString(NAME);
 		this.mItems = ParseUtil.toListOfStorables(MenuItem.class, po.getList(ITEMS));

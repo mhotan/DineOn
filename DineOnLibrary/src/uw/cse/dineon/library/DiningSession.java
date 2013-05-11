@@ -79,8 +79,9 @@ public class DiningSession extends TimeableStorable {
 	 * and ID (sessToken).
 	 * 
 	 * @param po ParseObject to 
+	 * @throws ParseException 
 	 */
-	public DiningSession(ParseObject po) {
+	public DiningSession(ParseObject po) throws ParseException {
 		super(po);
 		mTableID = po.getInt(TABLE_ID);
 		mUsers = ParseUtil.toListOfStorables(UserInfo.class, po.getList(USERS));

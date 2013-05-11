@@ -63,8 +63,9 @@ public class DineOnUser extends Storable {
 	/**
 	 * Creates a user from a parse object.
 	 * @param po Parse Object to use to build
+	 * @throws ParseException 
 	 */
-	public DineOnUser(ParseObject po) {
+	public DineOnUser(ParseObject po) throws ParseException {
 		super(po);
 		mUserInfo = new UserInfo(po.getParseObject(USER_INFO));
 		mFavRestaurants = ParseUtil.toListOfStorables(

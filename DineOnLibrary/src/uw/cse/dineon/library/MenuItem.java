@@ -1,5 +1,6 @@
 package uw.cse.dineon.library;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 /**
@@ -44,8 +45,9 @@ public class MenuItem extends Storable {
 	 * @param po Parcel of information in:
 	 * 		int, double, String
 	 * 		order.
+	 * @throws ParseException 
 	 */
-	public MenuItem(ParseObject po) {
+	public MenuItem(ParseObject po) throws ParseException {
 		super(po);
 		mProductID = po.getInt(PRODUCT_ID);
 		mPrice = po.getDouble(PRICE);

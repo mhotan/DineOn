@@ -5,6 +5,7 @@ package uw.cse.dineon.library;
 
 import java.util.Date;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 /**
@@ -48,8 +49,9 @@ public class CustomerRequest extends TimeableStorable {
 	 * Creates a Customer request shell of the parse object
 	 * This should always be used when downloading from the ParseCloud.
 	 * @param parseObject ParseObject
+	 * @throws ParseException 
 	 */
-	public CustomerRequest(ParseObject parseObject) {
+	public CustomerRequest(ParseObject parseObject) throws ParseException {
 		super(parseObject);
 		mDescription = parseObject.getString(DESCRIPTION);
 		mUserInfo = new UserInfo(parseObject.getParseObject(USER));

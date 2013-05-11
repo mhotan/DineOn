@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import uw.cse.dineon.library.util.ParseUtil;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 /**
@@ -44,7 +45,7 @@ public class Order extends TimeableStorable {
 	 * @param po Parse Object to use to build orders
 	 * @throws ParseException 
 	 */
-	public Order(ParseObject po) {
+	public Order(ParseObject po) throws ParseException {
 		super(po);
 		mTableID = po.getInt(TABLE_ID);
 		mUserInfo = new UserInfo(po.getParseObject(USER_INFO));

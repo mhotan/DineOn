@@ -64,8 +64,9 @@ public abstract class TimeableStorable extends Storable {
 	/**
 	 * Creates an isntance off a Parse Object.
 	 * @param parseObject Parse object to build from
+	 * @throws com.parse.ParseException 
 	 */
-	public TimeableStorable(ParseObject parseObject) {
+	public TimeableStorable(ParseObject parseObject) throws com.parse.ParseException {
 		super(parseObject);
 		String dateString = parseObject.getString(DATE);
 		Date temp = null;

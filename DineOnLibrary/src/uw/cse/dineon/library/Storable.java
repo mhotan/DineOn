@@ -38,22 +38,17 @@ public abstract class Storable {
 	/**
 	 * Creates a Storable object from a Parse Object.
 	 * @param parseObject parse object to build from 
+	 * @throws ParseException 
 	 */
-	public Storable(ParseObject parseObject) {
+	public Storable(ParseObject parseObject) throws ParseException {
 		if (parseObject == null) {
 			throw new IllegalArgumentException("");
 		}
 		// Initially Parse Provides a pointer to value a value in the cloud
 		// 		for nested classes.
 		// We have to explicitly fetch the object if we need it.
-		try {
-			parseObject.fetchIfNeeded();
-		} catch (ParseException e) {
-			// TODO Throw exception up the chain
-			// this notifies the user that there is no Intenet!
-			throw new RuntimeException("Fetching parse object: " + parseObject + " in "
-					+ " instance of class " + this.getClass().getSimpleName() + " FAILED!");
-		}
+		parseObject.fetchIfNeeded();
+
 		mCompleteObject = parseObject;
 		checkRep();
 	}
@@ -133,7 +128,7 @@ public abstract class Storable {
 			throw new RepresentationException("Null parse object for this storable instance");
 		}
 	}
-	
+
 	/**
 	 * Deletes this instance off of the cloud.
 	 * This deletion does not occur right away but instead 
@@ -142,7 +137,7 @@ public abstract class Storable {
 	public void deleteFromCloud() {
 		mCompleteObject.deleteEventually();
 	}
-	
+
 	/**
 	 * Changes the string representation to ParseObejct rep.
 	 * @return String of ParseObject
