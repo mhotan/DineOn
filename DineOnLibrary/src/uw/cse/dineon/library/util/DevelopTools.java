@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 /**
@@ -60,7 +61,13 @@ public final class DevelopTools {
 	 * @return me to use for testing
 	 */
 	public static Restaurant getYourOwnRestaurant(ParseUser me) {
-		Restaurant rest = new Restaurant(me);
+		Restaurant rest = null;
+		try {
+			rest = new Restaurant(me);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return rest;
 	}
 

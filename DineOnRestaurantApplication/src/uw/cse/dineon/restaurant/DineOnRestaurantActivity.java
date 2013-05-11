@@ -124,7 +124,11 @@ implements SateliteListener {
 			@Override
 			public void done(ParseObject object, ParseException e) {
 				if (e == null) {
-					mRestaurant = new Restaurant(object);
+					try {
+						mRestaurant = new Restaurant(object);
+					} catch (Exception e1) {
+						return;
+					}
 					mSatellite.register(mRestaurant, thisResActivity);
 				} else {
 					Utility.getBackToLoginAlertDialog(

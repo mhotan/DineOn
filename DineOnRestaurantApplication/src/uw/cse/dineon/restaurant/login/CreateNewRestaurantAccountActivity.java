@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -92,15 +93,30 @@ implements CreateNewAccountListener {
 
 					if (e == null) {
 						// They are logged in as a ParseUser
-						final Restaurant REST = new Restaurant(USER);
+
+						Restaurant rest = null;
+						try {
+							rest = new Restaurant(USER);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+						if (rest == null) {
+							Log.e(TAG, "No internet connect");
+							return;
+						}
+						
+						final Restaurant REST2 = rest;
+
 						// Callback within a callback egh...
 						// Save our new restaurant in the backgrounf
-						REST.saveInBackGround(new SaveCallback() {
+						REST2.saveInBackGround(new SaveCallback() {
 							@Override
 							public void done(ParseException e) {
 								if (e == null) { // Success
 									// There exist a restaurant instance for this 
-									mRestaurantID = REST.getObjId();
+									mRestaurantID = REST2.getObjId();
 									startMainActivity();
 								} else { // Fail to save
 									// Alert dialog notifying user of exceptional case

@@ -8,6 +8,7 @@ import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -61,8 +62,9 @@ public class Restaurant extends LocatableStorable {
 	 * Create a bare bones Restaurant with just a name.
 	 * TODO Add basic constraints to creating a restaurant
 	 * @param user of Restaurant
+	 * @throws ParseException 
 	 */
-	public Restaurant(ParseUser user) {
+	public Restaurant(ParseUser user) throws ParseException {
 		super(Restaurant.class);
 		mRestInfo = new RestaurantInfo(user);
 		
@@ -78,8 +80,9 @@ public class Restaurant extends LocatableStorable {
 	 * Creates a Restaurant object from the given ParseObject.
 	 * 
 	 * @param po Parse object to build from
+	 * @throws ParseException 
 	 */
-	public Restaurant(ParseObject po) {
+	public Restaurant(ParseObject po) throws ParseException {
 		super(po);
 		mRestInfo = new RestaurantInfo(po.getParseObject(INFO));
 		

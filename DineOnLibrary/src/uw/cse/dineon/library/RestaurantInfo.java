@@ -40,14 +40,11 @@ public class RestaurantInfo extends Storable {
 	/**
 	 * Creates a bare restaurant info using the inputted name.
 	 * @param name name of the restaurant
+	 * @throws ParseException 
 	 */
-	public RestaurantInfo(ParseUser name) {
+	public RestaurantInfo(ParseUser name) throws ParseException {
 		super(RestaurantInfo.class);
-		try {
-			name.fetchIfNeeded();
-		} catch (ParseException e) {
-			Log.w(TAG, "Unable to fetch Parse User");
-		}
+		name.fetchIfNeeded();
 		mUser = name;
 		mAddress = UNDETERMINED;
 		mPhone = UNDETERMINED;
@@ -62,9 +59,9 @@ public class RestaurantInfo extends Storable {
 	 * @param po Parse object to build from
 	 * @throws ParseException 
 	 */
-	public RestaurantInfo(ParseObject po) {
+	public RestaurantInfo(ParseObject po) throws ParseException {
 		super(po);
-		mUser = po.getParseUser(PARSEUSER);
+		mUser = po.getParseUser(PARSEUSER).fetchIfNeeded();
 		mAddress = po.getString(ADDR);
 		mPhone = po.getString(PHONE);
 		mMainImageIndex = po.getInt(IMAGE_MAIN);

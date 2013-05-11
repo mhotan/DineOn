@@ -2,6 +2,7 @@ package uw.cse.dineon.library;
 
 import java.util.Date;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
 
 /**
@@ -39,8 +40,9 @@ public class Reservation extends TimeableStorable {
 	 * Creates a Reservation object from the given Parcel.
 	 * 
 	 * @param po ParseObject 
+	 * @throws ParseException 
 	 */
-	public Reservation(ParseObject po) {
+	public Reservation(ParseObject po) throws ParseException {
 		super(po);
 		mUserInfo = new UserInfo(po.getParseObject(USER_INFO));
 		mRestInfo = new RestaurantInfo(po.getParseObject(REST_INFO));
