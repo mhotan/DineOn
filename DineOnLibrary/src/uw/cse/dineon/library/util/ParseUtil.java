@@ -510,6 +510,16 @@ public final class ParseUtil {
 	}
 	
 	/**
+	 * Returns the channel identifier for this Restaurant.
+	 * @param name Restaurant to find channel identifier for
+	 * @return Channel as string
+	 */
+	public static String getChannel(String name) {
+		return DineOnConstants.CHANNEL_PREFIX + name;
+	}
+	
+	
+	/**
 	 * Returns the channel identifier for this Restaurant
 	 * @param user User to extract channel from
 	 * @return Channel as string

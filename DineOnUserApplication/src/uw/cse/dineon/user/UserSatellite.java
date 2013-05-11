@@ -134,7 +134,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param tableNum Table number to associate check in request to
 	 * @param rest Restaurant 
 	 */
-	public void requestCheckIn(UserInfo user, int tableNum,  RestaurantInfo rest) {
+	public void requestCheckIn(UserInfo user, int tableNum,  String rest) {
 		Map<String, String> attr = new HashMap<String, String>();
 		attr.put(DineOnConstants.TABLE_NUM, "" + tableNum);
 		attr.put(DineOnConstants.OBJ_ID, user.getObjId());
@@ -149,7 +149,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param rest Restaurant to place order at
 	 */
 	public void notifyOrderPlaced(DiningSession session, RestaurantInfo rest) {
-		notifyByAction(DineOnConstants.ACTION_ORDER_PLACED, session.getObjId(), rest);
+		notifyByAction(DineOnConstants.ACTION_ORDER_PLACED, session.getObjId(), rest.getName());
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 */
 	public void notifyCustomerRequest(DiningSession session,
 			RestaurantInfo rest) {
-		notifyByAction(DineOnConstants.ACTION_CUSTOMER_REQUEST, session.getObjId(), rest); 
+		notifyByAction(DineOnConstants.ACTION_CUSTOMER_REQUEST, session.getObjId(), rest.getName()); 
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param rest Restaurant to send notification to.
 	 */
 	public void notifyCheckOut(DiningSession session, RestaurantInfo rest) {
-		notifyByAction(DineOnConstants.ACTION_CHECK_OUT, session.getObjId(), rest); 
+		notifyByAction(DineOnConstants.ACTION_CHECK_OUT, session.getObjId(), rest.getName()); 
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param rest Restaurant to send notification to.
 	 */
 	public void notifyChangeUserInfo(UserInfo user, RestaurantInfo rest) {
-		notifyByAction(DineOnConstants.ACTION_CHANGE_USER_INFO, user.getObjId(), rest);
+		notifyByAction(DineOnConstants.ACTION_CHANGE_USER_INFO, user.getObjId(), rest.getName());
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param info Restaurant to associate to
 	 */
 	private void notifyByAction(String action, 
-			String id, RestaurantInfo info) {
+			String id, String info) {
 		// Have to check the pointers before sending a request 
 		if (id == null) {
 			throw new NullPointerException("[notifiyAction] id is null");
@@ -220,7 +220,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param info Restaurant to associate to
 	 */
 	private void notifyByAction(String action, 
-			Map<String, String> attr, RestaurantInfo info) {
+			Map<String, String> attr, String info) {
 		if (action == null) {
 			throw new NullPointerException("[notifiyAction] action is null");
 		}

@@ -15,10 +15,11 @@ import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.Storable;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.ParseUtil;
+import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.UserSatellite.SatelliteListener;
 import uw.cse.dineon.user.bill.CurrentOrderActivity;
 import uw.cse.dineon.user.checkin.IntentIntegrator;
-import uw.cse.dineon.user.checkin.QRCheckin;
+import uw.cse.dineon.user.checkin.IntentResult;
 import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
@@ -60,12 +61,19 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	 * The associated user .
 	 */
 	protected DineOnUser mUser;	
-	private DiningSessionResponseReceiver mDSResponseReceiver;
+	
+	private String mUserId;
+	private UserSatellite mSat;
+	
+	private DineOnUserActivity This;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mDSResponseReceiver = new DiningSessionResponseReceiver(ParseUser.getCurrentUser());
+		
+		This = this;
+		
+		mSat = new UserSatellite();
 
 		// Check two cases
 		// 1. This activity is being created for the first time
@@ -73,21 +81,19 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 
 		// 1. 
 		Bundle extras = getIntent() == null ? null : getIntent().getExtras();
-		String userId;
+		
 		if (extras != null) {
-			userId = extras.getString(DineOnConstants.KEY_USER);
+			mUserId = extras.getString(DineOnConstants.KEY_USER);
 		} // 2.  
 		else if (savedInstanceState.containsKey(DineOnConstants.KEY_USER)) {
-			userId = savedInstanceState.getString(DineOnConstants.KEY_USER);
+			mUserId = savedInstanceState.getString(DineOnConstants.KEY_USER);
 		} else {
 			Log.e(TAG, "Unable to retrieve user instance");
 			return;
 		}
 
 		// Get the latest copy of this user instance
-		ParseQuery query = new ParseQuery(DineOnUser.class.getSimpleName());
-		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
-		query.getInBackground(userId, new InitializeCallback(this));
+		
 	}
 
 	/**
@@ -126,7 +132,29 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mDSResponseReceiver.register(this);
+		
+		ParseQuery query = new ParseQuery(DineOnUser.class.getSimpleName());
+		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+		query.getInBackground(mUserId, new GetCallback() {
+			
+			@Override
+			public void done(ParseObject object, ParseException e) {
+				if (e == null) {
+					try{
+						// Success
+						mUser = new DineOnUser(object);
+						mSat.register(mUser, This);
+					}catch(Exception e1){
+						Log.d(TAG, e1.getMessage());
+					}
+				} else { 
+					Utility.getBackToLoginAlertDialog(This, UserLoginActivity.class).show();
+				}
+				
+			}
+		});
+		
+		intializeUI();
 	}
 
 	@Override
@@ -138,14 +166,34 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mDSResponseReceiver.unRegister(this);
+		mSat.unRegister();
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		QRCheckin.QRResult(requestCode, resultCode, intent);
+		IntentResult scanResult = 
+				IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+		  if (scanResult != null) {
+			  // handle scan result
+			  try {
+				  String contents = scanResult.getContents();
+				  JSONObject data;
+				
+				  data = new JSONObject(contents);
+				  if(data.has(DineOnConstants.KEY_RESTAURANT) && data.has(DineOnConstants.TABLE_NUM)){
+					  mSat.requestCheckIn(mUser.getUserInfo(), data.getInt(DineOnConstants.TABLE_NUM), 
+							  data.getString(DineOnConstants.KEY_RESTAURANT));
+				  }
+				  
+			  } catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			  }
+			  //Log.d("ZXing", data.toString());
+			  
+				  
+		  }
 	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -434,87 +482,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		super.onRestoreInstanceState(savedInstanceState);
 		//		mDiningSession.unbundle(savedInstanceState.getBundle("diningSession"));
 	}
-
-	private static final String ACTION = "uw.cse.dineon.user.CONFIRM_DINING_SESSION";
-
-	/**
-	 * Handles the result of requesting a Dining session.
-	 * @author mhotan
-	 *
-	 */
-	private class DiningSessionResponseReceiver extends BroadcastReceiver {
-
-		private final ParseUser mParseUser;
-		private final IntentFilter mIF;
-		private final String mUserChannel;
-		private DineOnUserActivity mCurrentActivity;
-
-		private String mRestaurantSessionChannel;
-
-		/**
-		 * Constructs a receiver from information stored in a ParseUser.
-		 * @param user ParseUser to construct from
-		 */
-		public DiningSessionResponseReceiver(ParseUser user) {
-			mIF = new IntentFilter(ACTION);
-			// TODO Add dining sessions
-			mParseUser = user;
-			mUserChannel = "uw_cse_dineon_" + mParseUser.getUsername();
-			mRestaurantSessionChannel = null;
-
-		}
-
-		/**
-		 * Validates this receiver.
-		 * @param dineOnUserActivity to register.
-		 */
-		public void register(DineOnUserActivity dineOnUserActivity) {
-			mCurrentActivity = dineOnUserActivity;
-			dineOnUserActivity.registerReceiver(this, mIF);
-			PushService.subscribe(dineOnUserActivity, mUserChannel, dineOnUserActivity.getClass());
-		}
-
-		/**
-		 * Invalidates this receiver.
-		 * @param dineOnUserActivity to unregister.
-		 */
-		public void unRegister(DineOnUserActivity dineOnUserActivity) {
-			dineOnUserActivity.unregisterReceiver(this);
-			PushService.unsubscribe(dineOnUserActivity, mUserChannel);
-			mCurrentActivity = null;
-		}
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-
-			String theirChannel = intent.getExtras() == null ? null 
-					: intent.getExtras().getString("com.parse.Channel");
-
-			if (theirChannel == null || mCurrentActivity == null) {
-				return;
-			}
-
-			if (theirChannel.equals(mUserChannel)) {
-				try {
-					JSONObject jobj = 
-							new JSONObject(intent.getExtras().getString("com.parse.Data"));
-					mCurrentActivity.onCheckInCallback(jobj);
-
-				} 
-				catch (JSONException e) {
-					Log.d(TAG, "JSONException: " + e.getMessage());
-				} 
-
-			} 
-			else if (mRestaurantSessionChannel != null 
-					&& mRestaurantSessionChannel.equals(theirChannel)) {
-				// TODO Do something here that updates the state of the current Dining Session 
-
-			}
-		}
-
-	}
-
+	
 	@Override
 	public void onFail(String message) {
 		// TODO Auto-generated method stub
