@@ -2,6 +2,7 @@ package uw.cse.dineon.library;
 
 import uw.cse.dineon.library.util.RepresentationException;
 
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
@@ -32,6 +33,10 @@ public abstract class Storable {
 	 */
 	public Storable(Class<?> clazz) {
 		mCompleteObject = new ParseObject(clazz.getSimpleName());
+		ParseACL acl = new ParseACL();
+		acl.setPublicReadAccess(true);
+		acl.setPublicWriteAccess(true);
+		mCompleteObject.setACL(acl);
 		checkRep();
 	}
 
@@ -48,7 +53,6 @@ public abstract class Storable {
 		// 		for nested classes.
 		// We have to explicitly fetch the object if we need it.
 		parseObject.fetchIfNeeded();
-
 		mCompleteObject = parseObject;
 		checkRep();
 	}

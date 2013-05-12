@@ -166,6 +166,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		if (intent == null) return;
 		IntentResult scanResult = 
 				IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 		  if (scanResult != null) {
