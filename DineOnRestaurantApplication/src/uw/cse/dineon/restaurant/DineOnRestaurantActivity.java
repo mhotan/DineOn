@@ -5,6 +5,7 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
+import uw.cse.dineon.restaurant.RestaurantDownloader.RestaurantDownLoaderCallback;
 import uw.cse.dineon.restaurant.RestaurantSatellite.SateliteListener;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
@@ -17,10 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 
@@ -58,6 +55,9 @@ implements SateliteListener {
 	 */
 	private String mRestaurantId;
 
+	/**
+	 * A general reference for inner class usage.
+	 */
 	private DineOnRestaurantActivity thisResActivity;
 
 
@@ -66,11 +66,10 @@ implements SateliteListener {
 	 */
 	protected void updateUI() {
 
-		// Lets invalidate the options menu so it shows the correct 
-		// buttons
+		// Update the Action bar based on current state
 		invalidateOptionsMenu();
 
-		// TODO  Initialize the UI based on the state of the application
+		// TODO  Update the UI based on the state of the application
 		// ...
 	}
 
@@ -116,26 +115,31 @@ implements SateliteListener {
 		super.onResume();
 
 		// We need to download the restaurant before registering the receiver
-		// Hopefully its fast
-		ParseQuery query = new ParseQuery(Restaurant.class.getSimpleName());
-		query.setCachePolicy(CachePolicy.CACHE_ELSE_NETWORK);
-		query.getInBackground(mRestaurantId, new GetCallback() {
+		RestaurantDownloader downloader = new RestaurantDownloader(mRestaurantId, 
+				CachePolicy.CACHE_ELSE_NETWORK,
+				new RestaurantDownLoaderCallback() {
+
 			@Override
-			public void done(ParseObject object, ParseException e) {
-				if (e == null) {
-					try {
-						mRestaurant = new Restaurant(object);
-					} catch (Exception e1) {
-						return;
-					}
-					mSatellite.register(mRestaurant, thisResActivity);
-				} else {
-					Utility.getBackToLoginAlertDialog(
-							thisResActivity, RestaurantLoginActivity.class).show();
+			public void onFailToDownLoadRestaurant(String message) {
+				// Have the user start back at the login screen.
+				ParseUser.logOut();
+				Utility.getBackToLoginAlertDialog(
+						thisResActivity, message, RestaurantLoginActivity.class).show();
+			}
+
+			@Override
+			public void onDownloadedRestaurant(Restaurant rest) {
+				if (rest != null) {
+					mRestaurant = rest;
 				}
+				mSatellite.register(mRestaurant, thisResActivity);
+				updateUI();
 			}
 		});
-		updateUI();
+		
+		// This actually runs the execution process
+		// Must explicitly call execute.
+		downloader.execute(CachePolicy.CACHE_ELSE_NETWORK);
 	}
 
 	@Override
@@ -143,7 +147,7 @@ implements SateliteListener {
 		super.onPause();
 		mSatellite.unRegister();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -217,9 +221,11 @@ implements SateliteListener {
 	 */
 	public void startLoginActivity() {
 		Intent i = new Intent(this, RestaurantLoginActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		mRestaurant = null;
 		startActivity(i);
 	}
-	
+
 	/**
 	 * Starts the activity that lets the user look at the restaurant profile.
 	 */
@@ -227,7 +233,7 @@ implements SateliteListener {
 		Intent i = new Intent(this, ProfileActivity.class);
 		startActivity(i);
 	}
-	
+
 	@Override
 	public void startActivity(Intent intent) {
 		if (mRestaurant != null) {
@@ -270,7 +276,7 @@ implements SateliteListener {
 		Log.w(TAG, "Restaurant instance associated with this user is null");
 		return false;
 	}
-	
+
 	////////////////////////////////////////////////
 	/////  Satellite Calls 
 	/////////////////////////////////////////////////
@@ -281,19 +287,26 @@ implements SateliteListener {
 	 * has changed.  
 	 */
 	protected void notifyAllUsersOfRestaurantChange() {
+		// Defensive null checks
 		if (mRestaurant == null) {
 			Log.e(TAG, "Restaurant is null while attempting to use the satellite");
 			return;
 		}
+		if (mSatellite == null) {
+			Log.e(TAG, "Satellite is null while attempting to notify all the users");
+			return;
+		}
+		
+		
 		// For every User that is currently in the restaurant
 		//  That is get all the Users for all the active dining sessions
 		
 	}
-	
+
 	////////////////////////////////////////////////
 	/////  Satelite Listener Callbacks
 	/////////////////////////////////////////////////
-	
+
 	@Override
 	public void onFail(String message) {
 		// TODO Auto-generated method stub
@@ -331,157 +344,6 @@ implements SateliteListener {
 		// TODO Auto-generated method stub
 
 	}
-
-	//	/**
-	//	 * Handles the communication to Customers.
-	//	 * @author mhotan
-	//	 */
-	//	private class RestaurantSatelite extends BroadcastReceiver {
-	//
-	//		/**
-	//		 * Restaurant this station is associated to.
-	//		 */
-	//		private Restaurant mParseRestaurant;
-	//
-	//		/**
-	//		 * Intent filter to control which actions to hold.
-	//		 */
-	//		private final IntentFilter mIF;
-	//
-	//		/**
-	//		 * The Channel associated with THIS Satelite.
-	//		 */
-	//		private String mThisChannel;
-	//
-	//		/**
-	//		 * The activity that the broadcast receiver is registers with.
-	//		 */
-	//		private DineOnRestaurantActivity mCurrentActivity;
-	//
-	//		/**
-	//		 * TODO ???
-	//		 */
-	//		private String mRestaurantSessionChannel;
-	//
-	//		public RestaurantSatelite() {
-	//			mIF = new IntentFilter();
-	//			mIF.addAction(DineOnConstants.ACTION_REQUEST_DINING_SESSION);
-	//			mIF.addAction(DineOnConstants.ACTION_ORDER_PLACED);
-	//			mIF.addAction(DineOnConstants.ACTION_CHECK_OUT);
-	//			mIF.addAction(DineOnConstants.ACTION_CHANGE_USER_INFO);
-	//			mRestaurantSessionChannel = null;
-	//		}
-	//
-	//		public void register(Restaurant restaurant, 
-	//				DineOnRestaurantActivity dineOnRestaurantActivity){
-	//
-	//			// Check for null values
-	//			if (restaurant == null) {
-	//				throw new IllegalArgumentException(
-	//						"Null restaurant when registering broadcast receiver");
-	//			}
-	//			if (dineOnRestaurantActivity == null) {
-	//				Log.w(TAG, "RestaurantSatelite attempted to register null activity");
-	//				return;
-	//			}
-	//
-	//			// Establish the activity 
-	//			mCurrentActivity = dineOnRestaurantActivity;
-	//
-	//			// Establish a reference to the restaurant
-	//			mParseRestaurant = restaurant;
-	//
-	//			// Establish the channel to make 
-	//			mThisChannel = ParseUtil.getChannel(mParseRestaurant);
-	//
-	//			// Registers this activity to this receiver
-	//			mCurrentActivity.registerReceiver(this, mIF);
-	//
-	//			// Subscribe to my channel so I can hear incoming messages
-	//			PushService.subscribe(dineOnRestaurantActivity, 
-	//					mThisChannel, 
-	//					dineOnRestaurantActivity.getClass());
-	//		}
-	//
-	//		/**
-	//		 * Invalidates this receiver.
-	//		 */
-	//		public void unRegister() {
-	//			if (mCurrentActivity == null) {
-	//				return;
-	//			}
-	//
-	//			mCurrentActivity.unregisterReceiver(this);
-	//			PushService.unsubscribe(mCurrentActivity, mThisChannel);
-	//			mCurrentActivity = null;
-	//		}
-	//
-	//		@Override
-	//		public void onReceive(Context context, Intent intent) {
-	//
-	//			// Extract the channel they were sending to
-	//			String theirChannel = intent.getExtras() == null ? null :  
-	//				intent.getExtras().getString(DineOnConstants.PARSE_CHANNEL);
-	//
-	//			// IF they don't have a channel are our activity died
-	//			// Then exit this method
-	//			if (theirChannel == null || mCurrentActivity == null) {
-	//				Log.w(TAG, "[onReceive] Their channel: " + theirChannel 
-	//						+ " Our activity: " + mCurrentActivity);
-	//				return;
-	//			}
-	//
-	//			// As an assurance we assert their channel is equal to ours
-	//			if (theirChannel.equals(mThisChannel)) {
-	//				// Extract the 
-	//				String id = null;
-	//				try {
-	//					JSONObject jobj = new JSONObject(
-	//							intent.getExtras().getString(DineOnConstants.PARSE_DATA));
-	//					id = jobj.getString(DineOnConstants.OBJ_ID);
-	//				} 
-	//				catch (JSONException e) {
-	//					Log.d(TAG, "JSONException: " + e.getMessage());
-	//				} 
-	//				String action = intent.getAction();
-	//				if (DineOnConstants.ACTION_REQUEST_DINING_SESSION.equals(action)) {
-	//
-	//				} else if (DineOnConstants.ACTION_ORDER_PLACED.equals(action)) {
-	//
-	//				} else if (DineOnConstants.ACTION_CUSTOMER_REQUEST.equals(action)) {
-	//
-	//				} else if (DineOnConstants.ACTION_CHECK_OUT.equals(action)) {
-	//
-	//				} else if (DineOnConstants.ACTION_CHANGE_USER_INFO.equals(action)) {
-	//
-	//				} else {
-	//					Log.w(TAG, "Unknown action received: " + action);
-	//				}
-	//
-	//			} 
-	//			else if (mRestaurantSessionChannel != null && 
-	//					mRestaurantSessionChannel.equals(theirChannel)) {
-	//				// TODO Do something here that updates the state of the current Dining Session 
-	//
-	//			}
-	//		}
-	//
-	//
-	//	}
-	//
-	//	/**
-	//	 * Helper to save/update Restaurant associated with this activity.
-	//	 */
-	//	private void saveRestaurant() {
-	//		try {
-	//			ParseUtil.saveDataToCloud(mRestaurant, 
-	//					Restaurant.class.getMethod("onSaveInstanceState", 
-	//							new Class[]{Bundle.class}));
-	//		} catch (NoSuchMethodException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		}
-	//	}
 
 	/*
 //	 * Brodcast receiver callback specific methods 

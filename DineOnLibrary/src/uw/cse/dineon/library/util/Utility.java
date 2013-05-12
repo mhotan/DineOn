@@ -15,12 +15,12 @@ import android.net.NetworkInfo;
  * @author mhotan
  */
 public final class Utility {
-	
+
 	/**
 	 * Prevents construction of a utility class.
 	 */
 	private Utility() { }
-	
+
 	/**
 	 * Returns whether the screen can be split horizontally into two panes
 	 * for optimal user interaction.  Currently the restriction is 
@@ -52,7 +52,7 @@ public final class Utility {
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 		return (networkInfo != null && networkInfo.isConnected());
 	}
-	
+
 	/**
 	 * Returns a general Alert Dialog box for notifying the user that
 	 * their attempt to login failed.
@@ -65,7 +65,7 @@ public final class Utility {
 			String message, Context context) {
 		return getGeneralAlertDialog("Failed to Create Account", message, context);
 	}
-	
+
 	/**
 	 * Returns general alert dialog box.
 	 * 
@@ -88,7 +88,7 @@ public final class Utility {
 		});
 		return b.create();
 	}
-	
+
 	/**
 	 * Creates an alert dialog that pushes user back to login page.
 	 * @param context Context to show Alert Dialog
@@ -97,10 +97,23 @@ public final class Utility {
 	 */
 	public static AlertDialog getBackToLoginAlertDialog(
 			final Context context, final Class<?> loginClass) {
+		return getBackToLoginAlertDialog(context, 
+				"Looks like we have misplaced your Information.  " 
+						+ "Please log back in to try again." , loginClass);
+	}
+
+	/**
+	 * Creates an alert dialog that pushes user back to login page.
+	 * @param context Context to show Alert Dialog
+	 * @param message custom message to show User
+	 * @param loginClass Class of the Login to launch. 
+	 * @return The alert dialog.
+	 */
+	public static AlertDialog getBackToLoginAlertDialog(
+			final Context context, final String message, final Class<?> loginClass) {
 		AlertDialog.Builder b = new Builder(context);
 		b.setTitle("Failed to get you information");
-		b.setMessage("We have misplaced your information at this time.  " +
-				"Would you like to login again");
+		b.setMessage(message);
 		b.setCancelable(true);
 		b.setPositiveButton("Login", new OnClickListener() {
 			@Override
@@ -110,14 +123,14 @@ public final class Utility {
 			}
 		});
 		b.setNegativeButton("Cancel", new OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
 			}
 		});
 		return b.create();
-	
+
 	}
 
 }

@@ -1,39 +1,36 @@
 package uw.cse.dineon.restaurant.login;
 
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
-import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
+import uw.cse.dineon.restaurant.RestaurantDownloader;
+import uw.cse.dineon.restaurant.RestaurantDownloader.RestaurantDownLoaderCallback;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 
 /**
- * Login Activity for Restaurant users. Usually sets up the initial
+ * Login Activity for Restaurant users.
  * 
  * @author mhotan
  */
 public class RestaurantLoginActivity extends FragmentActivity implements
-LoginFragment.OnLoginListener {
+LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 
 	/**
 	 * Progress bar dialog for showing user progress.
@@ -49,7 +46,7 @@ LoginFragment.OnLoginListener {
 	/**
 	 * Reference to this Activity instance for anonymous inner classes.
 	 */
-	private Context thisCxt;
+	private RestaurantLoginActivity This;
 
 
 	// //////////////////////////////////////////////////////////////////////
@@ -66,8 +63,14 @@ LoginFragment.OnLoginListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		thisCxt = this;
-		// TODO Attempt to get the last ParseUser
+		This = this;
+		
+		ParseUser user = ParseUser.getCurrentUser();
+		if (user != null && user.isAuthenticated() 
+				&& user.getUsername() != null) {
+			RestaurantDownloader downloader = new LoginRestaurantDownloader(user, This);
+			downloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
+		}
 	}
 
 	/**
@@ -80,7 +83,6 @@ LoginFragment.OnLoginListener {
 		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurantID);
 		super.startActivity(intent);
 	}
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -125,28 +127,7 @@ LoginFragment.OnLoginListener {
 		}
 	
 		// Log in using asyncronous callback
-		ParseUser.logInInBackground(username, password, new LogInCallback() {
-
-			@Override
-			public void done(ParseUser user, ParseException e) {
-				
-				if (e == null && user != null) {
-					// Login successful 
-					// because create Restaurant activity always handles first time
-					// users we know that this user is returning
-					// Therefore there has to be a Restaurant instance in the cloud
-					RestaurantFinder callback = new RestaurantFinder(user);
-					callback.findRestaurant();
-					
-				} else if (user == null) {
-					destroyProgressDialog();
-					Utility.getFailedToCreateAccountDialog("Invalid Credentials", thisCxt).show();
-				} else {
-					destroyProgressDialog();
-					Utility.getGeneralAlertDialog("Server Error", e.getMessage(), thisCxt).show();
-				}
-			}
-		});
+		ParseUser.logInInBackground(username, password, new RestaurantLoginCallback());
 	}
 
 	/**
@@ -171,51 +152,33 @@ LoginFragment.OnLoginListener {
 	// //////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Handles the Getting of Restaurant instances.
-	 * Once they are found the next activity is started
-	 * 
+	 * Login Callback for restaurant downloads.
 	 * @author mhotan
 	 */
-	private class RestaurantFinder extends GetCallback {
+	private class RestaurantLoginCallback extends LogInCallback {
 
-		private final ParseUser user;
-		
-		/**
-		 * Creates a callback associated to this user.
-		 * @param user User that is contained in the Restaurant to Find
-		 */
-		public RestaurantFinder(ParseUser user) {
-			this.user = user;
-		}
-		
-		/**
-		 * Finds a restaurant associated with this ParseUser.
-		 */
-		public void findRestaurant() {
-			// TODO we need to test these queries
-			ParseQuery inner = new ParseQuery(RestaurantInfo.class.getSimpleName());
-			inner.whereEqualTo(RestaurantInfo.PARSEUSER, user);
-			ParseQuery query = new ParseQuery(Restaurant.class.getSimpleName());
-			query.whereMatchesQuery(Restaurant.INFO, inner);
-			query.getFirstInBackground(this);
-		}
-		
 		@Override
-		public void done(ParseObject object, ParseException e) {
-			// Stop the progress dialog
-			destroyProgressDialog();
-			
-			if (e == null) {
-				// We have found the correct object
-				mRestaurantID = object.getObjectId();
-				startMainActivity();
+		public void done(ParseUser user, ParseException e) {
+			if (e == null && user != null) {
+				// Login successful 
+				// because create Restaurant activity always handles first time
+				// users we know that this user is returning
+				// Therefore there has to be a Restaurant instance in the cloud
+//				RestaurantFinder callback = new RestaurantFinder(user);
+//				callback.findRestaurant();
+				RestaurantDownloader downloader = new LoginRestaurantDownloader(user, This);
+				downloader.execute(CachePolicy.NETWORK_ONLY);
+				
+			} else if (user == null) {
+				destroyProgressDialog();
+				Utility.getFailedToCreateAccountDialog("Invalid Credentials", This).show();
 			} else {
-				Utility.getGeneralAlertDialog("Server Failure", 
-						"Failed to get your information", thisCxt).show();
+				destroyProgressDialog();
+				Utility.getGeneralAlertDialog("Server Error", e.getMessage(), This).show();
 			}
 		}
 	}
-
+	
 	// //////////////////////////////////////////////////////////////////////
 	// /// UI Specific methods
 	// //////////////////////////////////////////////////////////////////////
@@ -244,4 +207,49 @@ LoginFragment.OnLoginListener {
 		}
 	}
 
+	@Override
+	public void onFailToDownLoadRestaurant(String message) {
+		ParseUser.logOut();
+		Utility.getGeneralAlertDialog("No Restaurant Account", 
+				"Unable to get your Restaurant account because: " + message, This).show();
+	}
+
+	@Override
+	public void onDownloadedRestaurant(Restaurant rest) {
+		if (rest != null) {
+			mRestaurantID = rest.getObjId();
+			startMainActivity();
+		}
+	}
+	
+	/**
+	 * A restaurant downloader that controls progress dialog.
+	 * @author mhotan
+	 */
+	private class LoginRestaurantDownloader extends RestaurantDownloader {
+
+		/**
+		 * Creates a Login Restaurant Downloader that can control progress dialogs.
+		 * @param user
+		 * @param callback
+		 */
+		public LoginRestaurantDownloader(ParseUser user,
+				RestaurantDownLoaderCallback callback) {
+			super(user, callback);
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			createProgressDialog();
+		}
+	
+		@Override
+		protected void onPostExecute (Restaurant result) {
+			destroyProgressDialog();
+			super.onPostExecute(result);
+		}
+		
+	}
+	
 }

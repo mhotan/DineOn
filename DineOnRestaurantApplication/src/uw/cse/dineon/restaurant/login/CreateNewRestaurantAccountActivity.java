@@ -2,23 +2,23 @@ package uw.cse.dineon.restaurant.login;
 
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.CredentialValidator;
-import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.R;
+import uw.cse.dineon.restaurant.RestaurantDownloader;
+import uw.cse.dineon.restaurant.RestaurantDownloader.RestaurantDownLoaderCallback;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.CreateNewAccountFragment.CreateNewAccountListener;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.parse.ParseException;
+import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 /**
@@ -27,7 +27,7 @@ import com.parse.SignUpCallback;
  * @author mhotan
  */
 public class CreateNewRestaurantAccountActivity extends FragmentActivity 
-implements CreateNewAccountListener {
+implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 
 	private static final String TAG = CreateNewRestaurantAccountActivity.class.getSimpleName();
 
@@ -44,14 +44,14 @@ implements CreateNewAccountListener {
 	/**
 	 * Instance to myself.
 	 */
-	private Context thisCxt;
+	private CreateNewRestaurantAccountActivity This;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_account);
 
-		thisCxt = this;
+		This = this;
 	}
 
 	/**
@@ -61,11 +61,6 @@ implements CreateNewAccountListener {
 	 */
 	@Override
 	public void startActivity(Intent intent) {
-		if (DineOnConstants.DEBUG && mRestaurantID == null) {
-			Toast.makeText(this, "Need to create or download a User",
-					Toast.LENGTH_SHORT).show();
-			return;
-		}
 		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurantID);
 		super.startActivity(intent);
 	}
@@ -83,62 +78,65 @@ implements CreateNewAccountListener {
 			USER.setUsername(username);
 			USER.setPassword(pw);
 			USER.setEmail(email);
-			USER.signUpInBackground(new SignUpCallback() {
-
-				@Override
-				public void done(ParseException e) {
-
-					// stop the alert dialog
-					destroyProgressDialog();
-
-					if (e == null) {
-						// They are logged in as a ParseUser
-
-						Restaurant rest = null;
-						try {
-							rest = new Restaurant(USER);
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						
-						if (rest == null) {
-							Log.e(TAG, "No internet connect");
-							return;
-						}
-						
-						final Restaurant REST2 = rest;
-
-						// Callback within a callback egh...
-						// Save our new restaurant in the backgrounf
-						REST2.saveInBackGround(new SaveCallback() {
-							@Override
-							public void done(ParseException e) {
-								if (e == null) { // Success
-									// There exist a restaurant instance for this 
-									mRestaurantID = REST2.getObjId();
-									startMainActivity();
-								} else { // Fail to save
-									// Alert dialog notifying user of exceptional case
-									// Unable to save restaurant
-									Utility.getFailedToCreateAccountDialog(
-											e.getMessage(), thisCxt).show();
-								}
-							}
-						});
-					} else {
-						// Sign up didn't succeed. Look at the ParseException
-						// to figure out what went wrong
-						Utility.getFailedToCreateAccountDialog(e.getMessage(), thisCxt).show();
-					}
-				}
-			});
+			USER.signUpInBackground(new RestaurantSignUpCallback(USER));
 		} 
 		else {
-			Utility.getFailedToCreateAccountDialog(completeRes.getMessage(), thisCxt).show();
+			Utility.getFailedToCreateAccountDialog(completeRes.getMessage(), This).show();
 		}
 	}
 
+	/**
+	 * Private Helper Class to help create a new ParseUser.
+	 * @author mhotan 
+	 */
+	private class RestaurantSignUpCallback extends SignUpCallback {
+
+		private final ParseUser mCallbackParseUser;
+		
+		/**
+		 * Creates a Restaurant Sign up callback.
+		 * @param user User to sign up.
+		 */
+		public RestaurantSignUpCallback(ParseUser user) {
+			mCallbackParseUser = user;
+		}
+		
+		@Override
+		public void done(ParseException e) {
+			// stop the alert dialog
+			destroyProgressDialog();
+
+			if (e == null) {
+				// Download the Restaurant
+				RestaurantDownloader downloader = 
+						new RestaurantDownloader(mCallbackParseUser, This);
+				downloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
+			} else {
+				// Sign up didn't succeed. Look at the ParseException
+				// to figure out what went wrong
+				Utility.getFailedToCreateAccountDialog(e.getMessage(), This).show();
+			}
+		}
+	}
+	
+	// //////////////////////////////////////////////////////////////////////
+	// /// Restaurant Downlaod Callback
+	// //////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void onFailToDownLoadRestaurant(String message) {
+		ParseUser.logOut();
+		Utility.getFailedToCreateAccountDialog(message, This).show();
+	}
+
+	@Override
+	public void onDownloadedRestaurant(Restaurant rest) {
+		if (rest != null) {
+			mRestaurantID = rest.getObjId();
+			startMainActivity();
+		}
+	}
+	
 	/**
 	 * Starts the Main activity for this restaurant.
 	 */
@@ -174,4 +172,6 @@ implements CreateNewAccountListener {
 			mProgressDialog.dismiss();
 		}
 	}
+	
+
 }
