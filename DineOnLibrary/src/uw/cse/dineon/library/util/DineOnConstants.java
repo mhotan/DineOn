@@ -22,6 +22,7 @@ public final class DineOnConstants {
 	// Parse Related Cosntants to access Parse API
 	public static final String APPLICATION_ID = "10dCEpc2D8Rp7pC2uFaLCN7CtRcNSeZkz8d7eAaX";
 	public static final String CLIENT_KEY = "4NAn0437HLZpDMa5v0gS6JeYT28Q0vmxW19qWdSw";
+
 	
 	public static final String FACEBOOK_APP_ID = "505185672873933";
 	
@@ -49,6 +50,8 @@ public final class DineOnConstants {
 	 *	Activity: For Bundle b, b.getParcelable(KEY_RESTAURANT);
 	 */
 	public static final String KEY_RESTAURANT = "RESTAURANT";
+	
+	public static final String KEY_ACTION = "action";
 	
 	/**
 	 * Reference KEY_RESTAURANT, but for Restaurant Info.

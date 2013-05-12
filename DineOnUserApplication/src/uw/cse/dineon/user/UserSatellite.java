@@ -228,10 +228,20 @@ public class UserSatellite extends BroadcastReceiver {
 			throw new NullPointerException("[notifiyAction] info is null");
 		}
 
+		JSONObject jobj = new JSONObject();
+		try {
+			jobj.put(DineOnConstants.KEY_ACTION, action);
+			for (String k : attr.keySet()) {
+				jobj.put(k, attr.get(k));				
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// Send IT!
 		ParseUtil.notifyApplication(
-				action,
-				attr,
+				jobj,
 				ParseUtil.getChannel(info));
 	}
 

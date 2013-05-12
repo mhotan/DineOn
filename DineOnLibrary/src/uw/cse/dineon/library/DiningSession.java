@@ -33,17 +33,14 @@ public class DiningSession extends TimeableStorable {
 
 	// ID's used for easier parsing
 	public static final String USERS = "users";
-	public static final String PENDING_ORDERS = "pendingOrders";
-	public static final String COMPLETED_ORDERS = "completedOrders";
+	public static final String ORDERS = "orders";
 	public static final String TABLE_ID = "tableId";
 	public static final String REQUESTS = "requests";
 
 	// list of users involved in this session
 	private final List<UserInfo> mUsers;	
 	// list of orders made but not completed 
-	private final List<Order> mPendingOrders;
-	// List of completed orders
-	private final List<Order> mCompletedOrders;
+	private final List<Order> mOrders;
 	// list of unresolved pending request
 	private final List<CustomerRequest> mPendingRequests;
 
@@ -54,23 +51,25 @@ public class DiningSession extends TimeableStorable {
 	 * Creates a dining session instance that is associated to a particular table.
 	 * Takes current time as 
 	 * @param tableID the id of the table
+	 * @param uInfo to store
 	 */
-	public DiningSession(int tableID) {
-		this(tableID, null);
+	public DiningSession(int tableID, UserInfo uInfo) {
+		this(tableID, null, uInfo);
 	}
 
 	/**
 	 * Creates a dining session that is associated with a particular
 	 * start date.
 	 * @param tableId Table ID to associate to
-	 * @param startDate of session
+	 * @param startDate of session, if null sets it as the current date
+	 * @param uInfo UserInfo to store
 	 */
-	public DiningSession(int tableId, Date startDate) {
+	public DiningSession(int tableId, Date startDate, UserInfo uInfo) {
 		super(DiningSession.class, startDate);
 		resetTableID(tableId);
 		mUsers = new ArrayList<UserInfo>();
-		mPendingOrders = new ArrayList<Order>();
-		mCompletedOrders = new ArrayList<Order>();
+		mUsers.add(uInfo);
+		mOrders = new ArrayList<Order>();
 		mPendingRequests = new ArrayList<CustomerRequest>();
 	}
 
@@ -85,8 +84,7 @@ public class DiningSession extends TimeableStorable {
 		super(po);
 		mTableID = po.getInt(TABLE_ID);
 		mUsers = ParseUtil.toListOfStorables(UserInfo.class, po.getList(USERS));
-		mPendingOrders = ParseUtil.toListOfStorables(Order.class, po.getList(PENDING_ORDERS));
-		mCompletedOrders = ParseUtil.toListOfStorables(Order.class, po.getList(COMPLETED_ORDERS));
+		mOrders = ParseUtil.toListOfStorables(Order.class, po.getList(ORDERS));
 		mPendingRequests = ParseUtil.toListOfStorables(CustomerRequest.class, po.getList(REQUESTS));
 	}
 	
@@ -99,8 +97,7 @@ public class DiningSession extends TimeableStorable {
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
 		po.put(USERS, ParseUtil.toListOfParseObjects(mUsers));
-		po.put(PENDING_ORDERS, ParseUtil.toListOfParseObjects(mPendingOrders));
-		po.put(COMPLETED_ORDERS, ParseUtil.toListOfParseObjects(mCompletedOrders));
+		po.put(ORDERS, ParseUtil.toListOfParseObjects(mOrders));
 		po.put(REQUESTS, ParseUtil.toListOfParseObjects(mPendingRequests));
 		return po;
 	}
@@ -111,8 +108,8 @@ public class DiningSession extends TimeableStorable {
 	 * @return A list of current pending orders
 	 */
 	public List<Order> getPendingOrders() {
-		List<Order> copy = new ArrayList<Order>(mPendingOrders.size());
-		Collections.copy(copy, mPendingOrders);
+		List<Order> copy = new ArrayList<Order>(mOrders.size());
+		Collections.copy(copy, mOrders);
 		return copy;
 	}
 
@@ -121,8 +118,7 @@ public class DiningSession extends TimeableStorable {
 	 * @return A list of currently completed orders for this dining session
 	 */
 	public List<Order> getCompletedOrders() {
-		List<Order> copy = new ArrayList<Order>(mCompletedOrders.size());
-		Collections.copy(copy, mCompletedOrders);
+		List<Order> copy = new ArrayList<Order>(mOrders.size());
 		return copy;
 	}
 	
@@ -153,19 +149,7 @@ public class DiningSession extends TimeableStorable {
 	 * @param order to add.
 	 */
 	public void addPendingOrder(Order order) {
-		mPendingOrders.add(order);
-	}
-
-	/**
-	 * Order has completed preparation and is served to the customer.
-	 * @param order that is served
-	 */
-	public void orderServed(Order order) {
-		// Order has left the kitchen and served to the table
-		// TODO Essentially moving from one list to the other
-		if (mPendingOrders.remove(order)) {
-			mCompletedOrders.add(order);
-		}
+		mOrders.add(order);
 	}
 
 	/**
@@ -212,7 +196,7 @@ public class DiningSession extends TimeableStorable {
 		}
 		
 		// Delete all the pending orders
-		for (Order r: mPendingOrders) {
+		for (Order r: mOrders) {
 			r.deleteFromCloud();
 		}
 		

@@ -1,6 +1,7 @@
 package uw.cse.dineon.restaurant;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -133,15 +134,30 @@ public class RestaurantSatellite extends BroadcastReceiver {
 	 * Note: This does not save the dining sessin it just simply assumes
 	 * that its state is appropiate for a push.
 	 * @param ds DiningSession instance to return
-	 * @param user User to return to
 	 */
-	public void confirmDiningSession(DiningSession ds, UserInfo user) {
-		Map<String, String> attr = new HashMap<String, String>();
-		attr.put(DineOnConstants.OBJ_ID, ds.getObjId());
+	public void confirmDiningSession(DiningSession ds) {
+		if(ds.getUsers() == null || ds.getUsers().isEmpty()) {
+			throw new IllegalArgumentException("User list is null/empty.");
+		}
+		if(ds.getObjId() == null) {
+			throw new IllegalArgumentException("Forgot to save dining session.");
+		}
+		JSONObject jobj = new JSONObject();
+		
+		try {
+			jobj.put(DineOnConstants.OBJ_ID, ds.getObjId());
+			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_DINING_SESSION);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		List<UserInfo> users = ds.getUsers();
+		for (UserInfo u : users) {
 		ParseUtil.notifyApplication(
-				DineOnConstants.ACTION_CONFIRM_DINING_SESSION,
-				attr,
-				ParseUtil.getChannel(user));
+				jobj,
+				ParseUtil.getChannel(u));
+		}
 	}
 
 	/**
@@ -152,11 +168,18 @@ public class RestaurantSatellite extends BroadcastReceiver {
 	 * @param user User to notify
 	 */
 	public void notifyChangeRestaurantInfo(RestaurantInfo restaurant, UserInfo user) {
-		Map<String, String> attr = new HashMap<String, String>();
-		attr.put(DineOnConstants.OBJ_ID, restaurant.getObjId());
+		JSONObject jobj = new JSONObject();
+		
+		try {
+			jobj.put(DineOnConstants.OBJ_ID, restaurant.getObjId());
+			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CHANGE_RESTAURANT_INFO);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		ParseUtil.notifyApplication(
-				DineOnConstants.ACTION_CHANGE_RESTAURANT_INFO,
-				attr,
+				jobj,
 				ParseUtil.getChannel(user));
 	}
 
@@ -194,9 +217,11 @@ public class RestaurantSatellite extends BroadcastReceiver {
 			return;
 		} 
 
-		int tableNum = -1; //Default Value
+		String tableNumStr = "" + -1; //Default Value
+		int tableNum = -1;
 		try {
-			tableNum = jobj.getInt(DineOnConstants.TABLE_NUM);
+			tableNumStr = jobj.getString(DineOnConstants.TABLE_NUM);
+			tableNum = Integer.valueOf(tableNumStr);
 		} catch (JSONException e) {
 			// Leave it at -1
 			Log.e(TAG, "JSON Exception occured on push request.");
@@ -226,6 +251,8 @@ public class RestaurantSatellite extends BroadcastReceiver {
 					}
 				}
 			});
+			
+			Log.v(TAG, "Dining Session received!");
 		} else if (DineOnConstants.ACTION_ORDER_PLACED.equals(action)) {
 			// TODO Download Dining Session
 			dsQuery.getInBackground(id, new GetCallback() {

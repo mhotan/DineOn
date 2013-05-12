@@ -3,6 +3,9 @@ package uw.cse.dineon.restaurant.profile;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.parse.ParseException;
+import com.parse.SaveCallback;
+
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.R;
@@ -21,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Main view that allows the user to access and see their restaurant.
@@ -54,7 +58,7 @@ public class RestaurantInfoFragment extends Fragment {
 		// IF there are arguments 
 		// then check if there is a restaurant info instance
 		// info can be null
-		RestaurantInfo info = getArguments() != null ? (RestaurantInfo)
+		final RestaurantInfo info = getArguments() != null ? (RestaurantInfo)
 				getArguments().getParcelable(DineOnConstants.KEY_RESTAURANTINFO) : null;
 
 		// Check the view and its state and intialize appropiately
@@ -69,9 +73,10 @@ public class RestaurantInfoFragment extends Fragment {
 			CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.checkbox_is_default_image);
 			ImageButton mButtonAdd = (ImageButton) view.findViewById(R.id.button_add_new_image);
 			ImageButton mButtonDelt = (ImageButton) view.findViewById(R.id.button_delete_image);
-			EditText mPhoneInput = (EditText) view.findViewById(R.id.edittext_phone_number);
-			EditText mAddressInput = (EditText) view.findViewById(R.id.edittext_restaurant_address);
+			final EditText mPhoneInput = (EditText) view.findViewById(R.id.edittext_restaurant_phone);
+			final EditText mAddressInput = (EditText) view.findViewById(R.id.edittext_restaurant_address);
 			Button mSaveButton = (Button) view.findViewById(R.id.button_save_restaurant_info);
+			TextView restName = (TextView) view.findViewById(R.id.label_restaurant_name);
 
 			imageViews = new ArrayList<View>();
 
@@ -87,8 +92,34 @@ public class RestaurantInfoFragment extends Fragment {
 			// user selects another image of focus.
 
 			// TODO Set the default values to the current argument
+			mPhoneInput.setText(info.getPhone());
+			mAddressInput.setText(info.getAddr());
+			restName.setText(info.getName());
+			
 
 			// TODO Set listener for the buttons
+			mSaveButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					
+					info.setAddr(mAddressInput.getText().toString());
+					info.setPhone(mPhoneInput.getText().toString());
+					
+					
+					
+					info.saveInBackGround(new SaveCallback(){
+
+						@Override
+						public void done(ParseException arg0) {
+							Toast.makeText(getActivity(), "Restaurant Info Updated!", Toast.LENGTH_SHORT).show();
+						}
+						
+					});
+					// TODO Auto-generated method stub
+					
+				}
+			});
 
 			// Listener will then Alter the restaurant Info instance.
 

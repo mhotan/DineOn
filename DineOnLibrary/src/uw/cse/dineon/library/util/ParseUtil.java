@@ -359,26 +359,17 @@ public final class ParseUtil {
 	 * There must be a custom broadcast receiver on the receiving end which
 	 * is subscribed to the sending channel.
 	 * 
-	 * @param action A string to differenciate b/t different actions causing
-	 * a push
-	 * @param attr The key-value attributes that describe the information to
-	 * send in the form of JSON obj
+	 * @param jobj JSONObject to send
 	 * @param channel The channel which the push is sent over
 	 * 
 	 * Note: There must must coordination b/t the sender and receiver on the
 	 * format of attributes.
 	 */
-	public static void notifyApplication(String action, Map<String, String> attr, String channel) {
+	public static void notifyApplication(JSONObject jobj, String channel) {
 		try {
-			JSONObject data = new JSONObject();
-			data.put("action", action);
-			Set<String> kSet = attr.keySet();
-			for (String k : kSet) {
-				data.put(k, attr.get(k));
-			}
 			ParsePush push = new ParsePush();
 			push.setChannel(channel);
-			push.setData(data);
+			push.setData(jobj);
 			push.sendInBackground();
 		} catch (Exception e) {
 			Log.d(TAG, e.getMessage());

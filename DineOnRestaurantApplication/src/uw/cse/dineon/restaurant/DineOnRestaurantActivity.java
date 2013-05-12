@@ -5,10 +5,10 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
-import uw.cse.dineon.restaurant.RestaurantDownloader.RestaurantDownLoaderCallback;
 import uw.cse.dineon.restaurant.RestaurantSatellite.SateliteListener;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -17,7 +17,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.widget.Toast;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 
@@ -55,9 +61,6 @@ implements SateliteListener {
 	 */
 	private String mRestaurantId;
 
-	/**
-	 * A general reference for inner class usage.
-	 */
 	private DineOnRestaurantActivity thisResActivity;
 
 
@@ -66,10 +69,11 @@ implements SateliteListener {
 	 */
 	protected void updateUI() {
 
-		// Update the Action bar based on current state
+		// Lets invalidate the options menu so it shows the correct 
+		// buttons
 		invalidateOptionsMenu();
 
-		// TODO  Update the UI based on the state of the application
+		// TODO  Initialize the UI based on the state of the application
 		// ...
 	}
 
@@ -115,31 +119,26 @@ implements SateliteListener {
 		super.onResume();
 
 		// We need to download the restaurant before registering the receiver
-		RestaurantDownloader downloader = new RestaurantDownloader(mRestaurantId, 
-				CachePolicy.CACHE_ELSE_NETWORK,
-				new RestaurantDownLoaderCallback() {
-
+		// Hopefully its fast
+		ParseQuery query = new ParseQuery(Restaurant.class.getSimpleName());
+		query.setCachePolicy(CachePolicy.CACHE_ELSE_NETWORK);
+		query.getInBackground(mRestaurantId, new GetCallback() {
 			@Override
-			public void onFailToDownLoadRestaurant(String message) {
-				// Have the user start back at the login screen.
-				ParseUser.logOut();
-				Utility.getBackToLoginAlertDialog(
-						thisResActivity, message, RestaurantLoginActivity.class).show();
-			}
-
-			@Override
-			public void onDownloadedRestaurant(Restaurant rest) {
-				if (rest != null) {
-					mRestaurant = rest;
+			public void done(ParseObject object, ParseException e) {
+				if (e == null) {
+					try {
+						mRestaurant = new Restaurant(object);
+					} catch (Exception e1) {
+						return;
+					}
+					mSatellite.register(mRestaurant, thisResActivity);
+				} else {
+					Utility.getBackToLoginAlertDialog(
+							thisResActivity, RestaurantLoginActivity.class).show();
 				}
-				mSatellite.register(mRestaurant, thisResActivity);
-				updateUI();
 			}
 		});
-		
-		// This actually runs the execution process
-		// Must explicitly call execute.
-		downloader.execute(CachePolicy.CACHE_ELSE_NETWORK);
+		updateUI();
 	}
 
 	@Override
@@ -147,7 +146,7 @@ implements SateliteListener {
 		super.onPause();
 		mSatellite.unRegister();
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -221,11 +220,9 @@ implements SateliteListener {
 	 */
 	public void startLoginActivity() {
 		Intent i = new Intent(this, RestaurantLoginActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		mRestaurant = null;
 		startActivity(i);
 	}
-
+	
 	/**
 	 * Starts the activity that lets the user look at the restaurant profile.
 	 */
@@ -233,7 +230,7 @@ implements SateliteListener {
 		Intent i = new Intent(this, ProfileActivity.class);
 		startActivity(i);
 	}
-
+	
 	@Override
 	public void startActivity(Intent intent) {
 		if (mRestaurant != null) {
@@ -276,7 +273,7 @@ implements SateliteListener {
 		Log.w(TAG, "Restaurant instance associated with this user is null");
 		return false;
 	}
-
+	
 	////////////////////////////////////////////////
 	/////  Satellite Calls 
 	/////////////////////////////////////////////////
@@ -287,26 +284,19 @@ implements SateliteListener {
 	 * has changed.  
 	 */
 	protected void notifyAllUsersOfRestaurantChange() {
-		// Defensive null checks
 		if (mRestaurant == null) {
 			Log.e(TAG, "Restaurant is null while attempting to use the satellite");
 			return;
 		}
-		if (mSatellite == null) {
-			Log.e(TAG, "Satellite is null while attempting to notify all the users");
-			return;
-		}
-		
-		
 		// For every User that is currently in the restaurant
 		//  That is get all the Users for all the active dining sessions
 		
 	}
-
+	
 	////////////////////////////////////////////////
 	/////  Satelite Listener Callbacks
 	/////////////////////////////////////////////////
-
+	
 	@Override
 	public void onFail(String message) {
 		// TODO Auto-generated method stub
@@ -319,6 +309,31 @@ implements SateliteListener {
 		// Something is wrong if user == null
 		// TODO Create a Dining Session
 		// 
+		//			DiningSession newDS = new DiningSession(
+		//					new LinkedList<Order>(), 
+		//					0, 
+		//					jobj.getInt("tableID"));
+		//			UserInfo info = new UserInfo();
+		//			info.unpackObject(user);
+		//			newDS.addUser(info);
+		//			// save to cloud
+		//			Method m = DineOnRestaurantActivity.class.getMethod("onSavedDiningSession", 
+		//					Boolean.class, String.class, Storable.class); 
+		//			ParseUtil.saveDataToCloud(this, newDS, m);
+		final DiningSession newDS = new DiningSession(tableID, user);
+		
+		newDS.saveInBackGround(new SaveCallback() {
+			
+			@Override
+			public void done(ParseException e) {
+				if (e == null) {
+					mSatellite.confirmDiningSession(newDS);
+				} else {
+					Log.e(TAG, "unable to confirm dining session: " + e.getMessage());
+				}
+			}
+		});
+		
 	}
 
 	@Override
@@ -335,8 +350,12 @@ implements SateliteListener {
 
 	@Override
 	public void onCustomerRequest(DiningSession session) {
-		// TODO Auto-generated method stub
+		Context context = getApplicationContext();
+		CharSequence text = "Request recieved!";
+		int duration = Toast.LENGTH_SHORT;
 
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
 	}
 
 	@Override
@@ -363,17 +382,6 @@ implements SateliteListener {
 	//			user.put(UserInfo.EMAIL, juserInfo.getString(UserInfo.EMAIL));
 	//			user.put(UserInfo.PHONE, juserInfo.getString(UserInfo.PHONE));
 	//
-	//			DiningSession newDS = new DiningSession(
-	//					new LinkedList<Order>(), 
-	//					0, 
-	//					jobj.getInt("tableID"));
-	//			UserInfo info = new UserInfo();
-	//			info.unpackObject(user);
-	//			newDS.addUser(info);
-	//			// save to cloud
-	//			Method m = DineOnRestaurantActivity.class.getMethod("onSavedDiningSession", 
-	//					Boolean.class, String.class, Storable.class); 
-	//			ParseUtil.saveDataToCloud(this, newDS, m);
 	//
 	//		} catch (NoSuchMethodException e) {
 	//			// TODO Auto-generated catch block

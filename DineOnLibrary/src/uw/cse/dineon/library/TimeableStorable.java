@@ -49,7 +49,7 @@ public abstract class TimeableStorable extends Storable {
 		if (startDate == null) {
 			startDate = new Date();
 		}
-		mDate = new Date();
+		mDate = startDate;
 	}
 	
 	/**
