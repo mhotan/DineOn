@@ -11,6 +11,8 @@ import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.LoadingFrament;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.DiningSessionListFragment.DiningSessionListListener;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.DownloadManager.Request;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 /**
  * This activity supports the main features for this restaurant
@@ -60,69 +63,25 @@ DiningSessionListListener {
 		mPager.setAdapter(mPagerAdapter);
 	}
 	
-	/**
-	 * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-	 * sequence.
-	 */
-	private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
-
-		private Fragment mCurrent;
-
-		/**
-		 * This is a PageAdapter to control Restaurant displays
-		 * that show orders, customer requests, and sessions.
-		 * @param fragmentManager Fragment manager of this activity
-		 */
-		public ScreenSlidePagerAdapter(FragmentManager fragmentManager) {
-			super(fragmentManager);
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			Restaurant rest = getRestaurant();
-			
-			// There is no restaurant so show loading screen.
-			if (rest == null) {
-				return new LoadingFrament();
-			}
-			
-			// Narrow in position
-			position = Math.min(Math.max(position, 0), CONTENT.length - 1);
-
-			Fragment f;
-			switch (position) {
-			case 0:
-				f = new OrderListFragment();
-				break;
-			case 1:
-				f = new RequestListFragment();
-				break;
-			default:
-				f = new DiningSessionListFragment();
-			}
-			
-			mCurrent = f;
-			return mCurrent;
-		}
-
-		@Override
-		public int getCount() {
-			return CONTENT.length;
-		}
-
-		@Override
-		public CharSequence getPageTitle(int position) {
-			position = Math.max(Math.min(position, CONTENT.length - 1), 0);
-			return CONTENT[position];
+	@Override
+	protected void updateUI() {
+		super.updateUI();
+		
+		if (getRestaurant() == null) {
+			Log.e(TAG, "Something messed up no restaurant available");
+			return;
 		}
 		
-		/**
-		 * Returns the a reference to the current fragment in focus. 
-		 * @return Fragment user is looking at
-		 */
-		public Fragment getCurrentFragment() {
-			return mCurrent;
-		}
+		// Tells adapter to refresh.
+		mPagerAdapter.notifyDataSetChanged();
+		
+	}
+	
+	@Override
+	protected void addDiningSession(DiningSession session) {
+		super.addDiningSession(session);
+		
+		// Our stuff
 	}
 
 //	/**
@@ -194,7 +153,7 @@ DiningSessionListListener {
 		if (getRestaurant() != null) {
 			return getRestaurant().getSessions();
 		}
-		return null;
+		return new ArrayList<DiningSession>();
 	}
 	
 	@Override
@@ -202,7 +161,7 @@ DiningSessionListListener {
 		if (getRestaurant() != null) {
 			return getRestaurant().getCustomerRequests();
 		}
-		return null;
+		return new ArrayList<CustomerRequest>();
 	}
 	
 	@Override
@@ -210,7 +169,7 @@ DiningSessionListListener {
 		if (getRestaurant() != null) {
 			return getRestaurant().getPendingOrders();
 		}
-		return null;
+		return new ArrayList<Order>();
 	}
 	
 	@Override
@@ -264,5 +223,69 @@ DiningSessionListListener {
 	////	Methods overriden from DineOnRestaurantActivity
 	//////////////////////////////////////////////////////////////////////
 
+	/**
+	 * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
+	 * sequence.
+	 */
+	private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
+
+		private Fragment mCurrent;
+
+		/**
+		 * This is a PageAdapter to control Restaurant displays
+		 * that show orders, customer requests, and sessions.
+		 * @param fragmentManager Fragment manager of this activity
+		 */
+		public ScreenSlidePagerAdapter(FragmentManager fragmentManager) {
+			super(fragmentManager);
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			Restaurant rest = getRestaurant();
+			
+			// There is no restaurant so show loading screen.
+			if (rest == null) {
+				return new LoadingFrament();
+			}
+			
+			// Narrow in position
+			position = Math.min(Math.max(position, 0), CONTENT.length - 1);
+
+			Fragment f;
+			switch (position) {
+			case 0:
+				f = new OrderListFragment();
+				break;
+			case 1:
+				f = new RequestListFragment();
+				break;
+			default:
+				f = new DiningSessionListFragment();
+			}
+			
+			mCurrent = f;
+			return mCurrent;
+		}
+
+		@Override
+		public int getCount() {
+			return CONTENT.length;
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position) {
+			position = Math.max(Math.min(position, CONTENT.length - 1), 0);
+			return CONTENT[position];
+		}
+		
+		/**
+		 * Returns the a reference to the current fragment in focus. 
+		 * @return Fragment user is looking at
+		 */
+		public Fragment getCurrentFragment() {
+			return mCurrent;
+		}
+	}
 
 }
