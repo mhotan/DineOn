@@ -1,10 +1,9 @@
 package uw.cse.dineon.library;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Locale;
 
+import uw.cse.dineon.library.util.DineOnConstants;
 import android.util.Log;
 
 import com.parse.ParseObject;
@@ -19,15 +18,6 @@ import com.parse.ParseObject;
 public abstract class TimeableStorable extends Storable {
 	
 	private static final String TAG = TimeableStorable.class.getSimpleName();
-	
-	/**
-	 * This date formatter is used for storing and sending dates
-	 * in parse objects.  This same date formatter is used to 
-	 * write dates to string and turn those strings
-	 * back into Dates
-	 */
-	private static final DateFormat MDATEFORMAT = 
-			DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, Locale.getDefault()); 
 	
 	private static final String DATE = "dineonDate";
 	
@@ -71,7 +61,7 @@ public abstract class TimeableStorable extends Storable {
 		String dateString = parseObject.getString(DATE);
 		Date temp = null;
 		try {
-			temp = MDATEFORMAT.parse(dateString);
+			temp = DineOnConstants.MDATEFORMAT.parse(dateString);
 		} catch (ParseException e) { // Java ParseException
 			// This should never happen unless we use 
 			// A different date formatter
@@ -97,7 +87,7 @@ public abstract class TimeableStorable extends Storable {
 	@Override
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
-		po.put(DATE, MDATEFORMAT.format(mDate));
+		po.put(DATE, DineOnConstants.MDATEFORMAT.format(mDate));
 		return po;
 	}
 	

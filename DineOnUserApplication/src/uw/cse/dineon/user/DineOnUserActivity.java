@@ -1,20 +1,17 @@
 package uw.cse.dineon.user;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.RestaurantInfo;
-import uw.cse.dineon.library.Storable;
 import uw.cse.dineon.library.util.DineOnConstants;
-import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.UserSatellite.SatelliteListener;
 import uw.cse.dineon.user.bill.CurrentOrderActivity;
@@ -23,8 +20,6 @@ import uw.cse.dineon.user.checkin.IntentResult;
 import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
-import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -59,18 +54,18 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	 * The associated user .
 	 */
 	protected DineOnUser mUser;	
-	
+
 	private String mUserId;
 	private UserSatellite mSat;
-	
-	private DineOnUserActivity This;
+
+	private DineOnUserActivity thisActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		This = this;
-		
+
+		thisActivity = this;
+
 		mSat = new UserSatellite();
 
 		// Check two cases
@@ -79,7 +74,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 
 		// 1. 
 		Bundle extras = getIntent() == null ? null : getIntent().getExtras();
-		
+
 		if (extras != null) {
 			mUserId = extras.getString(DineOnConstants.KEY_USER);
 		} // 2.  
@@ -91,7 +86,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		}
 
 		// Get the latest copy of this user instance
-		
+
 	}
 
 	/**
@@ -130,23 +125,23 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		ParseQuery query = new ParseQuery(DineOnUser.class.getSimpleName());
 		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
 		query.getInBackground(mUserId, new GetCallback() {
-			
+
 			@Override
 			public void done(ParseObject object, ParseException e) {
 				if (e == null) {
-					try{
+					try {
 						// Success
 						mUser = new DineOnUser(object);
-						mSat.register(mUser, This);
-					}catch(Exception e1){
+						mSat.register(mUser, thisActivity);
+					} catch (Exception e1) {
 						Log.d(TAG, e1.getMessage());
 					}
 				} else { 
-					Utility.getBackToLoginAlertDialog(This, UserLoginActivity.class).show();
+					Utility.getBackToLoginAlertDialog(thisActivity, UserLoginActivity.class).show();
 				}
 				intializeUI();
 			}
@@ -167,29 +162,32 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		if (intent == null) return;
+		if (intent == null) { 
+			return;
+		}
 		IntentResult scanResult = 
 				IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-		  if (scanResult != null) {
-			  // handle scan result
-			  try {
-				  String contents = scanResult.getContents();
-				  JSONObject data;
-				
-				  data = new JSONObject(contents);
-				  if(data.has(DineOnConstants.KEY_RESTAURANT) && data.has(DineOnConstants.TABLE_NUM)){
-					  mSat.requestCheckIn(mUser.getUserInfo(), data.getInt(DineOnConstants.TABLE_NUM), 
-							  data.getString(DineOnConstants.KEY_RESTAURANT));
-				  }
-				  
-			  } catch (JSONException e) {
+		if (scanResult != null) {
+			// handle scan result
+			try {
+				String contents = scanResult.getContents();
+				JSONObject data;
+
+				data = new JSONObject(contents);
+				if(data.has(DineOnConstants.KEY_RESTAURANT) 
+						&& data.has(DineOnConstants.TABLE_NUM)) {
+
+					mSat.requestCheckIn(mUser.getUserInfo(),
+							data.getInt(DineOnConstants.TABLE_NUM), 
+							data.getString(DineOnConstants.KEY_RESTAURANT));
+				}
+
+			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			  }
-			  //Log.d("ZXing", data.toString());
-			  
-				  
-		  }
+			}
+			//Log.d("ZXing", data.toString());
+		}
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -367,11 +365,11 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		super.onRestoreInstanceState(savedInstanceState);
 		//		mDiningSession.unbundle(savedInstanceState.getBundle("diningSession"));
 	}
-	
+
 	@Override
 	public void onFail(String message) {
 		// TODO Auto-generated method stub
-		
+		Toast.makeText(this, "onFail: " + message, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -383,16 +381,17 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		Log.d("GOT_DINING_SESSION_FROM_CLOUD", session.getTableID() + "");
 
 		mUser.setDiningSession(session);
-		mUser.saveInBackGround(new SaveCallback(){
+		mUser.saveInBackGround(new SaveCallback() {
 
 			@Override
 			public void done(ParseException e) {
 				// TODO Auto-generated method stub
-				if (e == null)
+				if (e == null) {
 					intializeUI();
-				else
-					Log.e(TAG, "unable to save the updated dineon user " + 
-					      "after new dining session received.");
+				} else {
+					Log.e(TAG, "unable to save the updated dineon user " 
+				+ "after new dining session received.");
+				}
 			}
 		});
 
@@ -401,6 +400,24 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	@Override
 	public void onRestaurantInfoChanged(RestaurantInfo restaurant) {
 		// TODO Auto-generated method stub
-		
+		Toast.makeText(this, "onRestaurantInfoChanged", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onConfirmReservation(Reservation res, Date reservationDate) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "onConfirmReservation", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onConfirmOrder(DiningSession ds, String orderId) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "onConfirmOrder", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onConfirmCustomerRequest(DiningSession ds, String requestID) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "onConfirmCustomerRequest", Toast.LENGTH_SHORT).show();
 	}
 }

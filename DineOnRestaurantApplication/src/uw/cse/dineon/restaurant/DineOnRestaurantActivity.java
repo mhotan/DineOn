@@ -1,6 +1,10 @@
 package uw.cse.dineon.restaurant;
 
+import java.util.Date;
+
+import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
@@ -300,56 +304,40 @@ implements SateliteListener {
 	@Override
 	public void onFail(String message) {
 		// TODO Auto-generated method stub
-
+		Toast.makeText(this, "onFail" + message, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void onUserCheckedIn(UserInfo user, int tableID) {
-		// Parameter check if user is null then 
-		// Something is wrong if user == null
-		// TODO Create a Dining Session
-		// 
-		//			DiningSession newDS = new DiningSession(
-		//					new LinkedList<Order>(), 
-		//					0, 
-		//					jobj.getInt("tableID"));
-		//			UserInfo info = new UserInfo();
-		//			info.unpackObject(user);
-		//			newDS.addUser(info);
-		//			// save to cloud
-		//			Method m = DineOnRestaurantActivity.class.getMethod("onSavedDiningSession", 
-		//					Boolean.class, String.class, Storable.class); 
-		//			ParseUtil.saveDataToCloud(this, newDS, m);
-		final DiningSession newDS = new DiningSession(tableID, user);
-		
-		newDS.saveInBackGround(new SaveCallback() {
+		final DiningSession DS = new DiningSession(tableID, user);
+		DS.saveInBackGround(new SaveCallback() {
 			
 			@Override
 			public void done(ParseException e) {
 				if (e == null) {
-					mSatellite.confirmDiningSession(newDS);
+					mSatellite.confirmDiningSession(DS);
 				} else {
 					Log.e(TAG, "unable to confirm dining session: " + e.getMessage());
 				}
 			}
 		});
-		
+		Toast.makeText(this, "onUserCheckedIn", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void onUserChanged(UserInfo user) {
 		// TODO Auto-generated method stub
-
+		Toast.makeText(this, "onUserChanged", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
-	public void onOrderPlaced(DiningSession session) {
+	public void onOrderRequest(Order order, String sessionID) {
 		// TODO Auto-generated method stub
-
+		Toast.makeText(this, "onOrderRequest", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
-	public void onCustomerRequest(DiningSession session) {
+	public void onCustomerRequest(CustomerRequest request, String sessionID) {
 		Context context = getApplicationContext();
 		CharSequence text = "Request recieved!";
 		int duration = Toast.LENGTH_SHORT;
@@ -361,70 +349,12 @@ implements SateliteListener {
 	@Override
 	public void onCheckedOut(DiningSession session) {
 		// TODO Auto-generated method stub
-
+		Toast.makeText(this, "onCheckedOut", Toast.LENGTH_SHORT).show();
 	}
 
-	/*
-//	 * Brodcast receiver callback specific methods 
-//	 ************************************************************************/
-	//
-	//	// jobj :
-	//	//		- userInfo : UserInfo.JSON
-	//	//		- tableNum : int
-	//	public void onDiningSessionRequest(JSONObject jobj) {
-	//		Log.d("GOT_DINING_SESSION_REQUEST", "");
-	//		try {
-	//			// create a dining session
-	//			JSONObject juserInfo = new JSONObject(jobj.getString("userInfo"));
-	//			ParseObject user = new ParseObject(UserInfo.class.getSimpleName());
-	//			user.setObjectId(juserInfo.getString("objID"));
-	//			user.put(UserInfo.NAME,juserInfo.getString(UserInfo.NAME));
-	//			user.put(UserInfo.EMAIL, juserInfo.getString(UserInfo.EMAIL));
-	//			user.put(UserInfo.PHONE, juserInfo.getString(UserInfo.PHONE));
-	//
-	//
-	//		} catch (NoSuchMethodException e) {
-	//			// TODO Auto-generated catch block
-	//			Log.d(TAG, "Error: " + e.getMessage());
-	//			e.printStackTrace();
-	//		} catch (Exception e) {
-	//			Log.d(TAG, "Error: " + e.getMessage());
-	//		}
-	//	}
-
-	//	/**
-	//	 * Save DiningSession.
-	//	 * 
-	//	 * @param success Boolean
-	//	 * @param objID String ID of obj
-	//	 * @param obj Storable object to be saved
-	//	 */
-	//	public void onSavedDiningSession(Boolean success, String objID, Storable obj) {
-	//		Log.d("SAVED_NEW_DINING_SESSION_REST", "");
-	//		try {
-	//			if (success) {
-	//				// push notification for user
-	//				DiningSession session = (DiningSession) obj;
-	//				Map<String, String> attr = new HashMap<String, String>();
-	//				attr.put(DineOnConstants.OBJ_ID, objID);
-	//				if(session.getUsers() != null 
-	//						&& !session.getUsers().isEmpty()) {
-	//					ParseUtil.notifyApplication(
-	//							"uw.cse.dineon.user.CONFIRM_DINING_SESSION", 
-	//							attr, 
-	//							"uw_cse_dineon_" + session.getUsers().get(0).getName());
-	//
-	//					diningSessionAcquired(session);
-	//				} else {
-	//					Log.d(TAG, "Error[invalid state]: " 
-	//							+ "A dining session saved, but no user associated.");
-	//				}
-	//			} else {
-	//				Log.d(TAG, "Error: A dining session couldn't be saved.");
-	//			}
-	//		} catch (Exception e) {
-	//			Log.d(TAG, "Error: " + e.getMessage());
-	//		}
-	//	}
-
+	@Override
+	public void onReservationRequest(Date date) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "onReservationRequest", Toast.LENGTH_SHORT).show();
+	}
 }

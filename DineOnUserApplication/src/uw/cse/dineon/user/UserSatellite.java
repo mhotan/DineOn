@@ -1,13 +1,17 @@
 package uw.cse.dineon.user;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
@@ -62,13 +66,26 @@ public class UserSatellite extends BroadcastReceiver {
 	private DineOnUserActivity mCurrentActivity;
 
 	/**
+	 * Enum classes that control the type of objects to download.
+	 * @author mhotan
+	 */
+	private enum ACTION_OPTION {
+		NA,
+		INTIAL_DS_RECEIVED,
+		RESTAURANT_INFO_CHANGE,
+		CONFIRM_RESERVATION,
+		CONFIRM_ORDER,
+		CONFIRM_CUSTOMER_REQUEST }
+	
+	/**
 	 * Creates and prepares this satellite for transmission
 	 * and reception. 
 	 */
 	public UserSatellite() {
 		mIF = new IntentFilter();
-		mIF.addAction(DineOnConstants.ACTION_CONFIRM_DINING_SESSION);
-		mIF.addAction(DineOnConstants.ACTION_CHANGE_RESTAURANT_INFO);
+		for (String action: DineOnConstants.CUSTOMER_ACTIONS) {
+			mIF.addAction(action);
+		}
 	}
 
 	/**
@@ -136,7 +153,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 */
 	public void requestCheckIn(UserInfo user, int tableNum,  String rest) {
 		Map<String, String> attr = new HashMap<String, String>();
-		attr.put(DineOnConstants.TABLE_NUM, "" + tableNum);
+		attr.put(DineOnConstants.OBJ_ID_2, "" + tableNum);
 		attr.put(DineOnConstants.OBJ_ID, user.getObjId());
 		notifyByAction(DineOnConstants.ACTION_REQUEST_DINING_SESSION, attr, rest);
 	} 
@@ -146,10 +163,16 @@ public class UserSatellite extends BroadcastReceiver {
 	 * NOTE: This method does not do any saving. That is if you want to update the
 	 * restaurant you must save your argument before you call this method
 	 * @param session Dining Session that was updated
+	 * @param order Order to request
 	 * @param rest Restaurant to place order at
 	 */
-	public void notifyOrderPlaced(DiningSession session, RestaurantInfo rest) {
-		notifyByAction(DineOnConstants.ACTION_ORDER_PLACED, session.getObjId(), rest.getName());
+	public void requestOrder(DiningSession session, 
+			Order order, 
+			RestaurantInfo rest) {
+		notifyByAction(DineOnConstants.ACTION_REQUEST_ORDER, 
+				order.getObjId(), // Make sure they download the Order Object
+				session.getObjId(), // Reference the Session ID
+				rest.getName());
 	}
 
 	/**
@@ -158,11 +181,31 @@ public class UserSatellite extends BroadcastReceiver {
 	 * NOTE: This method does not do any saving. That is if you want to update the
 	 * restaurant you must save your argument before you call this method
 	 * @param session Saved DiningSession that has a new Customer Request
+	 * @param request Customer Request to request
 	 * @param rest Restaurant to send notification to.
 	 */
-	public void notifyCustomerRequest(DiningSession session,
+	public void requestCustomerRequest(DiningSession session, 
+			CustomerRequest request,
 			RestaurantInfo rest) {
-		notifyByAction(DineOnConstants.ACTION_CUSTOMER_REQUEST, session.getObjId(), rest.getName()); 
+		notifyByAction(DineOnConstants.ACTION_REQUEST_CUSTOMER_REQUEST,
+				request.getObjId(), // Make sure they download the Request Object
+				session.getObjId(),
+				rest.getName()); 
+	}
+
+	/**
+	 * Notify the restaurant that a Customer Request was placed for this
+	 * dining session.
+	 * NOTE: This method does not do any saving. That is if you want to update the
+	 * restaurant you must save your argument before you call this method
+	 * @param reservation Saved DiningSession that has a new Customer Request
+	 * @param rest Restaurant to send notification to.
+	 */
+	public void requestReservation(Date reservation,
+			RestaurantInfo rest) {
+		notifyByAction(DineOnConstants.ACTION_REQUEST_RESERVATION,
+				DineOnConstants.MDATEFORMAT.format(reservation),
+				rest.getName()); 
 	}
 
 	/**
@@ -173,8 +216,9 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param session Saved DiningSession that has been checked out.
 	 * @param rest Restaurant to send notification to.
 	 */
-	public void notifyCheckOut(DiningSession session, RestaurantInfo rest) {
-		notifyByAction(DineOnConstants.ACTION_CHECK_OUT, session.getObjId(), rest.getName()); 
+	public void requestCheckOut(DiningSession session, RestaurantInfo rest) {
+		notifyByAction(DineOnConstants.ACTION_REQUEST_CHECK_OUT,
+				session.getObjId(), rest.getName()); 
 	}
 
 	/**
@@ -196,17 +240,40 @@ public class UserSatellite extends BroadcastReceiver {
 	 * "action" is a specification that is predetermined by Restaurant and
 	 * Customer
 	 * @param action Action to send to Restaurant
-	 * @param id Object to ID to notify restaurant for
+	 * @param id1 Object ID to notify restaurant for
+	 * @param id2 Second Object ID to notify restaurant with  
 	 * @param info Restaurant to associate to
 	 */
 	private void notifyByAction(String action, 
-			String id, String info) {
+			String id1, String id2, String info) {
 		// Have to check the pointers before sending a request 
-		if (id == null) {
+		if (id1 == null) {
 			throw new NullPointerException("[notifiyAction] id is null");
 		}
 		Map<String, String> attr = new HashMap<String, String>();
-		attr.put(DineOnConstants.OBJ_ID, id);
+		attr.put(DineOnConstants.OBJ_ID, id1);
+		attr.put(DineOnConstants.OBJ_ID_2, id2);
+		notifyByAction(action, attr, info);
+	}
+
+	/**
+	 * General notifier that tells the Restaurant associated with 
+	 * info that a new object is ready for them to download.  The type
+	 * of object to download is dictated by the action argument.  This
+	 * "action" is a specification that is predetermined by Restaurant and
+	 * Customer
+	 * @param action Action to send to Restaurant
+	 * @param id1 Object ID to notify restaurant for
+	 * @param info Restaurant to associate to
+	 */
+	private void notifyByAction(String action, 
+			String id1, String info) {
+		// Have to check the pointers before sending a request 
+		if (id1 == null) {
+			throw new NullPointerException("[notifiyAction] id is null");
+		}
+		Map<String, String> attr = new HashMap<String, String>();
+		attr.put(DineOnConstants.OBJ_ID, id1);
 		notifyByAction(action, attr, info);
 	}
 
@@ -238,7 +305,7 @@ public class UserSatellite extends BroadcastReceiver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// Send IT!
 		ParseUtil.notifyApplication(
 				jobj,
@@ -264,6 +331,9 @@ public class UserSatellite extends BroadcastReceiver {
 			return;
 		}
 
+		// Retrieve the action that the other satellite is requesting
+		String action = intent.getAction();
+
 		String id = null;
 		JSONObject jo;
 		try {
@@ -278,8 +348,12 @@ public class UserSatellite extends BroadcastReceiver {
 			return;
 		}
 
-		// Retrieve the action that the other satellite is requesting
-		String action = intent.getAction();
+		String id2 = null;
+		try {
+			id2 = jo.getString(DineOnConstants.OBJ_ID_2);
+		} catch (JSONException e) {
+			Log.d(TAG, "ID 2 is null for action: " + action);
+		}
 
 		// Prepare the queries that we might need 
 		ParseQuery restInfo = new ParseQuery(RestaurantInfo.class.getSimpleName());
@@ -287,47 +361,139 @@ public class UserSatellite extends BroadcastReceiver {
 		restInfo.setCachePolicy(CachePolicy.NETWORK_ONLY);
 		dsQuery.setCachePolicy(CachePolicy.NETWORK_ONLY);
 
+		ParseQuery query;
+		SatelliteGetCallback callback = new SatelliteGetCallback(mCurrentActivity, id2);
+		
 		// Restaurant is confirming the dining session by returning a dining session.
 		if (DineOnConstants.ACTION_CONFIRM_DINING_SESSION.equals(action)) {
-			
-			// Actually do the query knowing it is a Dining Session
-			ParseQuery query = new ParseQuery(DiningSession.class.getSimpleName());
-			query.getInBackground(id, new GetCallback() {
-				@Override
-				public void done(ParseObject object, ParseException e) {
-					if (e == null) {
-						try {
-							mCurrentActivity.onInitialDiningSessionReceived(
-									new DiningSession(object));
-						} catch (ParseException e1) {
-							mCurrentActivity.onFail(e1.getMessage());
-						}
-					} else {
-						// Some error possibly internet
-						mCurrentActivity.onFail(e.getMessage());
-					}
-				}
-			});
+			// Received the intial Dining Session
+			query = new ParseQuery(DiningSession.class.getSimpleName());
+			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
+			callback.setOption(ACTION_OPTION.INTIAL_DS_RECEIVED);
+			query.getInBackground(id, callback);
 		} 
 		// Restaurant that we are currently associated to has changed some state
 		else if (DineOnConstants.ACTION_CHANGE_RESTAURANT_INFO.equals(action)) {
-			// WE received a dining session
-			ParseQuery query = new ParseQuery(DiningSession.class.getSimpleName());
-			query.getInBackground(id, new GetCallback() {
-				@Override
-				public void done(ParseObject object, ParseException e) {
-					if (e == null) {
-						try {
-							mCurrentActivity.onRestaurantInfoChanged(
-									new RestaurantInfo(object));
-						} catch (ParseException e1) {
-							mCurrentActivity.onFail(e1.getMessage());
-						}
-					} else {
-						mCurrentActivity.onFail(e.getMessage());
+			// WE received a updated Restaurant Info 
+			query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
+			callback.setOption(ACTION_OPTION.RESTAURANT_INFO_CHANGE);
+			query.getInBackground(id, callback);
+		}
+		else if (DineOnConstants.ACTION_CONFIRM_ORDER.equals(action)) {
+			// Attempt to get the Dining Session that was updated.
+			query = new ParseQuery(DiningSession.class.getSimpleName());
+			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
+			callback.setOption(ACTION_OPTION.CONFIRM_ORDER);
+			query.getInBackground(id, callback);
+		}
+		else if (DineOnConstants.ACTION_CONFIRM_RESERVATION.equals(action)) {
+			// Attempt to get the Reservation that was updated.
+			query = new ParseQuery(Reservation.class.getSimpleName());
+			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
+			callback.setOption(ACTION_OPTION.CONFIRM_RESERVATION);
+			query.getInBackground(id, callback);
+		}
+		else if (DineOnConstants.ACTION_CONFIRM_CUSTOMER_REQUEST.equals(action)) {
+			// Attempt to get the Dining Session that was updated.
+			query = new ParseQuery(DiningSession.class.getSimpleName());
+			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
+			callback.setOption(ACTION_OPTION.CONFIRM_CUSTOMER_REQUEST);
+			query.getInBackground(id, callback);
+		}
+	}
+
+
+
+	/**
+	 * Private GetCallback that encapsulates the processing of 
+	 * different types of Gets.
+	 * @author mhotan
+	 */
+	private class SatelliteGetCallback extends GetCallback {
+
+		private ACTION_OPTION mOption;
+
+		private final SatelliteListener mListener;
+		
+		private final String mSecondArg;
+
+		/**
+		 * Creates a callback that is able to respond to the user 
+		 * once a download is complete.  Secondary arguments is a helper
+		 * because some methods require a secondary ID.
+		 * @param listener Listener for which method to call
+		 * @param secondArgument Second string that contain object ID or formatted dates
+		 */
+		public SatelliteGetCallback(SatelliteListener listener, 
+				String secondArgument) {
+			mListener = listener;
+			mOption = ACTION_OPTION.NA;
+			mSecondArg = secondArgument;
+		}
+
+		/**
+		 * Sets the appropriate action for reacting a restaurant response.
+		 * @param option Option to set
+		 */
+		public void setOption(ACTION_OPTION option) {
+			mOption = option;
+		}
+
+		@Override
+		public void done(ParseObject object, ParseException e) {
+			if (e != null) {
+				mListener.onFail(e.getMessage());
+				return;
+			}
+			
+			try {
+				switch (mOption) {
+				case INTIAL_DS_RECEIVED: 
+					mListener.onInitialDiningSessionReceived(
+							new DiningSession(object));
+					break;
+				case RESTAURANT_INFO_CHANGE:
+					mListener.onRestaurantInfoChanged(
+							new RestaurantInfo(object));
+					break;
+				case CONFIRM_RESERVATION: 
+					if (mSecondArg == null) {
+						mListener.onFail("Restaurant failed to get make a reservation");
+						return;
+					}
+					try {
+						mListener.onConfirmReservation(
+								new Reservation(object), 
+								DineOnConstants.MDATEFORMAT.parse(mSecondArg));
+					} catch (java.text.ParseException e1) {
+						mListener.onFail(e1.getMessage());
+					}
+					break;
+				case CONFIRM_ORDER:
+					if (mSecondArg == null) {
+						mListener.onFail("Restaurant failed to confirm your order");
+						return;
+					}
+					mListener.onConfirmOrder(
+							new DiningSession(object), mSecondArg);
+					break;
+				case CONFIRM_CUSTOMER_REQUEST:
+					if (mSecondArg == null) {
+						mListener.onFail("Restaurant failed to confirm your request");
+						return;
+					}
+					mListener.onConfirmCustomerRequest(
+							new DiningSession(object), mSecondArg);
+					break;
+				default:
+					if (DineOnConstants.DEBUG) {
+						mListener.onFail("Unknown Request Recieved!");
 					}
 				}
-			});
+			} catch (ParseException e1) {
+				mListener.onFail(e1.getMessage());
+			}
 		}
 	}
 
@@ -358,6 +524,32 @@ public class UserSatellite extends BroadcastReceiver {
 		 * @param restaurant Restaurant that has recently changed
 		 */
 		void onRestaurantInfoChanged(RestaurantInfo restaurant);
+
+		/**
+		 * Notifies the user that the reservation requested was accepted.
+		 * @param res Reservation object
+		 * @param reservationDate Date of reservation confirmed
+		 */
+		void onConfirmReservation(Reservation res, Date reservationDate);
+
+		/**
+		 * Notifies the customer that there previous request 
+		 * to update the Dining Session has gone through.
+		 * 
+		 * @param ds Dining session that has been changed
+		 * @param orderId ID of the Order that was updated
+		 */
+		void onConfirmOrder(DiningSession ds, String orderId);
+
+		/**
+		 * Notifies the customer that there previous request 
+		 * to update the Dining Session has gone through.
+		 * 
+		 * @param ds Dining session that has been changed
+		 * @param requestID ID of the Customer Request that was updated
+		 */
+		void onConfirmCustomerRequest(DiningSession ds, String requestID);
+
 	}
 
 }
