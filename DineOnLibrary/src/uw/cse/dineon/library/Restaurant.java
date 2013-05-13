@@ -20,10 +20,17 @@ import com.parse.ParseUser;
  */
 public class Restaurant extends LocatableStorable {
 
+	/*
+	 * Abstract Representation:
+	 * 
+	 * 
+	 */
+	
 	// Parse used Keys
 	public static final String RESERVATION_LIST = "reservationList";
 	public static final String INFO = "restaurantInfo";
 	public static final String PAST_ORDERS = "pastOrders";
+	public static final String PENDING_ORDERS = "pendingOrders";
 	public static final String PAST_USERS = "pastUsers";
 	public static final String SESSIONS = "restaurantDiningSessions";
 	public static final String CUSTOMER_REQUESTS = "customerRequests";
@@ -35,8 +42,15 @@ public class Restaurant extends LocatableStorable {
 	
 	/**
 	 * Past Orders placed at this restaurant.
+	 * Also includes any recently placed orders.
 	 */
 	private final List<Order> mPastOrders;
+	
+	/**
+	 * Past Orders placed at this restaurant.
+	 * Also includes any recently placed orders.
+	 */
+	private final List<Order> mPendingOrders;
 	
 	/**
 	 * Past users that have visited the restaurant.
@@ -71,6 +85,7 @@ public class Restaurant extends LocatableStorable {
 		mPastOrders = new ArrayList<Order>();
 		mPastUsers = new ArrayList<UserInfo>();
 		
+		mPendingOrders = new ArrayList<Order>();
 		mReservations = new ArrayList<Reservation>();
 		mSessions = new ArrayList<DiningSession>();
 		mCustomerRequests = new ArrayList<CustomerRequest>();
@@ -89,6 +104,8 @@ public class Restaurant extends LocatableStorable {
 		mPastOrders = ParseUtil.toListOfStorables(Order.class, po.getList(PAST_ORDERS));
 		mPastUsers = ParseUtil.toListOfStorables(UserInfo.class, po.getList(PAST_USERS));
 		
+		mPendingOrders = ParseUtil.toListOfStorables(
+				Order.class, po.getList(PENDING_ORDERS)); 
 		mReservations = ParseUtil.toListOfStorables(
 				Reservation.class, po.getList(RESERVATION_LIST)); 
 		mSessions = ParseUtil.toListOfStorables(DiningSession.class, po.getList(SESSIONS));
@@ -106,6 +123,7 @@ public class Restaurant extends LocatableStorable {
 		po.put(PAST_USERS, ParseUtil.toListOfParseObjects(mPastUsers));
 		
 		// Pack current stuff
+		po.put(PENDING_ORDERS, ParseUtil.toListOfParseObjects(mPendingOrders));
 		po.put(RESERVATION_LIST, ParseUtil.toListOfParseObjects(mReservations));
 		po.put(SESSIONS, ParseUtil.toListOfParseObjects(mSessions));
 		po.put(CUSTOMER_REQUESTS, ParseUtil.toListOfParseObjects(mCustomerRequests));	
@@ -155,9 +173,7 @@ public class Restaurant extends LocatableStorable {
 	 * @return List<Order> of past orders placed at the restaurant.
 	 */
 	public List<Order> getPastOrders() {
-		List<Order> copy = new ArrayList<Order>(mPastOrders.size());
-		Collections.copy(copy, mPastOrders);
-		return copy;
+		return new ArrayList<Order>(mPastOrders);
 	}
 
 	/**
@@ -165,9 +181,16 @@ public class Restaurant extends LocatableStorable {
 	 * @return List<DiningSession>
 	 */
 	public List<DiningSession> getSessions() {
-		List<DiningSession> copy = new ArrayList<DiningSession>(mSessions.size());
-		Collections.copy(copy, mSessions);
-		return copy;
+		return new ArrayList<DiningSession>(mSessions);
+	}
+	
+	/**
+	 * Each one of the restaurants have pending dining sessions.
+	 * Returns all the orders of all the pending dining sessions.
+	 * @return a list of all pending orders 
+	 */
+	public List<Order> getPendingOrders() {
+		return new ArrayList<Order>(mPendingOrders);
 	}
 
 	/////////////////////////////////////////////////////
@@ -191,11 +214,30 @@ public class Restaurant extends LocatableStorable {
 	}
 	
 	/**
-	 * Adds all the orders in to past orders. 
-	 * @param orders Completed orders
+	 * Marks this Order as complete. 
+	 * @param order Order that has been completed.
 	 */
-	public void addToPastOrders(Collection<Order> orders) {
-		mPastOrders.addAll(orders);
+	public void completeOrder(Order order) {
+		if (order == null) {
+			return;
+		}
+		
+		// Move from list of pending orders to
+		// list of past orders
+		if (mPendingOrders.remove(order)) {
+			mPastOrders.add(order);
+		}
+	}
+	
+	/**
+	 * Adds a pending order to a restaurant.
+	 * @param order Order to be added. cannot be null.
+	 */
+	public void addOrder(Order order) {
+		if (order == null) {
+			throw new NullPointerException("Order being added to restaurant is null");
+		}
+		mPendingOrders.add(order);
 	}
 	
 	/**
@@ -203,9 +245,32 @@ public class Restaurant extends LocatableStorable {
 	 * @param session to add
 	 */
 	public void addDiningSession(DiningSession session) {
+		if (session == null) { // Invalid input
+			return;
+		}
+		if (mSessions.contains(session)) { // Already tracking this session
+			return;
+		}
+		
 		mSessions.add(session);
 	}
 
+	/**
+	 * Deletes this dining session from the cloud and the restaurant.
+	 * @param session 
+	 */
+	public void removeDiningSession(DiningSession session) {
+		if (session == null) {
+			return;
+		}
+		
+		// If we found the session.
+		if (mSessions.remove(session)) {
+			mPastUsers.addAll(session.getUsers());
+			session.deleteFromCloud();
+		}
+	}
+	
 	/**
 	 * Remove the specified CustomerRequest.
 	 * @param oldReq request to remove
@@ -229,8 +294,56 @@ public class Restaurant extends LocatableStorable {
 	 */
 	public void clearPastOrders() {
 		// TODO For each of the Orders delete from parse
-		
 		mPastOrders.clear();
+	}
+	
+	/**
+	 * Updates the current user if it exists in the restaurant.
+	 * @param user User to update
+	 */
+	public void updateUser(UserInfo user) {
+		if (user == null) {
+			return;
+		}
+		// NOTE (MH) Because we have to replace the old version
+		// of this user with a current version.
+		// We have to check for object ID equality to find the object to replace 
+		
+		// Find the UserInfo to remove in past users
+		UserInfo toRemove = null;
+		for (UserInfo info : mPastUsers) {
+			if (info.getObjId().equals(user.getObjId())) {
+				toRemove = info;
+			}
+		}
+		// Effectively replaces.
+		if (toRemove != null) {
+			mPastUsers.remove(toRemove);
+			mPastUsers.add(user);
+		}
+		
+		// Find the user if they exist in the past .
+		for (DiningSession session: mSessions) {
+			toRemove = null;
+			for (UserInfo sessionUser: session.getUsers()) {
+				
+				// Find the user to remove.
+				if (sessionUser.getObjId().equals(user.getObjId())) {
+					toRemove = sessionUser;
+					break;
+				}
+				
+				// Remove and replace new user
+				if (toRemove != null) {
+					session.removeUser(toRemove);
+					session.addUser(user);
+				}
+			}
+			
+		}
+		
+		
+		
 	}
 
 	/**

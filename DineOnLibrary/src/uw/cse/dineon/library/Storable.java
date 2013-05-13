@@ -150,6 +150,23 @@ public abstract class Storable {
 	public String toString() {
 		return mCompleteObject.toString();
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
+		if (!o.getClass().equals(getClass())) {
+			return false;
+		}
+		Storable s = (Storable) o;
+		return s.mCompleteObject.equals(this.mCompleteObject);
+	}
+	
+	@Override
+	public int hashCode() {
+		return mCompleteObject.hashCode();
+	}
 }
 
 

@@ -76,7 +76,7 @@ public class UserSatellite extends BroadcastReceiver {
 		CONFIRM_RESERVATION,
 		CONFIRM_ORDER,
 		CONFIRM_CUSTOMER_REQUEST }
-	
+
 	/**
 	 * Creates and prepares this satellite for transmission
 	 * and reception. 
@@ -201,10 +201,10 @@ public class UserSatellite extends BroadcastReceiver {
 	 * @param reservation Saved DiningSession that has a new Customer Request
 	 * @param rest Restaurant to send notification to.
 	 */
-	public void requestReservation(Date reservation,
+	public void requestReservation(Reservation reservation,
 			RestaurantInfo rest) {
 		notifyByAction(DineOnConstants.ACTION_REQUEST_RESERVATION,
-				DineOnConstants.MDATEFORMAT.format(reservation),
+				reservation.getObjId(),
 				rest.getName()); 
 	}
 
@@ -363,7 +363,7 @@ public class UserSatellite extends BroadcastReceiver {
 
 		ParseQuery query;
 		SatelliteGetCallback callback = new SatelliteGetCallback(mCurrentActivity, id2);
-		
+
 		// Restaurant is confirming the dining session by returning a dining session.
 		if (DineOnConstants.ACTION_CONFIRM_DINING_SESSION.equals(action)) {
 			// Received the intial Dining Session
@@ -415,7 +415,7 @@ public class UserSatellite extends BroadcastReceiver {
 		private ACTION_OPTION mOption;
 
 		private final SatelliteListener mListener;
-		
+
 		private final String mSecondArg;
 
 		/**
@@ -446,7 +446,7 @@ public class UserSatellite extends BroadcastReceiver {
 				mListener.onFail(e.getMessage());
 				return;
 			}
-			
+
 			try {
 				switch (mOption) {
 				case INTIAL_DS_RECEIVED: 
@@ -458,17 +458,7 @@ public class UserSatellite extends BroadcastReceiver {
 							new RestaurantInfo(object));
 					break;
 				case CONFIRM_RESERVATION: 
-					if (mSecondArg == null) {
-						mListener.onFail("Restaurant failed to get make a reservation");
-						return;
-					}
-					try {
-						mListener.onConfirmReservation(
-								new Reservation(object), 
-								DineOnConstants.MDATEFORMAT.parse(mSecondArg));
-					} catch (java.text.ParseException e1) {
-						mListener.onFail(e1.getMessage());
-					}
+					mListener.onConfirmReservation(new Reservation(object));
 					break;
 				case CONFIRM_ORDER:
 					if (mSecondArg == null) {
@@ -530,7 +520,7 @@ public class UserSatellite extends BroadcastReceiver {
 		 * @param res Reservation object
 		 * @param reservationDate Date of reservation confirmed
 		 */
-		void onConfirmReservation(Reservation res, Date reservationDate);
+		void onConfirmReservation(Reservation res);
 
 		/**
 		 * Notifies the customer that there previous request 

@@ -31,51 +31,41 @@ import android.widget.TextView;
  */
 public class OrderListFragment extends ListFragment {
 
-	private final String TAG = this.getClass().getSimpleName();
+	private static final String TAG = OrderListFragment.class.getSimpleName();
 
 	private OrderItemListener mListener;
 
-	//TODO change string to order
-	private ArrayAdapter<String> mAdapter;
+	private ArrayAdapter<Order> mAdapter;
 
+//	private static final String KEY_LIST = "MY LIST";
 
-	private static final String KEY_LIST = "MY LIST";
-
-
-	/**
-	 * Creates a new order list fragment.
-	 * @param orders TODO Change to order class
-	 * @return new fragment
-	 */
-	public static OrderListFragment newInstance(List<String> orders) {
-		OrderListFragment frag = new OrderListFragment();
-		ArrayList<String> mList = new ArrayList<String>();
-		if (orders != null) {
-			mList.addAll(orders);
-		}
-
-		Bundle args = new Bundle();
-		args.putStringArrayList(KEY_LIST, mList);
-		frag.setArguments(args);
-		return frag;
-	}
+//	/**
+//	 * Creates a new order list fragment.
+//	 * @param orders TODO Change to order class
+//	 * @return new fragment
+//	 */
+//	public static OrderListFragment newInstance(List<Order> orders) {
+//		OrderListFragment frag = new OrderListFragment();
+//		ArrayList<Order> mList = new ArrayList<Order>();
+//		if (orders != null) {
+//			mList.addAll(orders);
+//		}
+//
+//		Bundle args = new Bundle();
+//		args.putParcelableArrayList(KEY_LIST, mList);
+//		frag.setArguments(args);
+//		return frag;
+//	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		List<String> mOrders = getArguments() != null 
-				? getArguments().getStringArrayList(KEY_LIST) : null;
-				if (mOrders == null) {
-					if (mListener != null) {
-						mOrders = mListener.getCurrentOrders();
-					} else {
-						mOrders = new ArrayList<String>(); // Empty
-					}
-				}
-
-				//TODO Create custom adapter to handle custom layoutss
-				mAdapter = new OrderListAdapter(this.getActivity(), mOrders);
-				setListAdapter(mAdapter);	
+		
+		List<Order> orders = mListener.getCurrentOrders();
+		if (orders == null) {
+			orders = new ArrayList<Order>();
+		}
+		mAdapter = new OrderListAdapter(this.getActivity(), orders);
 	}
 
 	@Override
@@ -99,7 +89,7 @@ public class OrderListFragment extends ListFragment {
 	 * Adds order to this view.
 	 * @param order String
 	 */
-	public void addOrder(String order) {
+	public void addOrder(Order order) {
 		mAdapter.add(order);
 		mAdapter.notifyDataSetChanged();
 	}
@@ -108,8 +98,8 @@ public class OrderListFragment extends ListFragment {
 	 * Adds all the orders to this view.
 	 * @param orders Collection of Strings
 	 */
-	public void addAll(Collection<String> orders) {
-		for (String o: orders) {
+	public void addAll(Collection<Order> orders) {
+		for (Order o: orders) {
 			mAdapter.add(o);
 		}
 		mAdapter.notifyDataSetChanged();
@@ -119,7 +109,7 @@ public class OrderListFragment extends ListFragment {
 	 * Deletes this order if it finds it.
 	 * @param order String
 	 */
-	public void deleteOrder(String order) {
+	public void deleteOrder(Order order) {
 		mAdapter.remove(order);
 		mAdapter.notifyDataSetChanged();
 	}
@@ -149,26 +139,26 @@ public class OrderListFragment extends ListFragment {
 		 * @param order order to reference
 		 * @param progress progress of this order
 		 */
-		void onProgressChanged(String order, int progress);
+		void onProgressChanged(Order order, int progress);
 
 		/**
 		 * User(Restaurant Employee) wants to see details pertaining this order.
 		 * @param order order to reference
 		 */
-		void onRequestOrderDetail(String order);
+		void onRequestOrderDetail(Order order);
 
 		/**
 		 * Restaurant wants to notify customer that the order is complete.
 		 * @param order order to reference
 		 */
-		void onOrderComplete(String order);
+		void onOrderComplete(Order order);
 
 		/**
 		 * Used to get the most recent up to date list of items to show.
-		 * Cannot return null
+		 * if returns null then no list will be added
 		 * @return List of items to show
 		 */
-		List<String> getCurrentOrders();
+		List<Order> getCurrentOrders();
 
 	}
 
@@ -181,11 +171,11 @@ public class OrderListFragment extends ListFragment {
 	 * Adapter to handle.
 	 * @author mhotan
 	 */
-	private class OrderListAdapter extends ArrayAdapter<String> {
+	private class OrderListAdapter extends ArrayAdapter<Order> {
 
 		private final Context mContext;
-		private final List<String> mOrders;
-		private final Map<View, String> mViewToOrder;
+		private final List<Order> mOrders;
+		private final Map<View, Order> mViewToOrder;
 		private final OrderItemListener mItemListener;
 		private final OrderProgressListener mProgessListener;
 		private int expanded = -1;
@@ -196,11 +186,11 @@ public class OrderListFragment extends ListFragment {
 		 * @param ctx Context
 		 * @param orders List of strings
 		 */
-		public OrderListAdapter(Context ctx, List<String> orders) {
+		public OrderListAdapter(Context ctx, List<Order> orders) {
 			super(ctx, R.layout.listitem_restaurant_order_bot, orders);
 			this.mContext = ctx;
 			this.mOrders = orders;
-			this.mViewToOrder = new HashMap<View, String>();
+			this.mViewToOrder = new HashMap<View, Order>();
 			this.mItemListener = new OrderItemListener();
 			this.mProgessListener = new OrderProgressListener();
 		}
@@ -258,25 +248,23 @@ public class OrderListFragment extends ListFragment {
 				vwBot = view.findViewById(R.id.listitem_order_bot);
 			}
 
-			//TODO Obtain the order at the position
-			String order = mOrders.get(position);
+			Order order = mOrders.get(position);
 
-			//Button title = (Button) vw.findViewById(R.id.button_order_title);
-			//title.setText(order);
-
+			// Reference the correct UI components adn set up
 			Button buttonCompleteOrder = (Button) view.findViewById(R.id.button_completed_order);
 			TextView orderTitle = 
 					(TextView) view.findViewById(R.id.button_order_title);
-			orderTitle.setText(order);
+			orderTitle.setText("Table " + order.getTableID() 
+					+ " " + order.getOriginalUser().getName());
 			SeekBar progressBar = (SeekBar) view.findViewById(R.id.seekbar_order_progress);
 			progressBar.setMax(100);
 			progressBar.setProgress(0);
 
 			//Set up expand button
 			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_order);
-
 			setArrow(position, arrowButton);
 
+			// Add the onclick listener that listens 
 			arrowButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					expand(position);
@@ -289,8 +277,6 @@ public class OrderListFragment extends ListFragment {
 						mListener.onRequestOrderDetail(mOrders.get(position));
 					}				
 				}
-
-
 			});
 
 			if(expanded != position) {
@@ -319,7 +305,7 @@ public class OrderListFragment extends ListFragment {
 			@Override
 			public void onClick(View v) {
 
-				String order = mViewToOrder.get(v);
+				Order order = mViewToOrder.get(v);
 
 				// TODO Auto-generated method stub
 				switch (v.getId()) {
@@ -344,7 +330,7 @@ public class OrderListFragment extends ListFragment {
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				// TODO Auto-generated method stub
-				String order = mViewToOrder.get(seekBar);
+				Order order = mViewToOrder.get(seekBar);
 				mListener.onProgressChanged(order, progress);
 
 				if (progress == seekBar.getMax()) {

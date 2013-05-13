@@ -26,68 +26,51 @@ import android.widget.TextView;
  */
 public class RequestListFragment extends ListFragment {
 
-	private final String TAG = this.getClass().getSimpleName();
+	private static final String TAG = RequestListFragment.class.getSimpleName();
 
 	private RequestItemListener mListener;
 	
 	private ArrayAdapter<CustomerRequest> mAdapter;
 	
-	private static List<CustomerRequest> mRequests;
+//	private static List<CustomerRequest> mRequests;
 	
-	/**
-	 * Creates a new customer list fragment.
-	 * @param requests list of requests
-	 * @return new fragment
-	 */
-	public static RequestListFragment newInstance(List<CustomerRequest> requests) {
-		RequestListFragment frag = new RequestListFragment();
-		ArrayList<CustomerRequest> mList = new ArrayList<CustomerRequest>();
-		if (requests != null) {
-			mList.addAll(requests);
-		}
-		
-		Bundle b = new Bundle();
-		
-		if(requests != null) {
-			mRequests.addAll(requests);			
-		} else {
-			mRequests = null;
-		}
-		
-		frag.addAll(requests);
-		frag.setArguments(b);
-		return frag;
-	}
+//	/**
+//	 * Creates a new customer list fragment.
+//	 * @param requests list of requests
+//	 * @return new fragment
+//	 */
+//	public static RequestListFragment newInstance(List<CustomerRequest> requests) {
+//		RequestListFragment frag = new RequestListFragment();
+//		ArrayList<CustomerRequest> mList = new ArrayList<CustomerRequest>();
+//		if (requests != null) {
+//			mList.addAll(requests);
+//		}
+//		
+//		Bundle b = new Bundle();
+//		
+//		if(requests != null) {
+//			mRequests.addAll(requests);			
+//		} else {
+//			mRequests = null;
+//		}
+//		
+//		frag.addAll(requests);
+//		frag.setArguments(b);
+//		return frag;
+//	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (mRequests == null) {
-			if (mListener != null) {
-				mRequests = mListener.getCurrentRequests();
-			} else {
-				mRequests = new ArrayList<CustomerRequest>(); // Empty
-			}
+		// Obtain the current Requests
+		List<CustomerRequest> requests = mListener.getCurrentRequests();
+		if (requests == null) {
+			requests = new ArrayList<CustomerRequest>();
 		}
 
-		//TODO Create custom adapter to handle custom layoutss
-		mAdapter = new RequestListAdapter(this.getActivity(), mRequests);
+		mAdapter = new RequestListAdapter(this.getActivity(), requests);
 		setListAdapter(mAdapter);	
-	}
-	
-	/**
-	 * Activity Created its on create.
-	 * @param savedInstanceState Bundle
-	 */
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-//		 TODO Check Functionality before deleting		
-//		List<String> requests = mListener.getCurrentRequests();
-//		
-//		mAdapter = new RequestListAdapter(this.getActivity(), requests);
-//		setListAdapter(mAdapter);
 	}
 
 	@Override
@@ -218,6 +201,7 @@ public class RequestListFragment extends ListFragment {
 			this.mContext = ctx;
 			this.mRequests = orders;
 			
+			// For debug purposes we will add fake staff members
 			mStaff = new ArrayList<String>();
 			mStaff.add("Bert");
 			mStaff.add("Ernie");

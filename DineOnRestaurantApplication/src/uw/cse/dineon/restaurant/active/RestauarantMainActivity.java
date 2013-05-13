@@ -5,8 +5,13 @@ import java.util.List;
 
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
+import uw.cse.dineon.restaurant.LoadingFrament;
 import uw.cse.dineon.restaurant.R;
+import uw.cse.dineon.restaurant.active.DiningSessionListFragment.DiningSessionListListener;
+import android.app.DownloadManager.Request;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,12 +32,12 @@ import android.support.v4.view.ViewPager;
 public class RestauarantMainActivity extends DineOnRestaurantActivity implements
 OrderListFragment.OrderItemListener,
 RequestListFragment.RequestItemListener,
-CustomerListFragment.CustomerListener {
+DiningSessionListListener {
 
 	private static final String TAG = RestauarantMainActivity.class.getSimpleName(); 
 
 	private static final String[] CONTENT = 
-		{"Pending Orders" , "Pending Requests", "Current Customers"};
+		{"Pending Orders" , "Pending Requests", "Current Sessions"};
 
 	/**
 	 * The pager widget, which handles animation and allows swiping horizontally to access previous
@@ -45,11 +50,6 @@ CustomerListFragment.CustomerListener {
 	 */
 	private ScreenSlidePagerAdapter mPagerAdapter;
 
-	private List<String> mOrders;
-	private List<CustomerRequest> mRequests;
-
-	List<DiningSession> mCustomers;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,24 +58,6 @@ CustomerListFragment.CustomerListener {
 		mPager = (ViewPager) findViewById(R.id.pager_restaurant_main);
 		mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
 		mPager.setAdapter(mPagerAdapter);
-
-		// TODO Fill and update appropiately
-		mOrders = new ArrayList<String>();
-		mRequests = new ArrayList<CustomerRequest>();
-		mCustomers = new ArrayList<DiningSession>();
-
-		// TODO remove default values
-
-		String[] orders = {"Fried Chicken", "Peanut butter and Jelly", 
-				"Fried Rice", "Chicken Noodle Soup", "Butte Balls"};
-		for (String s: orders) {
-			mOrders.add(s);
-		}
-
-		String[] customers = {"Batman", "Robin", "Superman", "Wonderwoman"};
-		for (String s: customers) {
-//			mCustomers.add(makeDummySession(s));
-		}
 	}
 	
 	/**
@@ -96,19 +78,26 @@ CustomerListFragment.CustomerListener {
 
 		@Override
 		public Fragment getItem(int position) {
+			Restaurant rest = getRestaurant();
+			
+			// There is no restaurant so show loading screen.
+			if (rest == null) {
+				return new LoadingFrament();
+			}
+			
+			// Narrow in position
 			position = Math.min(Math.max(position, 0), CONTENT.length - 1);
 
 			Fragment f;
-
 			switch (position) {
 			case 0:
-				f = OrderListFragment.newInstance(mOrders);
+				f = new OrderListFragment();
 				break;
 			case 1:
-				f = RequestListFragment.newInstance(mRequests);
+				f = new RequestListFragment();
 				break;
 			default:
-				f = CustomerListFragment.newInstance(mCustomers);
+				f = new DiningSessionListFragment();
 			}
 			
 			mCurrent = f;
@@ -135,47 +124,46 @@ CustomerListFragment.CustomerListener {
 		}
 	}
 
-	/**
-	 * Updates the current fragment if it is in focus.
-	 * 
-	 * @param customer String
-	 */
-	//TODO Make this take a diningsession
-	@SuppressWarnings({ "unused" })
-	private void addCustomer(String customer) {
-		Fragment f = mPagerAdapter.getCurrentFragment();
-		if (f != null && f instanceof CustomerListFragment) {
-			CustomerListFragment frag = (CustomerListFragment) f;
-//			frag.addCustomer(makeDummySession(customer)); 
-		}
-//		mCustomers.add(makeDummySession(customer));
-	}
-	
-	/**
-	 * Updates the current fragment if it is in focus.
-	 * @param order String
-	 */
-	private void addOrder(String order) {
-		Fragment f = mPagerAdapter.getCurrentFragment();
-		if (f != null && f instanceof OrderListFragment) {
-			OrderListFragment frag = (OrderListFragment) f;
-			frag.addOrder(order);
-		}
-		mOrders.add(order);
-	}
-	
-	/**
-	 * Updates the current fragment if it is in focus.
-	 * @param request String
-	 */
-	private void addRequest(CustomerRequest request) {
-		Fragment f = mPagerAdapter.getCurrentFragment();
-		if (f != null && f instanceof RequestListFragment) {
-			RequestListFragment frag = (RequestListFragment) f;
-			frag.addRequest(request);
-		}
-		mRequests.add(request);
-	}
+//	/**
+//	 * Updates the current fragment if it is in focus.
+//	 * 
+//	 * @param customer String
+//	 */
+//	//TODO Make this take a diningsession
+//	@SuppressWarnings({ "unused" })
+//	private void addDiningSession(DiningSession customer) {
+//		Fragment f = mPagerAdapter.getCurrentFragment();
+//		if (f != null && f instanceof DiningSessionListFragment) {
+//			DiningSessionListFragment frag = (DiningSessionListFragment) f;
+////			frag.addCustomer(makeDummySession(customer)); 
+//		}
+//	}
+//	
+//	/**
+//	 * Updates the current fragment if it is in focus.
+//	 * @param order String
+//	 */
+//	private void addOrder(Order order) {
+//		Fragment f = mPagerAdapter.getCurrentFragment();
+//		if (f != null && f instanceof OrderListFragment) {
+//			OrderListFragment frag = (OrderListFragment) f;
+//			frag.addOrder(order);
+//		}
+////		mOrders.add(order);
+//	}
+//	
+//	/**
+//	 * Updates the current fragment if it is in focus.
+//	 * @param request String
+//	 */
+//	private void addRequest(CustomerRequest request) {
+//		Fragment f = mPagerAdapter.getCurrentFragment();
+//		if (f != null && f instanceof RequestListFragment) {
+//			RequestListFragment frag = (RequestListFragment) f;
+//			frag.addRequest(request);
+//		}
+//		mRequests.add(request);
+//	}
 
 	/**
 	 * Wrapper to convert a string (user's name) into a
@@ -201,64 +189,74 @@ CustomerListFragment.CustomerListener {
 	//////////////////////////////////////////////////////////////////////
 
 	@Override
-	public List<DiningSession> getCurrentUsers() {
-		return mCustomers;
+	public List<DiningSession> getCurrentSessions() {
+		if (getRestaurant() != null) {
+			return getRestaurant().getSessions();
+		}
+		return null;
 	}
-
+	
 	@Override
 	public List<CustomerRequest> getCurrentRequests() {
-		return mRequests;
+		if (getRestaurant() != null) {
+			return getRestaurant().getCustomerRequests();
+		}
+		return null;
 	}
-
+	
 	@Override
-	public List<String> getCurrentOrders() {
-		return mOrders;
+	public List<Order> getCurrentOrders() {
+		if (getRestaurant() != null) {
+			return getRestaurant().getPendingOrders();
+		}
+		return null;
 	}
-
+	
 	@Override
 	public void onRequestRequestDetail(CustomerRequest request) {
 		Intent intent = new Intent(getApplicationContext(),
 				RequestDetailActivity.class);
-		intent.putExtra(RequestDetailActivity.EXTRA_REQUEST, request.getDescription());
+//		intent.putExtra(RequestDetailActivity.EXTRA_REQUEST, request.getDescription());
 		startActivity(intent);
 	}
 
 	@Override
-	public void onRequestOrderDetail(String order) {
+	public void onRequestOrderDetail(Order order) {
 		Intent intent = new Intent(getApplicationContext(),
 				OrderDetailActivity.class);
-		intent.putExtra(OrderDetailActivity.EXTRA_ORDER, order);
+//		intent.putExtra(OrderDetailActivity.EXTRA_ORDER, order);
 		startActivity(intent);
 	}
 
+	
 	@Override
 	public void onAssignStaffToRequest(CustomerRequest request, String staff) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void onDismissRequest(CustomerRequest request) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void onRemoveRequest(CustomerRequest request) {
-		mRestaurant.removeCustomerRequest(request);
+		// TODO Auto-generated method stub
+		
+	}	
+
+	@Override
+	public void onProgressChanged(Order order, int progress) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void onProgressChanged(String order, int progress) {
+	public void onOrderComplete(Order order) {
 		// TODO Auto-generated method stub
-
-	}
-
-
-	@Override
-	public void onOrderComplete(String order) {
-		// TODO Auto-generated method stub
-
+		
 	}
 	
 	//////////////////////////////////////////////////////////////////////

@@ -191,8 +191,8 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 			return;
 		}
 		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setTitle("Getting you");
-		mProgressDialog.setMessage("Logging in...");
+		mProgressDialog.setTitle(R.string.dialog_title_loggin_in);
+		mProgressDialog.setMessage("Getting you ready to work!");
 		mProgressDialog.setIndeterminate(true);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		mProgressDialog.show();

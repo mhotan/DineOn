@@ -79,8 +79,7 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 	 * @param policy Cache policy to user to download the restaurant. 
 	 * @param callback Callback to listen for events
 	 */
-	public RestaurantDownloader(String id, 
-			CachePolicy policy, RestaurantDownLoaderCallback callback) {
+	public RestaurantDownloader(String id, RestaurantDownLoaderCallback callback) {
 		if (id == null) {
 			throw new NullPointerException(TAG + "Can't have null user");
 		}

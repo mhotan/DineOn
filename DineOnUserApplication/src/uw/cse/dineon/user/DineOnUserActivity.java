@@ -404,12 +404,6 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	}
 
 	@Override
-	public void onConfirmReservation(Reservation res, Date reservationDate) {
-		// TODO Auto-generated method stub
-		Toast.makeText(this, "onConfirmReservation", Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
 	public void onConfirmOrder(DiningSession ds, String orderId) {
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "onConfirmOrder", Toast.LENGTH_SHORT).show();
@@ -419,5 +413,11 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	public void onConfirmCustomerRequest(DiningSession ds, String requestID) {
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "onConfirmCustomerRequest", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onConfirmReservation(Reservation res) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "onConfirmReservation", Toast.LENGTH_SHORT).show();
 	}
 }

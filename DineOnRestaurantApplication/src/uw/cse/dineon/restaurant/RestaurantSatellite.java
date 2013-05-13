@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
@@ -68,6 +69,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 		REQUEST_ORDER,
 		REQUEST_CUSTOMER_REQUEST,
 		REQUEST_CHECK_OUT,
+		REQUEST_RESERVATION,
 		CHANGE_USER_INFO,
 		NA
 	}
@@ -164,6 +166,79 @@ public class RestaurantSatellite extends BroadcastReceiver {
 					jobj,
 					ParseUtil.getChannel(u));
 		}
+	}
+
+	/**
+	 * Notify all the users of the dining session that the order was 
+	 * placed correctly.
+	 * @param ds Dining Session that was updated.
+	 * @param order Order for reference.
+	 */
+	public void confirmOrder(DiningSession ds, Order order) {
+		JSONObject jobj = new JSONObject();
+
+		try {
+			jobj.put(DineOnConstants.OBJ_ID, ds.getObjId());
+			jobj.put(DineOnConstants.OBJ_ID_2, order.getObjId());
+			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_ORDER);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		List<UserInfo> users = ds.getUsers();
+		for (UserInfo u : users) {
+			ParseUtil.notifyApplication(
+					jobj,
+					ParseUtil.getChannel(u));
+		}
+	}
+
+	/**
+	 * Notify all the users of the dining session that the customer request
+	 * was seen.
+	 * @param ds Dining session in which customer request occured.
+	 * @param request request to notify was accepted
+	 */
+	public void confirmCustomerRequest(DiningSession ds, CustomerRequest request) {
+		JSONObject jobj = new JSONObject();
+
+		try {
+			jobj.put(DineOnConstants.OBJ_ID, ds.getObjId());
+			jobj.put(DineOnConstants.OBJ_ID_2, request.getObjId());
+			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_ORDER);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		List<UserInfo> users = ds.getUsers();
+		for (UserInfo u : users) {
+			ParseUtil.notifyApplication(
+					jobj,
+					ParseUtil.getChannel(u));
+		}
+	}
+
+	/**
+	 * Notifies user of reservation confirmation.
+	 * @param user user to notify
+	 * @param res Reservation to confirm
+	 */
+	public void confirmReservation(UserInfo user, Reservation res) {
+		JSONObject jobj = new JSONObject();
+
+		try {
+			jobj.put(DineOnConstants.OBJ_ID, res.getObjId());
+			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_ORDER);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		ParseUtil.notifyApplication(
+				jobj,
+				ParseUtil.getChannel(user));
 	}
 
 	/**
@@ -270,16 +345,10 @@ public class RestaurantSatellite extends BroadcastReceiver {
 		} 
 		else if (DineOnConstants.ACTION_REQUEST_RESERVATION.equals(action)) {
 			// Get the date in string format
-			Date dateStr;
-			try {
-				dateStr = DineOnConstants.MDATEFORMAT.parse(id);
-			} catch (java.text.ParseException e) {
-				if (DineOnConstants.DEBUG) {
-					mCurrentActivity.onFail("Customer attempted bad reservation request");
-				}
-				return;
-			}
-			mCurrentActivity.onReservationRequest(dateStr);
+			query = new ParseQuery(Reservation.class.getSimpleName());
+			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
+			callback.setOption(ACTION_OPTION.REQUEST_RESERVATION);
+			query.getInBackground(id, callback);
 		} 
 		else if (DineOnConstants.ACTION_REQUEST_CHECK_OUT.equals(action)) {
 			// Get the current Dining Session instance
@@ -359,6 +428,9 @@ public class RestaurantSatellite extends BroadcastReceiver {
 					mListener.onCustomerRequest(new CustomerRequest(object),
 							mSecondArg);
 					break;
+				case REQUEST_RESERVATION:
+					mListener.onReservationRequest(new Reservation(object));
+					break;
 				case REQUEST_ORDER:
 					mListener.onOrderRequest(new Order(object), mSecondArg);
 					break;
@@ -377,7 +449,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 	 * Listener for Activities to implement to receive action.
 	 * @author mhotan
 	 */
-	public interface SateliteListener {
+	interface SateliteListener { // Package level notification
 
 		/**
 		 * Notifies that a error occured.
@@ -427,9 +499,9 @@ public class RestaurantSatellite extends BroadcastReceiver {
 		/**
 		 * Notifies that a customer request was placed from the User(s)
 		 * associated with the attached dining session.
-		 * @param date Date that user request.
+		 * @param reservation Date that user request.
 		 */
-		void onReservationRequest(Date date);
+		void onReservationRequest(Reservation reservation);
 
 
 	}

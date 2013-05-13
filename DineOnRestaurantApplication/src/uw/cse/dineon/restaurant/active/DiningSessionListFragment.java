@@ -25,65 +25,58 @@ import android.widget.TextView;
  * @author mhotan
  * @author blasv
  */
-public class CustomerListFragment extends ListFragment {
+public class DiningSessionListFragment extends ListFragment {
 
 	/**
 	 * For Use with Log functions.
 	 */
-	private final String TAG = this.getClass().getSimpleName();
+	private static final String TAG = DiningSessionListFragment.class.getSimpleName();
 
 	//An activity that implements the required listener functions
-	private CustomerListener mListener;
+	private DiningSessionListListener mListener;
 
 	//String for storing list in arguments
-	private static final String KEY_LIST = "MY LIST";
+//	private static final String KEY_LIST = "MY LIST";
 
-	private UserListAdapter mAdapter;
+	private DiningSessionListAdapter mAdapter;
 
-	/**
-	 * Creates a new customer list fragment.
-	 * @param customers List of DiningSessions
-	 * @return New CustomerListFragment
-	 */
-	public static CustomerListFragment newInstance(List<DiningSession> customers) {
-		CustomerListFragment frag = new CustomerListFragment();
-		ArrayList<DiningSession> mList = new ArrayList<DiningSession>();
-		if (customers != null) {
-			mList.addAll(customers);
-		}
+//	/**
+//	 * Creates a new customer list fragment.
+//	 * @param sessions List of DiningSessions
+//	 * @return New CustomerListFragment
+//	 */
+//	public static DiningSessionListFragment newInstance(List<DiningSession> sessions) {
+//		DiningSessionListFragment frag = new DiningSessionListFragment();
+//		ArrayList<DiningSession> mList = new ArrayList<DiningSession>();
+//		if (sessions != null) {
+//			mList.addAll(sessions);
+//		}
+//
+//		//Store list in arguments for future retrieval
+//		Bundle args = new Bundle();
+////		args.putParcelableArrayList(KEY_LIST, mList);
+//		frag.setArguments(args);
+//		return frag;
+//	}
 
-		//Store list in arguments for future retrieval
-		Bundle args = new Bundle();
-//		args.putParcelableArrayList(KEY_LIST, mList);
-		frag.setArguments(args);
-		return frag;
-	}
-
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//Retrieve customer list from stored arguments if available
-		@SuppressWarnings("rawtypes") //XXX SO UNSAFE
-		List mCustomers = getArguments() != null 
-				? getArguments().getParcelableArrayList(KEY_LIST) : null;
-		if (mCustomers == null) {
-			if (mListener != null) {
-				mCustomers = mListener.getCurrentUsers();
-			} else {
-				mCustomers = new ArrayList<String>(); // Empty
-			}
+		
+		List<DiningSession> sessions = mListener.getCurrentSessions();
+		if (sessions == null) {
+			sessions = new ArrayList<DiningSession>();
 		}
 
-		mAdapter = new UserListAdapter(getActivity(), mCustomers);
+		mAdapter = new DiningSessionListAdapter(getActivity(), sessions);
 		setListAdapter(mAdapter);
 	}
 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if (activity instanceof CustomerListener) {
-			mListener = (CustomerListener) activity;
+		if (activity instanceof DiningSessionListListener) {
+			mListener = (DiningSessionListListener) activity;
 		} else {
 			throw new ClassCastException(activity.toString()
 					+ " must implemenet CurrentCustomersFragment.CustomerListener");
@@ -91,11 +84,11 @@ public class CustomerListFragment extends ListFragment {
 	}
 
 	/**
-	 * @param customer DiningSession
+	 * @param session DiningSession
 	 */
-	public void addCustomer(DiningSession customer) {
+	public void addDiningSession(DiningSession session) {
 		if (mAdapter != null) {
-			mAdapter.add(customer);
+			mAdapter.add(session);
 		} else {
 			Log.d(TAG, "Attempted to add customer to nonexistent list!");
 		}
@@ -103,11 +96,11 @@ public class CustomerListFragment extends ListFragment {
 
 	/**
 	 * 
-	 * @param customer DiningSession
+	 * @param session DiningSession
 	 */
-	public void removeCustomer(DiningSession customer) {
+	public void removeDiningSession(DiningSession session) {
 		if (mAdapter != null) {
-			mAdapter.remove(customer);
+			mAdapter.remove(session);
 		} else {
 			Log.d(TAG, "Attempted to remove customer from nonexistent list!");
 		}
@@ -117,14 +110,14 @@ public class CustomerListFragment extends ListFragment {
 	 * Mandatory interface for this fragment.
 	 * @author mhotan
 	 */
-	public interface CustomerListener {
+	public interface DiningSessionListListener {
 
 		/**
 		 * Retrieves the current diningsessions.
 		 * 
-		 * @return list of DiningSessions
+		 * @return list of DiningSessions, or null if no restaurant is available
 		 */
-		public List<DiningSession> getCurrentUsers();
+		public List<DiningSession> getCurrentSessions();
 
 		/**
 		 * TODO Add more methods here as needed
@@ -137,11 +130,10 @@ public class CustomerListFragment extends ListFragment {
 	}
 	
 	/**
-	 * 
-	 * @author 
-	 *
+	 * List adapter for holding dining sessions.
+	 * @author mhotan
 	 */
-	private class UserListAdapter extends BaseAdapter {
+	private class DiningSessionListAdapter extends BaseAdapter {
 		
 		private List<DiningSession> users;
 		private int expanded = -1;
@@ -153,7 +145,7 @@ public class CustomerListFragment extends ListFragment {
 		 * @param context The current context
 		 * @param userlist The list of users to display
 		 */
-		public UserListAdapter(Context context, List<DiningSession> userlist) {
+		public DiningSessionListAdapter(Context context, List<DiningSession> userlist) {
 			mContext = context;
 			users = userlist;
 		}

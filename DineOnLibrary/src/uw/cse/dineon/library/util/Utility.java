@@ -1,11 +1,16 @@
 package uw.cse.dineon.library.util;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import uw.cse.dineon.library.Order;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -130,7 +135,21 @@ public final class Utility {
 			}
 		});
 		return b.create();
-
 	}
 
+	/**
+	 * 
+	 * @param orders Orders to sort
+	 * @return The sorted list of orders
+	 */
+	public List<Order> sortOrdersMostRecent(List<Order> orders) {
+		Collections.sort(orders, new Comparator<Order>() {
+
+			@Override
+			public int compare(Order lhs, Order rhs) {
+				return lhs.getOriginatingTime().compareTo(rhs.getOriginatingTime());
+			}
+		});
+		return orders;
+	}
 }

@@ -107,19 +107,8 @@ public class DiningSession extends TimeableStorable {
 	 * but not received by the customer.
 	 * @return A list of current pending orders
 	 */
-	public List<Order> getPendingOrders() {
-		List<Order> copy = new ArrayList<Order>(mOrders.size());
-		Collections.copy(copy, mOrders);
-		return copy;
-	}
-
-	/**
-	 * In order to keep track of what orders have been completed.
-	 * @return A list of currently completed orders for this dining session
-	 */
-	public List<Order> getCompletedOrders() {
-		List<Order> copy = new ArrayList<Order>(mOrders.size());
-		return copy;
+	public List<Order> getOrders() {
+		return new ArrayList<Order>(mOrders);
 	}
 	
 	/**
@@ -201,7 +190,6 @@ public class DiningSession extends TimeableStorable {
 		}
 		
 		// We keep the orders in the cloud for later analytics
-		// We dont
 		
 		super.deleteFromCloud();
 	}
