@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/husky_soft_logo" />
+        android:gravity="center"
+        android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/button_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/input_password"
-        android:layout_alignRight="@+id/input_restaurant_login_name"
-        android:layout_centerVertical="true"
-        android:text="@string/label_login" />
+        <TextView
+            android:id="@+id/label_order_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="30dp"
+            android:text="@string/label_login_title"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <EditText
-        android:id="@+id/input_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_login"
-        android:layout_alignLeft="@+id/input_restaurant_login_name"
-        android:layout_marginBottom="30dp"
-        android:ems="10"
-        android:hint="@string/hint_password"
-        android:inputType="textPassword" />
+        <EditText
+            android:id="@+id/input_restaurant_login_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:ems="10"
+            android:hint="@string/hint_restaurant_name" >
 
-    <EditText
-        android:id="@+id/input_restaurant_login_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/input_password"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:ems="10"
-        android:hint="@string/hint_restaurant_name" >
+            <requestFocus />
+        </EditText>
 
-        <requestFocus />
-    </EditText>
+        <EditText
+            android:id="@+id/input_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:ems="10"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword" />
 
-    <TextView
-        android:id="@+id/label_order_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/input_restaurant_login_name"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:text="@string/label_login_title"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <Button
+            android:id="@+id/button_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_login" />
 
-</RelativeLayout>
+        <ImageView
+            android:contentDescription="@string/husky_soft_logo"
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/husky_soft_logo" />
+    </LinearLayout>
+
+</ScrollView>

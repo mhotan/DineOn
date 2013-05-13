@@ -34,8 +34,9 @@
     <string name="item_forgot_password">Forgot Password?</string>
     <string name="item_create_account">Create Account</string>
     <string name="activity_start_login">startLoginActivity</string>
-    <string name="create_new_account">Create new Account</string>
+    <string name="create_new_account">Create New Account</string>
     <string name="hint_email_address">Email Address</string>
     <string name="hint_password_repeat">Repeat Password</string>
     <string name="hint_restaurant_name">Your Restaurant Name</string>
+    <string name="husky_soft_logo">HuskySoft Logo</string>
 </resources>
