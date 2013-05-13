@@ -6,17 +6,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -37,8 +41,9 @@ public class OrderListFragment extends ListFragment {
 
 	private static final String KEY_LIST = "MY LIST";
 
+
 	/**
-	 * Creates a new customer list fragment.
+	 * Creates a new order list fragment.
 	 * @param orders TODO Change to order class
 	 * @return new fragment
 	 */
@@ -60,17 +65,17 @@ public class OrderListFragment extends ListFragment {
 		super.onCreate(savedInstanceState);
 		List<String> mOrders = getArguments() != null 
 				? getArguments().getStringArrayList(KEY_LIST) : null;
-		if (mOrders == null) {
-			if (mListener != null) {
-				mOrders = mListener.getCurrentOrders();
-			} else {
-				mOrders = new ArrayList<String>(); // Empty
-			}
-		}
+				if (mOrders == null) {
+					if (mListener != null) {
+						mOrders = mListener.getCurrentOrders();
+					} else {
+						mOrders = new ArrayList<String>(); // Empty
+					}
+				}
 
-		//TODO Create custom adapter to handle custom layoutss
-		mAdapter = new OrderListAdapter(this.getActivity(), mOrders);
-		setListAdapter(mAdapter);	
+				//TODO Create custom adapter to handle custom layoutss
+				mAdapter = new OrderListAdapter(this.getActivity(), mOrders);
+				setListAdapter(mAdapter);	
 	}
 
 	@Override
@@ -80,7 +85,7 @@ public class OrderListFragment extends ListFragment {
 			mListener = (OrderItemListener) activity;
 		} else {
 			throw new ClassCastException(activity.toString()
-					+ " must implemenet OrderListFragment.OrderItemListener");
+					+ " must implement OrderListFragment.OrderItemListener");
 		}
 	}
 
@@ -183,6 +188,7 @@ public class OrderListFragment extends ListFragment {
 		private final Map<View, String> mViewToOrder;
 		private final OrderItemListener mItemListener;
 		private final OrderProgressListener mProgessListener;
+		private int expanded = -1;
 
 		/**
 		 * Creates an adapter that manages the addition and layout of
@@ -191,7 +197,7 @@ public class OrderListFragment extends ListFragment {
 		 * @param orders List of strings
 		 */
 		public OrderListAdapter(Context ctx, List<String> orders) {
-			super(ctx, R.layout.listitem_restaurant_order, orders);
+			super(ctx, R.layout.listitem_restaurant_order_bot, orders);
 			this.mContext = ctx;
 			this.mOrders = orders;
 			this.mViewToOrder = new HashMap<View, String>();
@@ -199,33 +205,107 @@ public class OrderListFragment extends ListFragment {
 			this.mProgessListener = new OrderProgressListener();
 		}
 
+		/**
+		 * Sets the arrow based on whether or not the list item
+		 * is expanded or not.
+		 * @param position The position of the list item to set
+		 * @param arrowButton The specified arrow button to set
+		 */
+		private void setArrow(int position, ImageButton arrowButton) {
+			if(position == expanded) {
+				arrowButton.setImageResource(R.drawable.navigation_next_item);
+			} else {
+				arrowButton.setImageResource(R.drawable.navigation_expand);
+			}
+		}
+
+		/**
+		 * Toggles expansion of the given list item.
+		 * Currently only one item can be expanded at a time
+		 * @param position The position of the list item to toggle
+		 */
+		public void expand(int position) {
+
+			if(expanded == position) { //Already expanded, collapse it
+				expanded = -1;
+			} else {
+				expanded = position;
+			}
+			notifyDataSetChanged();
+		}
+
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = (LayoutInflater) mContext
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View view = inflater.inflate(R.layout.listitem_restaurant_order, parent, false);
+		public View getView(final int position, View convertView, ViewGroup parent) {
+
+			View vwTop;
+			View vwBot;
+
+			final LinearLayout view;
+
+			if(convertView == null) {
+				view = new LinearLayout(mContext);
+				view.setOrientation(LinearLayout.VERTICAL);
+				LayoutInflater inflater = (LayoutInflater) mContext
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				vwTop = inflater.inflate(R.layout.listitem_restaurant_order_top, null, true);
+				vwBot = inflater.inflate(R.layout.listitem_restaurant_order_bot, null, true);
+				view.addView(vwTop);
+				view.addView(vwBot);
+			} else {
+				//Everything already created, just find them
+				view = (LinearLayout) convertView;
+				vwTop = view.findViewById(R.id.listitem_order_top);
+				vwBot = view.findViewById(R.id.listitem_order_bot);
+			}
 
 			//TODO Obtain the order at the position
 			String order = mOrders.get(position);
 
-			TextView title = (TextView) view.findViewById(R.id.label_order_title);
-			title.setText(order);
+			//Button title = (Button) vw.findViewById(R.id.button_order_title);
+			//title.setText(order);
 
 			Button buttonCompleteOrder = (Button) view.findViewById(R.id.button_completed_order);
-			ImageButton buttonGetDetails = 
-					(ImageButton) view.findViewById(R.id.button_order_detail);
-			SeekBar progressBar = (SeekBar)view.findViewById(R.id.seekbar_order_progress);
+			TextView orderTitle = 
+					(TextView) view.findViewById(R.id.button_order_title);
+			orderTitle.setText(order);
+			SeekBar progressBar = (SeekBar) view.findViewById(R.id.seekbar_order_progress);
 			progressBar.setMax(100);
 			progressBar.setProgress(0);
 
+			//Set up expand button
+			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_order);
+
+			setArrow(position, arrowButton);
+
+			arrowButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					expand(position);
+
+					ImageButton arrowButton = 
+							(ImageButton) view.findViewById(R.id.button_expand_order);
+					setArrow(position, arrowButton);
+					//Right arrow case -- goes to details fragment
+					if(expanded != position) {
+						mListener.onRequestOrderDetail(mOrders.get(position));
+					}				
+				}
+
+
+			});
+
+			if(expanded != position) {
+				vwBot.setVisibility(View.GONE);
+			} else {
+				vwBot.setVisibility(View.VISIBLE);
+			}
+
 			// Add to mapping to reference later
 			mViewToOrder.put(buttonCompleteOrder, order);
-			mViewToOrder.put(buttonGetDetails, order);
+			mViewToOrder.put(arrowButton, order);
 			mViewToOrder.put(progressBar, order);
 
 			// Add listener for reaction purposes
 			buttonCompleteOrder.setOnClickListener(mItemListener);
-			buttonGetDetails.setOnClickListener(mItemListener);
 			progressBar.setOnSeekBarChangeListener(mProgessListener);
 			return view;
 		}
@@ -248,9 +328,6 @@ public class OrderListFragment extends ListFragment {
 					mListener.onOrderComplete(order);
 					mAdapter.notifyDataSetChanged();
 					break;
-				case R.id.button_order_detail:
-					mListener.onRequestOrderDetail(order);
-					break;
 				default:
 					break;
 				}
@@ -269,7 +346,7 @@ public class OrderListFragment extends ListFragment {
 				// TODO Auto-generated method stub
 				String order = mViewToOrder.get(seekBar);
 				mListener.onProgressChanged(order, progress);
-				
+
 				if (progress == seekBar.getMax()) {
 					mAdapter.remove(order);
 					mListener.onOrderComplete(order);
@@ -284,6 +361,7 @@ public class OrderListFragment extends ListFragment {
 			public void onStopTrackingTouch(SeekBar seekBar) { }
 
 		}
-	}
 
+
+	}
 }

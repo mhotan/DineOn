@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listitem_order_bot"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -33,31 +34,10 @@
         android:gravity="left|center_vertical"
         android:text="Order Complete!" />
 
-    <ImageButton
-        android:id="@+id/button_order_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/navigation_next_item" />
-
     <SeekBar
         android:id="@+id/seekbar_order_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/button_order_detail" />
-
-    <TextView
-        android:id="@+id/label_order_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button_order_detail"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/button_order_detail"
-        android:gravity="center_vertical"
-        android:text="@string/label_order_blank"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_alignParentLeft="true" />
 
 </RelativeLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listitem_order_top"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageButton
+        android:id="@+id/button_expand_order"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical|center_horizontal"
+        android:minHeight="30dp"
+        android:src="@drawable/navigation_expand" />
+
+    <TextView
+        android:id="@+id/button_order_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
+        android:minHeight="30dp"
+        android:text="Order Name goes here"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>
