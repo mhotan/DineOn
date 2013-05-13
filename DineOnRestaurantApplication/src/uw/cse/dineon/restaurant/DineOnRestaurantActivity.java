@@ -223,6 +223,27 @@ implements SateliteListener {
 	}
 	
 	/**
+	 * Adds a customer request to the restaurant.
+	 * @param request Customer Request to add
+	 */
+	protected void addCustomerRequest(CustomerRequest request) {
+		// reference our mRestaurant object
+		mRestaurant.addCustomerRequest(request);
+		mRestaurant.saveInBackGround(null);
+	}
+	
+	/**
+	 * Removes the request from the restaurant pending request record.
+	 * @param request Request to delete.
+	 */
+	protected void removeCustomerRequest(CustomerRequest request) {
+		// Remove the customer request from the 
+		// restaurant permanently.
+		mRestaurant.removeCustomerRequest(request);
+		mRestaurant.saveInBackGround(null);
+	}
+	
+	/**
 	 * Adds a reservation to the state of this restaurant.
 	 * @param reservation reservation that is being added to the restaurant.
 	 */
@@ -346,7 +367,10 @@ implements SateliteListener {
 					@Override
 					public void done(ParseException e) {
 						if (e == null) {
+							// Tell the customer that we have received their order
 							mSatellite.confirmOrder(SESSION, order);
+							// Add the order to our restaurant
+							addOrder(order);
 						} else {
 							Log.e(TAG, "Error saving dining session" + e.getMessage());
 						}
@@ -379,7 +403,10 @@ implements SateliteListener {
 					@Override
 					public void done(ParseException e) {
 						if (e == null) {
+							// Tell the customer we have received their request
 							mSatellite.confirmCustomerRequest(SESSION, request);
+							// Update our state as well
+							addCustomerRequest(request);
 						} else {
 							Log.e(TAG, "Error saving dining session" + e.getMessage());
 						}
@@ -404,7 +431,9 @@ implements SateliteListener {
 		
 		mSatellite.confirmReservation(reservation.getUserInfo(), reservation);
 	
-		mRestaurant.addReservation(reservation);
+		// We are not updating the dining session
+		// because there is no dining session with this reservation.
+		addReservation(reservation);
 	}
 
 	@Override

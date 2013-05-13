@@ -154,12 +154,6 @@ public class RequestListFragment extends ListFragment {
 		public void onAssignStaffToRequest(CustomerRequest request, String staff);
 
 		/**
-		 * Dismisses the request.  Doesn't mean issue was tended to
-		 * @param request request to dismiss
-		 */
-		public void onDismissRequest(CustomerRequest request);
-
-		/**
 		 * Removes a request. request is removed completely from this 
 		 * list.  This is a notification method 
 		 * @param request String
@@ -290,7 +284,7 @@ public class RequestListFragment extends ListFragment {
 				mDelete = isChecked;
 				if (mDelete) {
 					mAssignToStaff.setImageResource(R.drawable.discard_content);
-					mListener.onDismissRequest(mRequest);
+//					mListener.onDismissRequest(mRequest);
 				} else {
 					mAssignToStaff.setImageResource(R.drawable.add_staffmember);
 				}
