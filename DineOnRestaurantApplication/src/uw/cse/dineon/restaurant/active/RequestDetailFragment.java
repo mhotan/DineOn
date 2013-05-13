@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.os.Bundle;
@@ -38,8 +40,7 @@ implements OnCheckedChangeListener, OnClickListener {
 	private RequestDetailListener mListener;
 	private String mUrgency;
 
-	/*TODO Replace with a request object*/
-	private String mRequest;
+	private CustomerRequest mRequest;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -115,13 +116,12 @@ implements OnCheckedChangeListener, OnClickListener {
 	 * Sets the state of this fragment to this request.
 	 * @param request request to update the fragment to
 	 */
-	public void setRequest(String request) {
-		mRequest = request;
-
+	public void setRequest(String request, UserInfo user) {
+		mRequest = new CustomerRequest(request, user);
 		if (mRequest != null) {
 			mMessageBlock.setText("");
 			// Set text TODO fix
-			mTitle.setText(mRequest);
+			mTitle.setText(mRequest.getDescription());
 			mDetails.setText("I'm Hungry!");
 			mTableNumber.setText("5");
 			mTimeTaken.setText("7:45pm");
@@ -158,19 +158,18 @@ implements OnCheckedChangeListener, OnClickListener {
 	public interface RequestDetailListener {
 
 		/**
-		 * TODO Replace all of the argument data types appropiately.
 		 * @param request Request to reference
 		 * @param staff staff to assign to
 		 * @param urgency Urgency to accomplish task
 		 */
-		public void onSendTaskToStaff(String request, String staff, String urgency);
+		public void onSendTaskToStaff(CustomerRequest request, String staff, String urgency);
 
 		/**
 		 * Send a message to the customer about their request.
 		 * @param request request to send
 		 * @param message message
 		 */
-		public void onSendMessage(String request, String message);
+		public void onSendMessage(CustomerRequest request, String message);
 
 	}
 

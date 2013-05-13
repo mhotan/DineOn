@@ -53,7 +53,7 @@ implements SateliteListener {
 	/**
 	 * The underlying restaurant instance.
 	 */
-	private Restaurant mRestaurant;
+	protected Restaurant mRestaurant;
 
 	/**
 	 * Just a variable for creation.  This helps us track the user

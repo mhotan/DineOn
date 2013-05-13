@@ -42,13 +42,12 @@ RequestListFragment.RequestItemListener {
 	// Following two methods control the view of the activity
 
 	@Override
-	public void onRequestRequestDetail(String request) {
-		// TODO Auto-generated method stub
+	public void onRequestRequestDetail(CustomerRequest request) {
 //		if (!Utility.isPaneSplitable(this)) {
 			// We are in portrait mode
 			Intent intent = new Intent(getApplicationContext(),
 					RequestDetailActivity.class);
-			intent.putExtra(RequestDetailActivity.EXTRA_REQUEST, request);
+			intent.putExtra(RequestDetailActivity.EXTRA_REQUEST, request.getDescription());
 			startActivity(intent);
 //		} else {
 //
@@ -69,7 +68,6 @@ RequestListFragment.RequestItemListener {
 
 	@Override
 	public void onRequestOrderDetail(String order) {
-		// TODO Auto-generated method stub
 //		if (!Utility.isPaneSplitable(this)) {
 			// We are in portrait mode
 			Intent intent = new Intent(getApplicationContext(),
@@ -93,13 +91,8 @@ RequestListFragment.RequestItemListener {
 	}
 
 	@Override
-	public List<String> getCurrentRequests() {
-		// TODO Auto-generated method stub
-		String[] requests = {"Water Please", "Waiter Needed", "There is a booger in my soup"};
-		List<String> reqList = new ArrayList<String>();
-		for (String s: requests) {
-			reqList.add(s);
-		}
+	public List<CustomerRequest> getCurrentRequests() {
+		List<CustomerRequest> reqList = new ArrayList<CustomerRequest>();
 		return reqList;
 	}
 
@@ -121,35 +114,34 @@ RequestListFragment.RequestItemListener {
 	}
 
 	@Override
-	public void onSendMessage(String request, String message) {
+	public void onSendMessage(CustomerRequest request, String message) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onSendTaskToStaff(String request, String staff, String urgency) {
+	public void onSendTaskToStaff(CustomerRequest request, String staff, String urgency) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onAssignStaffToRequest(String request, String staff) {
+	public void onAssignStaffToRequest(CustomerRequest request, String staff) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onDismissRequest(String request) {
-		// TODO Auto-generated method stub
-
+	public void onDismissRequest(CustomerRequest request) {
+		// TODO finish: should this be the same as remove?
+		mRestaurant.removeCustomerRequest(request);
 	}
 
 
 
 	@Override
-	public void onRemoveRequest(String request) {
-		// TODO Auto-generated method stub
-
+	public void onRemoveRequest(CustomerRequest request) {
+		mRestaurant.removeCustomerRequest(request);
 	}
 
 

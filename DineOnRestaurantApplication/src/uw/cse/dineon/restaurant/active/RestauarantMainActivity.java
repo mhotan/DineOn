@@ -3,6 +3,7 @@ package uw.cse.dineon.restaurant.active;
 import java.util.ArrayList;
 import java.util.List;
 
+import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
@@ -44,7 +45,8 @@ CustomerListFragment.CustomerListener {
 	 */
 	private ScreenSlidePagerAdapter mPagerAdapter;
 
-	private List<String> mOrders, mRequests;
+	private List<String> mOrders;
+	private List<CustomerRequest> mRequests;
 
 	List<DiningSession> mCustomers;
 
@@ -59,7 +61,7 @@ CustomerListFragment.CustomerListener {
 
 		// TODO Fill and update appropiately
 		mOrders = new ArrayList<String>();
-		mRequests = new ArrayList<String>();
+		mRequests = new ArrayList<CustomerRequest>();
 		mCustomers = new ArrayList<DiningSession>();
 
 		// TODO remove default values
@@ -68,11 +70,6 @@ CustomerListFragment.CustomerListener {
 				"Fried Rice", "Chicken Noodle Soup", "Butte Balls"};
 		for (String s: orders) {
 			mOrders.add(s);
-		}
-
-		String[] requests = {"Water Please", "Waiter Needed", "There is a booger in my soup"};
-		for (String s: requests) {
-			mRequests.add(s);
 		}
 
 		String[] customers = {"Batman", "Robin", "Superman", "Wonderwoman"};
@@ -101,7 +98,6 @@ CustomerListFragment.CustomerListener {
 		public Fragment getItem(int position) {
 			position = Math.min(Math.max(position, 0), CONTENT.length - 1);
 
-			Bundle args = new Bundle();
 			Fragment f;
 
 			switch (position) {
@@ -172,7 +168,7 @@ CustomerListFragment.CustomerListener {
 	 * Updates the current fragment if it is in focus.
 	 * @param request String
 	 */
-	private void addRequest(String request) {
+	private void addRequest(CustomerRequest request) {
 		Fragment f = mPagerAdapter.getCurrentFragment();
 		if (f != null && f instanceof RequestListFragment) {
 			RequestListFragment frag = (RequestListFragment) f;
@@ -210,7 +206,7 @@ CustomerListFragment.CustomerListener {
 	}
 
 	@Override
-	public List<String> getCurrentRequests() {
+	public List<CustomerRequest> getCurrentRequests() {
 		return mRequests;
 	}
 
@@ -220,10 +216,10 @@ CustomerListFragment.CustomerListener {
 	}
 
 	@Override
-	public void onRequestRequestDetail(String request) {
+	public void onRequestRequestDetail(CustomerRequest request) {
 		Intent intent = new Intent(getApplicationContext(),
 				RequestDetailActivity.class);
-		intent.putExtra(RequestDetailActivity.EXTRA_REQUEST, request);
+		intent.putExtra(RequestDetailActivity.EXTRA_REQUEST, request.getDescription());
 		startActivity(intent);
 	}
 
@@ -236,21 +232,20 @@ CustomerListFragment.CustomerListener {
 	}
 
 	@Override
-	public void onAssignStaffToRequest(String request, String staff) {
+	public void onAssignStaffToRequest(CustomerRequest request, String staff) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onDismissRequest(String request) {
+	public void onDismissRequest(CustomerRequest request) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onRemoveRequest(String request) {
-		// TODO Auto-generated method stub
-
+	public void onRemoveRequest(CustomerRequest request) {
+		mRestaurant.removeCustomerRequest(request);
 	}
 
 	@Override
