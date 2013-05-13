@@ -573,8 +573,8 @@ implements SateliteListener {
 			return;
 		}
 		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setTitle(R.string.dialog_title_loggin_in);
-		mProgressDialog.setMessage("Getting you your own restaurant");
+		mProgressDialog.setTitle("Loading...");
+		mProgressDialog.setMessage("Getting you your restaurant");
 		mProgressDialog.setIndeterminate(true);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		mProgressDialog.show();
