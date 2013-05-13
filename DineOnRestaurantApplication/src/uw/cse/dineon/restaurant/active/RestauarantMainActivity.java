@@ -69,7 +69,8 @@ DiningSessionListListener {
 		private Fragment mCurrent;
 
 		/**
-		 * 
+		 * This is a PageAdapter to control Restaurant displays
+		 * that show orders, customer requests, and sessions.
 		 * @param fragmentManager Fragment manager of this activity
 		 */
 		public ScreenSlidePagerAdapter(FragmentManager fragmentManager) {
