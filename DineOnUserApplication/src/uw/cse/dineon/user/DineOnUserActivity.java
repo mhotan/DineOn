@@ -41,6 +41,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 /**
  * General Fragment Activity class that pertains to a specific user.
@@ -339,118 +340,6 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	}
 
 	/**
-	 * Callback for retrieving the User object from the cache
-	 * or the network.  After this succeeds we will then continue to 
-	 * Intialize to UI
-	 * @author mhotan
-	 */
-	private class InitializeCallback extends GetCallback {
-
-		private final Context mContext;
-
-		/**
-		 * Creates a callback to handle queries.
-		 * Specically handle downloading a UserObject
-		 * @param ctx Context to set
-		 */
-		public InitializeCallback(Context ctx) {
-			mContext = ctx;
-		}
-
-		@Override
-		public void done(ParseObject object, ParseException e) {
-			if (e == null) {
-				// We have found the correct object
-				try {
-					mUser = new DineOnUser(object);
-				} catch (Exception e1) {
-					Log.e(TAG, "Exception on Fetch:" + e1);
-				}
-				Toast.makeText(mContext, "User found time to initialize", 
-						Toast.LENGTH_SHORT).show();
-
-				// User was found update the UI
-				intializeUI();
-				
-			} else {
-				Toast.makeText(mContext, "FAIL: Unable to find user", 
-						Toast.LENGTH_SHORT).show();
-			}
-		}
-
-	}
-
-	/**
-	 * This is the defined call back method for when the
-	 * User attempts to check in to a restaurant.
-	 * @param jobj JSONOBJECT used to check
-	 * 	DineOnConstants.OBJ_ID => Parse Object ID for Dining Session
-	 */
-	public void onCheckInCallback(JSONObject jobj) {
-		try {
-			Log.d("CONFIRM_DINING_SESSION_FROM_REST", "");
-
-			// Use Utility to call Parse and get the Dining Session instance
-			if (jobj == null || !jobj.has(DineOnConstants.OBJ_ID)) {
-				Log.d(TAG, "The receiver did not return a valid response for checkin.");
-				// TODO Update the UI
-				Toast.makeText(this, "No DiningSession returned", Toast.LENGTH_SHORT).show();
-			}
-			String objId = jobj.getString(DineOnConstants.OBJ_ID);
-			Map<String, String> attr = new HashMap<String, String>();
-			attr.put(DineOnConstants.OBJ_ID, objId);
-
-			// Then Bundle the Dining Session Instance into		
-			Method m = DineOnUserActivity.class.getMethod("onDiningSessionRecievedCallback",
-					List.class);
-
-			ParseUtil.getDataFromCloud(this, DiningSession.class, m, attr);
-		} catch (NoSuchMethodException e) {
-			Log.e(TAG, "Failed to invocate method onDiningSessionRecievedCallback()");
-		} catch (JSONException e) {
-			Log.e(TAG, "JSON error in checkin callback");
-		}
-
-	}
-
-	/**
-	 * This is a callback for when the Dining Session is recieved via local
-	 * caching or.
-	 * @param list List<Storable>
-	 */
-	public void onDiningSessionRecievedCallback(List<Storable> list) {
-		// Assert that the first item in the list is
-		// is a DiningSession
-		if (list == null || list.size() != 1) {
-			throw new IllegalArgumentException("List returned is not valid: " + list);
-		}
-		DiningSession mDiningSession = (DiningSession) list.get(0);
-
-		Toast.makeText(this, "Dining Session Started", Toast.LENGTH_SHORT).show();
-
-		// DEBUG:
-		Log.d("GOT_DINING_SESSION_FROM_CLOUD", mDiningSession.getTableID() + "");
-
-		mUser.setDiningSession(mDiningSession);
-
-		invalidateOptionsMenu();
-
-		// TODO Extract channel for push
-		// Shouldn't we already have the channel and be registered at this point 
-		// via onCreate/onResume?
-		// TODO Register for the channel and start listening for updates
-		// TODO Extract object id for restaurant
-
-		// Bundle up dining session
-		// Start RestaurantMainActivity with bundle
-		Intent i = new Intent(this, RestaurantHomeActivity.class);
-		ArrayList<Storable> mDSList = new ArrayList<Storable>();
-		mDSList.add(mDiningSession);
-		//		i.putParcelableArrayListExtra(DineOnConstants.DINING_SESSION, mDSList);
-		startActivity(i);
-	}
-
-	/**
 	 * Saves the instance of the current DiningSession. Information can
 	 * be recovered by using onRestoreInstanceState.
 	 *
@@ -488,7 +377,25 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	@Override
 	public void onInitialDiningSessionReceived(DiningSession session) {
 		// TODO Auto-generated method stub
-		
+		Toast.makeText(this, "Dining Session Started", Toast.LENGTH_SHORT).show();
+
+		// DEBUG:
+		Log.d("GOT_DINING_SESSION_FROM_CLOUD", session.getTableID() + "");
+
+		mUser.setDiningSession(session);
+		mUser.saveInBackGround(new SaveCallback(){
+
+			@Override
+			public void done(ParseException e) {
+				// TODO Auto-generated method stub
+				if (e == null)
+					intializeUI();
+				else
+					Log.e(TAG, "unable to save the updated dineon user " + 
+					      "after new dining session received.");
+			}
+		});
+
 	}
 
 	@Override

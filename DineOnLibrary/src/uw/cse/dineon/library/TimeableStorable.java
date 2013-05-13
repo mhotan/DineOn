@@ -29,7 +29,7 @@ public abstract class TimeableStorable extends Storable {
 	private static final DateFormat MDATEFORMAT = 
 			DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, Locale.getDefault()); 
 	
-	private static final String DATE = "date";
+	private static final String DATE = "dineonDate";
 	
 	/**
 	 * Start Date for this instance.
@@ -97,7 +97,7 @@ public abstract class TimeableStorable extends Storable {
 	@Override
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
-		po.add(DATE, MDATEFORMAT.format(mDate));
+		po.put(DATE, MDATEFORMAT.format(mDate));
 		return po;
 	}
 	
