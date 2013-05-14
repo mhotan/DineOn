@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/listitem_order_top"
+    android:id="@+id/listitem_request_top"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <ImageButton
-        android:id="@+id/button_expand_order"
+        android:id="@+id/button_expand_request"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,23 +17,23 @@
         android:src="@drawable/navigation_expand" />
 
     <TextView
-        android:id="@+id/button_order_title"
+        android:id="@+id/label_request_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:gravity="center_vertical"
         android:minHeight="30dp"
-        android:text="Order Name Goes Here"
+        android:text="Request Goes Here"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/label_order_time"
+        android:id="@+id/label_request_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/button_expand_order"
+        android:layout_below="@+id/button_expand_request"
         android:text="2:30:00 PM -- 05/13/13"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+    
 </RelativeLayout>

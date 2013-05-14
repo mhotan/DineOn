@@ -1,9 +1,12 @@
 package uw.cse.dineon.restaurant.login;
 
+import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.library.util.FakeRestaurantInformation;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.RestaurantDownloader;
@@ -14,11 +17,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 /**
@@ -132,8 +135,39 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 	@Override
 	public void onDownloadedRestaurant(Restaurant rest) {
 		if (rest != null) {
-			mRestaurantID = rest.getObjId();
-			startMainActivity();
+			if (!DineOnConstants.DEBUG) {
+				mRestaurantID = rest.getObjId();
+				startMainActivity();
+				return;
+			}
+			
+			
+			// Add fake restaurant orders and requests
+			for (Order o : FakeRestaurantInformation.getFakeOrders(
+					ParseUser.getCurrentUser())) {
+				rest.addOrder(o);
+			}
+			
+			for (CustomerRequest c : FakeRestaurantInformation.getFakeRequests(
+					ParseUser.getCurrentUser())) {
+				rest.addCustomerRequest(c);
+			}
+			
+			final Restaurant REST2 = rest;
+			REST2.saveInBackGround(new SaveCallback() {
+				
+				@Override
+				public void done(ParseException e) {
+					if (e == null) {
+						
+						
+						mRestaurantID = REST2.getObjId();
+						startMainActivity();
+					}
+				}
+			});
+			
+
 		}
 	}
 	

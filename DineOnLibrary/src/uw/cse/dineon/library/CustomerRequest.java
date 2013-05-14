@@ -17,8 +17,8 @@ import com.parse.ParseObject;
  * @author Zach, mhotan
  */
 public class CustomerRequest extends TimeableStorable {
-	public static final String DESCRIPTION = "description";
-	public static final String USER = "user";
+	public static final String DESCRIPTION = "requestDescription";
+	public static final String USER = "dineonCustomer";
 	
 	private final String mDescription;
 	private final UserInfo mUserInfo;
@@ -99,7 +99,7 @@ public class CustomerRequest extends TimeableStorable {
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
 		po.put(DESCRIPTION, mDescription);
-		po.put(USER, mUserInfo);
+		po.put(USER, mUserInfo.packObject());
 		return po;
 	}
 	
