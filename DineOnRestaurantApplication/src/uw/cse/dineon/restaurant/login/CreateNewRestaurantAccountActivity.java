@@ -176,6 +176,7 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 	 */
 	private void startMainActivity() {
 		Intent i = new Intent(this, RestauarantMainActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(i);
 	}
 

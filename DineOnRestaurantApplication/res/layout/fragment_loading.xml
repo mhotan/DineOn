@@ -3,12 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleLarge"
+    <TextView
+        android:id="@+id/textView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:indeterminate="true"
-        android:visibility="visible" />
+        android:layout_height="wrap_content"
+        android:text="Got Nothing"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </FrameLayout>

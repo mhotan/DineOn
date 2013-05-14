@@ -6,10 +6,8 @@ import java.util.List;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
-import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
-import uw.cse.dineon.restaurant.LoadingFrament;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.DiningSessionListFragment.DiningSessionListListener;
 import android.os.Bundle;
@@ -56,8 +54,7 @@ DiningSessionListListener {
 		setContentView(R.layout.activity_restaurant_main);
 
 		mPager = (ViewPager) findViewById(R.id.pager_restaurant_main);
-		mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-		mPager.setAdapter(mPagerAdapter);
+		
 	}
 
 	@Override
@@ -70,7 +67,8 @@ DiningSessionListListener {
 		}
 
 		// Tells adapter to refresh.
-		mPagerAdapter.notifyDataSetChanged();
+		mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+		mPager.setAdapter(mPagerAdapter);
 	}
 
 	@Override
@@ -248,12 +246,6 @@ DiningSessionListListener {
 
 		@Override
 		public Fragment getItem(int position) {
-			Restaurant rest = getRestaurant();
-
-			// There is no restaurant so show loading screen.
-			if (rest == null) {
-				return new LoadingFrament();
-			}
 
 			// Narrow in position
 			position = Math.min(Math.max(position, 0), CONTENT.length - 1);

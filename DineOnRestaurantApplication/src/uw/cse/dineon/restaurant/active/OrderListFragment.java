@@ -37,26 +37,6 @@ public class OrderListFragment extends ListFragment {
 
 	private ArrayAdapter<Order> mAdapter;
 
-//	private static final String KEY_LIST = "MY LIST";
-
-//	/**
-//	 * Creates a new order list fragment.
-//	 * @param orders TODO Change to order class
-//	 * @return new fragment
-//	 */
-//	public static OrderListFragment newInstance(List<Order> orders) {
-//		OrderListFragment frag = new OrderListFragment();
-//		ArrayList<Order> mList = new ArrayList<Order>();
-//		if (orders != null) {
-//			mList.addAll(orders);
-//		}
-//
-//		Bundle args = new Bundle();
-//		args.putParcelableArrayList(KEY_LIST, mList);
-//		frag.setArguments(args);
-//		return frag;
-//	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
