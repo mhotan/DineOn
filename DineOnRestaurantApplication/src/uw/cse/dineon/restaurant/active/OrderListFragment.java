@@ -46,6 +46,7 @@ public class OrderListFragment extends ListFragment {
 			orders = new ArrayList<Order>();
 		}
 		mAdapter = new OrderListAdapter(this.getActivity(), orders);
+		setListAdapter(mAdapter);
 	}
 
 	@Override
@@ -211,7 +212,7 @@ public class OrderListFragment extends ListFragment {
 			View vwBot;
 
 			final LinearLayout view;
-
+			
 			if(convertView == null) {
 				view = new LinearLayout(mContext);
 				view.setOrientation(LinearLayout.VERTICAL);
