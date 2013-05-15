@@ -42,11 +42,11 @@ public final class FakeRestaurantInformation {
 		int[] secondOrderIndices = {3, 4, 5};
 		int[] thirdOrderIndices = {6, 7, 8};
 		
-		Order one = new Order(-1, new UserInfo(user), 
+		Order one = new Order(1, new UserInfo(user), 
 				getFakeMenuItems(firstOrderIndices));
-		Order two = new Order(-1, new UserInfo(user), 
+		Order two = new Order(2, new UserInfo(user), 
 				getFakeMenuItems(secondOrderIndices));
-		Order three = new Order(-1, new UserInfo(user), 
+		Order three = new Order(3, new UserInfo(user), 
 				getFakeMenuItems(thirdOrderIndices));
 		
 		orders.add(one);

@@ -2,9 +2,12 @@ package uw.cse.dineon.restaurant.active;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
@@ -13,10 +16,13 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -29,35 +35,35 @@ public class RequestListFragment extends ListFragment {
 	private static final String TAG = RequestListFragment.class.getSimpleName();
 
 	private RequestItemListener mListener;
-	
+
 	private ArrayAdapter<CustomerRequest> mAdapter;
-	
-//	private static List<CustomerRequest> mRequests;
-	
-//	/**
-//	 * Creates a new customer list fragment.
-//	 * @param requests list of requests
-//	 * @return new fragment
-//	 */
-//	public static RequestListFragment newInstance(List<CustomerRequest> requests) {
-//		RequestListFragment frag = new RequestListFragment();
-//		ArrayList<CustomerRequest> mList = new ArrayList<CustomerRequest>();
-//		if (requests != null) {
-//			mList.addAll(requests);
-//		}
-//		
-//		Bundle b = new Bundle();
-//		
-//		if(requests != null) {
-//			mRequests.addAll(requests);			
-//		} else {
-//			mRequests = null;
-//		}
-//		
-//		frag.addAll(requests);
-//		frag.setArguments(b);
-//		return frag;
-//	}
+
+	//	private static List<CustomerRequest> mRequests;
+
+	//	/**
+	//	 * Creates a new customer list fragment.
+	//	 * @param requests list of requests
+	//	 * @return new fragment
+	//	 */
+	//	public static RequestListFragment newInstance(List<CustomerRequest> requests) {
+	//		RequestListFragment frag = new RequestListFragment();
+	//		ArrayList<CustomerRequest> mList = new ArrayList<CustomerRequest>();
+	//		if (requests != null) {
+	//			mList.addAll(requests);
+	//		}
+	//		
+	//		Bundle b = new Bundle();
+	//		
+	//		if(requests != null) {
+	//			mRequests.addAll(requests);			
+	//		} else {
+	//			mRequests = null;
+	//		}
+	//		
+	//		frag.addAll(requests);
+	//		frag.setArguments(b);
+	//		return frag;
+	//	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -80,7 +86,7 @@ public class RequestListFragment extends ListFragment {
 			mListener = (RequestItemListener) activity;
 		} else {
 			throw new ClassCastException(activity.toString()
-					+ " must implemenet RequestListFragment.RequestItemListener");
+					+ " must implement RequestListFragment.RequestItemListener");
 		}
 	}
 
@@ -166,7 +172,7 @@ public class RequestListFragment extends ListFragment {
 		 * @return List of requests to show
 		 */
 		public List<CustomerRequest> getCurrentRequests();
-		
+
 	}
 
 	//////////////////////////////////////////////////////
@@ -182,7 +188,10 @@ public class RequestListFragment extends ListFragment {
 
 		private final Context mContext;
 		private final List<CustomerRequest> mRequests;
+		private final Map<View, CustomerRequest> mViewToCustomerRequest;
 		private final ArrayList<String> mStaff;
+		private final Spinner mSpinner;
+		int expanded = -1;
 
 		/**
 		 * Creates an adapter that manages the addition and layout of
@@ -191,47 +200,124 @@ public class RequestListFragment extends ListFragment {
 		 * @param orders List of orders
 		 */
 		public RequestListAdapter(Context ctx, List<CustomerRequest> orders) {
-			super(ctx, R.layout.listitem_restaurant_request, orders);
+			super(ctx, R.layout.listitem_restaurant_request_bot, orders);
 			this.mContext = ctx;
 			this.mRequests = orders;
-			
+			this.mViewToCustomerRequest = new HashMap<View, CustomerRequest>();
 			// For debug purposes we will add fake staff members
 			mStaff = new ArrayList<String>();
+			mSpinner = new Spinner(ctx);
 			mStaff.add("Bert");
 			mStaff.add("Ernie");
 			mStaff.add("Big Bird");
 			mStaff.add("Elmo");
 		}
 
+		/**
+		 * Sets the arrow based on whether or not the list item
+		 * is expanded or not.
+		 * @param position The position of the list item to set
+		 * @param arrowButton The specified arrow button to set
+		 */
+		private void setArrow(int position, ImageButton arrowButton) {
+			if(position == expanded) {
+				arrowButton.setImageResource(R.drawable.navigation_next_item);
+			} else {
+				arrowButton.setImageResource(R.drawable.navigation_expand);
+			}
+		}
+
+		/**
+		 * Toggles expansion of the given list item.
+		 * Currently only one item can be expanded at a time
+		 * @param position The position of the list item to toggle
+		 */
+		public void expand(int position) {
+
+			if(expanded == position) { //Already expanded, collapse it
+				expanded = -1;
+			} else {
+				expanded = position;
+			}
+			notifyDataSetChanged();
+		}
+
+
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = (LayoutInflater) mContext
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View view = inflater.inflate(R.layout.listitem_restaurant_request, parent, false);
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			View vwTop;
+			View vwBot;
+
+			final LinearLayout VIEW;
+			final CustomerRequest REQUEST = mRequests.get(position);
+
+			if(convertView == null) {
+				VIEW = new LinearLayout(mContext);
+				VIEW.setOrientation(LinearLayout.VERTICAL);
+				LayoutInflater inflater = (LayoutInflater) mContext
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				vwTop = inflater.inflate(R.layout.listitem_restaurant_request_top, null, true);
+				vwBot = inflater.inflate(R.layout.listitem_restaurant_request_bot, null, true);
+				VIEW.addView(vwTop);
+				VIEW.addView(vwBot);
+			} else {
+				//Everything already created, just find them
+				VIEW = (LinearLayout) convertView;
+				vwTop = VIEW.findViewById(R.id.listitem_request_top);
+				vwBot = VIEW.findViewById(R.id.listitem_request_bot);
+			}
+
+			TextView title = (TextView) VIEW.findViewById(R.id.label_request_title);
+			title.setText(REQUEST.getDescription() + " - " + REQUEST.getUserInfo().getName());
+
+			TextView time = (TextView) VIEW.findViewById(R.id.label_request_time);
+			time.setText(REQUEST.getOriginatingTime().toString());
 			
-			CustomerRequest request = mRequests.get(position);
+			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_request);
+			setArrow(position, arrowButton);
 			
-			TextView title = (TextView) view.findViewById(R.id.label_request_title);
-			title.setText(request.getDescription());
+			ImageButton assignStaffButton = (ImageButton) vwBot.findViewById(R.id.button_assign);
+
+			// Add the onclick listener that listens 
+			arrowButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					expand(position);
+
+					ImageButton arrowButton = 
+							(ImageButton) VIEW.findViewById(R.id.button_expand_request);
+					setArrow(position, arrowButton);
+					//Right arrow case -- goes to details fragment
+					if(expanded != position) {
+						mListener.onRequestRequestDetail(mRequests.get(position));
+					}				
+				}
+			});
+
+			if(expanded != position) {
+				vwBot.setVisibility(View.GONE);
+			} else {
+				vwBot.setVisibility(View.VISIBLE);
+			}
+
+
+			ImageButton remove = (ImageButton) VIEW.findViewById(R.id.button_remove);
+
+			Spinner spinner = (Spinner) VIEW.findViewById(
+					R.id.spinner_staff_to_assign);
+
+			//TODO: Load assigned staff into spinner
 			
-			ImageButton reqDetail = (ImageButton) view.findViewById(R.id.button_request_detail);
-			ImageButton sendToStaff = (ImageButton) view.findViewById(R.id.button_send_to_staff);
-			CheckBox dismissBox = (CheckBox) view.findViewById(R.id.checkBox_dismiss_request);
-			Spinner staff = (Spinner) view.findViewById(R.id.spinner_staff_to_assign);
-			staff.setAdapter(new ArrayAdapter<String>(getActivity(), 
+			spinner.setAdapter(new ArrayAdapter<String>(getActivity(), 
 					android.R.layout.simple_list_item_1, mStaff));
-			
-			AllAroundListener listener = new AllAroundListener(request,
-					staff,
-					sendToStaff,
-					reqDetail,
-					dismissBox);
-			
-			reqDetail.setOnClickListener(listener);
-			sendToStaff.setOnClickListener(listener);
-			dismissBox.setOnCheckedChangeListener(listener);
-			
-			return view;
+
+			// Add to mapping to reference later
+			mViewToCustomerRequest.put(remove, REQUEST);
+			mViewToCustomerRequest.put(arrowButton, REQUEST);
+			mViewToCustomerRequest.put(spinner, REQUEST);
+			remove.setOnClickListener(new AllAroundListener(spinner));
+			assignStaffButton.setOnClickListener(new AllAroundListener(spinner));
+
+			return VIEW;
 		}
 
 		/**
@@ -239,73 +325,42 @@ public class RequestListFragment extends ListFragment {
 		 * @author mhotan
 		 */
 		private class AllAroundListener implements 
-		View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+		View.OnClickListener {
 
-			private final CustomerRequest mRequest;
-			private final Spinner mStaff;
-			private final ImageButton mAssignToStaff, mDetailButton;
-			private final CheckBox mDismiss;
-			private boolean mDelete;
-
+			private final Spinner mSpinner;
+			
 			/**
 			 * 
-			 * @param request String
-			 * @param staff Spinner
-			 * @param assignToStaff ImageButton
-			 * @param detailButton ImageButton
-			 * @param dismiss CheckBox
+			 * @param spinner Spinner
 			 */
-			public AllAroundListener(
-					CustomerRequest request,
-					Spinner staff,
-					ImageButton assignToStaff,
-					ImageButton detailButton,
-					CheckBox dismiss) {
+			public AllAroundListener(Spinner spinner) {
 
-				mRequest = request;
-				mStaff = staff;
-				mAssignToStaff = assignToStaff;
-				mDetailButton = detailButton;
-				mDismiss = dismiss;
-				mDelete = false;
+				mSpinner = spinner;
 
-				mAssignToStaff.setOnClickListener(this);
-				mDetailButton.setOnClickListener(this);
-				mDismiss.setOnCheckedChangeListener(this);
-				
 				// Default selection is first on the list
-				mStaff.setSelection(0);
-			}
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				// Is checked == show delete button
-				mDelete = isChecked;
-				if (mDelete) {
-					mAssignToStaff.setImageResource(R.drawable.discard_content);
-//					mListener.onDismissRequest(mRequest);
-				} else {
-					mAssignToStaff.setImageResource(R.drawable.add_staffmember);
-				}
-			}
-
+				mSpinner.setSelection(0);
+			} 
+			
 			@Override
 			public void onClick(View v) {
-				if (v == mAssignToStaff) {
-					if (mDelete) { // User wants to delete this request
-						mAdapter.remove(mRequest);
-						mListener.onRemoveRequest(mRequest);
-						mAdapter.notifyDataSetChanged();
-					} else { // User wants to assign this request to a staff member
-						String staffMem = mStaff.getSelectedItem().toString();
-						mListener.onAssignStaffToRequest(mRequest, staffMem);
-					}
 
-				} else if (v == mDetailButton) {
-					// User just wants details about this request
-					mListener.onRequestRequestDetail(mRequest);
+				CustomerRequest request = mViewToCustomerRequest.get(v);
+
+				switch (v.getId()) {
+				case R.id.button_remove:
+					mAdapter.remove(request);
+					mListener.onRemoveRequest(request);
+					mAdapter.notifyDataSetChanged();
+					break;
+				case R.id.button_assign:
+					String staffMem = mSpinner.getSelectedItem().toString();
+					mListener.onAssignStaffToRequest(request, staffMem);
+					mAdapter.notifyDataSetChanged();
+					break;
+				default:
+					break;
 				}
+
 			}
 
 		}

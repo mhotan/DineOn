@@ -12,12 +12,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -231,16 +229,26 @@ public class OrderListFragment extends ListFragment {
 
 			Order order = mOrders.get(position);
 
-			// Reference the correct UI components adn set up
+			// Reference the correct UI components and set up
 			Button buttonCompleteOrder = (Button) view.findViewById(R.id.button_completed_order);
 			TextView orderTitle = 
 					(TextView) view.findViewById(R.id.button_order_title);
-			orderTitle.setText("Table " + order.getTableID() 
-					+ " " + order.getOriginalUser().getName());
+			int table = order.getTableID();
+			
+			if(table == -1) { // No Table
+				orderTitle.setText(order.getOriginalUser().getName());
+			} else {
+				orderTitle.setText("Table " + order.getTableID() 
+						+ " - " + order.getOriginalUser().getName());
+			}
+			
 			SeekBar progressBar = (SeekBar) view.findViewById(R.id.seekbar_order_progress);
 			progressBar.setMax(100);
 			progressBar.setProgress(0);
 
+			TextView time = (TextView) view.findViewById(R.id.label_order_time);
+			time.setText(order.getOriginatingTime().toString());
+			
 			//Set up expand button
 			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_order);
 			setArrow(position, arrowButton);
