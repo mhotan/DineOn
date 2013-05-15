@@ -96,15 +96,15 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	 */
 	@Override
 	public void startActivity(Intent intent) {
-		if (DineOnConstants.DEBUG && mUser == null) {
+		// Adds the User object id
+		if (mUser != null) {
+			intent.putExtra(DineOnConstants.KEY_USER, mUser.getObjId());
+		} else if (DineOnConstants.DEBUG && mUser == null) {
 			// TODO change to Dialog box
 			Toast.makeText(this, "Need to create or download a User", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		// Adds the USer object id
-		if (mUser != null) {
-			intent.putExtra(DineOnConstants.KEY_USER, mUser.getObjId());
-		}
+
 		super.startActivity(intent);
 	}
 
@@ -301,6 +301,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		if(item == null) {
 			menu.add(rID);
 		}
+		item = menu.findItem(rID);
 		item.setEnabled(true);
 		item.setVisible(true);
 	}
@@ -330,6 +331,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 			break;
 		default:
 			//Unknown
+			Log.e(TAG, "None of the specified action items were selected.");
 		}
 		if (i != null) {
 			startActivity(i);
@@ -390,7 +392,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 					intializeUI();
 				} else {
 					Log.e(TAG, "unable to save the updated dineon user " 
-				+ "after new dining session received.");
+							+ "after new dining session received.");
 				}
 			}
 		});
