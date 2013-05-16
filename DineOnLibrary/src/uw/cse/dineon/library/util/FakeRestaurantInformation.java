@@ -5,6 +5,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
@@ -20,34 +21,39 @@ import com.parse.ParseUser;
  * @author Garrett Lee
  *
  */
-public final class FakeRestaurantInformation {
+public class FakeRestaurantInformation {
 
 	/**
-	 * To appease Checkstyle.
+	 * A single dine on user to use to creat fake restaurant things.
 	 */
-	private FakeRestaurantInformation() {
-
+	private final DineOnUser mUser;
+	
+	/**
+	 * Creates a bunch of fake Library elements using this 
+	 * parseUser.
+	 * @param user User to use for User Info
+	 */
+	public FakeRestaurantInformation(ParseUser user) {
+		mUser = new DineOnUser(user);
 	}
 
 	/**
 	 * Returns a list of fake orders.
 	 * 
-	 * @param user the specified ParseUser
 	 * @return a list of fake orders
 	 */
-	public static List<Order> getFakeOrders(ParseUser user) {
+	public List<Order> getFakeOrders() {
 		List<Order> orders = new ArrayList<Order>();
-
 
 		int[] firstOrderIndices = {0, 1, 2};
 		int[] secondOrderIndices = {3, 4, 5};
 		int[] thirdOrderIndices = {6, 7, 8};
 
-		Order one = new Order(1, new UserInfo(user), 
+		Order one = new Order(1, mUser.getUserInfo(), 
 				getFakeMenuItems(firstOrderIndices));
-		Order two = new Order(2, new UserInfo(user), 
+		Order two = new Order(2, mUser.getUserInfo(), 
 				getFakeMenuItems(secondOrderIndices));
-		Order three = new Order(3, new UserInfo(user), 
+		Order three = new Order(3, mUser.getUserInfo(), 
 				getFakeMenuItems(thirdOrderIndices));
 
 		orders.add(one);
@@ -60,7 +66,7 @@ public final class FakeRestaurantInformation {
 	/**
 	 * @return A Menu representing an Entree menu
 	 */
-	public static Menu getEntreeMenu() {
+	public Menu getEntreeMenu() {
 		Menu entreeMenu = new Menu("Entrees");
 		for (MenuItem item: getFakeMenuItems()) {
 			entreeMenu.addNewItem(item);
@@ -74,7 +80,7 @@ public final class FakeRestaurantInformation {
 	 * 
 	 * @return a generic menu for drinks
 	 */
-	public static Menu getDrinkMenu() {
+	public Menu getDrinkMenu() {
 		Menu drinkMenu = new Menu("Drinks");
 		for (MenuItem item: getDrinkMenuItems()) {
 			drinkMenu.addNewItem(item);
@@ -85,7 +91,7 @@ public final class FakeRestaurantInformation {
 	/**
 	 * @return returns a list of Drink Items.
 	 */
-	public static List<MenuItem> getDrinkMenuItems() {
+	public List<MenuItem> getDrinkMenuItems() {
 		List<MenuItem> drinks = new ArrayList<MenuItem>();
 		int drinkCnt = 1;
 		drinks.add(new MenuItem(drinkCnt++, 4.99, "Scotch Neat", "Age single malt scotch"));
@@ -105,7 +111,7 @@ public final class FakeRestaurantInformation {
 	 * 
 	 * @return a list of fake menu items
 	 */
-	public static List<MenuItem> getFakeMenuItems() {
+	public List<MenuItem> getFakeMenuItems() {
 		List<MenuItem> menuItems = new ArrayList<MenuItem>();
 		int itemCnt = 100;
 		MenuItem steak = new MenuItem(itemCnt++, 12.99, "Steak", "A juicy hunk of meat.");
@@ -144,7 +150,7 @@ public final class FakeRestaurantInformation {
 	 * the specified order items you want
 	 * @return a list of fake menu items
 	 */
-	public static List<MenuItem> getFakeMenuItems(int[] indices) {
+	public List<MenuItem> getFakeMenuItems(int[] indices) {
 		List<MenuItem> menuItems = getFakeMenuItems();
 		List<MenuItem> selectedItems = new ArrayList<MenuItem>();
 		for (int i : indices) {
@@ -159,21 +165,20 @@ public final class FakeRestaurantInformation {
 	/**
 	 * Returns a specific list of fake requests.
 	 * 
-	 * @param user the specified ParseUser
 	 * @return a list of fake requests
 	 */
-	public static List<CustomerRequest> getFakeRequests(ParseUser user) {
+	public List<CustomerRequest> getFakeRequests() {
 		List<CustomerRequest> requests = new ArrayList<CustomerRequest>();
 
 		CustomerRequest one = new CustomerRequest("Water Refill", 
-				new UserInfo(user), new GregorianCalendar().getTime());
+				mUser.getUserInfo(), new GregorianCalendar().getTime());
 
 		CustomerRequest two = new CustomerRequest("There is a fly in my soup.", 
-				new UserInfo(user), new GregorianCalendar().getTime());
+				mUser.getUserInfo(), new GregorianCalendar().getTime());
 
 		CustomerRequest three = new CustomerRequest(
 				"My glass fell on the ground and there's glass everywhere.", 
-				new UserInfo(user), new GregorianCalendar().getTime());
+				mUser.getUserInfo(), new GregorianCalendar().getTime());
 
 		requests.add(one);
 		requests.add(two);

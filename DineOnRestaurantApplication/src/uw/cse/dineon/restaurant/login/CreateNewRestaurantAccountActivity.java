@@ -141,21 +141,21 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 				return;
 			}
 			
+			FakeRestaurantInformation fakey = 
+					new FakeRestaurantInformation(ParseUser.getCurrentUser());
 			
 			// Add fake restaurant orders and requests
-			for (Order o : FakeRestaurantInformation.getFakeOrders(
-					ParseUser.getCurrentUser())) {
+			for (Order o : fakey.getFakeOrders()) {
 				rest.addOrder(o);
 			}
 			
 			// Add fake Requests
-			for (CustomerRequest c : FakeRestaurantInformation.getFakeRequests(
-					ParseUser.getCurrentUser())) {
+			for (CustomerRequest c : fakey.getFakeRequests()) {
 				rest.addCustomerRequest(c);
 			}
 			
-			rest.getInfo().addMenu(FakeRestaurantInformation.getEntreeMenu());
-			rest.getInfo().addMenu(FakeRestaurantInformation.getDrinkMenu());
+			rest.getInfo().addMenu(fakey.getEntreeMenu());
+			rest.getInfo().addMenu(fakey.getDrinkMenu());
 			
 			final Restaurant REST2 = rest;
 			REST2.saveInBackGround(new SaveCallback() {
@@ -163,7 +163,6 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 				@Override
 				public void done(ParseException e) {
 					if (e == null) {
-						
 						
 						mRestaurantID = REST2.getObjId();
 						startMainActivity();

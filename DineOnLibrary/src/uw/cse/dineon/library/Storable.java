@@ -188,7 +188,9 @@ public abstract class Storable {
 	}
 
 	/**
-	 * Cons
+	 * Constructs a Storable instance from a Parcel.
+	 * Has to refetch the instance of the object from parse.
+	 * It does this in the background.
 	 * @param in 
 	 */
 	protected Storable(Parcel in) {

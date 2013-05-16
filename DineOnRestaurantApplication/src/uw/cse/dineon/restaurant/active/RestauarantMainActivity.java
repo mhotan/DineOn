@@ -181,6 +181,8 @@ DiningSessionListListener {
 	public void onRequestRequestDetail(CustomerRequest request) {
 		DevelopTools.getUnimplementedDialog(this, null);
 
+		
+		
 		//		Intent intent = new Intent(getApplicationContext(),
 		//				RequestDetailActivity.class);
 		//		startActivity(intent);
