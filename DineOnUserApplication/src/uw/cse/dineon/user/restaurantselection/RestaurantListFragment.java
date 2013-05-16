@@ -2,8 +2,10 @@ package uw.cse.dineon.user.restaurantselection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +19,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
 /**
  * TODO finish.
  * @author mhotan
@@ -26,6 +33,9 @@ public class RestaurantListFragment extends ListFragment {
 	private final String TAG = this.getClass().getSimpleName();
 
 	private RestaurantListListener mListener;
+	
+	private List<RestaurantInfo> restaurants;
+	private List<String> restaurantNames;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -34,15 +44,47 @@ public class RestaurantListFragment extends ListFragment {
 		// TODO make Parse queries
 		// Or load from local data base
 		// TODO Change String to a new data type (Restaurant)
-		String[] values = 
-				new String[] {"Marty's" , "Burger King", "Some other stupid restaurant" };
-		List<String> tediousList = new ArrayList<String>();
-		for (String s : values) {
-			tediousList.add(s);
-		}
+		
+		restaurants = new LinkedList<RestaurantInfo>();
+		restaurantNames = new LinkedList<String>();
+		
+		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+		// TODO Limit will need to change later
+		query.setLimit(6); 
+		query.findInBackground(new FindCallback() {
 
-		ArrayAdapter<String> adapter = new RestaurantListAdapter(
-				this.getActivity(), tediousList);
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					
+					for (int i = 0; i < objects.size(); i++) {
+						try {
+							ParseObject p = objects.get(i);
+							restaurants.add(new RestaurantInfo(p));
+							restaurantNames.add(p.getParseUser(
+									RestaurantInfo.PARSEUSER).fetchIfNeeded().getUsername());
+						} catch (ParseException e1) {
+							Log.d(TAG, e1.getMessage());
+						}
+					}
+					
+					onRestaurantsReceived();
+					
+				} else { 
+					Log.d(TAG, "No restaurants where found in the cloud.");
+				}
+			}
+			
+		});
+	}
+	
+	/**
+	 * After obtaining the restaurants in the cloud, populate restaurant list.
+	 */
+	public void onRestaurantsReceived() {
+		ArrayAdapter<String> adapter = 
+				new RestaurantListAdapter(this.getActivity(), restaurantNames);
 		setListAdapter(adapter);
 	}
 
