@@ -109,14 +109,14 @@ public class DiningSessionTest extends AndroidTestCase {
 		//TODO fail("Not yet implemented");
 	}
 
-	//also tests addpendingorders
-	public void testGetPendingOrders() {
+	//also tests addorders
+	public void testGetOrders() {
 
 		
 		testSession.addPendingOrder(testOrder);
 
 		
-		//TODO: Remove deep copy from DS assertEquals(orders, testSession.getPendingOrders());
+		assertEquals(orders, testSession.getOrders());
 	}
 
 	

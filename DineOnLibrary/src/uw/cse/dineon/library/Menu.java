@@ -66,9 +66,7 @@ public class Menu extends Storable {
 	 * @return the items
 	 */
 	public List<MenuItem> getItems() {
-		List<MenuItem> copy = new ArrayList<MenuItem>(mItems.size());
-		Collections.copy(copy, mItems);
-		return copy;
+		return new ArrayList<MenuItem>(mItems);
 	}
 
 	/**

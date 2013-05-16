@@ -78,9 +78,7 @@ public class Order extends TimeableStorable {
 	 * @return the menuItems
 	 */
 	public List<MenuItem> getMenuItems() {
-		List<MenuItem> copy = new ArrayList<MenuItem>(mMenuItems.size());
-		Collections.copy(copy, mMenuItems);
-		return copy;
+		return new ArrayList<MenuItem>(mMenuItems);
 	}
 
 	/**

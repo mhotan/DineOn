@@ -18,8 +18,8 @@ public class MenuItem extends Storable {
 	
 	// We dont want 
 	private final int mProductID;		// ID of this product
-	private final double mPrice;
-	private final String mTitle; // price of this product
+	private final double mPrice;  // price of this product
+	private final String mTitle; 
 	private final String mDescription;	// description of this product
 	// TODO Image id;
 	
@@ -74,6 +74,13 @@ public class MenuItem extends Storable {
 	 */
 	public double getPrice() {
 		return mPrice;
+	}
+	
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return mTitle;
 	}
 
 //	/**
