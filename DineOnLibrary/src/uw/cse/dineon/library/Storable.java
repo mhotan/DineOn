@@ -1,7 +1,10 @@
 package uw.cse.dineon.library;
 
 import uw.cse.dineon.library.util.RepresentationException;
+import android.os.Parcel;
+import android.util.Log;
 
+import com.parse.GetCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -20,6 +23,11 @@ import com.parse.SaveCallback;
  *
  */
 public abstract class Storable {
+
+	/**
+	 * Tag for logging information.
+	 */
+	private final String tag = this.getClass().getSimpleName();
 
 	/**
 	 * A reference to the parse object that completely
@@ -56,6 +64,7 @@ public abstract class Storable {
 		mCompleteObject = parseObject;
 		checkRep();
 	}
+
 
 	/**
 	 * Inserts this objects fields and returns the ParseObject
@@ -150,7 +159,7 @@ public abstract class Storable {
 	public String toString() {
 		return mCompleteObject.toString();
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null) {
@@ -162,31 +171,65 @@ public abstract class Storable {
 		Storable s = (Storable) o;
 		return s.mCompleteObject.equals(this.mCompleteObject);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return mCompleteObject.hashCode();
 	}
+
+	/**
+	 * Any class that  
+	 * @author mhotan
+	 */
+	public interface StateChangeListener {
+
+		public void onStateChanged(Storable s);
+
+	}
+
+	/**
+	 * Cons
+	 * @param in 
+	 */
+	protected Storable(Parcel in) {
+		String id = in.readString();
+		mCompleteObject = new ParseObject(this.getClass().getSimpleName());
+		mCompleteObject.setObjectId(id);
+		// Download this object asynchronously
+		mCompleteObject.fetchIfNeededInBackground(new GetCallback() {
+
+			@Override
+			public void done(ParseObject object, ParseException e) {
+				if (e != null) {
+					Log.e(tag, "Unable to load object " + object + " because of " + e.getMessage());
+				} else {
+					// Successfully downloaded updates in the background
+					// Updated the state of this object with the latest ParseObject
+					// TODO Figure out a way to update the state of the current instance.
+					//				updateState(object);				
+				}
+			}
+		});
+	}
+
+	/**
+	 * Updates the state of 
+	 * @param object Object 
+	 */
+	//public abstract void updateState(ParseObject object);
+
+
+	//	@Override
+	//	public void writeToParcel(Parcel dest, int flags) {
+	//		dest.writeString(this.getObjId());
+	//	}
+	//	
+	//	/**
+	//	 * Fills this instance with the values found in this parcel
+	//	 * @param source
+	//	 */
+	//	protected void readFromParcel(Parcel source) {
+	//		this.setObjId(source.readString());
+	//	} 
+
 }
-
-
-//	/**
-//	 *
-//	 * @param objId String
-//	 */
-//	public void setObjId(String objId) {
-//		this.objId = objId;
-//	}
-
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		dest.writeString(this.getObjId());
-//	}
-//	
-//	/**
-//	 * Fills this instance with the values found in this parcel
-//	 * @param source
-//	 */
-//	protected void readFromParcel(Parcel source) {
-//		this.setObjId(source.readString());
-//	} 

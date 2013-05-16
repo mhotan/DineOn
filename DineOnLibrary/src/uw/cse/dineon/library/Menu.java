@@ -72,21 +72,55 @@ public class Menu extends Storable {
 	}
 
 	/**
-	 * Add given item to the Menu.
-	 * 
-	 * @param item MenuItem
+	 * If this menu has any item of the same product ID.
+	 * @param nItem menu item to add.
+	 * @return true if an item with the same product ID exists
 	 */
-	public void addNewItem(MenuItem item) {
+	public boolean hasMenuItem(MenuItem nItem) {
+		for (MenuItem item: mItems) {
+			if (item.getProductID() == nItem.getProductID()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Add given item to the Menu.
+	 * Replaces menu item with the same product ID if it already exists.
+	 * 
+	 * @param item MenuItem to add
+	 * @return true if item was replaced, false otherwise
+	 */
+	public boolean addNewItem(MenuItem item) {
+		MenuItem toRemove = null;
+		// Find item with the same ID
+		for (MenuItem i : mItems) {
+			if (i.getProductID() == item.getProductID()) {
+				toRemove = i;
+				break;
+			}
+		}
+		// Remove any old
+		removeItem(toRemove);
+		
 		mItems.add(item);
+		return toRemove != null;
 	}
 
 	/**
 	 * Remove given MenuItem from the menu.
 	 * 
 	 * @param item MenuItem
+	 * @return True if menu item was remvoed
 	 */
-	public void removeItem(MenuItem item) {
-		mItems.remove(item);
+	public boolean removeItem(MenuItem item) {
+		if (item == null) {
+			return false;
+		}
+		return mItems.remove(item);
+		
+		// TODO delete from database
 	}
 
 	/**

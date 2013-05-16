@@ -54,7 +54,6 @@ DiningSessionListListener {
 		setContentView(R.layout.activity_restaurant_main);
 
 		mPager = (ViewPager) findViewById(R.id.pager_restaurant_main);
-		
 	}
 
 	@Override

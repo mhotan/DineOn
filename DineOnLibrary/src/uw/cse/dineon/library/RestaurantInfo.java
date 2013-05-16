@@ -110,7 +110,9 @@ public class RestaurantInfo extends Storable {
 	}
 
 	/**
-	 * @param number int phone number
+	 * Must Adhere to some form of a number.
+	 * (123)456-7890
+	 * @param number String representation of a phone number
 	 */
 	public void setPhone(String number) {
 		this.mPhone = number;
@@ -141,7 +143,88 @@ public class RestaurantInfo extends Storable {
 	public List<String> getImageList() {
 		return mImageList;
 	}
+	
+	/**
+	 * Retrieves menu with associated name menuName
+	 * 
+	 * @param menuName MenuName to search for
+	 * @return Menu with argument name, null otherwise
+	 */
+	private Menu getMenu(String menuName) {
+		if (menuName == null) {
+			return null;
+		}
+		
+		for (Menu m : mMenus) {
+			if (m.getName().equals(menuName)) {
+				return m;
+			}
+		}
+		// Not found
+		return null;
+	}
 
+	/**
+	 * Checks if this restaurant has the associated menu.
+	 * If there already exists a menu with the same name then 
+	 * true is returned.
+	 * @param menu Menu to check existence
+	 * @return true if restaurant has Menu already.
+	 */
+	public boolean hasMenu(Menu menu) {
+		if (menu == null) {
+			return false;
+		}
+		
+		return getMenu(menu.getName()) != null;
+	}
+	
+	/**
+	 * If the menu with the same name does not exist already this menu
+	 * will be added.
+	 * @param newMenu Menu to add to the restaurant.
+	 * @return true if the menu did not exists already, 
+	 * false if the menu was not added because it already exists   
+	 */
+	public boolean addMenu(Menu newMenu){
+		if (hasMenu(newMenu)) {
+			return mMenus.add(newMenu);
+		}
+		return false;
+	}
+	
+	/**
+	 * Adds a new Item to associated Menu.
+	 * @param menu Menu to add to.
+	 * @param item Item to add to the menu
+	 * @return false if Menu does not exist in the restaurant 
+	 */
+	public boolean addItemToMenu(Menu menu, MenuItem item) {
+		if (!hasMenu(menu)) {
+			return false;
+		}
+		
+		for (Menu m : mMenus) {
+			if (m.getName().equals(menu.getName())) {
+				menu.addNewItem(item);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Removes a menu from the restaurant.
+	 * @param menu menu to remove
+	 * @return true if menu was removed false other wise.
+	 */
+	public boolean removeMenu(Menu menu) {
+		if (!hasMenu(menu)) {
+			return false;
+		}
+		return mMenus.remove(getMenu(menu.getName()));
+	}
+	
 //	/**
 //	 * @param images list of Integers
 //	 */

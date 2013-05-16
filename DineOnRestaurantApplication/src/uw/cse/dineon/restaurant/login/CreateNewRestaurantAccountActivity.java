@@ -148,10 +148,14 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 				rest.addOrder(o);
 			}
 			
+			// Add fake Requests
 			for (CustomerRequest c : FakeRestaurantInformation.getFakeRequests(
 					ParseUser.getCurrentUser())) {
 				rest.addCustomerRequest(c);
 			}
+			
+			rest.getInfo().addMenu(FakeRestaurantInformation.getEntreeMenu());
+			rest.getInfo().addMenu(FakeRestaurantInformation.getDrinkMenu());
 			
 			final Restaurant REST2 = rest;
 			REST2.saveInBackGround(new SaveCallback() {
