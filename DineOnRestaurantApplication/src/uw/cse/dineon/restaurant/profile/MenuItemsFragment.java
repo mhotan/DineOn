@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,9 @@ import android.widget.TextView;
  */
 public class MenuItemsFragment extends ListFragment {
 
+	private final String TAG = "MenuItemsFragment";
+
+	
 	/**
 	 * Adapter for restaurant menu Item adapter.
 	 * Use this to add new Menuitems
@@ -232,12 +236,12 @@ public class MenuItemsFragment extends ListFragment {
 				// TODO Use listener to change the image this menu item
 				// Use alert dialog
 				// delete mItem
-
+				Log.i(TAG, "TODO Use listener to change image");
 			} else if (v == mDelete) {
 				// TODO User listener to delete this menu item
 				// use alert dialog
 				// delete mItem
-
+				Log.i(TAG, "TODO Use listener to delete this item");
 			} else if (v == mSave) {
 				// TODO User listener to save this menu item
 				// use alert dialog

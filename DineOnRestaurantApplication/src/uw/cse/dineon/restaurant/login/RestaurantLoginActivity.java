@@ -231,8 +231,8 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 
 		/**
 		 * Creates a Login Restaurant Downloader that can control progress dialogs.
-		 * @param user
-		 * @param callback
+		 * @param user ParseUser logging in
+		 * @param callback RestaurantDownLoaderCallback to use
 		 */
 		public LoginRestaurantDownloader(ParseUser user,
 				RestaurantDownLoaderCallback callback) {
@@ -246,7 +246,7 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 		}
 	
 		@Override
-		protected void onPostExecute (Restaurant result) {
+		protected void onPostExecute(Restaurant result) {
 			destroyProgressDialog();
 			super.onPostExecute(result);
 		}

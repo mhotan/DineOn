@@ -42,7 +42,7 @@ public class RestaurantInfoFragment extends Fragment {
 
 	/**
 	 * Sets display features for this fragment to this argument.
-	 * @param restaurantName Restaurant to present
+	 * @param restaurant Restaurant to present
 	 */
 	public void setRestaurantForDisplay(/*TODO Change to Restaurant data type*/
 			RestaurantInfo restaurant) {

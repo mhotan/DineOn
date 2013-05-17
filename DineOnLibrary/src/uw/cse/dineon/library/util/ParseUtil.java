@@ -509,7 +509,7 @@ public final class ParseUtil {
 	
 	
 	/**
-	 * Returns the channel identifier for this Restaurant
+	 * Returns the channel identifier for this Restaurant.
 	 * @param user User to extract channel from
 	 * @return Channel as string
 	 */

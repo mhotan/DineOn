@@ -300,7 +300,7 @@ public class RequestListFragment extends ListFragment {
 			Spinner spinner = (Spinner) VIEW.findViewById(
 					R.id.spinner_staff_to_assign);
 
-			//TODO: Load assigned staff into spinner
+			//TODO Load assigned staff into spinner
 			
 			spinner.setAdapter(new ArrayAdapter<String>(getActivity(), 
 					android.R.layout.simple_list_item_1, mStaff));

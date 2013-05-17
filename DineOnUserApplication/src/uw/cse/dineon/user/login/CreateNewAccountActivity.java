@@ -48,7 +48,7 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 	/**
 	 * This automates the addition of the User Intent.
 	 * Should never be called when mUser is null.
-	 * @param intent Intent to startactivity with
+	 * @param intent Intent to start activity with
 	 */
 	@Override
 	public void startActivity(Intent intent) {

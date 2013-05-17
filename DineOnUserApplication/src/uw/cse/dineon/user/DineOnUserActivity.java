@@ -207,11 +207,10 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 
 		// Remove this activity from the back stack
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
+		startActivity(i);
 		// Making this null makes sure there is no 
 		// data leakage to the login page
 		mUser = null;
-		startActivity(i);
 	}
 
 	/**
@@ -302,13 +301,21 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 			i = new Intent(getApplicationContext(), UserPreferencesActivity.class);
 			break;
 		case R.id.option_check_in:
+			//{TABLE_NUM: 15, RESTAURANT: "msm"}
 			IntentIntegrator integrator = new IntentIntegrator(this);
 			integrator.initiateScan();
 			break;
 		case R.id.option_bill:
 			i = new Intent(getApplicationContext(), CurrentOrderActivity.class);
+			if (mUser != null) {
+				i.putExtra(DineOnConstants.KEY_USER, mUser.getObjId());
+				startActivityForResult(i, DineOnConstants.REQUEST_VIEW_CURRENT_ORDER);
+			} else if (DineOnConstants.DEBUG && mUser == null) {
+				// TODO change to Dialog box
+				Toast.makeText(this, "Need to create or download a User", Toast.LENGTH_SHORT).show();
+			}
 			// Count all the elements that the user has currently selected
-			startActivityForResult(i, DineOnConstants.REQUEST_VIEW_CURRENT_ORDER);
+			
 			break;
 		case R.id.option_logout:
 			ParseUser.logOut();

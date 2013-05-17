@@ -58,12 +58,12 @@ public class RestaurantInfoFragment extends Fragment {
 		// IF there are arguments 
 		// then check if there is a restaurant info instance
 		// info can be null
-		final RestaurantInfo info = getArguments() != null ? (RestaurantInfo)
+		final RestaurantInfo INFO = getArguments() != null ? (RestaurantInfo)
 				getArguments().getParcelable(DineOnConstants.KEY_RESTAURANTINFO) : null;
 
 		// Check the view and its state and intialize appropiately
 		View view;
-		if (isValid(info)) {
+		if (isValid(INFO)) {
 			view = inflater.inflate(R.layout.fragment_restaurant_info,
 					container, false);
 
@@ -73,8 +73,10 @@ public class RestaurantInfoFragment extends Fragment {
 			CheckBox mCheckBox = (CheckBox) view.findViewById(R.id.checkbox_is_default_image);
 			ImageButton mButtonAdd = (ImageButton) view.findViewById(R.id.button_add_new_image);
 			ImageButton mButtonDelt = (ImageButton) view.findViewById(R.id.button_delete_image);
-			final EditText mPhoneInput = (EditText) view.findViewById(R.id.edittext_restaurant_phone);
-			final EditText mAddressInput = (EditText) view.findViewById(R.id.edittext_restaurant_address);
+			final EditText M_PHONE_INPUT = 
+					(EditText) view.findViewById(R.id.edittext_restaurant_phone);
+			final EditText M_ADDRESS_INPUT = 
+					(EditText) view.findViewById(R.id.edittext_restaurant_address);
 			Button mSaveButton = (Button) view.findViewById(R.id.button_save_restaurant_info);
 			TextView restName = (TextView) view.findViewById(R.id.label_restaurant_name);
 
@@ -92,9 +94,9 @@ public class RestaurantInfoFragment extends Fragment {
 			// user selects another image of focus.
 
 			// TODO Set the default values to the current argument
-			mPhoneInput.setText(info.getPhone());
-			mAddressInput.setText(info.getAddr());
-			restName.setText(info.getName());
+			M_PHONE_INPUT.setText(INFO.getPhone());
+			M_ADDRESS_INPUT.setText(INFO.getAddr());
+			restName.setText(INFO.getName());
 			
 
 			// TODO Set listener for the buttons
@@ -103,16 +105,17 @@ public class RestaurantInfoFragment extends Fragment {
 				@Override
 				public void onClick(View v) {
 					
-					info.setAddr(mAddressInput.getText().toString());
-					info.setPhone(mPhoneInput.getText().toString());
+					INFO.setAddr(M_ADDRESS_INPUT.getText().toString());
+					INFO.setPhone(M_PHONE_INPUT.getText().toString());
 					
 					
 					
-					info.saveInBackGround(new SaveCallback(){
+					INFO.saveInBackGround(new SaveCallback() {
 
 						@Override
 						public void done(ParseException arg0) {
-							Toast.makeText(getActivity(), "Restaurant Info Updated!", Toast.LENGTH_SHORT).show();
+							Toast.makeText(getActivity(), "Restaurant Info Updated!", 
+									Toast.LENGTH_SHORT).show();
 						}
 						
 					});
@@ -130,7 +133,7 @@ public class RestaurantInfoFragment extends Fragment {
 		// 
 		view = inflater.inflate(R.layout.fragment_empty, container, false);
 		TextView errorMessage = (TextView) view.findViewById(R.id.label_error);
-		errorMessage.setText("Illegal Dining Session: " + info);
+		errorMessage.setText("Illegal Dining Session: " + INFO);
 		
 		return view;
 	}

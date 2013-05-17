@@ -75,9 +75,6 @@ CurrentOrderFragment.OrderUpdateListener {
 					"Dining session with accrued orders goes here");
 			startActivityForResult(intent, DineOnConstants.REQUEST_PAY_BILL);
 			break;
-		case R.id.button_request:
-			Toast.makeText(this, "Requested", 5000);
-			break;
 		default:
 			break;
 		}

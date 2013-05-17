@@ -97,7 +97,7 @@ public class CheckInFragment extends Fragment {
 		private String mRestaurant;
 		
 		/**
-		 * Defalut constructor.
+		 * Default constructor.
 		 */
 		public CheckInClickListener() {
 			mRestaurant = null;
