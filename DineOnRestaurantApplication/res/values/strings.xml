@@ -44,6 +44,8 @@
     <string name="button_remove_request">Remove Request Button</string>
     <string name="label_request_default">Request Goes Here</string>
     <string name="label_time_default">May 13 2013 2:30:00 PM</string>
-     <string name="button_accordion">Accordion Button</string>
-     <string name="label_order_default">Order Goes Here</string>
+    <string name="button_accordion">Accordion Button</string>
+    <string name="label_order_default">Order Goes Here</string>
+    <string name="label_orders">Orders:</string>
+
 </resources>

@@ -2,8 +2,8 @@ package uw.cse.dineon.restaurant.active;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
@@ -36,33 +36,33 @@ public class DiningSessionListFragment extends ListFragment {
 	private DiningSessionListListener mListener;
 
 	//String for storing list in arguments
-//	private static final String KEY_LIST = "MY LIST";
+	//	private static final String KEY_LIST = "MY LIST";
 
 	private DiningSessionListAdapter mAdapter;
 
-//	/**
-//	 * Creates a new customer list fragment.
-//	 * @param sessions List of DiningSessions
-//	 * @return New CustomerListFragment
-//	 */
-//	public static DiningSessionListFragment newInstance(List<DiningSession> sessions) {
-//		DiningSessionListFragment frag = new DiningSessionListFragment();
-//		ArrayList<DiningSession> mList = new ArrayList<DiningSession>();
-//		if (sessions != null) {
-//			mList.addAll(sessions);
-//		}
-//
-//		//Store list in arguments for future retrieval
-//		Bundle args = new Bundle();
-////		args.putParcelableArrayList(KEY_LIST, mList);
-//		frag.setArguments(args);
-//		return frag;
-//	}
+	//	/**
+	//	 * Creates a new customer list fragment.
+	//	 * @param sessions List of DiningSessions
+	//	 * @return New CustomerListFragment
+	//	 */
+	//	public static DiningSessionListFragment newInstance(List<DiningSession> sessions) {
+	//		DiningSessionListFragment frag = new DiningSessionListFragment();
+	//		ArrayList<DiningSession> mList = new ArrayList<DiningSession>();
+	//		if (sessions != null) {
+	//			mList.addAll(sessions);
+	//		}
+	//
+	//		//Store list in arguments for future retrieval
+	//		Bundle args = new Bundle();
+	////		args.putParcelableArrayList(KEY_LIST, mList);
+	//		frag.setArguments(args);
+	//		return frag;
+	//	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		List<DiningSession> sessions = mListener.getCurrentSessions();
 		if (sessions == null) {
 			sessions = new ArrayList<DiningSession>();
@@ -128,17 +128,17 @@ public class DiningSessionListFragment extends ListFragment {
 		 * IE: Send the user a message
 		 */
 	}
-	
+
 	/**
 	 * List adapter for holding dining sessions.
 	 * @author mhotan
 	 */
 	private class DiningSessionListAdapter extends BaseAdapter {
-		
+
 		private List<DiningSession> users;
 		private int expanded = -1;
 		private Context mContext;
-		
+
 		/**
 		 * Constructs a new UserList Adapter.
 		 * 
@@ -168,7 +168,7 @@ public class DiningSessionListFragment extends ListFragment {
 			// XXX This will likely break if we start reordering the list
 			// (which isn't a big deal if we never use the method)
 		}
-		
+
 		/**
 		 * Toggles expansion of the given list item.
 		 * Currently only one item can be expanded at a time
@@ -182,6 +182,20 @@ public class DiningSessionListFragment extends ListFragment {
 			}
 			notifyDataSetChanged();
 		}
+
+		/**
+		 * Sets the arrow based on whether or not the list item
+		 * is expanded or not.
+		 * @param position The position of the list item to set
+		 * @param arrowButton The specified arrow button to set
+		 */
+		private void setArrow(int position, ImageButton arrowButton) {
+			if(position == expanded) {
+				arrowButton.setImageResource(R.drawable.navigation_next_item);
+			} else {
+				arrowButton.setImageResource(R.drawable.navigation_expand);
+			}
+		}
 		
 		/**
 		 * 
@@ -192,7 +206,7 @@ public class DiningSessionListFragment extends ListFragment {
 			Log.v(TAG, "Added customer " + customer);
 			notifyDataSetChanged();
 		}
-		
+
 		/**
 		 * 
 		 * @param customer DiningSession
@@ -202,79 +216,92 @@ public class DiningSessionListFragment extends ListFragment {
 			Log.v(TAG, "Removed customer " + customer);
 			notifyDataSetChanged();
 		}
-		
-		
+
+
 
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			LinearLayout vw;
 			//use vw.findViewById(R.id.whatever) to get children views
-			
+
+			DiningSession mDiningSession = users.get(position);
+
 			View vwTop;
 			View vwBot;
+						
 			if (convertView == null) {
 				//Initialize and verticalize parent container viewgroup
 				vw = new LinearLayout(mContext);
 				vw.setOrientation(LinearLayout.VERTICAL);
-				
+
 				//inflate views from xml and add to parent view
 				LayoutInflater inflater = 
 						(LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				vwTop = inflater.inflate(R.layout.listitem_restaurant_user_top, null, true);
 				vwBot = inflater.inflate(R.layout.listitem_restaurant_user_bot, null, true);
+				
 				vw.addView(vwTop);
 				vw.addView(vwBot);
+				
 			} else {
 				//Everything already created, just find them
 				vw = (LinearLayout) convertView;
 				vwTop = vw.findViewById(R.id.listitem_user_top);
 				vwBot = vw.findViewById(R.id.listitem_user_bot);
 			}
+			
 			//Set up expand button
-			ImageButton expand = (ImageButton) vwTop.findViewById(R.id.button_expand_user);
-			
-			expand.setOnClickListener(new View.OnClickListener() {
-	             public void onClick(View v) {
-	            	 expand(position);
-	            	 Log.v(TAG, "Toggled position " + position);
-	            	 //Stick *that* in your closure and smoke it
-	             }
-	         });
-			
+			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_user);
+			setArrow(position, arrowButton);
+			arrowButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					expand(position);
+					ImageButton arrowButton = 
+							(ImageButton) v.findViewById(R.id.button_expand_user);
+					setArrow(position, arrowButton);
+					Log.v(TAG, "Toggled position " + position);
+					//Stick *that* in your closure and smoke it
+				}
+			});
+
 			if(expanded != position) {
 				vwBot.setVisibility(View.GONE);
 			} else {
 				vwBot.setVisibility(View.VISIBLE);
 			}
-			
+
 			//TODO Pull actual info from a UserInfo object
 			TextView custName = (TextView) vwTop.findViewById(R.id.label_user_name);
-			
+
 			String name;
-			String phone;
-			
+
 			List<UserInfo> infolist = users.get(position).getUsers();
 			if(infolist != null && infolist.size() > 0 && infolist.get(0) != null) {
 				UserInfo ui = infolist.get(0);
 				name = ui.getName();
-				phone = ui.getPhone();
 			} else {
 				Log.w(TAG, "Could not retrieve name for position: " + position);
 				name = "No Customer!";
-				phone = "No phone?";
 			}
-	
+
 			custName.setText(name);
 			
-			TextView infotext = (TextView) vwBot.findViewById(R.id.label_user_info);
-			infotext.setText(phone);
-			
+			//Displays Order information as a string
+			String orderString = "";
+
+			for (Order o : mDiningSession.getOrders()) {
+
+				int tableID = o.getTableID();
+				if(tableID != -1) {
+					orderString += "Table " + tableID;
+				}
+
+				orderString += "\n" + o.getOriginatingTime().toString() + "\n\n";
+			}
+			TextView orderText = (TextView) vwBot.findViewById(R.id.label_user_order_content);
+			orderText.setText(orderString);
 			
 			return vw;
 		}
-		
-		
-		
 	}
-	
 }
