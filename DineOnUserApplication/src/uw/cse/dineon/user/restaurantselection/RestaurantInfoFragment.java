@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.restaurantselection;
 
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.os.Bundle;
@@ -30,9 +31,9 @@ public class RestaurantInfoFragment extends Fragment {
 	 * @param restaurantName Restaurant to present
 	 */
 	public void setRestaurantForDisplay(/*TODO Change to Restaurant data type*/
-			String restaurantName) {
+			String restaurant) {
 		TextView view = (TextView) getView().findViewById(R.id.label_restaurant_info);
-		view.setText(restaurantName);
+		view.setText(restaurant);
 	}
 
 	@Override

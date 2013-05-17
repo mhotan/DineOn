@@ -24,3 +24,15 @@ local.properties
 # javadoc junk
 *.html
 doc/
+
+# findbugs junk
+findbugs.xml
+
+# checkstyle junk
+checkstyle-result.xml
+
+# unittest junk
+unit_tests_log.txt
+
+# facebook junk
+proguard-project.txt

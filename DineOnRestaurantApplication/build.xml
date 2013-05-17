@@ -110,6 +110,9 @@
         <findbugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml"
                 excludeFilter="findbugs-exclude.xml" warningsProperty="findbugsWarning" errorProperty="findbugsError">
             <auxClasspath path="${project.target.android.jar}" />
+	    <auxClasspath path="libs/android-support-v4.jar" />
+            <auxClasspath path="libs/Parse-1.2.3.jar" />
+            <auxClasspath path="../DineOnLibrary/bin/dineonlibrary.jar" />
             <class location="${out.dir}" />
         </findbugs>
         <fail if="findbugsError" message="FindBugs detected at least one error." />

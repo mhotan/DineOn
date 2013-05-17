@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.restaurantselection;
 
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
 import android.content.res.Configuration;
@@ -34,6 +35,7 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		setContentView(R.layout.activity_restaurant_info);
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
+			//mRestaurant = extras.getString(EXTRA_RESTAURANT);
 			mRestaurant = extras.getString(EXTRA_RESTAURANT);
 			if (mRestaurant == null) { // Improper call of activity check
 				Log.e(TAG, "Null restaurant name found when extrating bundle");

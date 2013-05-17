@@ -2,18 +2,25 @@
 
 package uw.cse.dineon.user.restaurantselection;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
-import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.parse.ParseUser;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 /**
  * TODO finish.
@@ -29,6 +36,9 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	public static final String EXTRA_USER = "USER";
 	
 	private static final int MENU_ITEM_FILTER = 1234;
+	
+	private List<RestaurantInfo> mRestaurants;
+	
 
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
@@ -46,6 +56,51 @@ RestaurantInfoFragment.RestaurantInfoListener {
 			ACTION_BAR.setTitle(R.string.actionbar_title_restaurant_selection);
 		}
 		
+		mRestaurants = new ArrayList<RestaurantInfo>();
+		
+		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+		// TODO add attributes as filters are used
+		// TODO Limit will need to change later
+		query.setLimit(6); 
+		query.findInBackground(new FindCallback() {
+
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					
+					for (int i = 0; i < objects.size(); i++) {
+						try {
+							ParseObject p = objects.get(i);
+							RestaurantInfo r = new RestaurantInfo(p);
+							mRestaurants.add(r);
+							addRestaurantInfo(r);
+						} catch (ParseException e1) {
+							Log.d(TAG, e1.getMessage());
+						}
+					}
+				} else { 
+					Log.d(TAG, "No restaurants where found in the cloud.");
+				}
+			}
+			
+		});
+	}
+	
+	/**
+	 * Add a new restaurant info object to the restaurant list.
+	 * 
+	 * @param info RestaurantInfo object to add to list.
+	 */
+	public void addRestaurantInfo(RestaurantInfo info) {
+		// Update our UI for the new restaurant info
+		FragmentManager fm = getSupportFragmentManager();
+		RestaurantListFragment frag = 
+				(RestaurantListFragment) fm.findFragmentById(R.id.restaurantList);
+		// If fragment is in foreground add it to list
+		if (frag != null && frag.isInLayout()) {
+			frag.addRestaurantInfo(info);
+		}
 	}
 	
 	@Override
@@ -83,7 +138,7 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	}
 
 	@Override
-	public void onRestaurantFocusedOn(String restaurant) {
+	public void onRestaurantFocusedOn(RestaurantInfo restaurant) {
 		// TODO Auto-generated method stub
 		
 		FragmentManager fm = getSupportFragmentManager();
@@ -91,10 +146,10 @@ RestaurantInfoFragment.RestaurantInfoListener {
 				(RestaurantInfoFragment) fm.findFragmentById(R.id.restaurantInfo);
 		// If the fragment already exists then just update its value
 		if (frag != null && frag.isInLayout()) {
-			frag.setRestaurantForDisplay(restaurant);
+			frag.setRestaurantForDisplay(restaurant.getName());
 		} else {
 			Intent i = new Intent(getApplicationContext(), RestaurantInfoActivity.class);	
-			i.putExtra(RestaurantInfoActivity.EXTRA_RESTAURANT, restaurant);
+			i.putExtra(RestaurantInfoActivity.EXTRA_RESTAURANT, restaurant.getName());
 			startActivity(i);
 		}
 	}
@@ -128,4 +183,10 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public List<RestaurantInfo> getRestaurants() {
+		return mRestaurants;
+	}
+
 }
