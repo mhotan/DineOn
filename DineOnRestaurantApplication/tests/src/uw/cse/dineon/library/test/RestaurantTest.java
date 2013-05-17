@@ -20,9 +20,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.test.AndroidTestCase;
 
-import junit.framework.TestCase;
-
-
 public class RestaurantTest extends AndroidTestCase {
 	
 	Activity activity;

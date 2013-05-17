@@ -1,12 +1,10 @@
 package uw.cse.dineon.library;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
-import android.annotation.SuppressLint;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -36,13 +34,17 @@ public class DiningSession extends TimeableStorable {
 	public static final String ORDERS = "orders";
 	public static final String TABLE_ID = "tableId";
 	public static final String REQUESTS = "requests";
-
+	public static final String RESTAURANT_INFO = "rest";
+	
+	
 	// list of users involved in this session
 	private final List<UserInfo> mUsers;	
 	// list of orders made but not completed 
 	private final List<Order> mOrders;
 	// list of unresolved pending request
 	private final List<CustomerRequest> mPendingRequests;
+	
+	private final RestaurantInfo mRest;
 
 	// ID of table the dining is taking place at
 	private int mTableID;	
@@ -52,9 +54,10 @@ public class DiningSession extends TimeableStorable {
 	 * Takes current time as 
 	 * @param tableID the id of the table
 	 * @param uInfo to store
+	 * @param rInfo RestaurantInfo of current restaurant
 	 */
-	public DiningSession(int tableID, UserInfo uInfo) {
-		this(tableID, null, uInfo);
+	public DiningSession(int tableID, UserInfo uInfo, RestaurantInfo rInfo) {
+		this(tableID, null, uInfo, rInfo);
 	}
 
 	/**
@@ -63,14 +66,16 @@ public class DiningSession extends TimeableStorable {
 	 * @param tableId Table ID to associate to
 	 * @param startDate of session, if null sets it as the current date
 	 * @param uInfo UserInfo to store
+	 * @param rInfo RestaurantInfo of current restaurant
 	 */
-	public DiningSession(int tableId, Date startDate, UserInfo uInfo) {
+	public DiningSession(int tableId, Date startDate, UserInfo uInfo, RestaurantInfo rInfo) {
 		super(DiningSession.class, startDate);
 		resetTableID(tableId);
 		mUsers = new ArrayList<UserInfo>();
 		mUsers.add(uInfo);
 		mOrders = new ArrayList<Order>();
 		mPendingRequests = new ArrayList<CustomerRequest>();
+		mRest = rInfo;
 	}
 
 	/**
@@ -86,6 +91,7 @@ public class DiningSession extends TimeableStorable {
 		mUsers = ParseUtil.toListOfStorables(UserInfo.class, po.getList(USERS));
 		mOrders = ParseUtil.toListOfStorables(Order.class, po.getList(ORDERS));
 		mPendingRequests = ParseUtil.toListOfStorables(CustomerRequest.class, po.getList(REQUESTS));
+		mRest = new RestaurantInfo(po.getParseObject(RESTAURANT_INFO));
 	}
 	
 	/**
@@ -99,6 +105,7 @@ public class DiningSession extends TimeableStorable {
 		po.put(USERS, ParseUtil.toListOfParseObjects(mUsers));
 		po.put(ORDERS, ParseUtil.toListOfParseObjects(mOrders));
 		po.put(REQUESTS, ParseUtil.toListOfParseObjects(mPendingRequests));
+		po.put(RESTAURANT_INFO, this.mRest.packObject());
 		return po;
 	}
 
@@ -132,7 +139,14 @@ public class DiningSession extends TimeableStorable {
 	public int getTableID() {
 		return mTableID;
 	}
-
+	
+	/**
+	 * @return restaurant
+	 */
+	public RestaurantInfo getRestaurantInfo() {
+		return mRest;
+	}
+	
 	/**
 	 * Adds a order to be pending for this session.
 	 * @param order to add.
@@ -146,8 +160,9 @@ public class DiningSession extends TimeableStorable {
 	 * @param newId to set to 
 	 */
 	public void resetTableID(int newId) {
-		//TODO validate table number
-		// Throw illegal argument exception if needed
+		if(newId < 0 || newId > 1000) {
+			throw new IllegalArgumentException("Invalid tableId");
+		}
 		mTableID = newId;
 	}
 

@@ -209,30 +209,30 @@ public class OrderListFragment extends ListFragment {
 			View vwTop;
 			View vwBot;
 
-			final LinearLayout view;
+			final LinearLayout VIEW;
 			
 			if(convertView == null) {
-				view = new LinearLayout(mContext);
-				view.setOrientation(LinearLayout.VERTICAL);
+				VIEW = new LinearLayout(mContext);
+				VIEW.setOrientation(LinearLayout.VERTICAL);
 				LayoutInflater inflater = (LayoutInflater) mContext
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				vwTop = inflater.inflate(R.layout.listitem_restaurant_order_top, null, true);
 				vwBot = inflater.inflate(R.layout.listitem_restaurant_order_bot, null, true);
-				view.addView(vwTop);
-				view.addView(vwBot);
+				VIEW.addView(vwTop);
+				VIEW.addView(vwBot);
 			} else {
 				//Everything already created, just find them
-				view = (LinearLayout) convertView;
-				vwTop = view.findViewById(R.id.listitem_order_top);
-				vwBot = view.findViewById(R.id.listitem_order_bot);
+				VIEW = (LinearLayout) convertView;
+				vwTop = VIEW.findViewById(R.id.listitem_order_top);
+				vwBot = VIEW.findViewById(R.id.listitem_order_bot);
 			}
 
 			Order order = mOrders.get(position);
 
 			// Reference the correct UI components and set up
-			Button buttonCompleteOrder = (Button) view.findViewById(R.id.button_completed_order);
+			Button buttonCompleteOrder = (Button) VIEW.findViewById(R.id.button_completed_order);
 			TextView orderTitle = 
-					(TextView) view.findViewById(R.id.button_order_title);
+					(TextView) VIEW.findViewById(R.id.button_order_title);
 			int table = order.getTableID();
 			
 			if(table == -1) { // No Table
@@ -242,11 +242,11 @@ public class OrderListFragment extends ListFragment {
 						+ " - " + order.getOriginalUser().getName());
 			}
 			
-			SeekBar progressBar = (SeekBar) view.findViewById(R.id.seekbar_order_progress);
+			SeekBar progressBar = (SeekBar) VIEW.findViewById(R.id.seekbar_order_progress);
 			progressBar.setMax(100);
 			progressBar.setProgress(0);
 
-			TextView time = (TextView) view.findViewById(R.id.label_order_time);
+			TextView time = (TextView) VIEW.findViewById(R.id.label_order_time);
 			time.setText(order.getOriginatingTime().toString());
 			
 			//Set up expand button
@@ -259,7 +259,7 @@ public class OrderListFragment extends ListFragment {
 					expand(position);
 
 					ImageButton arrowButton = 
-							(ImageButton) view.findViewById(R.id.button_expand_order);
+							(ImageButton) VIEW.findViewById(R.id.button_expand_order);
 					setArrow(position, arrowButton);
 					//Right arrow case -- goes to details fragment
 					if(expanded != position) {
@@ -282,7 +282,7 @@ public class OrderListFragment extends ListFragment {
 			// Add listener for reaction purposes
 			buttonCompleteOrder.setOnClickListener(mItemListener);
 			progressBar.setOnSeekBarChangeListener(mProgessListener);
-			return view;
+			return VIEW;
 		}
 
 		/**

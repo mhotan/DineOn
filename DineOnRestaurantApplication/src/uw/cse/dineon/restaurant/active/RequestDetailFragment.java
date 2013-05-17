@@ -115,6 +115,7 @@ implements OnCheckedChangeListener, OnClickListener {
 	/**
 	 * Sets the state of this fragment to this request.
 	 * @param request request to update the fragment to
+	 * @param user UserInfo issuing the request
 	 */
 	public void setRequest(String request, UserInfo user) {
 		mRequest = new CustomerRequest(request, user);

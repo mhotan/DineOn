@@ -305,12 +305,12 @@ implements SateliteListener {
 	@Override
 	public void onFail(String message) {
 		// TODO Auto-generated method stub
-		Toast.makeText(this, "onFail" + message, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "onFail " + message, Toast.LENGTH_LONG).show();
 	}
 
 	@Override
 	public void onUserCheckedIn(UserInfo user, int tableID) {
-		final DiningSession DS = new DiningSession(tableID, user);
+		final DiningSession DS = new DiningSession(tableID, user, mRestaurant.getInfo());
 		DS.saveInBackGround(new SaveCallback() {
 
 			@Override

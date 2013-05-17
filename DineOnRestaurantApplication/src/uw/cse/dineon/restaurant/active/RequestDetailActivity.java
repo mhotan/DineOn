@@ -40,7 +40,7 @@ public static final String EXTRA_REQUEST = "request";
 	@Override
 	public void onSendTaskToStaff(CustomerRequest request, String staff, String urgency) {
 		// TODO Auto-generated method stub
-		
+		request.setWaiter(staff);
 	}
 
 	@Override

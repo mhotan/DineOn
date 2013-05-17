@@ -1,5 +1,7 @@
 package uw.cse.dineon.library;
 
+import android.util.Log;
+
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -30,6 +32,7 @@ public class UserInfo extends Storable {
 		mImageID = UNDETERMINED;
 		mProfileDescription = UNDETERMINED;
 		mPhone = UNDETERMINED;
+		Log.e("Constructor called", mPhone);
 	}
 	
 	/**

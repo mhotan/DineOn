@@ -206,7 +206,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 		try {
 			jobj.put(DineOnConstants.OBJ_ID, ds.getObjId());
 			jobj.put(DineOnConstants.OBJ_ID_2, request.getObjId());
-			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_ORDER);
+			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_CUSTOMER_REQUEST);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -386,7 +386,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 		 * @param listener Listener for which method to call
 		 * @param secondArgument Second string that contain object ID or formatted dates
 		 */
-		public SatelliteGetCallback(SateliteListener listener, String secondArgument){
+		public SatelliteGetCallback(SateliteListener listener, String secondArgument) {
 			mListener = listener;
 			mOption = ACTION_OPTION.NA;
 			mSecondArg = secondArgument;

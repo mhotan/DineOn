@@ -518,7 +518,6 @@ public class UserSatellite extends BroadcastReceiver {
 		/**
 		 * Notifies the user that the reservation requested was accepted.
 		 * @param res Reservation object
-		 * @param reservationDate Date of reservation confirmed
 		 */
 		void onConfirmReservation(Reservation res);
 

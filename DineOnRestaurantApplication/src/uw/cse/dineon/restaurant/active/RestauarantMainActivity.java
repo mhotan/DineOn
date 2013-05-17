@@ -201,7 +201,7 @@ DiningSessionListListener {
 	public void onAssignStaffToRequest(CustomerRequest request, String staff) {
 		// TODO Implement Add a field in customer request
 		// Assigns a staff to customer request.
-		Log.i(TAG, "Staff: " + staff + " assigned to customer request.");
+		request.setWaiter(staff);
 	}
 
 	@Override

@@ -128,7 +128,7 @@ public abstract class Storable {
 	 * NOTE Make sure you are in background thread
 	 * @throws ParseException Could not download
 	 */
-	public void saveOnCurrentThread() throws ParseException{
+	public void saveOnCurrentThread() throws ParseException {
 		ParseObject po = this.packObject();
 		po.save();
 	}
@@ -178,11 +178,15 @@ public abstract class Storable {
 	}
 
 	/**
-	 * Any class that  
+	 * 
 	 * @author mhotan
 	 */
 	public interface StateChangeListener {
 
+		/**
+		 * 
+		 * @param s Storable who's state changed
+		 */
 		public void onStateChanged(Storable s);
 
 	}

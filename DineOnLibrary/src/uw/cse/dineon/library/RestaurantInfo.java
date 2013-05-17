@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
-import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;

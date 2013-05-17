@@ -22,6 +22,7 @@ public class CustomerRequest extends TimeableStorable {
 	
 	private final String mDescription;
 	private final UserInfo mUserInfo;
+	private String mWaiter;
 	
 	/**
 	 * 
@@ -91,6 +92,20 @@ public class CustomerRequest extends TimeableStorable {
 		return mUserInfo;
 	}
 
+	/**
+	 * @param waiter to assign this request to
+	 */
+	public void setWaiter(String waiter) {
+		mWaiter = waiter;
+	}
+
+	/**
+	 * @return String waiter this request is assigned to
+	 */
+	public String getWaiter() {
+		return mWaiter;
+	}
+	
 	/**
 	 * Inserts this objects fields and returns the ParseObject
 	 * representation.
