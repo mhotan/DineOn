@@ -107,7 +107,7 @@
             bootClassPathOut="project.target.class.path"
             targetApiOut="project.target.apilevel"
             minSdkVersionOut="project.minSdkVersion" />
-        <findbugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml"
+        <findbugs home="${findbugs.home}" output="xml:withMessages" outputFile="findbugs.xml"
                 excludeFilter="findbugs-exclude.xml" warningsProperty="findbugsWarning" errorProperty="findbugsError">
             <auxClasspath path="${project.target.android.jar}" />
 	    <auxClasspath path="libs/android-support-v4.jar" />
@@ -115,6 +115,7 @@
             <auxClasspath path="../DineOnLibrary/bin/dineonlibrary.jar" />
             <class location="${out.dir}" />
         </findbugs>
+	<xslt in="findbugs.xml" out="findbugs.html" style="${findbugs.home}/src/xsl/default.xsl"/>
         <fail if="findbugsError" message="FindBugs detected at least one error." />
         <fail if="findbugsWarning" message="FindBugs detected at least one warning." />
     </target>
