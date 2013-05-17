@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -23,7 +25,7 @@ public class Restaurant extends LocatableStorable {
 	 * 
 	 * 
 	 */
-	
+
 	// Parse used Keys
 	public static final String RESERVATION_LIST = "reservationList";
 	public static final String INFO = "restaurantInfo";
@@ -37,34 +39,34 @@ public class Restaurant extends LocatableStorable {
 	 * Restaurant information.
 	 */
 	private final RestaurantInfo mRestInfo;
-	
+
 	/**
 	 * Past Orders placed at this restaurant.
 	 * Also includes any recently placed orders.
 	 */
 	private final List<Order> mPastOrders;
-	
+
 	/**
 	 * Past Orders placed at this restaurant.
 	 * Also includes any recently placed orders.
 	 */
 	private final List<Order> mPendingOrders;
-	
+
 	/**
 	 * Past users that have visited the restaurant.
 	 */
 	private final List<UserInfo> mPastUsers;
-	
+
 	/**
 	 * Currently pending reservations.
 	 */
 	private final List<Reservation> mReservations;
-	
+
 	/**
 	 *  Currently Active Dining sessions.
 	 */
 	private final List<DiningSession> mSessions;
-	
+
 	/**
 	 * Customer request that is not associated with the restaurant.
 	 */
@@ -79,10 +81,10 @@ public class Restaurant extends LocatableStorable {
 	public Restaurant(ParseUser user) throws ParseException {
 		super(Restaurant.class);
 		mRestInfo = new RestaurantInfo(user);
-		
+
 		mPastOrders = new ArrayList<Order>();
 		mPastUsers = new ArrayList<UserInfo>();
-		
+
 		mPendingOrders = new ArrayList<Order>();
 		mReservations = new ArrayList<Reservation>();
 		mSessions = new ArrayList<DiningSession>();
@@ -98,10 +100,10 @@ public class Restaurant extends LocatableStorable {
 	public Restaurant(ParseObject po) throws ParseException {
 		super(po);
 		mRestInfo = new RestaurantInfo(po.getParseObject(INFO));
-		
+
 		mPastOrders = ParseUtil.toListOfStorables(Order.class, po.getList(PAST_ORDERS));
 		mPastUsers = ParseUtil.toListOfStorables(UserInfo.class, po.getList(PAST_USERS));
-		
+
 		mPendingOrders = ParseUtil.toListOfStorables(
 				Order.class, po.getList(PENDING_ORDERS)); 
 		mReservations = ParseUtil.toListOfStorables(
@@ -111,15 +113,17 @@ public class Restaurant extends LocatableStorable {
 				CustomerRequest.class, po.getList(CUSTOMER_REQUESTS));
 	}
 
+	
+
 	@Override
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
 		po.put(INFO, mRestInfo.packObject());
-		
+
 		// Pack up old stuff
 		po.put(PAST_ORDERS, ParseUtil.toListOfParseObjects(mPastOrders));
 		po.put(PAST_USERS, ParseUtil.toListOfParseObjects(mPastUsers));
-		
+
 		// Pack current stuff
 		po.put(PENDING_ORDERS, ParseUtil.toListOfParseObjects(mPendingOrders));
 		po.put(RESERVATION_LIST, ParseUtil.toListOfParseObjects(mReservations));
@@ -181,7 +185,7 @@ public class Restaurant extends LocatableStorable {
 	public List<DiningSession> getSessions() {
 		return new ArrayList<DiningSession>(mSessions);
 	}
-	
+
 	/**
 	 * Each one of the restaurants have pending dining sessions.
 	 * Returns all the orders of all the pending dining sessions.
@@ -202,7 +206,7 @@ public class Restaurant extends LocatableStorable {
 	public void addCustomerRequest(CustomerRequest newReq) {
 		mCustomerRequests.add(newReq);
 	}
-	
+
 	/**
 	 * Adds the given reservation to the reservation list.
 	 * @param newReservation to add
@@ -210,7 +214,7 @@ public class Restaurant extends LocatableStorable {
 	public void addReservation(Reservation newReservation) {
 		mReservations.add(newReservation);
 	}
-	
+
 	/**
 	 * Marks this Order as complete. 
 	 * @param order Order that has been completed.
@@ -219,14 +223,14 @@ public class Restaurant extends LocatableStorable {
 		if (order == null) {
 			return;
 		}
-		
+
 		// Move from list of pending orders to
 		// list of past orders
 		if (mPendingOrders.remove(order)) {
 			mPastOrders.add(order);
 		}
 	}
-	
+
 	/**
 	 * Adds a pending order to a restaurant.
 	 * @param order Order to be added. cannot be null.
@@ -237,7 +241,7 @@ public class Restaurant extends LocatableStorable {
 		}
 		mPendingOrders.add(order);
 	}
-	
+
 	/**
 	 * Adds given DiningSession to sessions.
 	 * @param session to add
@@ -249,7 +253,7 @@ public class Restaurant extends LocatableStorable {
 		if (mSessions.contains(session)) { // Already tracking this session
 			return;
 		}
-		
+
 		mSessions.add(session);
 	}
 
@@ -261,14 +265,14 @@ public class Restaurant extends LocatableStorable {
 		if (session == null) {
 			return;
 		}
-		
+
 		// If we found the session.
 		if (mSessions.remove(session)) {
 			mPastUsers.addAll(session.getUsers());
 			session.deleteFromCloud();
 		}
 	}
-	
+
 	/**
 	 * Remove the specified CustomerRequest.
 	 * @param oldReq request to remove
@@ -294,7 +298,7 @@ public class Restaurant extends LocatableStorable {
 		// TODO For each of the Orders delete from parse
 		mPastOrders.clear();
 	}
-	
+
 	/**
 	 * Updates the current user if it exists in the restaurant.
 	 * @param user User to update
@@ -306,7 +310,7 @@ public class Restaurant extends LocatableStorable {
 		// NOTE (MH) Because we have to replace the old version
 		// of this user with a current version.
 		// We have to check for object ID equality to find the object to replace 
-		
+
 		// Find the UserInfo to remove in past users
 		UserInfo toRemove = null;
 		for (UserInfo info : mPastUsers) {
@@ -319,29 +323,29 @@ public class Restaurant extends LocatableStorable {
 			mPastUsers.remove(toRemove);
 			mPastUsers.add(user);
 		}
-		
+
 		// Find the user if they exist in the past .
 		for (DiningSession session: mSessions) {
 			toRemove = null;
 			for (UserInfo sessionUser: session.getUsers()) {
-				
+
 				// Find the user to remove.
 				if (sessionUser.getObjId().equals(user.getObjId())) {
 					toRemove = sessionUser;
 					break;
 				}
-				
+
 				// Remove and replace new user
 				if (toRemove != null) {
 					session.removeUser(toRemove);
 					session.addUser(user);
 				}
 			}
-			
+
 		}
-		
-		
-		
+
+
+
 	}
 
 	/**
@@ -352,111 +356,62 @@ public class Restaurant extends LocatableStorable {
 		mSessions.remove(session);
 		session.deleteFromCloud();
 	}
-	
 
-	//	@Override
-	//	public void unpackObject(ParseObject pobj) {
-	//		this.setObjId(pobj.getObjectId());
-	//		
-	//		List<Storable> storable = 
-	//				ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.MENUS));
-	//		List<Menu> menus = new ArrayList<Menu>(storable.size());
-	//		for (Storable menu : storable) {
-	//			menus.add((Menu) menu);
-	//		}
-	//		setMenus(menus);
-	//		
-	//		RestaurantInfo info = new RestaurantInfo();
-	//		info.unpackObject((ParseObject) pobj.get(Restaurant.INFO));
-	//		this.setInfo(info);
-	//		
-	//		storable = 
-	//			ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.RESERVATION_LIST));
-	//		List<Reservation> reserves = new ArrayList<Reservation>(storable.size());
-	//		for (Storable res : storable) {
-	//			reserves.add((Reservation) res);
-	//		}
-	//		setReservationList(reserves);
-	//		
-	//		storable = ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.ORDERS));
-	//		for (Storable order : storable) {
-	//			addOrder((Order) order);
-	//		}
-	//		
-	//		storable = 
-	//				ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.SESSIONS));
-	//		List<DiningSession> sessions = new ArrayList<DiningSession>(storable.size());
-	//		for (Storable sess : storable) {
-	//			sessions.add((DiningSession) sess);
-	//		}
-	//		setSessions(sessions);
-	//		
-	//		storable = 
-	//			ParseUtil.unpackListOfStorables(pobj.getParseObject(Restaurant.CUSTOMER_REQUESTS));
-	//		List<CustomerRequest> requests = new ArrayList<CustomerRequest>(storable.size());
-	//		for (Storable request : storable) {
-	//			requests.add((CustomerRequest) request);
-	//		}
-	//		setCustomerRequests(requests);
-	//	}
-	//
-	//	/**
-	//	 * A Parcel method to describe the contents of the object.
-	//	 * @return an int describing contents
-	//	 */
-	//	@Override
-	//	public int describeContents() {
-	//		return 0;
-	//	}
-	//
-	//	/**
-	//	 * Write the object to a parcel object.
-	//	 * @param dest the Parcel to write to
-	//	 * @param flags to set
-	//	 */
-	//	@Override
-	//	public void writeToParcel(Parcel dest, int flags) {
-	//		dest.writeTypedList(menus);
-	//		dest.writeTypedList(mReservations);
-	//		dest.writeParcelable(mRestInfo, flags);
-	//		dest.writeTypedList(mOrders);
-	//		dest.writeTypedList(mSessions);
-	//		dest.writeTypedList(mCustomerRequests);
-	//		dest.writeString(this.getObjId());		
-	//	}
-	//	
-	//	/**
-	//	 * Parcelable creator object of a Restaurant.
-	//	 * Can create a Restaurant from a Parcel.
-	//	 */
-	//	public static final Parcelable.Creator<Restaurant> CREATOR = 
-	//			new Parcelable.Creator<Restaurant>() {
-	//
-	//				@Override
-	//				public Restaurant createFromParcel(Parcel source) {
-	//					return new Restaurant(source);
-	//				}
-	//
-	//				@Override
-	//				public Restaurant[] newArray(int size) {
-	//					return new Restaurant[size];
-	//				}
-	//	};
-	//			
-	//	/**
-	//	 * Helper method for updating Restaurant with the data from a Parcel.
-	//	 * @param source Parcel containing data in the order:
-	//	 * 		Menu, Reservation, RestaurantInfo, List<Order>, List<DiningSession, 
-	//	 * 		List<CustomerRequests>, String
-	//	 */
-	//	protected void readFromParcel(Parcel source) {
-	//		source.readTypedList(menus, Menu.CREATOR);
-	//		source.readTypedList(mReservations, Reservation.CREATOR);
-	//		this.setInfo((RestaurantInfo)source.readParcelable(
-	//				RestaurantInfo.class.getClassLoader()));
-	//		source.readTypedList(mOrders, Order.CREATOR);
-	//		source.readTypedList(mSessions, DiningSession.CREATOR);
-	//		source.readTypedList(mCustomerRequests, CustomerRequest.CREATOR);
-	//		this.setObjId(source.readString());
-	//	}
+	/**
+	 * Creates a restaurant from a parcel.
+	 * @param source Source to build from
+	 */
+	public Restaurant(Parcel source) {
+		super(source);
+		mRestInfo = source.readParcelable(RestaurantInfo.class.getClassLoader());
+		
+		mPastOrders = new ArrayList<Order>();
+		mPendingOrders = new ArrayList<Order>();
+		mPastUsers = new ArrayList<UserInfo>();
+		mReservations = new ArrayList<Reservation>();
+		mSessions = new ArrayList<DiningSession>();
+		mCustomerRequests = new ArrayList<CustomerRequest>();
+		
+		source.readTypedList(mPastOrders, Order.CREATOR);
+		source.readTypedList(mPendingOrders, Order.CREATOR);
+		source.readTypedList(mPastUsers, UserInfo.CREATOR);
+		source.readTypedList(mReservations, Reservation.CREATOR);
+		source.readTypedList(mSessions, DiningSession.CREATOR);
+		source.readTypedList(mCustomerRequests, CustomerRequest.CREATOR);
+	}
+	
+	/**
+	 * Write the object to a parcel object.
+	 * @param dest the Parcel to write to
+	 * @param flags to set
+	 */
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
+		dest.writeParcelable(mRestInfo, flags);
+		dest.writeTypedList(mPastOrders);
+		dest.writeTypedList(mPendingOrders);
+		dest.writeTypedList(mPastUsers);
+		dest.writeTypedList(mReservations);
+		dest.writeTypedList(mSessions);
+		dest.writeTypedList(mCustomerRequests);		
+	}
+
+	/**
+	 * Parcelable creator object of a Restaurant.
+	 * Can create a Restaurant from a Parcel.
+	 */
+	public static final Parcelable.Creator<Restaurant> CREATOR = 
+			new Parcelable.Creator<Restaurant>() {
+
+		@Override
+		public Restaurant createFromParcel(Parcel source) {
+			return new Restaurant(source);
+		}
+
+		@Override
+		public Restaurant[] newArray(int size) {
+			return new Restaurant[size];
+		}
+	};
 }

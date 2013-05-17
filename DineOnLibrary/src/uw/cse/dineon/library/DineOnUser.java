@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils.Permissions.User;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -25,22 +28,22 @@ public class DineOnUser extends Storable {
 	/**
 	 * Current list of Restaurant Information. 
 	 */
-	private List<RestaurantInfo> mFavRestaurants;
+	private final List<RestaurantInfo> mFavRestaurants;
 
 	/**
 	 * List of current pending reservations.
 	 */
-	private List<Reservation> mReservations;
+	private final List<Reservation> mReservations;
 
 	/**
 	 * Current List of friends.
 	 */
-	private List<UserInfo> mFriendsLists;
+	private final List<UserInfo> mFriendsLists;
 
 	/**
 	 * Information associated with the User.
 	 */
-	private UserInfo mUserInfo;
+	private final UserInfo mUserInfo;
 
 	/**
 	 * This is the dining session the team is currently involved in.
@@ -80,6 +83,8 @@ public class DineOnUser extends Storable {
 			mDiningSession = new DiningSession(currDiningSession);
 		} 
 	}
+
+
 
 	@Override
 	public ParseObject packObject() {
@@ -138,26 +143,10 @@ public class DineOnUser extends Storable {
 
 	/**
 	 *
-	 * @param favList list of restaurants
-	 */
-	public void setFavs(List<RestaurantInfo> favList) {
-		this.mFavRestaurants = favList;
-	}
-
-	/**
-	 *
 	 * @return UserInfo
 	 */
 	public UserInfo getUserInfo() {
 		return mUserInfo;
-	}
-
-	/**
-	 *
-	 * @param info UserInfo
-	 */
-	public void setUserInfo(UserInfo info) {
-		this.mUserInfo = info;
 	}
 
 	/**
@@ -170,26 +159,10 @@ public class DineOnUser extends Storable {
 
 	/**
 	 *
-	 * @param reservations list of reservations
-	 */
-	public void setReserves(List<Reservation> reservations) {
-		this.mReservations = reservations;
-	}
-
-	/**
-	 *
 	 * @return list of strings
 	 */
 	public List<UserInfo> getFriendList() {
 		return mFriendsLists;
-	}
-
-	/**
-	 *
-	 * @param friends list of strings
-	 */
-	public void setFriendList(List<UserInfo> friends) {
-		this.mFriendsLists = friends;
 	}
 
 	/**
@@ -215,100 +188,64 @@ public class DineOnUser extends Storable {
 		return mUserInfo.getName();
 	}
 
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
+		dest.writeTypedList(mFavRestaurants);
+		dest.writeTypedList(mReservations);
+		dest.writeTypedList(mFriendsLists);
+		dest.writeParcelable(mUserInfo, flags);
+
+		// have to do some logic for checking if there is a dining session.
+		if (mDiningSession != null) {
+			dest.writeByte((byte) 1);
+			dest.writeParcelable(mDiningSession, flags);
+		} else {
+			dest.writeByte((byte)0);
+		}
+	}
+	
+	/**
+	 * Creates a Dine On User from a Parcel Source.
+	 * @param source source to create user
+	 */
+	protected DineOnUser(Parcel source) {
+		super(source);
+		mFavRestaurants = new ArrayList<RestaurantInfo>();
+		mReservations = new ArrayList<Reservation>();
+		mFriendsLists = new ArrayList<UserInfo>();
+		
+		// Read in each list independently
+		source.readTypedList(mFavRestaurants, RestaurantInfo.CREATOR);
+		source.readTypedList(mReservations, Reservation.CREATOR);
+		source.readTypedList(mFriendsLists, UserInfo.CREATOR);
+
+		// Read my user info
+		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
+		
+		if (source.readByte() == 1) { // If there is a current dining session
+			mDiningSession = source.readParcelable(DiningSession.class.getClassLoader());
+		}
+	}
+
+	/**
+	 * Parcelable creator object of a User.
+	 * Can create a User from a Parcel.
+	 */
+	public static final Parcelable.Creator<DineOnUser> CREATOR = 
+			new Parcelable.Creator<DineOnUser>() {
+
+		@Override
+		public DineOnUser createFromParcel(Parcel source) {
+			return new DineOnUser(source);
+		}
+
+		@Override
+		public DineOnUser[] newArray(int size) {
+			return new DineOnUser[size];
+		}
+	};
 
 
 
-	//	@Override
-	//	public void unpackObject(ParseObject pobj) {
-	//		this.setObjId(pobj.getObjectId());
-	//		//		this.setFavs(ParseUtil.unpackListOfStorables(pobj.getParseObject(User.FAVS)));
-	//		this.setFbToken(pobj.getInt(User.FB_TOKEN));
-	//		//		this.setReserves((List<Reservation>) pobj.get(User.RESERVES));
-	//		UserInfo info = new UserInfo();
-	//		info.unpackObject((ParseObject) pobj.get(User.USER_INFO));
-	//		this.setUserInfo(info);
-	//
-	//		// TODO FIX ME
-	//		List<Storable> storable = 
-	//				ParseUtil.unpackListOfStorables(pobj.getParseObject(User.FRIEND_LIST));
-	//		List<UserInfo> friends = new ArrayList<UserInfo>(storable.size());
-	//		for (Storable friend : storable) {
-	//			friends.add((UserInfo) friend);
-	//		}
-	//		setFriendList(friends);
-	//
-	//		storable = ParseUtil.unpackListOfStorables(pobj.getParseObject(User.RESERVATIONS));
-	//		List<Reservation> reservations = new ArrayList<Reservation>(storable.size());
-	//		for (Storable reserve : storable) {
-	//			reservations.add((Reservation) reserve);
-	//		}
-	//		setReserves(reservations);
-	//
-	//		Object ds = pobj.get(User.DINING_SESSION);
-	//		this.setDiningSession((DiningSession)ds);
-	//	}
-	//
-	//
-	//	@Override
-	//	public int describeContents() {
-	//		return 0;
-	//	}
-
-	//	private List<RestaurantInfo> favs;
-	//	private UserInfo userInfo;
-	//	private List<Reservation> reserves;
-	//	private int fbToken; //TODO Delete
-	//	private List<UserInfo> friendList;
-	//	private DiningSession diningSession;
-
-	//	@Override
-	//	public void writeToParcel(Parcel dest, int flags) {
-	//		dest.writeString(this.getObjId());
-	//		dest.writeParcelable(mUserInfo, flags);
-	//		dest.writeTypedList(mFavRestaurants);
-	//		dest.writeTypedList(mReservations);
-	//		dest.writeTypedList(mFriendsLists);
-	//		dest.writeParcelable(mDiningSession, flags);
-	//		// TODO Make sure order consistency
-	//		//		dest.writeTypedList(favs);
-	////		dest.writeParcelable(userInfo, flags);
-	////		dest.writeTypedList(reserves);
-	////		dest.writeInt(fbToken);
-	////		dest.writeTypedList(friendList);
-	////		dest.writeString(this.getObjId());
-	//
-	//	}
-	//
-	//	/**
-	//	 * Parcelable creator object of a User.
-	//	 * Can create a User from a Parcel.
-	//	 */
-	//	public static final Parcelable.Creator<User> CREATOR = 
-	//			new Parcelable.Creator<User>() {
-	//
-	//		@Override
-	//		public User createFromParcel(Parcel source) {
-	//			return new User(source);
-	//		}
-	//
-	//		@Override
-	//		public User[] newArray(int size) {
-	//			return new User[size];
-	//		}
-	//	};
-	//
-	//
-	//	/**
-	//	 * Read object out of Parcel.
-	//	 * @param source to read from
-	//	 */
-	//	private void readFromParcel(Parcel source) {
-	//		this.setObjId(source.readString());
-	//		this.setUserInfo((UserInfo)source.readParcelable(UserInfo.class.getClassLoader()));
-	//		source.readTypedList(mFavRestaurants, RestaurantInfo.CREATOR);
-	//		source.readTypedList(mReservations, Reservation.CREATOR);
-	//		source.readTypedList(mFriendsLists, UserInfo.CREATOR);
-	//		this.setDiningSession((DiningSession)source.readParcelable(
-	//				DiningSession.class.getClassLoader()));
-	//	}
 }

@@ -64,12 +64,6 @@ implements SateliteListener {
 	 */
 	protected Restaurant mRestaurant;
 
-	/**
-	 * Just a variable for creation.  This helps us track the user
-	 * 
-	 */
-	private String mRestaurantId;
-
 	private DineOnRestaurantActivity thisResActivity;
 
 
@@ -101,21 +95,21 @@ implements SateliteListener {
 
 		// Lets first check if the activity is being recreated after being
 		// destroyed but there was an already existing restuarant
-		if (savedInstanceState != null && savedInstanceState.getString(
-				DineOnConstants.KEY_RESTAURANT) != null) { 
+		if (savedInstanceState != null && savedInstanceState.containsKey(
+				DineOnConstants.KEY_RESTAURANT)) { 
 			// Activity recreated
-			mRestaurantId = savedInstanceState.getString(
+			mRestaurant = savedInstanceState.getParcelable(
 					DineOnConstants.KEY_RESTAURANT);
 		} 
-		else if (extras != null && extras.getString(
-				DineOnConstants.KEY_RESTAURANT) != null) {
+		else if (extras != null && extras.containsKey(
+				DineOnConstants.KEY_RESTAURANT)) {
 			// Activity started and created for the first time
 			// Valid extras were passed into this
-			mRestaurantId = extras.getString(
+			mRestaurant = extras.getParcelable(
 					DineOnConstants.KEY_RESTAURANT);
 		}
 
-		if (mRestaurantId == null) {
+		if (mRestaurant == null) {
 			Utility.getGeneralAlertDialog("Uh OH!", "Doesn't look like your logged in"
 					, this).show();
 		}
@@ -125,29 +119,10 @@ implements SateliteListener {
 	protected void onResume() {
 		super.onResume();
 
-		// We need to download the restaurant before registering the receiver
-		// Hopefully its fast
-		RestaurantDownloader downloader = new CustomRestaurantDownloader(
-				mRestaurantId, new RestaurantDownLoaderCallback() {
+		mSatellite.register(mRestaurant, thisResActivity);
+		updateUI(); // This is the call that should trigger a lot of UI changes.
+		
 
-					@Override
-					public void onFailToDownLoadRestaurant(String message) {
-						Utility.getBackToLoginAlertDialog(
-								thisResActivity,
-								message,
-								RestaurantLoginActivity.class).show();
-					}
-
-					@Override
-					public void onDownloadedRestaurant(Restaurant rest) {
-						if (rest != null) {
-							mRestaurant = rest;
-							mSatellite.register(mRestaurant, thisResActivity);
-							updateUI(); // This is the call that should trigger a lot of UI changes.
-						}
-					}
-				});
-		downloader.execute(CachePolicy.CACHE_ELSE_NETWORK);
 	}
 
 	@Override
@@ -446,40 +421,6 @@ implements SateliteListener {
 	}
 
 	////////////////////////////////////////////////
-	/////  Restaurant Downloader
-	/////////////////////////////////////////////////
-
-	/**
-	 * Downloads restaurants and then sets the class member to currect reference.
-	 * @author mhotan
-	 */
-	private class CustomRestaurantDownloader extends RestaurantDownloader {
-
-		/**
-		 * Downloads restaurant.
-		 * @param id Parse object ID of restaurant to download.
-		 * @param callback Callback to use 
-		 */
-		public CustomRestaurantDownloader(String id, 
-				RestaurantDownLoaderCallback callback) {
-			super(id, callback);
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			createProgressDialog();
-		}
-
-		@Override
-		protected void onPostExecute(Restaurant result) {
-			destroyProgressDialog();
-			super.onPostExecute(result);
-		}
-
-	}
-
-	////////////////////////////////////////////////
 	/////  Establish Menu
 	/////////////////////////////////////////////////	
 
@@ -573,7 +514,7 @@ implements SateliteListener {
 	@Override
 	public void startActivity(Intent intent) {
 		if (mRestaurant != null) {
-			intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant.getObjId());
+			intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		}
 		super.startActivity(intent);
 	}
@@ -582,7 +523,7 @@ implements SateliteListener {
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		// Place the correct Key for the restaurant
 		if (mRestaurant != null) {
-			savedInstanceState.putString(DineOnConstants.KEY_RESTAURANT, mRestaurant.getObjId());
+			savedInstanceState.putParcelable(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		}
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -594,7 +535,7 @@ implements SateliteListener {
 	/**
 	 * Instantiates a new progress dialog and shows it on the screen.
 	 */
-	protected void createProgressDialog() {
+	protected void createProgressDialog(boolean cancelable) {
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			return;
 		}
@@ -602,6 +543,7 @@ implements SateliteListener {
 		mProgressDialog.setTitle("Loading...");
 		mProgressDialog.setMessage("Getting you your restaurant");
 		mProgressDialog.setIndeterminate(true);
+		mProgressDialog.setCancelable(cancelable);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		mProgressDialog.show();
 	}

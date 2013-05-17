@@ -1,5 +1,8 @@
 package uw.cse.dineon.library;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
@@ -15,14 +18,14 @@ public class MenuItem extends Storable {
 	private static final String PRICE = "price";
 	private static final String DESCRIPTION = "description";
 	private static final String TITLE = "title";
-	
+
 	// We dont want 
 	private final int mProductID;		// ID of this product
 	private final double mPrice;  // price of this product
 	private final String mTitle; 
 	private final String mDescription;	// description of this product
 	// TODO Image id;
-	
+
 	/**
 	 * Creates a new MenuItem with the given parameters.
 	 * 
@@ -38,7 +41,7 @@ public class MenuItem extends Storable {
 		this.mDescription = description;
 		this.mTitle = title;
 	}
-	
+
 	/**
 	 * Creates a new MenuItem in from the given Parcel.
 	 * 
@@ -61,13 +64,13 @@ public class MenuItem extends Storable {
 	public int getProductID() {
 		return mProductID;
 	}
-	
-//	/**
-//	 * @param productID the productID to set
-//	 */
-//	public void setProductID(int productID) {
-//		this.mProductID = productID;
-//	}
+
+	//	/**
+	//	 * @param productID the productID to set
+	//	 */
+	//	public void setProductID(int productID) {
+	//		this.mProductID = productID;
+	//	}
 
 	/**
 	 * @return the price
@@ -75,7 +78,7 @@ public class MenuItem extends Storable {
 	public double getPrice() {
 		return mPrice;
 	}
-	
+
 	/**
 	 * @return the title
 	 */
@@ -83,12 +86,12 @@ public class MenuItem extends Storable {
 		return mTitle;
 	}
 
-//	/**
-//	 * @param price the price to set
-//	 */
-//	public void setPrice(double price) {
-//		this.mPrice = price;
-//	}
+	//	/**
+	//	 * @param price the price to set
+	//	 */
+	//	public void setPrice(double price) {
+	//		this.mPrice = price;
+	//	}
 
 	/**
 	 * @return the description
@@ -97,12 +100,12 @@ public class MenuItem extends Storable {
 		return mDescription;
 	}
 
-//	/**
-//	 * @param description the description to set
-//	 */
-//	public void setDescription(String description) {
-//		this.mDescription = description;
-//	}
+	//	/**
+	//	 * @param description the description to set
+	//	 */
+	//	public void setDescription(String description) {
+	//		this.mDescription = description;
+	//	}
 
 	/**
 	 * Packs this MenuItem into a ParseObject to be stored.
@@ -118,68 +121,52 @@ public class MenuItem extends Storable {
 		pobj.put(TITLE, mTitle);
 		return pobj;
 	}
+	
+	/**
+	 * Creates a menu item from Parcel.
+	 * @param source Source to create menu item from
+	 */
+	protected MenuItem(Parcel source) {
+		super(source);
+		mProductID = source.readInt();
+		mPrice = source.readDouble();
+		mTitle = source.readString();
+		mDescription = source.readString();
+	}
 
-//	/**
-//	 * Unpacks the given ParseObject into this MenuItem setting
-//	 * field values to the given data.
-//	 * 
-//	 * @param pobj ParseObject to be unpacked into a MenuItem
-//	 */
-//	@SuppressWarnings("static-access")
-//	@Override
-//	public void unpackObject(ParseObject pobj) {
-//		this.setObjId(pobj.getObjectId());
-//		this.setProductID(pobj.getInt(this.PRODUCT_ID));
-//		this.setPrice(pobj.getDouble(this.PRICE));
-//		this.setDescription(pobj.getString(this.DESCRIPTION));
-//	}
-//
-//	@Override
-//	public int describeContents() {
-//		return 0;
-//	}
+	/**
+	 * Writes this MenuItem to Parcel dest in the order:
+	 * int, double, String to be retrieved at a later time.
+	 * 
+	 * @param dest Parcel to write MenuItem data to.
+	 * @param flags int
+	 */
+	// NOTE: if you change the write order you must change the read order
+	// below.
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
+		dest.writeInt(mProductID);
+		dest.writeDouble(mPrice);
+		dest.writeString(mTitle);
+		dest.writeString(mDescription);
+	}
 
-//	/**
-//	 * Writes this MenuItem to Parcel dest in the order:
-//	 * int, double, String to be retrieved at a later time.
-//	 * 
-//	 * @param dest Parcel to write MenuItem data to.
-//	 * @param flags int
-//	 */
-//	// NOTE: if you change the write order you must change the read order
-//	// below.
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		dest.writeInt(productID);
-//		dest.writeDouble(price);
-//		dest.writeString(description);
-//	}
-//	
-//	/**
-//	 * Helper method for updating MenuItem with the data from a Parcel.
-//	 * @param source Parcel containing data in the order: int, double, string
-//	 */
-//	private void readFromParcel(Parcel source) {
-//		productID = source.readInt();
-//		price = source.readDouble();
-//		description = source.readString();
-//	}
-//	
-//	/**
-//	 * Parcelable creator object of a MenuItem.
-//	 * Can create a MenuItem from a Parcel.
-//	 */
-//	public static final Parcelable.Creator<MenuItem> CREATOR = 
-//			new Parcelable.Creator<MenuItem>() {
-//
-//				@Override
-//				public MenuItem createFromParcel(Parcel source) {
-//					return new MenuItem(source);
-//				}
-//
-//				@Override
-//				public MenuItem[] newArray(int size) {
-//					return new MenuItem[size];
-//				}
-//			};
+	/**
+	 * Parcelable creator object of a MenuItem.
+	 * Can create a MenuItem from a Parcel.
+	 */
+	public static final Parcelable.Creator<MenuItem> CREATOR = 
+			new Parcelable.Creator<MenuItem>() {
+
+		@Override
+		public MenuItem createFromParcel(Parcel source) {
+			return new MenuItem(source);
+		}
+
+		@Override
+		public MenuItem[] newArray(int size) {
+			return new MenuItem[size];
+		}
+	};
 }

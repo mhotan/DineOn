@@ -140,7 +140,15 @@ public final class DineOnConstants {
 	 * write dates to string and turn those strings
 	 * back into Dates
 	 */
-	public static final DateFormat MDATEFORMAT = 
+	private static final DateFormat MDATEFORMAT = 
 			DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, Locale.getDefault()); 
 
+	/**
+	 * Returns the Date format for use with both applications.
+	 * @return Date format to use.
+	 */
+	public static DateFormat getCurrentDateFormat(){ 
+		return MDATEFORMAT;
+	}
+	
 }
