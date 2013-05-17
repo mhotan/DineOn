@@ -55,9 +55,14 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	 */
 	protected DineOnUser mUser;	
 
-	private String mUserId;
+	/**
+	 * Satellite for communication.
+	 */
 	private UserSatellite mSat;
 
+	/**
+	 * A self reference.
+	 */
 	private DineOnUserActivity thisActivity;
 
 	@Override
@@ -75,18 +80,21 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		// 1. 
 		Bundle extras = getIntent() == null ? null : getIntent().getExtras();
 
-		if (extras != null) {
-			mUserId = extras.getString(DineOnConstants.KEY_USER);
+		if (extras != null && extras.containsKey(DineOnConstants.KEY_USER)) {
+			mUser = extras.getParcelable(DineOnConstants.KEY_USER);
 		} // 2.  
-		else if (savedInstanceState.containsKey(DineOnConstants.KEY_USER)) {
-			mUserId = savedInstanceState.getString(DineOnConstants.KEY_USER);
+		else if (savedInstanceState != null 
+				&& savedInstanceState.containsKey(DineOnConstants.KEY_USER)) {
+			mUser = savedInstanceState.getParcelable(DineOnConstants.KEY_USER);
 		} else {
 			Log.e(TAG, "Unable to retrieve user instance");
 			return;
 		}
-
-		// Get the latest copy of this user instance
-
+		
+		if (mUser == null) {
+			Utility.getBackToLoginAlertDialog(this, 
+					"Unable to find your information", UserLoginActivity.class).show();
+		}
 	}
 
 	/**
@@ -98,9 +106,8 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	public void startActivity(Intent intent) {
 		// Adds the User object id
 		if (mUser != null) {
-			intent.putExtra(DineOnConstants.KEY_USER, mUser.getObjId());
+			intent.putExtra(DineOnConstants.KEY_USER, mUser);
 		} else if (DineOnConstants.DEBUG && mUser == null) {
-			// TODO change to Dialog box
 			Toast.makeText(this, "Need to create or download a User", Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -126,32 +133,14 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	protected void onResume() {
 		super.onResume();
 
-		ParseQuery query = new ParseQuery(DineOnUser.class.getSimpleName());
-		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
-		query.getInBackground(mUserId, new GetCallback() {
-
-			@Override
-			public void done(ParseObject object, ParseException e) {
-				if (e == null) {
-					try {
-						// Success
-						mUser = new DineOnUser(object);
-						mSat.register(mUser, thisActivity);
-					} catch (Exception e1) {
-						Log.d(TAG, e1.getMessage());
-					}
-				} else { 
-					Utility.getBackToLoginAlertDialog(thisActivity, UserLoginActivity.class).show();
-				}
-				intializeUI();
-			}
-		});
+		mSat.register(mUser, thisActivity);
+		intializeUI();
+		
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-
 	}
 
 	@Override

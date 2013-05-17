@@ -57,7 +57,7 @@ LoginFragment.OnLoginListener {
 	/**
 	 * Reference to User object that is created or downloaded.
 	 */
-	private String mUserID;
+	private DineOnUser mUser;
 
 	/**
 	 * Progress bar dialog for showing user progress.
@@ -88,11 +88,11 @@ LoginFragment.OnLoginListener {
 	 */
 	@Override
 	public void startActivity(Intent intent) {
-		if (DineOnConstants.DEBUG && mUserID == null) {
+		if (DineOnConstants.DEBUG && mUser == null) {
 			Toast.makeText(this, "Need to create or download a User", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		intent.putExtra(DineOnConstants.KEY_USER, mUserID);
+		intent.putExtra(DineOnConstants.KEY_USER, mUser);
 		super.startActivity(intent);
 	}
 	
@@ -143,9 +143,11 @@ LoginFragment.OnLoginListener {
 	/**
 	 * Starts Restaurant selection activity with current.
 	 * TODO send a user instance through this bundle
+	 * @param user User to send of the
 	 */
-	private void startRestSelectionAct() {
+	private void startRestSelectionAct(DineOnUser user) {
 		// Destroy any running progress dialog
+		mUser = user;
 		destroyProgressDialog();
 		Intent i = new Intent(this, RestaurantSelectionActivity.class);
 		startActivity(i);
@@ -312,8 +314,7 @@ LoginFragment.OnLoginListener {
 					public void done(ParseException e) {
 						destroyProgressDialog();
 						if (e == null) { // Success
-							mUserID = M_USER.getObjId();
-							startRestSelectionAct();
+							startRestSelectionAct(M_USER);
 						} else {
 							Utility.getGeneralAlertDialog("Login Failed", 
 									e.getMessage(), thisCxt).show();
@@ -368,8 +369,7 @@ LoginFragment.OnLoginListener {
 			if (e == null) {
 				// We have found the correct object
 				try {
-					mUserID = object.getObjectId();
-					startRestSelectionAct();
+					startRestSelectionAct(new DineOnUser(object));
 				} catch (Exception e1) { // Unable to fetch UserInfo
 					Log.e(TAG, "unable to extract user info: " + e1);
 				}

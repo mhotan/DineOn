@@ -2,6 +2,7 @@ package uw.cse.dineon.library;
 
 import uw.cse.dineon.library.util.RepresentationException;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.parse.GetCallback;
@@ -22,7 +23,7 @@ import com.parse.SaveCallback;
  * @author Jordan, Mike
  *
  */
-public abstract class Storable {
+public abstract class Storable implements Parcelable {
 
 	/**
 	 * Tag for logging information.
@@ -178,20 +179,6 @@ public abstract class Storable {
 	}
 
 	/**
-	 * 
-	 * @author mhotan
-	 */
-	public interface StateChangeListener {
-
-		/**
-		 * 
-		 * @param s Storable who's state changed
-		 */
-		public void onStateChanged(Storable s);
-
-	}
-
-	/**
 	 * Constructs a Storable instance from a Parcel.
 	 * Has to refetch the instance of the object from parse.
 	 * It does this in the background.
@@ -202,7 +189,7 @@ public abstract class Storable {
 		mCompleteObject = new ParseObject(this.getClass().getSimpleName());
 		mCompleteObject.setObjectId(id);
 		// Download this object asynchronously
-		mCompleteObject.fetchIfNeededInBackground(new GetCallback() {
+		mCompleteObject.fetchInBackground(new GetCallback() {
 
 			@Override
 			public void done(ParseObject object, ParseException e) {
@@ -218,12 +205,19 @@ public abstract class Storable {
 		});
 	}
 
-	/**
-	 * Updates the state of 
-	 * @param object Object 
-	 */
-	//public abstract void updateState(ParseObject object);
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		String objectId = this.getObjId();
+		if (objectId == null) {
+			Log.e(tag, "Trying to write unsaved Parse Object to Parcel");
+		}
+		dest.writeString(objectId);
+	}
 
+	@Override
+	public int describeContents() {
+		return 0;
+	}
 
 	//	@Override
 	//	public void writeToParcel(Parcel dest, int flags) {

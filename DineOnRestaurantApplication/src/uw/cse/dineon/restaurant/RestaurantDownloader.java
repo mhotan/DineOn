@@ -75,8 +75,7 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 	/**
 	 * Creates a Restaurant Downloader that explicitly looks for a Restaurant
 	 * by object id.
-	 * @param id ParseUser to use to download the restaurant
-	 * @param policy Cache policy to user to download the restaurant. 
+	 * @param id ParseUser to use to download the restaurant 
 	 * @param callback Callback to listen for events
 	 */
 	public RestaurantDownloader(String id, RestaurantDownLoaderCallback callback) {
@@ -94,7 +93,11 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 	// Background process.
 	@Override
 	protected Restaurant doInBackground(CachePolicy... params) {
-		CachePolicy policy = params[0] == null ? CachePolicy.NETWORK_ELSE_CACHE : params[0];
+		if (params[0] == null) {
+			params[0] = CachePolicy.NETWORK_ELSE_CACHE;
+		}
+		CachePolicy policy = params[0];
+		
 		try {
 			// Download by Parse User
 			if (mParseUser != null) {

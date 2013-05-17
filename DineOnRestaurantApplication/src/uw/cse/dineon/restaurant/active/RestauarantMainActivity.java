@@ -6,6 +6,7 @@ import java.util.List;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
@@ -54,6 +55,8 @@ DiningSessionListListener {
 		setContentView(R.layout.activity_restaurant_main);
 
 		mPager = (ViewPager) findViewById(R.id.pager_restaurant_main);
+		// Tells adapter to refresh.
+		
 	}
 
 	@Override
@@ -65,9 +68,11 @@ DiningSessionListListener {
 			return;
 		}
 
-		// Tells adapter to refresh.
+		// Reset the adapter
 		mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
 		mPager.setAdapter(mPagerAdapter);
+		
+		mPagerAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -181,8 +186,8 @@ DiningSessionListListener {
 	public void onRequestRequestDetail(CustomerRequest request) {
 		DevelopTools.getUnimplementedDialog(this, null);
 
-		
-		
+
+
 		//		Intent intent = new Intent(getApplicationContext(),
 		//				RequestDetailActivity.class);
 		//		startActivity(intent);
@@ -236,6 +241,8 @@ DiningSessionListListener {
 
 		private Fragment mCurrent;
 
+		private final Fragment[] mFragments;
+
 		/**
 		 * This is a PageAdapter to control Restaurant displays
 		 * that show orders, customer requests, and sessions.
@@ -243,6 +250,7 @@ DiningSessionListListener {
 		 */
 		public ScreenSlidePagerAdapter(FragmentManager fragmentManager) {
 			super(fragmentManager);
+			mFragments = new Fragment[3];
 		}
 
 		@Override
@@ -263,6 +271,7 @@ DiningSessionListListener {
 				f = new DiningSessionListFragment();
 			}
 
+			mFragments[position] = f;
 			mCurrent = f;
 			return mCurrent;
 		}
@@ -284,6 +293,13 @@ DiningSessionListListener {
 		 */
 		public Fragment getCurrentFragment() {
 			return mCurrent;
+		}
+
+		/**
+		 * @return an array of all current restaurants.
+		 */
+		public Fragment[] getAllCurrentFragments(){
+			return mFragments;
 		}
 	}
 

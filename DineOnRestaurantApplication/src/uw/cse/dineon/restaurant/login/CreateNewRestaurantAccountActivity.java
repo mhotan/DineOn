@@ -37,7 +37,7 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 	/**
 	 * String representation of restaurant id.
 	 */
-	private String mRestaurantID;
+	private Restaurant mRestaurant;
 
 	/**
 	 * Progress bar dialog for showing user progress.
@@ -64,7 +64,7 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 	 */
 	@Override
 	public void startActivity(Intent intent) {
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurantID);
+		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		super.startActivity(intent);
 	}
 
@@ -106,8 +106,6 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 		
 		@Override
 		public void done(ParseException e) {
-			// stop the alert dialog
-			destroyProgressDialog();
 
 			if (e == null) {
 				// Download the Restaurant
@@ -136,7 +134,8 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 	public void onDownloadedRestaurant(Restaurant rest) {
 		if (rest != null) {
 			if (!DineOnConstants.DEBUG) {
-				mRestaurantID = rest.getObjId();
+				destroyProgressDialog();
+				mRestaurant = rest;
 				startMainActivity();
 				return;
 			}
@@ -162,9 +161,9 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 				
 				@Override
 				public void done(ParseException e) {
+					destroyProgressDialog();
 					if (e == null) {
-						
-						mRestaurantID = REST2.getObjId();
+						mRestaurant = REST2;
 						startMainActivity();
 					}
 				}

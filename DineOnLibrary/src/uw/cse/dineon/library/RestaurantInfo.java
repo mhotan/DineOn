@@ -5,9 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 /**
@@ -16,25 +21,27 @@ import com.parse.ParseUser;
  *
  */
 public class RestaurantInfo extends Storable {
-	
+
 	private static final String TAG = RestaurantInfo.class.getSimpleName();
-	
+
 	public static final String PARSEUSER = "parseUser";
+	public static final String NAME = "restaurantName";
 	public static final String ADDR = "restaurantAddr";
 	public static final String PHONE = "restaurantPhone";
 	public static final String IMAGE_MAIN = "restaurantImageMain";
 	public static final String IMAGE_LIST = "restaurantImageList";
 	public static final String MENUS = "restaurantMenu";
-	
+
 	private static final String UNDETERMINED = "Undetermined";
-	
-	
+
 	private final ParseUser mUser;
+	// Lets set the name of the restaurant once and only once.
+	private final String mName;
 	private String mAddress;
 	private String mPhone;
 	private int mMainImageIndex; // Index of Main image
-	private List<String> mImageList; // Mapping of Parse Object IDs
-	private List<Menu> mMenus; // All menus
+	private final List<String> mImageList; // Mapping of Parse Object IDs
+	private final List<Menu> mMenus; // All menus
 
 	/**
 	 * Creates a bare restaurant info using the inputted name.
@@ -45,13 +52,14 @@ public class RestaurantInfo extends Storable {
 		super(RestaurantInfo.class);
 		name.fetchIfNeeded();
 		mUser = name;
+		mName = mUser.getUsername();
 		mAddress = UNDETERMINED;
 		mPhone = UNDETERMINED;
 		mMainImageIndex = 0;
 		mImageList = new ArrayList<String>();
 		mMenus = new ArrayList<Menu>();
 	}
-	
+
 	/**
 	 * Creates a RestaurantInfo object from the given ParseObject.
 	 * 
@@ -61,17 +69,21 @@ public class RestaurantInfo extends Storable {
 	public RestaurantInfo(ParseObject po) throws ParseException {
 		super(po);
 		mUser = po.getParseUser(PARSEUSER).fetchIfNeeded();
+		mName = po.getString(NAME);
 		mAddress = po.getString(ADDR);
 		mPhone = po.getString(PHONE);
 		mMainImageIndex = po.getInt(IMAGE_MAIN);
 		mImageList = po.getList(IMAGE_LIST);
 		mMenus = ParseUtil.toListOfStorables(Menu.class, po.getList(MENUS));
 	}
-	
+
+
+
 	@Override
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
 		po.put(PARSEUSER, mUser);
+		po.put(NAME, mName);
 		po.put(ADDR, mAddress);
 		po.put(PHONE, mPhone);
 		po.put(IMAGE_MAIN, mMainImageIndex);
@@ -84,7 +96,7 @@ public class RestaurantInfo extends Storable {
 	 * @return String Restaurant name
 	 */
 	public String getName() {
-		return mUser.getUsername();
+		return mName;
 	}
 
 	/**
@@ -111,6 +123,7 @@ public class RestaurantInfo extends Storable {
 	/**
 	 * Must Adhere to some form of a number.
 	 * (123)456-7890
+	 * number cannot be null.
 	 * @param number String representation of a phone number
 	 */
 	public void setPhone(String number) {
@@ -142,9 +155,9 @@ public class RestaurantInfo extends Storable {
 	public List<String> getImageList() {
 		return mImageList;
 	}
-	
+
 	/**
-	 * Retrieves menu with associated name menuName
+	 * Retrieves menu with associated name menuName.
 	 * 
 	 * @param menuName MenuName to search for
 	 * @return Menu with argument name, null otherwise
@@ -153,7 +166,7 @@ public class RestaurantInfo extends Storable {
 		if (menuName == null) {
 			return null;
 		}
-		
+
 		for (Menu m : mMenus) {
 			if (m.getName().equals(menuName)) {
 				return m;
@@ -174,10 +187,10 @@ public class RestaurantInfo extends Storable {
 		if (menu == null) {
 			return false;
 		}
-		
+
 		return getMenu(menu.getName()) != null;
 	}
-	
+
 	/**
 	 * If the menu with the same name does not exist already this menu
 	 * will be added.
@@ -185,13 +198,13 @@ public class RestaurantInfo extends Storable {
 	 * @return true if the menu did not exists already, 
 	 * false if the menu was not added because it already exists   
 	 */
-	public boolean addMenu(Menu newMenu){
+	public boolean addMenu(Menu newMenu) {
 		if (hasMenu(newMenu)) {
 			return mMenus.add(newMenu);
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Adds a new Item to associated Menu.
 	 * @param menu Menu to add to.
@@ -202,7 +215,7 @@ public class RestaurantInfo extends Storable {
 		if (!hasMenu(menu)) {
 			return false;
 		}
-		
+
 		for (Menu m : mMenus) {
 			if (m.getName().equals(menu.getName())) {
 				menu.addNewItem(item);
@@ -211,7 +224,7 @@ public class RestaurantInfo extends Storable {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Removes a menu from the restaurant.
 	 * @param menu menu to remove
@@ -223,93 +236,61 @@ public class RestaurantInfo extends Storable {
 		}
 		return mMenus.remove(getMenu(menu.getName()));
 	}
+
+	/**
+	 * Creates Restaurant Info from a Parcel.
+	 * @param source Source to use to build Restaurant Info.
+	 */
+	public RestaurantInfo(Parcel source) {
+		super(source);
+		mUser = new ParseUser();
+		mUser.setObjectId(source.readString());
+		mUser.fetchInBackground(new GetCallback() {
+			
+			@Override
+			public void done(ParseObject o, ParseException e) {
+				if (e != null) {
+					Log.e(TAG, "Unable to fetch user");
+				}
+			}
+		});
+		mName = source.readString();
+		mAddress = source.readString();
+		mPhone = source.readString();
+		mMainImageIndex = source.readInt();
+		mImageList = new ArrayList<String>();
+		source.readList(mImageList, String.class.getClassLoader());
+		mMenus = new ArrayList<Menu>();
+		source.readTypedList(mMenus, Menu.CREATOR);
+	}
 	
-//	/**
-//	 * @param images list of Integers
-//	 */
-//	public void setImageList(List<Integer> images) {
-//		this.mImageList = images;
-//	}
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
+		dest.writeString(mUser.getObjectId());
+		dest.writeString(mName);
+		dest.writeString(mAddress);
+		dest.writeString(mPhone);
+		dest.writeInt(mMainImageIndex);
+		dest.writeList(mImageList);
+		dest.writeTypedList(mMenus);
+	}
 
-//	/**
-//	 * @return Menu of Restaurant
-//	 */
-//	public Menu getMenu() {
-//		return ;
-//	}
-//
-//	/**
-//	 * @param m Menu
-//	 */
-//	public void setMenu(Menu m) {
-//		this.menu = m;
-//	}
+	/**
+	 * Parcelable creator object of a RestaurantInfo.
+	 * Can create a RestaurantInfo from a Parcel.
+	 */
+	public static final Parcelable.Creator<RestaurantInfo> CREATOR = 
+			new Parcelable.Creator<RestaurantInfo>() {
 
+		@Override
+		public RestaurantInfo createFromParcel(Parcel source) {
+			return new RestaurantInfo(source);
+		}
 
-
-
-//
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public void unpackObject(ParseObject pobj) {
-//		this.setObjId(pobj.getObjectId());
-//		this.setName(pobj.getString(RestaurantInfo.NAME));
-//		this.setAddr(pobj.getString(RestaurantInfo.ADDR));
-//		this.setPhone(pobj.getInt(RestaurantInfo.PHONE));
-//		this.setImageMain(pobj.getInt(RestaurantInfo.IMAGE_MAIN));
-//		this.setImageList((List<Integer>) pobj.get(RestaurantInfo.IMAGE_LIST));
-//
-//		Menu menu = new Menu("", null);
-//		menu.unpackObject((ParseObject) pobj.get(RestaurantInfo.MENU));
-//		this.setMenu(menu);
-//	}
-//
-//	@Override
-//	public int describeContents() {
-//		return 0;
-//	}
-//
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		dest.writeString(mName);
-//		dest.writeString(mAddress);
-//		dest.writeInt(mPhone);
-//		dest.writeInt(mMainImageIndex);
-//		dest.writeList(mImageList);
-//		dest.writeParcelable(menu, flags);
-//		dest.writeString(this.getObjId());
-//		
-//	}
-//	
-//	/**
-//	 * Parcelable creator object of a RestaurantInfo.
-//	 * Can create a RestaurantInfo from a Parcel.
-//	 */
-//	public static final Parcelable.Creator<RestaurantInfo> CREATOR = 
-//			new Parcelable.Creator<RestaurantInfo>() {
-//
-//				@Override
-//				public RestaurantInfo createFromParcel(Parcel source) {
-//					return new RestaurantInfo(source);
-//				}
-//
-//				@Override
-//				public RestaurantInfo[] newArray(int size) {
-//					return new RestaurantInfo[size];
-//				}
-//	};
-//			
-//	/**
-//	 * Read an object back out of parcel.
-//	 * @param source parcel to read from.
-//	 */
-//	private void readFromParcel(Parcel source) {
-//		this.setName(source.readString());
-//		this.setAddr(source.readString());
-//		this.setPhone(source.readInt());
-//		this.setImageMain(source.readInt());
-//		source.readList(mImageList, Integer.class.getClassLoader());
-//		this.setMenu((Menu)source.readParcelable(Menu.class.getClassLoader()));
-//		this.setObjId(source.readString());
-//	}
+		@Override
+		public RestaurantInfo[] newArray(int size) {
+			return new RestaurantInfo[size];
+		}
+	};
 }
