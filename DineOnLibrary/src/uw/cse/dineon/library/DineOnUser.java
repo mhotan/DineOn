@@ -8,7 +8,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.ParseException;
-import com.parse.ParseFacebookUtils.Permissions.User;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 

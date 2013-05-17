@@ -7,7 +7,12 @@ import java.util.List;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -91,6 +96,7 @@ public class RestaurantListFragment extends ListFragment {
 		 * @return return the list of restaurant infos.
 		 */
 		public List<RestaurantInfo> getRestaurants();
+
 
 	}
 

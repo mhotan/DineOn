@@ -9,7 +9,6 @@ import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
-import uw.cse.dineon.library.UserInfo;
 
 import com.parse.ParseUser;
 

@@ -6,7 +6,6 @@ import java.util.List;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
-import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;

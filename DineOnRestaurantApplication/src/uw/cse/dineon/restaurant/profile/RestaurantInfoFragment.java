@@ -3,9 +3,6 @@ package uw.cse.dineon.restaurant.profile;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.parse.ParseException;
-import com.parse.SaveCallback;
-
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.R;
@@ -25,6 +22,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 /**
  * Main view that allows the user to access and see their restaurant.
