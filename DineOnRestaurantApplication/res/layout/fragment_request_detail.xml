@@ -1,149 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/label_request_title_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="#14140E"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
-        android:text="@string/label_request_blank"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#46C4F2" />
-
-    <TextView
-        android:id="@+id/label_price_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/label_request_title_detail"
-        android:text="Details: " />
-
-    <TextView
-        android:id="@+id/text_details_request"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/label_price_description"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/label_request_title_detail"
-        android:layout_toRightOf="@+id/label_price_description"
-        android:text="DETAILS GO HERE!" />
-
-    <TableLayout
-        android:id="@+id/table"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_details_request"
-        android:layout_centerHorizontal="true" >
+        android:orientation="vertical" >
 
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/label_table_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Table Number: " />
-
-            <TextView
-                android:id="@+id/input_table_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="REPLACE WITH NUMBER" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow2"
+        <TextView
+            android:id="@+id/label_request_title_detail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="#14140E"
+            android:paddingBottom="4dp"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:text="@string/label_request_blank"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#46C4F2" />
 
-            <TextView
-                android:id="@+id/label_time_taken"
-                android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/label_request_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Table Number: " />
+
+        <TextView
+            android:id="@+id/label_request_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time requested: " />
+
+        <TextView
+            android:id="@+id/label_request_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Details: " />
+
+        <TextView
+            android:id="@+id/label_request_assign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="#14140E"
+            android:textColor="#46C4F2"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:text="@string/label_assign_to"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+             />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Spinner
+                android:id="@+id/spinner_staff"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Time requested: " />
+                android:layout_weight="1" />
 
-            <TextView
-                android:id="@+id/input_time_taken"
-                android:layout_width="match_parent"
+            <RadioGroup
+                android:id="@+id/radiogroup_urgency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <RadioButton
+                    android:id="@+id/radio_urgency_normal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/label_radio_urgency_normal" />
+
+                <RadioButton
+                    android:id="@+id/radio_urgency_important"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_urgency_important" />
+
+                <RadioButton
+                    android:id="@+id/radio_urgency_priority"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_urgency_priority" />
+            </RadioGroup>
+
+            <ImageButton
+                android:id="@+id/button_send_to_staff"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="REPLACE WITH TIME" />
-        </TableRow>
-    </TableLayout>
+                android:gravity="right"
+                android:src="@drawable/social_forward" />
+        </LinearLayout>
 
-    <Spinner
-        android:id="@+id/spinner_staff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/radiogroup_urgency"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/radiogroup_urgency"
-        android:layout_toLeftOf="@+id/radiogroup_urgency" />
-
-    <ImageButton
-        android:id="@+id/button_send_to_staff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/radiogroup_urgency"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/radiogroup_urgency"
-        android:src="@drawable/social_forward" />
-
-    <RadioGroup
-        android:id="@+id/radiogroup_urgency"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/table"
-        android:layout_toLeftOf="@+id/button_send_to_staff" >
-
-        <RadioButton
-            android:id="@+id/radio_urgency_normal"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/label_price_description"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/label_radio_urgency_normal" />
+            android:layout_marginTop="10dp"
+            android:background="#14140E"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:text="@string/label_message_customer"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#46C4F2" />
 
-        <RadioButton
-            android:id="@+id/radio_urgency_important"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_urgency_important" />
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal" >
 
-        <RadioButton
-            android:id="@+id/radio_urgency_priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_urgency_priority" />
-    </RadioGroup>
+            <EditText
+                android:id="@+id/edittext_send_message_request"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/hint_send_message"
+                android:inputType="textMultiLine" >
+            </EditText>
 
-    <EditText
-        android:id="@+id/edittext_send_message_request"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button_send_message"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/radiogroup_urgency"
-        android:layout_below="@+id/spinner_staff"
-        android:ems="10"
-        android:inputType="textMultiLine" >
+            <ImageButton
+                android:id="@+id/button_send_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:src="@drawable/message" />
+        </LinearLayout>
+    </LinearLayout>
 
-        <requestFocus />
-    </EditText>
-
-    <ImageButton
-        android:id="@+id/button_send_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button_send_to_staff"
-        android:layout_below="@+id/button_send_to_staff"
-        android:src="@drawable/send_message" />
-
-</RelativeLayout>
+</ScrollView>

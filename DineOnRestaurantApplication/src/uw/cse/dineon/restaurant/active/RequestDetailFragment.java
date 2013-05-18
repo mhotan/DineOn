@@ -50,9 +50,9 @@ implements OnCheckedChangeListener, OnClickListener {
 		mRequest = null;
 
 		mTitle = (TextView) view.findViewById(R.id.label_request_title_detail);
-		mDetails = (TextView) view.findViewById(R.id.text_details_request);
-		mTableNumber = (TextView) view.findViewById(R.id.input_table_number);
-		mTimeTaken = (TextView) view.findViewById(R.id.input_time_taken);
+		mDetails = (TextView) view.findViewById(R.id.label_request_details);
+		mTableNumber = (TextView) view.findViewById(R.id.label_request_table);
+		mTimeTaken = (TextView) view.findViewById(R.id.label_request_time);
 
 		// TODO Add staff members implementation
 		ArrayList<String> staff = new ArrayList<String>();

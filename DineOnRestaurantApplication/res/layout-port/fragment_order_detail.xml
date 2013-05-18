@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/label_order_title_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="#14140E"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:gravity="center"
+        android:text="@string/label_order_blank"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#46C4F2" />
+
+    <TextView
+        android:id="@+id/label_order_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Table Number: " />
+
+    <TextView
+        android:id="@+id/label_order_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Time requested: " />
+
+    <TextView
+        android:id="@+id/label_order_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Details: " />
+
+    <TextView
+        android:id="@+id/label_order_contents"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#14140E"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:text="@string/label_order_contents"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#46C4F2" />
+
+    <ListView
+        android:id="@+id/list_order"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/label_message_customer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#14140E"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:text="@string/label_message_customer"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#46C4F2" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/edittext_message_block"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/hint_send_message"
+            android:inputType="textMultiLine" >
+        </EditText>
+
+        <ImageButton
+            android:id="@+id/button_send_message_fororder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:src="@drawable/message" />
+    </LinearLayout>
+
+</LinearLayout>

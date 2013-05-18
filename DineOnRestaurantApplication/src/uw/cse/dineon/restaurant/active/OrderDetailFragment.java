@@ -38,8 +38,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		mOrder = null;
 
 		mTitle = (TextView) view.findViewById(R.id.label_order_title_detail);
-		mTableInput = (TextView) view.findViewById(R.id.input_table_number);
-		mTakenTime = (TextView) view.findViewById(R.id.input_time_taken);
+		mTableInput = (TextView) view.findViewById(R.id.label_order_table);
+		mTakenTime = (TextView) view.findViewById(R.id.label_order_time);
 
 		mMessageInput = (EditText) view.findViewById(R.id.edittext_message_block);
 		mSendMessageButton = (ImageButton) view.findViewById(R.id.button_send_message_fororder);

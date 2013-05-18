@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="hello">Hello World, RestaurantLoginActivity</string>
     <string name="app_name">DineOn</string>
     <string name="TaskTitle">Restaurant Order</string>
@@ -39,7 +40,7 @@
     <string name="hint_password_repeat">Repeat Password</string>
     <string name="hint_restaurant_name">Your Restaurant Name</string>
     <string name="husky_soft_logo">HuskySoft Logo</string>
-    <string name="label_assign_to">Assign To:</string>
+    <string name="label_assign_to">Assign To</string>
     <string name="button_assign">Assign Button</string>
     <string name="button_remove_request">Remove Request Button</string>
     <string name="label_request_default">Request Goes Here</string>
@@ -47,5 +48,7 @@
     <string name="button_accordion">Accordion Button</string>
     <string name="label_order_default">Order Goes Here</string>
     <string name="label_orders">Orders:</string>
+    <string name="label_order_contents">Order Contents</string>
+    <string name="label_message_customer">Message Customer</string>
 
 </resources>

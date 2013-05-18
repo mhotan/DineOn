@@ -1,94 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:weightSum="2" >
 
-    <TextView
-        android:id="@+id/label_order_title_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="#14140E"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
-        android:text="@string/label_order_blank"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#46C4F2" />
-
-    <TableLayout
-        android:id="@+id/table"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/label_order_title_detail"
-        android:layout_centerHorizontal="true" >
-
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/label_table_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Table Number: " />
-
-            <TextView
-                android:id="@+id/input_table_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="REPLACE WITH NUMBER" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/label_time_taken"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Time taken: " />
-
-            <TextView
-                android:id="@+id/input_time_taken"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="REPLACE WITH TIME" />
-            />
-        </TableRow>
-    </TableLayout>
-
-    <ListView
-        android:id="@+id/list_order"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/edittext_message_block" />
+        android:layout_weight="1"
+        android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/edittext_message_block"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button_send_message_fororder"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/table"
-        android:ems="10"
-        android:hint="@string/hint_send_message"
-        android:inputType="textMultiLine" >
+        <TextView
+            android:id="@+id/label_order_title_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="#14140E"
+            android:gravity="center"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:text="@string/label_order_blank"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#46C4F2" />
 
-        <requestFocus />
-    </EditText>
+        <TextView
+            android:id="@+id/label_order_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Table Number: " />
 
-    <ImageButton
-        android:id="@+id/button_send_message_fororder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/table"
-        android:layout_toRightOf="@+id/edittext_message_block"
-        android:src="@drawable/send_message" />
+        <TextView
+            android:id="@+id/label_order_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time requested: " />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/label_order_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Details: " />
+
+        <TextView
+            android:id="@+id/label_message_customer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="#14140E"
+            android:gravity="center"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:text="@string/label_order_contents"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#46C4F2" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/edittext_message_block"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/hint_send_message"
+                android:inputType="textMultiLine" >
+            </EditText>
+
+            <ImageButton
+                android:id="@+id/button_send_message_fororder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:src="@drawable/message" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/label_order_contents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#14140E"
+            android:gravity="center"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:text="@string/label_order_contents"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#46C4F2" />
+
+        <ListView
+            android:id="@+id/list_order"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" />
+    </LinearLayout>
+
+</LinearLayout>
