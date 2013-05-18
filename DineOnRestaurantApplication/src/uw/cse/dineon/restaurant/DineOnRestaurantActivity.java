@@ -8,6 +8,7 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
+import uw.cse.dineon.restaurant.RestaurantDownloader.RestaurantDownLoaderCallback;
 import uw.cse.dineon.restaurant.RestaurantSatellite.SateliteListener;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
@@ -23,6 +24,7 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Toast;
 
 import com.parse.ParseException;
+import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -437,7 +439,7 @@ implements SateliteListener {
 		switch (item.getItemId()) {
 		case R.id.item_restaurant_profile:
 			startProfileActivity();
-			break;
+			return true;
 		case R.id.item_logout:
 			if (mRestaurant != null) {
 				mRestaurant.saveEventually(null);
@@ -445,10 +447,10 @@ implements SateliteListener {
 			// TODO Notify Users that Restaurant is closing
 			ParseUser.logOut();
 			startLoginActivity();
-			break;
+			return true;
 		default:
 		}
-		return true;
+		return false;
 	}
 
 	@Override

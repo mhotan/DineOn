@@ -1,4 +1,3 @@
-
 package uw.cse.dineon.library;
 
 import java.util.ArrayList;
@@ -9,13 +8,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
-
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 /**
@@ -72,7 +68,7 @@ public class RestaurantInfo extends Storable {
 	public RestaurantInfo(ParseObject po) throws ParseException {
 		super(po);
 		mUser = po.getParseUser(PARSEUSER).fetchIfNeeded();
-		mName = mUser.getUsername();
+		mName = po.getString(NAME);
 		mAddress = po.getString(ADDR);
 		mPhone = po.getString(PHONE);
 		mMainImageIndex = po.getInt(IMAGE_MAIN);
@@ -147,7 +143,6 @@ public class RestaurantInfo extends Storable {
 		pos = Math.min(Math.max(0, pos), mImageList.size() - 1);
 		if (pos == -1) {
 			//TODO Handle no images
-			Log.d(TAG, "No images set.");
 		}
 		this.mMainImageIndex = pos;
 	}

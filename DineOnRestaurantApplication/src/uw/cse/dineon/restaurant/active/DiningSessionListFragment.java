@@ -339,7 +339,7 @@ public class DiningSessionListFragment extends ListFragment {
 
 				orderString += "\n" + o.getOriginatingTime().toString() + "\n\n";
 			}
-			TextView orderText = (TextView) vwBot.findViewById(R.id.label_user_order_content);
+			TextView orderText = (TextView) vwBot.findViewById(R.id.label_order_contents);
 			orderText.setText(orderString);
 
 			return vw;

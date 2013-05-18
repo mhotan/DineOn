@@ -19,8 +19,8 @@ import com.parse.ParseObject;
 public class Menu extends Storable {
 
 	// ID used for easier parsing
-	public static final String ITEMS = "items";
-	public static final String NAME = "name";
+	public static final String ITEMS = "menuItems";
+	public static final String NAME = "menuName";
 
 	/**
 	 * Name of the menu.

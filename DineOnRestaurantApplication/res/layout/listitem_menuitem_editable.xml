@@ -12,49 +12,44 @@
         android:src="@android:drawable/ic_search_category_default" />
 
     <TextView
-        android:id="@+id/label_menuitem_editable"
+        android:id="@+id/label_menuitem_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/image_thumbnail_menuitem"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/edittext_description"
+        android:layout_toLeftOf="@+id/imageButton1"
         android:layout_toRightOf="@+id/image_thumbnail_menuitem"
         android:gravity="center"
-        android:hint="@string/hint_menuitem_title"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="@string/hint_menuitem_title"
+        android:textAppearance="?android:attr/textAppearanceMedium" >
 
-    <ImageButton
-        android:id="@+id/button_discard_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/label_menuitem_editable"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
-        android:src="@drawable/discard_content" />
+    </TextView>
 
-    <EditText
-        android:id="@+id/edittext_description"
+    <TextView
+        android:id="@+id/label_menuitem_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/image_thumbnail_menuitem"
-        android:layout_toLeftOf="@+id/button_discard_item"
         android:ems="10"
-        android:hint="@string/hint_description"
-        android:imeOptions="actionGo"
-        android:inputType="textMultiLine" />
+        android:text="@string/hint_description" />
 
-    <ImageButton
-        android:id="@+id/button_save_menuitem"
+    <TextView
+        android:id="@+id/label_menuitem_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/edittext_description"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/label_menuitem_desc"
+        android:ems="10"
+        android:text="@string/hint_price" />
+
+    <ImageButton
+        android:id="@+id/button_menuitem_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/label_menuitem_title"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/edittext_description"
-         android:background="@android:color/transparent"
-        android:layout_toRightOf="@+id/edittext_description"
-        android:src="@drawable/content_save" />
+        android:layout_alignParentTop="true"
+        android:src="@drawable/discard_content" />
 
 </RelativeLayout>

@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/listitem_user_bot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-    
     <TextView
         android:id="@+id/label_user_table"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/label_orders"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/label_user_order_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:text="@string/label_order_default"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/debug1" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/label_user_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/label_user_table"
+        android:text="@string/debug2" />
+
+    <TextView
+        android:id="@+id/label_user_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/label_user_info"
+        android:text="@string/debug3" />
+
+</RelativeLayout>

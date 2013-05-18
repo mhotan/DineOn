@@ -54,15 +54,6 @@
         android:layout_alignParentRight="true"
         android:text="Save Changes" />
 
-    <TextView
-        android:id="@+id/label_restaurant_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imagebuttons"
-        android:layout_toRightOf="@+id/label_restaurant_address"
-        android:text="Restaurant Name"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <EditText
         android:id="@+id/edittext_restaurant_address"
         android:layout_width="wrap_content"
@@ -76,27 +67,37 @@
         android:id="@+id/edittext_restaurant_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/edittext_restaurant_address"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/edittext_restaurant_address"
         android:ems="10"
         android:inputType="phone" />
 
     <TextView
-        android:id="@+id/label_restaurant_address"
+        android:id="@+id/label_restaurant_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/edittext_restaurant_phone"
+        android:layout_alignParentLeft="true"
+        android:text="Phone"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/label_restaurant_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/edittext_restaurant_address"
         android:layout_alignParentLeft="true"
         android:text="Address"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/label_restaurant_phone"
+        android:id="@+id/label_restaurant_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/edittext_restaurant_address"
-        android:layout_alignParentLeft="true"
-        android:text="Phone"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_below="@+id/imagebuttons"
+        android:layout_centerHorizontal="true"
+        android:text="Restaurant Name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
