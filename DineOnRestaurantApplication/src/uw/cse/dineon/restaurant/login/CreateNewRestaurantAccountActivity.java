@@ -1,16 +1,11 @@
 package uw.cse.dineon.restaurant.login;
 
-import uw.cse.dineon.library.CustomerRequest;
-import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DineOnConstants;
-import uw.cse.dineon.library.util.FakeRestaurantInformation;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.R;
-import uw.cse.dineon.restaurant.RestaurantDownloader;
-import uw.cse.dineon.restaurant.RestaurantDownloader.RestaurantDownLoaderCallback;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.CreateNewAccountFragment.CreateNewAccountListener;
 import android.app.ProgressDialog;
@@ -19,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 import com.parse.ParseException;
-import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -30,7 +24,7 @@ import com.parse.SignUpCallback;
  * @author mhotan
  */
 public class CreateNewRestaurantAccountActivity extends FragmentActivity 
-implements CreateNewAccountListener, RestaurantDownLoaderCallback {
+implements CreateNewAccountListener {
 
 	private static final String TAG = CreateNewRestaurantAccountActivity.class.getSimpleName();
 
@@ -109,13 +103,32 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 
 			if (e == null) {
 				// Download the Restaurant
-				RestaurantDownloader downloader = 
-						new RestaurantDownloader(mCallbackParseUser, This);
-				downloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
+				try {
+					final Restaurant NEWREST = new Restaurant(mCallbackParseUser);
+					NEWREST.saveInBackGround(new SaveCallback() {
+						
+						@Override
+						public void done(ParseException e) {
+							destroyProgressDialog();
+							if (e == null) {
+								mRestaurant = NEWREST;
+								startMainActivity();
+							} else {
+								Utility.getFailedToCreateAccountDialog(
+										e.getMessage(), This).show();
+							}
+						}
+					});
+				} catch (ParseException e1) {
+					Utility.getFailedToCreateAccountDialog(
+							"Need to be connected to internet", This).show();
+				}
 			} else {
+				destroyProgressDialog();
 				// Sign up didn't succeed. Look at the ParseException
 				// to figure out what went wrong
 				Utility.getFailedToCreateAccountDialog(e.getMessage(), This).show();
+				
 			}
 		}
 	}
@@ -124,54 +137,52 @@ implements CreateNewAccountListener, RestaurantDownLoaderCallback {
 	// /// Restaurant Downlaod Callback
 	// //////////////////////////////////////////////////////////////////////
 
-	@Override
-	public void onFailToDownLoadRestaurant(String message) {
-		ParseUser.logOut();
-		Utility.getFailedToCreateAccountDialog(message, This).show();
-	}
-
-	@Override
-	public void onDownloadedRestaurant(Restaurant rest) {
-		if (rest != null) {
-			if (!DineOnConstants.DEBUG) {
-				destroyProgressDialog();
-				mRestaurant = rest;
-				startMainActivity();
-				return;
-			}
-			
-			FakeRestaurantInformation fakey = 
-					new FakeRestaurantInformation(ParseUser.getCurrentUser());
-			
-			// Add fake restaurant orders and requests
-			for (Order o : fakey.getFakeOrders()) {
-				rest.addOrder(o);
-			}
-			
-			// Add fake Requests
-			for (CustomerRequest c : fakey.getFakeRequests()) {
-				rest.addCustomerRequest(c);
-			}
-			
-			rest.getInfo().addMenu(fakey.getEntreeMenu());
-			rest.getInfo().addMenu(fakey.getDrinkMenu());
-			
-			final Restaurant REST2 = rest;
-			REST2.saveInBackGround(new SaveCallback() {
-				
-				@Override
-				public void done(ParseException e) {
-					destroyProgressDialog();
-					if (e == null) {
-						mRestaurant = REST2;
-						startMainActivity();
-					}
-				}
-			});
-			
-
-		}
-	}
+//	@Override
+//	public void onFailToDownLoadRestaurant(String message) {
+//		ParseUser.logOut();
+//		Utility.getFailedToCreateAccountDialog(message, This).show();
+//	}
+//
+//	@Override
+//	public void onDownloadedRestaurant(Restaurant rest) {
+//		if (rest != null) {
+//			if (!DineOnConstants.DEBUG) {
+//				destroyProgressDialog();
+//				mRestaurant = rest;
+//				startMainActivity();
+//				return;
+//			}
+//			
+//			FakeRestaurantInformation fakey = 
+//					new FakeRestaurantInformation(ParseUser.getCurrentUser());
+//			
+//			// Add fake restaurant orders and requests
+//			for (Order o : fakey.getFakeOrders()) {
+//				rest.addOrder(o);
+//			}
+//			
+//			// Add fake Requests
+//			for (CustomerRequest c : fakey.getFakeRequests()) {
+//				rest.addCustomerRequest(c);
+//			}
+//			
+//			rest.getInfo().addMenu(fakey.getEntreeMenu());
+//			rest.getInfo().addMenu(fakey.getDrinkMenu());
+//			
+//			final Restaurant REST2 = rest;
+//			REST2.saveInBackGround(new SaveCallback() {
+//				
+//				@Override
+//				public void done(ParseException e) {
+//					destroyProgressDialog();
+//					if (e == null) {
+//						mRestaurant = REST2;
+//						startMainActivity();
+//					}
+//				}
+//			});
+//		}
+//	}
 	
 	/**
 	 * Starts the Main activity for this restaurant.

@@ -132,23 +132,15 @@ public final class DineOnConstants {
 	 * IE channel for receiving a broadcast from a particular restaurant would be 
 	 * 
 	 */
-	static final String CHANNEL_PREFIX = "uw_cse_dineon_";
-
-	/**
-	 * This date formatter is used for storing and sending dates
-	 * in parse objects.  This same date formatter is used to 
-	 * write dates to string and turn those strings
-	 * back into Dates
-	 */
-	private static final DateFormat MDATEFORMAT = 
-			DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, Locale.getDefault()); 
+	static final String CHANNEL_PREFIX = "uw_cse_dineon_";	 
 
 	/**
 	 * Returns the Date format for use with both applications.
 	 * @return Date format to use.
 	 */
-	public static DateFormat getCurrentDateFormat(){ 
-		return MDATEFORMAT;
+	public static DateFormat getCurrentDateFormat() { 
+		return DateFormat.getDateTimeInstance(
+				DateFormat.FULL, DateFormat.FULL, Locale.getDefault());
 	}
 	
 }
