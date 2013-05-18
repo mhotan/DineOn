@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.content.Context;
@@ -212,6 +213,6 @@ public class SubMenuFragment extends ListFragment {
 		 * TODO change to Restaurant datatype.
 		 * @return String
 		 */
-		public String getCurrentRestaurant();
+		public RestaurantInfo getCurrentRestaurant();
 	}
 }

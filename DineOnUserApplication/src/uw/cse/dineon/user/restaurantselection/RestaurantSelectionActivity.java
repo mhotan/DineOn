@@ -6,16 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -39,6 +45,12 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	
 	private List<RestaurantInfo> mRestaurants;
 	
+	private ProgressDialog mProgressDialog;
+	
+	private RestaurantInfo currentRestaurant;
+	
+	private RestaurantSelectionActivity thisActivity;
+	
 
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
@@ -48,6 +60,8 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_restaurant_selection);
+		
+		this.thisActivity = this;
 
 		// Replace the Action bar title with a message letting the 
 		// user know this is the restaurant selection page
@@ -56,10 +70,12 @@ RestaurantInfoFragment.RestaurantInfoListener {
 			ACTION_BAR.setTitle(R.string.actionbar_title_restaurant_selection);
 		}
 		
+		createProgressDialog();
+		
 		mRestaurants = new ArrayList<RestaurantInfo>();
 		
 		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
-		query.setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK);
+		query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
 		// TODO add attributes as filters are used
 		// TODO Limit will need to change later
 		query.setLimit(6); 
@@ -74,12 +90,18 @@ RestaurantInfoFragment.RestaurantInfoListener {
 							ParseObject p = objects.get(i);
 							RestaurantInfo r = new RestaurantInfo(p);
 							mRestaurants.add(r);
-							addRestaurantInfo(r);
 						} catch (ParseException e1) {
 							Log.d(TAG, e1.getMessage());
 						}
 					}
+					destroyProgressDialog();
+					if (objects.size() == 0)
+						showNoRestaurantsDialog("Couldn't get restaurants");
+					else 
+						addListOfRestaurantInfos();
 				} else { 
+					destroyProgressDialog();
+					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
 					Log.d(TAG, "No restaurants where found in the cloud.");
 				}
 			}
@@ -87,19 +109,23 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		});
 	}
 	
+	public void addListOfRestaurantInfos() {
+		addRestaurantInfos(this.mRestaurants);
+	}
+	
 	/**
 	 * Add a new restaurant info object to the restaurant list.
 	 * 
 	 * @param info RestaurantInfo object to add to list.
 	 */
-	public void addRestaurantInfo(RestaurantInfo info) {
+	public void addRestaurantInfos(List<RestaurantInfo> infos) {
 		// Update our UI for the new restaurant info
 		FragmentManager fm = getSupportFragmentManager();
 		RestaurantListFragment frag = 
 				(RestaurantListFragment) fm.findFragmentById(R.id.restaurantList);
 		// If fragment is in foreground add it to list
 		if (frag != null && frag.isInLayout()) {
-			frag.addRestaurantInfo(info);
+			frag.addRestaurantInfos(infos);
 		}
 	}
 	
@@ -128,13 +154,16 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	// Method inherited from Restaurant list listener 
 	// for use when user selects a restaurant to focus on
 	@Override
-	public void onRestaurantSelected(String restaurant) {
-		// TODO Auto-generated method stub
+	public void onRestaurantSelected(RestaurantInfo restaurant) {
 		// Continue on to next activity
 		
-		Toast.makeText(this, "Restaurant \"" + restaurant + "\" Selected", 
-				Toast.LENGTH_SHORT).show();
-
+		Intent i = new Intent(this, RestaurantHomeActivity.class);
+		// send over the restaurantInfo
+		i.putExtra(DineOnConstants.KEY_RESTAURANTINFO, restaurant);
+		startActivity(i);
+		
+		//Toast.makeText(this, "Restaurant \"" + restaurant + "\" Selected", 
+		//		Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -146,10 +175,10 @@ RestaurantInfoFragment.RestaurantInfoListener {
 				(RestaurantInfoFragment) fm.findFragmentById(R.id.restaurantInfo);
 		// If the fragment already exists then just update its value
 		if (frag != null && frag.isInLayout()) {
-			frag.setRestaurantForDisplay(restaurant.getName());
+			frag.setRestaurantForDisplay(restaurant);
 		} else {
 			Intent i = new Intent(getApplicationContext(), RestaurantInfoActivity.class);	
-			i.putExtra(RestaurantInfoActivity.EXTRA_RESTAURANT, restaurant.getName());
+			i.putExtra(RestaurantInfoActivity.EXTRA_RESTAURANT, restaurant);
 			startActivity(i);
 		}
 	}
@@ -179,9 +208,15 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	}
 
 	@Override
-	public String getCurrentRestaurant() {
+	public RestaurantInfo getCurrentRestaurant() {
 		// TODO Auto-generated method stub
-		return null;
+		return currentRestaurant;
+	}
+	
+	@Override
+	public void setCurrentRestaurant(RestaurantInfo r) {
+		// TODO Auto-generated method stub
+		currentRestaurant = r;
 	}
 	
 	@Override
@@ -189,4 +224,45 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		return mRestaurants;
 	}
 
+	/**
+	 * Instantiates a new progress dialog and shows it on the screen.
+	 */
+	public void createProgressDialog() {
+		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+			return;
+		}
+		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setTitle("Loading your restaurants.");
+		mProgressDialog.setMessage("Loading...");       
+		mProgressDialog.setIndeterminate(true);
+		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		mProgressDialog.show();
+	}
+
+	/**
+	 * Hides the progress dialog if there is one.
+	 */
+	public void destroyProgressDialog() {
+		if(mProgressDialog != null && mProgressDialog.isShowing()) {
+			mProgressDialog.dismiss();
+		}
+	}
+
+	/**
+	 * Show bad input alert message for logging in.
+	 * @param message message to show
+	 */
+	public void showNoRestaurantsDialog(String message) {
+		AlertDialog.Builder b = new Builder(this);
+		b.setTitle("Couldn't find any restaurants.");
+		b.setMessage(message);
+		b.setCancelable(true);
+		b.setPositiveButton("Try Again", new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		}).show();
+	}
 }

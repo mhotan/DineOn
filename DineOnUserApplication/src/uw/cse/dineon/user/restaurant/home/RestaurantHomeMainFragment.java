@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoActivity;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoFragment;
@@ -94,7 +95,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 				String restaurant = "FIXME: Restaurant should be here!";
 				f = new RestaurantInfoFragment();
 				data.putString(RestaurantInfoActivity.EXTRA_RESTAURANT, 
-						mListener.getCurrentRestaurant());
+						mListener.getCurrentRestaurant().getName());
 				f.setArguments(data);
 				break;
 			default:
@@ -129,7 +130,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 		 * TODO change to Restaurant datatype.
 		 * @return String
 		 */
-		public String getCurrentRestaurant();
+		public RestaurantInfo getCurrentRestaurant();
 
 	}
 

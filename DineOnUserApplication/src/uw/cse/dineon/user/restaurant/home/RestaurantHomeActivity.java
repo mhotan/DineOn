@@ -1,15 +1,13 @@
 package uw.cse.dineon.user.restaurant.home;
 
-import java.util.ArrayList;
-
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,7 +25,9 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 
 	public static final String EXTRA_RESTAURANT = "restaurant"; 
 
-	private String /*Change to restaurant datatype*/ mRestaurant;
+	private RestaurantInfo mRestaurant;
+	
+	private DiningSession mDiningSession;
 
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
@@ -48,11 +48,29 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Bundle extras = getIntent().getExtras();
+		
 		// Attempt to get the restaurant name
-		ArrayList<Parcelable> extras = 
-				getIntent().getParcelableArrayListExtra(DineOnConstants.DINING_SESSION);
+		//ArrayList<Parcelable> extras = 
+		//		getIntent().getParcelableArrayListExtra(DineOnConstants.DINING_SESSION);
+		//if (extras != null) {
+		//	DiningSession mDiningSession = (DiningSession) extras.get(0);
+		//}
+		
 		if (extras != null) {
-			DiningSession mDiningSession = (DiningSession) extras.get(0);
+			if (extras.containsKey(DineOnConstants.KEY_DININGSESSION)) {
+				mDiningSession = extras.getParcelable(DineOnConstants.KEY_DININGSESSION);
+				mRestaurant = mDiningSession.getRestaurantInfo();
+			} else if (extras.containsKey(DineOnConstants.KEY_RESTAURANTINFO)) {
+				mRestaurant = extras.getParcelable(DineOnConstants.KEY_RESTAURANTINFO);
+			}
+		} else if (savedInstanceState != null) {
+			if (savedInstanceState.containsKey(DineOnConstants.KEY_DININGSESSION)) {
+				mDiningSession = savedInstanceState.getParcelable(DineOnConstants.KEY_DININGSESSION);
+				mRestaurant = mDiningSession.getRestaurantInfo();
+			} else if (savedInstanceState.containsKey(DineOnConstants.KEY_RESTAURANTINFO)) {
+				mRestaurant = savedInstanceState.getParcelable(DineOnConstants.KEY_RESTAURANTINFO);
+			}
 		}
 
 		setContentView(R.layout.activity_restaurant_home);
@@ -117,12 +135,15 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	}
 
 	@Override
-	public String getCurrentRestaurant() {
+	public RestaurantInfo getCurrentRestaurant() {
 		// TODO Auto-generated method stub
 		return mRestaurant;
 	}
 
-
-
+	@Override
+	public void setCurrentRestaurant(RestaurantInfo r) {
+		// TODO Auto-generated method stub
+		mRestaurant = r;
+	}
 
 }

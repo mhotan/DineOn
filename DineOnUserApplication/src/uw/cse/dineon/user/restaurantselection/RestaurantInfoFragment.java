@@ -18,6 +18,8 @@ public class RestaurantInfoFragment extends Fragment {
 
 	private RestaurantInfoListener mListener;
 	
+	private RestaurantInfo mRestaurant;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -30,10 +32,11 @@ public class RestaurantInfoFragment extends Fragment {
 	 * Sets display features for this fragment to this argument.
 	 * @param restaurantName Restaurant to present
 	 */
-	public void setRestaurantForDisplay(/*TODO Change to Restaurant data type*/
-			String restaurant) {
+	public void setRestaurantForDisplay(RestaurantInfo restaurant) {
 		TextView view = (TextView) getView().findViewById(R.id.label_restaurant_info);
-		view.setText(restaurant);
+		view.setText(restaurant.getName());
+		
+		this.mRestaurant = restaurant;
 	}
 
 	@Override
@@ -65,7 +68,9 @@ public class RestaurantInfoFragment extends Fragment {
 		 * TODO change to Restaurant datatype
 		 * @return null if no restaurant available, other wise the resaurant.
 		 */
-		String getCurrentRestaurant();
+		RestaurantInfo getCurrentRestaurant();
+		
+		void setCurrentRestaurant(RestaurantInfo r);
 		
 	}
 }
