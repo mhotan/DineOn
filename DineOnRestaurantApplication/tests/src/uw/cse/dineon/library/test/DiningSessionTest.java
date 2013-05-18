@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -15,6 +16,7 @@ import com.parse.ParseUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 
 /**
@@ -37,6 +39,7 @@ public class DiningSessionTest extends AndroidTestCase {
 	Order testOrder;
 	List<Order> orders;
 	List<UserInfo> testUInfos;
+	RestaurantInfo testRInfo;
 	
 	
 	
@@ -44,26 +47,20 @@ public class DiningSessionTest extends AndroidTestCase {
 		super();
 	}
 	
-	protected void setUpBeforeClass() throws Exception {
-		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
-		
-		testUser1 = new ParseUser();
-		testUser1.setUsername("tester1");
-		testUser1.setPassword("pass");
-		testUser1.signUp();
-		testUser1.save();
-		
-		testUser = new ParseUser();
-		testUser.setUsername("tester");
-		testUser.setPassword("pass");
-		testUser.signUp();
-		testUser.save();
-	}
-
 	protected void setUp() throws Exception {
+		Log.i("progress", "start setup");
+
+		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
+		Log.i("progress", "init parse");
+
+		testUser1 = ParseUser.logIn("zach1", "zach1");
 		
+		testUser = ParseUser.logIn("zach", "zach");
+		
+
 		testUInfo1 = new UserInfo(testUser1);
-		testSession = new DiningSession(32, new Date(3254645), testUInfo1);
+		testRInfo = new RestaurantInfo(testUser);
+		testSession = new DiningSession(32, new Date(3254645), testUInfo1, testRInfo);
 		
 		testUInfo = new UserInfo(testUser);
 		testItems = new ArrayList<MenuItem>();
@@ -79,10 +76,9 @@ public class DiningSessionTest extends AndroidTestCase {
 		testUInfos.add(testUInfo);
 	}
 
-	protected void tearDownAfterClass() throws Exception {
+	protected void tearDown() throws Exception {
 		super.tearDown();
-		testUser.delete();
-		testUser1.delete();
+		ParseUser.logOut();
 	}
 
 	public void testPackObject() throws ParseException {

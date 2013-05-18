@@ -12,6 +12,7 @@ import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 
 import com.parse.Parse;
 import com.parse.ParseUser;
@@ -19,6 +20,7 @@ import com.parse.ParseUser;
 import android.app.Activity;
 import android.content.Context;
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 public class RestaurantTest extends AndroidTestCase {
 	
@@ -46,19 +48,20 @@ public class RestaurantTest extends AndroidTestCase {
 
 	
 	protected void tearDown() throws Exception {
-		testUser.delete();
+		ParseUser.logOut();
 	}
 
 	protected void setUp() throws Exception {
-		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
-
+		Log.i("progress", "start setup");
+		mContext = this.getContext();
+		Log.i("progress", "got context");
+		Parse.initialize(mContext, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
+		Log.i("progress", "init parse");
 		
-		testUser = new ParseUser();
-		testUser.setUsername("tester");
-		testUser.setPassword("pass");
-		testUser.signUp();
-		testUser.save();
+		testUser = ParseUser.logIn("zach", "zach");
 		
+		testRestaurantInfo = new RestaurantInfo(testUser);
+		testSession = new DiningSession(32, new Date(3254645), testUInfo, testRestaurantInfo);
 		
 		testUInfo = new UserInfo(testUser);
 		testItems = new ArrayList<MenuItem>();
@@ -82,15 +85,9 @@ public class RestaurantTest extends AndroidTestCase {
 		testRequests.add(testRequest);
 		testReservations = new ArrayList<Reservation>();
 		testReservations.add(testReservation);
-		
-		testSession = new DiningSession(32, new Date(3254645), testUInfo, testRestaurantInfo);
 		testSessions = new ArrayList<DiningSession>();
 		testSessions.add(testSession);
-	}
-
-	protected void tearDownAfterClass() throws Exception {
-		super.tearDown();
-		
+		Log.i("progress", "end setup");
 	}
 
 	public void testRestaurantParseUser() {
