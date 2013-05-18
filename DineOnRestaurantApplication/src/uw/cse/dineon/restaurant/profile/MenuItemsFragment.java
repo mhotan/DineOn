@@ -11,7 +11,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.Fragment;
@@ -20,8 +19,12 @@ import android.view.LayoutInflater;
 import uw.cse.dineon.library.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -100,6 +103,7 @@ public class MenuItemsFragment extends ListFragment {
 			currentMenu = info.getMenuList().get(0);
 
 			// Make list of menu titles for future reference
+			menuTitles = new ArrayList<String>();
 			for (Menu m : info.getMenuList()) {
 				menuTitles.add(m.getName());
 			}
@@ -145,7 +149,7 @@ public class MenuItemsFragment extends ListFragment {
 				R.layout.alert_new_menuitem, null);
 
 		alert.setView(alertView);
-		alert.setPositiveButton("Save", new OnClickListener() {
+		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface d, int arg1) {
@@ -169,6 +173,12 @@ public class MenuItemsFragment extends ListFragment {
 				Log.v(TAG, "Adding new menu item");
 			}
 		});
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				//Do nothing
+			}
+		});
 		alert.show();
 	}
 
@@ -184,6 +194,38 @@ public class MenuItemsFragment extends ListFragment {
 		ArrayAdapter<String> aa = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_spinner_item, menuTitles);
 		s.setAdapter(aa);
+		
+		s.setOnItemSelectedListener(new OnItemSelectedListener(){
+			@Override
+			public void onItemSelected(AdapterView<?> a, View v,
+					int pos, long id) {
+				if(pos > mListener.getInfo().getMenuList().size()){
+					Log.e(TAG,"Invalid menu index selected!");
+				} else {
+					currentMenu = mListener.getInfo().getMenuList().get(pos);
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				Log.v(TAG, "Nothing selected");
+			}
+		});
+		
+		Button b = (Button) alertView.findViewById(R.id.button_new_menu);
+		b.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				//alertView.findViewById(R.id.container_new_menu).setVisibility(VISIBLE);
+				
+			}
+		});
+		
+		
+		
+		alert.show();
+		
 	}
 
 	@Override
