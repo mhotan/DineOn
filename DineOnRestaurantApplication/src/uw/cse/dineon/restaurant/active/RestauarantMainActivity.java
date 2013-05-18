@@ -11,6 +11,7 @@ import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.DiningSessionListFragment.DiningSessionListListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -170,17 +171,17 @@ DiningSessionListListener {
 	public void onRequestRequestDetail(CustomerRequest request) {
 		DevelopTools.getUnimplementedDialog(this, null);
 
-		//		Intent intent = new Intent(getApplicationContext(),
-		//				RequestDetailActivity.class);
-		//		startActivity(intent);
+				Intent intent = new Intent(getApplicationContext(),
+						RequestDetailActivity.class);
+				startActivity(intent);
 	}
 
 	@Override
 	public void onRequestOrderDetail(Order order) {
 		DevelopTools.getUnimplementedDialog(this, null);
-		//		Intent intent = new Intent(getApplicationContext(),
-		//				OrderDetailActivity.class);
-		//		startActivity(intent);
+				Intent intent = new Intent(getApplicationContext(),
+						OrderDetailActivity.class);
+				startActivity(intent);
 	}
 
 
