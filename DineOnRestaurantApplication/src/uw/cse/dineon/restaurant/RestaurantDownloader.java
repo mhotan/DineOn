@@ -48,7 +48,7 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 	 * The Restaurant ID of the Restaurant to find.
 	 */
 	private final String mRestaurantID;
-	
+
 	private String parseExceptionMessage;
 
 	/**
@@ -97,7 +97,7 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 			params[0] = CachePolicy.NETWORK_ELSE_CACHE;
 		}
 		CachePolicy policy = params[0];
-		
+
 		try {
 			// Download by Parse User
 			if (mParseUser != null) {
@@ -112,7 +112,7 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets the Restaurant assoiated with ID.
 	 * @param policy Cache Policy to user to attempt to download Restaurant
@@ -125,7 +125,7 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 		ParseObject restObject = query.get(mRestaurantID);
 		return new Restaurant(restObject);
 	}
-	
+
 	/**
 	 * Helper method that retrieves an unique restaurant instance
 	 * for a particular user.
@@ -148,31 +148,23 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 			query.whereMatchesQuery(Restaurant.INFO, inner);
 			query.setCachePolicy(policy);
 			ParseObject restaurantObject = null;
-			
+
 			// Failed to find restaurant.
 			try {
 				restaurantObject = query.getFirst();
 			} catch (ParseException e) {
 				restaurantObject = null;
 			}
-			
+
 			// Couldn't find a restaurant for that user
 			if (restaurantObject == null) {
 				// Here a Parse user exist but they havent created a restaurant account yet
-				if (DineOnConstants.DEBUG) {
-					// For developer debugging purposes 
-					// Just create a stupid restaurant for the user
-					Restaurant newRest = new Restaurant(mParseUser);
-					newRest.saveOnCurrentThread();
-					return newRest;
-				} else {
-					// If not in Debug mode then notify the User 
-					// that a restaurant 
-					onProgressUpdate(new ParseException(
-							"Invalid Account. You need to create a Restaurant Account.",
-							new Throwable()));
-					return null;
-				}
+				// If not in Debug mode then notify the User 
+				// that a restaurant 
+				onProgressUpdate(new ParseException(
+						"Invalid Account. You need to create a Restaurant Dumb Ass.",
+						new Throwable()));
+				return null;
 			} // Found a restaurant for that user
 			else {
 				return new Restaurant(restaurantObject);
@@ -196,7 +188,6 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 			return;
 		}
 		parseExceptionMessage = exception.getMessage();
-		
 	}
 
 	@Override

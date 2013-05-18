@@ -210,7 +210,7 @@ public class RestaurantInfo extends Storable {
 	 * false if the menu was not added because it already exists   
 	 */
 	public boolean addMenu(Menu newMenu) {
-		if (hasMenu(newMenu)) {
+		if (!hasMenu(newMenu)) {
 			return mMenus.add(newMenu);
 		}
 		return false;
