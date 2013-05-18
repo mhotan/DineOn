@@ -34,7 +34,7 @@ public class DiningSession extends TimeableStorable {
 	// ID's used for easier parsing
 	public static final String USERS = "users";
 	public static final String ORDERS = "orders";
-	public static final String TABLEID = "tableId";
+	public static final String TABLE_ID = "tableId";
 	public static final String REQUESTS = "requests";
 	public static final String RESTAURANT_INFO = "rest";
 	
@@ -89,7 +89,7 @@ public class DiningSession extends TimeableStorable {
 	 */
 	public DiningSession(ParseObject po) throws ParseException {
 		super(po);
-		mTableID = po.getInt(TABLEID);
+		mTableID = po.getInt(TABLE_ID);
 		mUsers = ParseUtil.toListOfStorables(UserInfo.class, po.getList(USERS));
 		mOrders = ParseUtil.toListOfStorables(Order.class, po.getList(ORDERS));
 		mPendingRequests = ParseUtil.toListOfStorables(CustomerRequest.class, po.getList(REQUESTS));
@@ -104,7 +104,6 @@ public class DiningSession extends TimeableStorable {
 	@Override
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
-		po.put(TABLEID, mTableID);
 		po.put(USERS, ParseUtil.toListOfParseObjects(mUsers));
 		po.put(ORDERS, ParseUtil.toListOfParseObjects(mOrders));
 		po.put(REQUESTS, ParseUtil.toListOfParseObjects(mPendingRequests));

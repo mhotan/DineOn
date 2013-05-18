@@ -1,83 +1,81 @@
 package uw.cse.dineon.user.test;
 
+import uw.cse.dineon.library.DineOnUser;
 
-public class DineOnUserActivityTest extends android.test.AndroidTestCase {
-//public class DineOnUserActivityTest extends TestCase {
+import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.user.DineOnUserActivity;
 
+import android.content.Intent;
+import android.test.ActivityInstrumentationTestCase2;
+
+import com.parse.Parse;
+import com.parse.ParseUser;
+
+
+public class DineOnUserActivityTest extends ActivityInstrumentationTestCase2<DineOnUserActivity> {
+	private DineOnUserActivity mActivity;
+	private ParseUser testUser;
+	private DineOnUser dineOnUser;
+
+//TODO No asserts in the class, it just runs the code
+	
 	public DineOnUserActivityTest() {
-		super();
+		super(DineOnUserActivity.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
+		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
+		setActivityInitialTouchMode(false);
+		
+		testUser = ParseUser.logIn("zach", "zach");
+		dineOnUser = new DineOnUser(testUser);
+		
+	    Intent addEvent = new Intent();
+	    addEvent.putExtra(DineOnConstants.KEY_USER, dineOnUser);
+	    setActivityIntent(addEvent);
+		mActivity = getActivity();
+		
+
 	}
 
 	protected void tearDown() throws Exception {
-	}
-
-	public void testOnResume() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
-
-	public void testOnPause() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
-
-	public void testOnStop() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
-
-	public void testOnCreateBundle() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
-
-	public void testStartActivityIntent() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
-
-	public void testIntializeUI() {
-		assertTrue(true);
-		//fail("Not yet implemented");
+		super.tearDown();
 	}
 
 	public void testOnActivityResultIntIntIntent() {
-		assertTrue(true);
+		Intent addEvent = new Intent();
+	    addEvent.putExtra(DineOnConstants.KEY_USER, "zach");
+	    setActivityIntent(addEvent);
+		mActivity.onActivityResult(1, 1, addEvent);
 		//fail("Not yet implemented");
 	}
-
-	public void testOnCreateOptionsMenuMenu() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
+//
+//	public void testOnCreateOptionsMenuMenu() {
+//		//fail("Not yet implemented");
+//	}
 
 	public void testStartLoginActivity() {
-		assertTrue(true);
+		mActivity.startLoginActivity();
 		//fail("Not yet implemented");
 	}
 
-	public void testOnPrepareOptionsMenuMenu() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
+//	public void testOnPrepareOptionsMenuMenu() {
+//		//fail("Not yet implemented");
+//	}
 
-	public void testOnOptionsItemSelectedMenuItem() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
+//	public void testOnOptionsItemSelectedMenuItem() {
+//		assertTrue(true);
+//		//fail("Not yet implemented");
+//	}
 
-	public void testOnCheckInCallback() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
-
-	public void testOnDiningSessionRecievedCallback() {
-		assertTrue(true);
-		//fail("Not yet implemented");
-	}
+	
+//	public void testOnDiningSessionRecievedCallback() throws ParseException {
+//		
+//		mActivity.onInitialDiningSessionReceived(new DiningSession(2, new UserInfo(ParseUser.logIn("zach", "zach"))));
+//		//fail("Not yet implemented");
+//	}
 
 	public void testOnSaveInstanceStateBundle() {
 		assertTrue(true);
@@ -102,6 +100,13 @@ public class DineOnUserActivityTest extends android.test.AndroidTestCase {
 	public void testOnRestaurantInfoChanged() {
 		assertTrue(true);
 		//fail("Not yet implemented");
+	} 
+	
+	public void testDeleteResume() {
+		getInstrumentation().waitForIdleSync();
+		mActivity.finish();
+
+		mActivity = getActivity();
 	}
 
 }
