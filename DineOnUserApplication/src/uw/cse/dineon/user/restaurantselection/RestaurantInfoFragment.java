@@ -21,10 +21,39 @@ public class RestaurantInfoFragment extends Fragment {
 	private RestaurantInfo mRestaurant;
 	
 	@Override
+	public void onCreate(Bundle onSavedInstance) {
+		super.onCreate(onSavedInstance);
+		Bundle extras = getArguments();
+		if (extras != null && extras.containsKey(RestaurantInfoActivity.EXTRA_RESTAURANT)) {
+			mRestaurant = extras.getParcelable(RestaurantInfoActivity.EXTRA_RESTAURANT);
+		}
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
 		View view = inflater.inflate(R.layout.fragment_restaurant_info,
 				container, false);
+		
+		if (this.mRestaurant != null) {
+			// set the title
+			TextView title = (TextView) view.findViewById(R.id.label_restaurant_info);
+			title.setText(this.mRestaurant.getName());
+			
+			// set the address
+			TextView address = (TextView) view.findViewById(R.id.label_restaurant_address);
+			address.setText(this.mRestaurant.getAddr());
+			
+			// TODO need to add hours field to RestaurantInfo set the hours
+			//TextView hours = (TextView) getView().findViewById(R.id.label_restaurant_hours);
+			//hours.setText(this.mRestaurant.getHours());
+
+			// TODO set the ratings
+			
+			// TODO set the image
+		}
+		
 		return view;
 	}
 

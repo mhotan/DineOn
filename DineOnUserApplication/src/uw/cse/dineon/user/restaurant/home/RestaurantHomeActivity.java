@@ -1,6 +1,7 @@
 package uw.cse.dineon.user.restaurant.home;
 
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
@@ -8,8 +9,6 @@ import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
 /**
  * TODO finish.
@@ -34,10 +33,10 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	//////////////////////////////////////////////////////////////////////
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(android.view.Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		
-		MenuItem item = menu.findItem(R.id.option_bill);
+		android.view.MenuItem item = menu.findItem(R.id.option_bill);
 		item.setEnabled(true);
 		item.setVisible(true);
 		
@@ -49,13 +48,6 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 		super.onCreate(savedInstanceState);
 
 		Bundle extras = getIntent().getExtras();
-		
-		// Attempt to get the restaurant name
-		//ArrayList<Parcelable> extras = 
-		//		getIntent().getParcelableArrayListExtra(DineOnConstants.DINING_SESSION);
-		//if (extras != null) {
-		//	DiningSession mDiningSession = (DiningSession) extras.get(0);
-		//}
 		
 		if (extras != null) {
 			if (extras.containsKey(DineOnConstants.KEY_DININGSESSION)) {
@@ -93,7 +85,7 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	}
 
 	@Override
-	public void onMenuItemFocusedOn(String menuItem) {
+	public void onMenuItemFocusedOn(MenuItem menuItem) {
 		// Attempt to find if the fragment exists
 		// If it does update its contents
 		// TODO Implement the ability to switch inbetween fragments
@@ -117,13 +109,13 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 
 
 	@Override
-	public void onMenuItemIncremented(String menuItem) {
+	public void onMenuItemIncremented(MenuItem menuItem) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onMenuItemDecremented(String menuItem) {
+	public void onMenuItemDecremented(MenuItem menuItem) {
 		// TODO Auto-generated method stub
 
 	}
@@ -145,5 +137,4 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 		// TODO Auto-generated method stub
 		mRestaurant = r;
 	}
-
 }

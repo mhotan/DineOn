@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import uw.cse.dineon.library.Menu;
+import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
@@ -31,11 +33,14 @@ public class SubMenuFragment extends ListFragment {
 
 	// Key for bundling
 	public static final String EXTRA_MENU_TYPE = "MENU_TYPE";
+	public static final String EXTRA_MENU = "MENU";
 	
-	private String mMenuType;
+	private Menu mMenu;
 	private final String UNDEFINED_MENU = "Undefined Menu";
 
 	private MenuItemListListener mListener;
+	
+	private MenuItemListAdapter mAdapter;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -45,19 +50,18 @@ public class SubMenuFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mMenuType = getArguments() != null ? getArguments().getString(EXTRA_MENU_TYPE) 
-				: UNDEFINED_MENU;
-
-		// TODO make Parse queries
-		// Or load from local data base
-		// TODO Change String to a new data type (Restaurant)
-		List<String> tediousList = new ArrayList<String>();
-		for (int i = 0; i < 5; ++i) {
-			tediousList.add(mMenuType + " Item " + (i + 1));
+		//mMenuType = getArguments() != null ? getArguments().getString(EXTRA_MENU_TYPE) 
+		//		: UNDEFINED_MENU;
+		
+		Bundle extras = getArguments();
+		
+		if (extras != null && extras.containsKey(EXTRA_MENU)) {
+			this.mMenu = extras.getParcelable(EXTRA_MENU); 
 		}
 
-		ArrayAdapter<String> adapter = new MenuItemListAdapter(
-				this.getActivity(), tediousList);
+		ArrayAdapter<MenuItem> adapter = new MenuItemListAdapter(
+				this.getActivity(), this.mMenu.getItems());
+		this.mAdapter = (MenuItemListAdapter) adapter;
 		setListAdapter(adapter);
 	}
 
@@ -78,10 +82,10 @@ public class SubMenuFragment extends ListFragment {
 	 * TODO Adapter for MenuItems.
 	 * @author mhotan
 	 */
-	private class MenuItemListAdapter extends ArrayAdapter<String> {
+	private class MenuItemListAdapter extends ArrayAdapter<MenuItem> {
 
 		private final Context mContext;
-		private final List<String> mMenuItems;
+		private final List<MenuItem> mMenuItems;
 
 		/**
 		 * This is a runtime mapping between "Increment and decrement button"
@@ -89,7 +93,9 @@ public class SubMenuFragment extends ListFragment {
 		 * TODO Change String to menuitem;
 		 * NOTE (MH): Not exactly sure if this is the best solution
 		 */
-		private final HashMap<NumberPicker, String> mMapping;
+		private final HashMap<NumberPicker, MenuItem> mPickerMapping;
+		
+		private final HashMap<String, MenuItem> mTitleMapping;
 		
 		// Listeners for all row items
 		private final NumberPicker.OnValueChangeListener mNumPickerListener;
@@ -100,24 +106,25 @@ public class SubMenuFragment extends ListFragment {
 		 * @param context Context
 		 * @param items List of strings
 		 */
-		public MenuItemListAdapter(Context context, List<String> items) {
+		public MenuItemListAdapter(Context context, List<MenuItem> items) {
 			super(context, R.layout.listitem_menuitem, items);
 			mContext = context;
-			mMenuItems = new ArrayList<String>(items);
-			mMapping = new HashMap<NumberPicker, String>();
+			mMenuItems = new ArrayList<MenuItem>(items);
+			mPickerMapping = new HashMap<NumberPicker, MenuItem>();
+			mTitleMapping = new HashMap<String, MenuItem>();
 			
 			// Inialize listener for number count
 			mNumPickerListener = new OnValueChangeListener() {
 				
 				@Override
 				public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-					if (mMapping.get(picker) == null) {
+					if (mPickerMapping.get(picker) == null) {
 						Log.e(TAG, 
 								"Failed to initialize Number picker and associate with menu item");
 						return;
 					}
 					
-					String menuItem = mMapping.get(picker);
+					MenuItem menuItem = mPickerMapping.get(picker);
 					
 					// increment the count with the difference with the new and old value
 					int incrementAmount = newVal - oldVal;
@@ -138,9 +145,9 @@ public class SubMenuFragment extends ListFragment {
 				@Override
 				public void onClick(View v) {
 					TextView tView = (TextView) v.findViewById(R.id.label_menu_item);
-					//TODO Fix this to be a mapping
 					String menuItem = tView.getText().toString();
-					mListener.onMenuItemFocusedOn(menuItem);
+					
+					mListener.onMenuItemFocusedOn(mAdapter.mTitleMapping.get(menuItem));
 				}
 			};
 
@@ -159,12 +166,12 @@ public class SubMenuFragment extends ListFragment {
 			TextView menuLabel = (TextView) rowView.findViewById(R.id.label_menu_item);
 			menuLabel.setOnClickListener(mFocusListener);
 			
-			// Get the right name from the list
-			String item = mMenuItems.get(position);
-			menuLabel.setText(item);
+			// Get the right name and description from the list
+			MenuItem item = mMenuItems.get(position);
+			menuLabel.setText(item.getTitle() + "\n" + item.getDescription());
 			
 			NumberPicker np = (NumberPicker) rowView.findViewById(R.id.numberpicker_menuitem_qty);
-			mMapping.put(np, item);
+			mPickerMapping.put(np, item);
 			np.setOnValueChangedListener(mNumPickerListener);
 			
 			return rowView;
@@ -185,19 +192,19 @@ public class SubMenuFragment extends ListFragment {
 		 * TODO implement.
 		 * @param menuItem String
 		 */
-		public void onMenuItemFocusedOn(/*Replace with menuitem object*/String menuItem);
+		public void onMenuItemFocusedOn(MenuItem menuItem);
 
 		/**
 		 * TODO implement.
 		 * @param menuItem String
 		 */
-		public void onMenuItemIncremented(/*Replace with menuitem object*/String menuItem);
+		public void onMenuItemIncremented(MenuItem menuItem);
 
 		/**
 		 * TODO implement.
 		 * @param menuItem String
 		 */
-		public void onMenuItemDecremented(/*Replace with menuitem object*/String menuItem);
+		public void onMenuItemDecremented(MenuItem menuItem);
 
 		/**
 		 * TODO implement.

@@ -1,5 +1,8 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoActivity;
@@ -25,13 +28,14 @@ import android.view.ViewGroup;
  * @author mhotan
  */
 public class RestaurantHomeMainFragment extends Fragment {
+	
+	private final static String INFORMATION = "Information";
 
 	private final String TAG = this.getClass().getSimpleName();
 
 	private ReferenceDataListener mListener;
-
-	private static final String[] CONTENT = new String[] { 
-		"Information", "Entrees", "Appetizers", "Drink Menu", "Happy Hour" };
+	
+	private RestaurantInfo mRestaurantInfo;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,18 +47,17 @@ public class RestaurantHomeMainFragment extends Fragment {
 
 		// Use activity's Fragment Manager
 		RestaurantMenuCategoryAdapter adapter = 
-				new RestaurantMenuCategoryAdapter(getFragmentManager());
+				new RestaurantMenuCategoryAdapter(getFragmentManager(), this.mRestaurantInfo);
 
 		pager.setAdapter(adapter);
+		
+		if (this.mListener != null) {
+			this.mRestaurantInfo = this.mListener.getCurrentRestaurant();
+		}
 
 		// Set initial page to the menu page
-		pager.setCurrentItem(1);
+		pager.setCurrentItem(0);
 		
-		// TODO Need to figure a process of passing the restaurant we chose
-		// in the previous process and send to this containing context
-		// However we cant assume the previous activity is RestaurantSelectionActivity
-		// That wont always be true
-
 		return view;
 	}
 
@@ -63,6 +66,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 		super.onAttach(activity);
 		if (activity instanceof ReferenceDataListener) {
 			mListener = (ReferenceDataListener) activity;
+			this.mRestaurantInfo = this.mListener.getCurrentRestaurant();
 		} else {
 			throw new ClassCastException(activity.toString()
 					+ " must implemenet RestaurantHomeMainFragment.ReferenceDataListener");
@@ -75,13 +79,18 @@ public class RestaurantHomeMainFragment extends Fragment {
 	 *
 	 */
 	class RestaurantMenuCategoryAdapter extends FragmentPagerAdapter {
+		
+		private List<Fragment> mFragments;
+		private RestaurantInfo mRestaurantInfo;
 
 		/**
 		 * 
 		 * @param fm FragmentManager
 		 */
-		public RestaurantMenuCategoryAdapter(FragmentManager fm) {
+		public RestaurantMenuCategoryAdapter(FragmentManager fm, RestaurantInfo r) {
 			super(fm);
+			this.mRestaurantInfo = r;
+			this.mFragments = new ArrayList<Fragment>();
 		}
 
 		@Override
@@ -89,34 +98,39 @@ public class RestaurantHomeMainFragment extends Fragment {
 			Fragment f = null;
 			Bundle data = new Bundle();
 			// make sure position is within bounds
-			position = Math.min(Math.max(position, 0), CONTENT.length - 1);
+			position = Math.min(Math.max(position, 0), this.mRestaurantInfo.getMenuList().size());
 			switch (position) {
 			case 0: // Show restaurant info
-				String restaurant = "FIXME: Restaurant should be here!";
 				f = new RestaurantInfoFragment();
-				data.putString(RestaurantInfoActivity.EXTRA_RESTAURANT, 
-						mListener.getCurrentRestaurant().getName());
+				data.putParcelable(RestaurantInfoActivity.EXTRA_RESTAURANT, 
+						mListener.getCurrentRestaurant());
 				f.setArguments(data);
 				break;
 			default:
-				String menuType = CONTENT[Math.min(position, CONTENT.length - 1)];
 				f = new SubMenuFragment();
-				data.putString(SubMenuFragment.EXTRA_MENU_TYPE, menuType);
+				data.putParcelable(SubMenuFragment.EXTRA_MENU, 
+						this.mRestaurantInfo.getMenuList().get(position -1));
 				f.setArguments(data);
 			}
 			
+			this.mFragments.add(position, f);
 			return f;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			position = Math.max(Math.min(position, CONTENT.length - 1), 0);
-			return CONTENT[position];
+			switch (position) {
+			case 0: 
+				return INFORMATION;
+			default:
+				position = Math.max(Math.min(position, this.mRestaurantInfo.getMenuList().size() - 1), 0);
+				return this.mRestaurantInfo.getMenuList().get(position).getName();
+			}
 		}
 
 		@Override
 		public int getCount() {
-			return CONTENT.length;
+			return this.mRestaurantInfo.getMenuList().size() + 1;
 		}
 	}
 

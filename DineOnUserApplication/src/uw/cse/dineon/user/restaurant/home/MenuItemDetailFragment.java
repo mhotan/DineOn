@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.user.R;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,9 +32,9 @@ public class MenuItemDetailFragment extends Fragment {
 	 * TODO finish.
 	 * @param item String
 	 */
-	public void setMenuItem(/*Replace with MenuItem*/String item) {
+	public void setMenuItem(MenuItem item) {
 		TextView view = (TextView) getView().findViewById(R.id.label_menu_item_name);
-		view.setText(item);
+		view.setText(item.getTitle());
 	}
 
 }

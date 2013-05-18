@@ -29,6 +29,7 @@ public class RestaurantInfo extends Storable {
 	public static final String IMAGE_MAIN = "restaurantImageMain";
 	public static final String IMAGE_LIST = "restaurantImageList";
 	public static final String MENUS = "restaurantMenu";
+	public static final String HOURS = "restaurantHours";
 
 	private static final String UNDETERMINED = "Undetermined";
 
@@ -40,6 +41,7 @@ public class RestaurantInfo extends Storable {
 	private int mMainImageIndex; // Index of Main image
 	private final List<String> mImageList; // Mapping of Parse Object IDs
 	private final List<Menu> mMenus; // All menus
+	//private String mRestaurantHours;
 
 	/**
 	 * Creates a bare restaurant info using the inputted name.
@@ -56,6 +58,7 @@ public class RestaurantInfo extends Storable {
 		mMainImageIndex = 0;
 		mImageList = new ArrayList<String>();
 		mMenus = new ArrayList<Menu>();
+		//TODO mRestaurantHours = ;
 	}
 
 	/**
@@ -73,6 +76,7 @@ public class RestaurantInfo extends Storable {
 		mMainImageIndex = po.getInt(IMAGE_MAIN);
 		mImageList = po.getList(IMAGE_LIST);
 		mMenus = ParseUtil.toListOfStorables(Menu.class, po.getList(MENUS));
+		//TODO mRestaurantHours = ;
 	}
 
 
@@ -87,8 +91,23 @@ public class RestaurantInfo extends Storable {
 		po.put(IMAGE_MAIN, mMainImageIndex);
 		po.put(IMAGE_LIST, mImageList);
 		po.put(MENUS, ParseUtil.toListOfParseObjects(mMenus));	
+		// TODO po.put(HOURS, mRestaurantHours);
 		return po;
 	}
+	// TODO implement the hours field
+//	/**
+//	 * @return String Restaurant hours
+//	 */
+//	public String getHours() {
+//		return mRestaurantHours;
+//	}
+//	
+//	/**
+//	 * Set the hours.
+//	 */
+//	public void getHours(String hours) {
+//		mRestaurantHours = hours;
+//	}
 
 	/**
 	 * @return String Restaurant name
