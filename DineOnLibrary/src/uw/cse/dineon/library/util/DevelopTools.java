@@ -54,21 +54,21 @@ public final class DevelopTools {
 		return alertDialogBuilder.create();
 	}
 
-	/**
-	 * Returns a defaulted Restaurant instance.
-	 * 
-	 * @param me ParseUser to get own restaurant for
-	 * @return me to use for testing
-	 */
-	public static Restaurant getYourOwnRestaurant(ParseUser me) {
-		Restaurant rest = null;
-		try {
-			rest = new Restaurant(me);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return rest;
-	}
+//	/**
+//	 * Returns a defaulted Restaurant instance.
+//	 * 
+//	 * @param me ParseUser to get own restaurant for
+//	 * @return me to use for testing
+//	 */
+//	public static Restaurant getYourOwnRestaurant(ParseUser me) {
+//		Restaurant rest = null;
+//		try {
+//			rest = new Restaurant(me);
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return rest;
+//	}
 
 }

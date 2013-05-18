@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,50 +30,74 @@ import android.widget.TextView;
 public class RequestListFragment extends ListFragment {
 
 	private static final String TAG = RequestListFragment.class.getSimpleName();
+	private static final String REQUESTS = TAG + "_requests";
 
 	private RequestItemListener mListener;
 
-	private ArrayAdapter<CustomerRequest> mAdapter;
+	private RequestListAdapter mAdapter;
 
-	//	private static List<CustomerRequest> mRequests;
+	/**
+	 * Creates a new customer list fragment.
+	 * @param requests list of requests
+	 * @return new fragment
+	 */
+	public static RequestListFragment newInstance(List<CustomerRequest> requests) {
+		RequestListFragment frag = new RequestListFragment();
+		Bundle args = new Bundle();
 
-	//	/**
-	//	 * Creates a new customer list fragment.
-	//	 * @param requests list of requests
-	//	 * @return new fragment
-	//	 */
-	//	public static RequestListFragment newInstance(List<CustomerRequest> requests) {
-	//		RequestListFragment frag = new RequestListFragment();
-	//		ArrayList<CustomerRequest> mList = new ArrayList<CustomerRequest>();
-	//		if (requests != null) {
-	//			mList.addAll(requests);
-	//		}
-	//		
-	//		Bundle b = new Bundle();
-	//		
-	//		if(requests != null) {
-	//			mRequests.addAll(requests);			
-	//		} else {
-	//			mRequests = null;
-	//		}
-	//		
-	//		frag.addAll(requests);
-	//		frag.setArguments(b);
-	//		return frag;
-	//	}
+		CustomerRequest[] requestsArray;
+		if (requests == null) {
+			requestsArray = new CustomerRequest[0];
+		} else {
+			requestsArray = new CustomerRequest[requests.size()];
+			for (int i = 0; i < requests.size(); ++i) {
+				requestsArray[i] = requests.get(i);
+			}
+		}
+
+		args.putParcelableArray(REQUESTS, requestsArray);
+		frag.setArguments(args);
+		return frag;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		CustomerRequest[] requestArray = null;
+		if (savedInstanceState != null // From saved instance
+				&& savedInstanceState.containsKey(REQUESTS)) {
+			requestArray = (CustomerRequest[])savedInstanceState.getParcelableArray(REQUESTS);
+		} else if (getArguments() != null && getArguments().containsKey(REQUESTS)) {
+			// Ugh have to convert to array for type reasons.
+			// List are not contravariant in java... :-(
+			requestArray = (CustomerRequest[])getArguments().getParcelableArray(REQUESTS);	
+		}
+
+		// Error check
+		if (requestArray == null) {
+			Log.e(TAG, "Unable to extract list of orders");
+			return;
+		}
+
 		// Obtain the current Requests
-		List<CustomerRequest> requests = mListener.getCurrentRequests();
-		if (requests == null) {
-			requests = new ArrayList<CustomerRequest>();
+		List<CustomerRequest> requests = new ArrayList<CustomerRequest>(requestArray.length);
+		for (CustomerRequest request : requestArray) {
+			requests.add(request);
 		}
 
 		mAdapter = new RequestListAdapter(this.getActivity(), requests);
 		setListAdapter(mAdapter);	
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		ArrayList<CustomerRequest> requests = mAdapter.getCurrentRequests();
+		CustomerRequest[] requestArray = new CustomerRequest[requests.size()];
+		for (int i = 0; i < requestArray.length; ++i) {
+			requestArray[i] = requests.get(i);
+		}
+		outState.putParcelableArray(REQUESTS, requestArray);
 	}
 
 	@Override
@@ -209,6 +235,13 @@ public class RequestListFragment extends ListFragment {
 		}
 
 		/**
+		 * @return Returns current list of requests.
+		 */
+		public ArrayList<CustomerRequest> getCurrentRequests(){
+			return new ArrayList<CustomerRequest>(mRequests);
+		}
+
+		/**
 		 * Sets the arrow based on whether or not the list item
 		 * is expanded or not.
 		 * @param position The position of the list item to set
@@ -267,10 +300,10 @@ public class RequestListFragment extends ListFragment {
 
 			TextView time = (TextView) VIEW.findViewById(R.id.label_request_time);
 			time.setText(REQUEST.getOriginatingTime().toString());
-			
+
 			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_request);
 			setArrow(position, arrowButton);
-			
+
 			ImageButton assignStaffButton = (ImageButton) vwBot.findViewById(R.id.button_assign);
 
 			// Add the onclick listener that listens 
@@ -323,7 +356,7 @@ public class RequestListFragment extends ListFragment {
 		View.OnClickListener {
 
 			private final Spinner mSpinner;
-			
+
 			/**
 			 * 
 			 * @param spinner Spinner
@@ -335,7 +368,7 @@ public class RequestListFragment extends ListFragment {
 				// Default selection is first on the list
 				mSpinner.setSelection(0);
 			} 
-			
+
 			@Override
 			public void onClick(View v) {
 

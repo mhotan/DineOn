@@ -1,11 +1,12 @@
 package uw.cse.dineon.library.test;
 
-
 import uw.cse.dineon.library.UserInfo;
+import android.test.AndroidTestCase;
+
 import com.parse.Parse;
 import com.parse.ParseUser;
 
-import android.test.AndroidTestCase;
+
 
 /**
  * 
