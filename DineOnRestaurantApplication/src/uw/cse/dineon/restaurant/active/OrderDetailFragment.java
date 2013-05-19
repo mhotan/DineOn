@@ -191,7 +191,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	 * View the relevant information of all the menu items.
 	 * @author mhotan
 	 */
-	private class MenuItemAdapter extends ArrayAdapter<MenuItem> {
+	private static class MenuItemAdapter extends ArrayAdapter<MenuItem> {
 
 		private final Context mContext;
 

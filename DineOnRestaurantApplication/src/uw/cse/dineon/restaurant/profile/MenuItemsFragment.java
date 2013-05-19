@@ -224,8 +224,8 @@ public class MenuItemsFragment extends ListFragment {
 			@Override
 			public void onItemSelected(AdapterView<?> a, View v,
 					int pos, long id) {
-				if(pos > mListener.getInfo().getMenuList().size()){
-					Log.e(TAG,"Invalid menu index selected!");
+				if(pos > mListener.getInfo().getMenuList().size()) {
+					Log.e(TAG, "Invalid menu index selected!");
 				} else {
 					currentMenu = mListener.getInfo().getMenuList().get(pos);
 					mAdapter.notifyDataSetInvalidated();
