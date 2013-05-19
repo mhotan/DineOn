@@ -159,9 +159,6 @@ public class RestaurantInfo extends Storable {
 	 */
 	public void setImageMain(int pos) {
 		pos = Math.min(Math.max(0, pos), mImageList.size() - 1);
-		if (pos == -1) {
-			//TODO Handle no images
-		}
 		this.mMainImageIndex = pos;
 	}
 
@@ -317,4 +314,15 @@ public class RestaurantInfo extends Storable {
 			return new RestaurantInfo[size];
 		}
 	};
+	
+	@Override
+	public void deleteFromCloud() {
+		// For each image delete from cloud
+		
+		for (Menu menu: mMenus) {
+			menu.deleteFromCloud();
+		}
+		
+		super.deleteFromCloud();
+	}
 }

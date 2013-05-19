@@ -1,17 +1,12 @@
 package uw.cse.dineon.restaurant.test;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
 
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
-import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.RestaurantInfo;
-import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import android.content.Intent;
@@ -28,19 +23,19 @@ public class RestaurantMainActivityTest extends
 ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 
 	private RestauarantMainActivity mActivity;
-	private Restaurant r;
-
 	private ParseUser mUser;
-
-	private UserInfo mUI;
-
-	private RestaurantInfo mRI;
+	
+	private DineOnUser mUI;
+	private Restaurant mRestaurant;
 
 	private CustomerRequest mRequest;
 	private Order mOrder;
 	private DiningSession testSession;
 	
 	int orderNum = 100;
+	
+	private static final String fakeUserName = "fakeLoginName";
+	private static final String fakePassword = "fakeLoginPassword";
 
 	private static String menuItemText = "Fake Menu Item 1"; 
 	private static String menuItemDescription = "Fake Menu Item 1 Description";
@@ -52,28 +47,35 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
 		Parse.initialize(getInstrumentation().getTargetContext(), 
 				"RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", 
 				"wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
-		mUser = ParseUser.logIn("glee23", "p");
+		
+		setActivityInitialTouchMode(false);
+		
+		mUser = new ParseUser();
+		mUser.setUsername(fakeUserName);
+		mUser.setPassword(fakePassword);
+		mUser.signUp();
 
-		mUI = new UserInfo(mUser);
-		mRI = new RestaurantInfo(mUser);
-		mRequest = createFakeRequest(mUser);
-		mOrder = createFakeOrder(mUser);
-		testSession = createFakeDiningSession(mUser);
-		r = createFakeRestaurant(mUser);
-		r.addCustomerRequest(mRequest);
-		r.addOrder(mOrder);
-		r.addDiningSession(testSession);
+		mUI = new DineOnUser(mUser);
+		mRestaurant = new Restaurant(mUser);
+		mRequest = TestUtility.createFakeRequest(mUI.getUserInfo());
+		mOrder = TestUtility.createFakeOrder(orderNum++, mUI.getUserInfo());
+		testSession = TestUtility.createFakeDiningSession(mUI.getUserInfo(), mRestaurant.getInfo());
+		mRestaurant = TestUtility.createFakeRestaurant(mUser);
+		mRestaurant.addCustomerRequest(mRequest);
+		mRestaurant.addOrder(mOrder);
+		mRestaurant.addDiningSession(testSession);
 
 		ArrayList<Parcelable> dSessions = new ArrayList<Parcelable>();
 		dSessions.add(testSession);
 
 		Intent intent = new Intent(getInstrumentation().getTargetContext(),
 				RestauarantMainActivity.class);
-		intent.putExtra(DineOnConstants.KEY_USER, new DineOnUser(mUser));
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, r);
+		intent.putExtra(DineOnConstants.KEY_USER, mUI);
+		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		intent.putExtra(DineOnConstants.DINING_SESSION, dSessions);
 		setActivityIntent(intent);
 
@@ -82,40 +84,14 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		mActivity = getActivity();
 	}
 
-	private Restaurant createFakeRestaurant(ParseUser user) throws ParseException{
-		Restaurant r = new Restaurant(user);
-		return r;
-	}
-
-	private Order createFakeOrder(ParseUser user){
-		return new Order(orderNum++, mUI, createFakeMenuItems());
-	}
-
-	private List<MenuItem> createFakeMenuItems(){
-		MenuItem m = new MenuItem(1, 3.99, menuItemText, menuItemDescription);
-		List<MenuItem> items = new ArrayList<MenuItem>();
-		items.add(m);
-		return items;
-	}
-
-	private CustomerRequest createFakeRequest(ParseUser user){
-		return new CustomerRequest("I want my food now!", mUI, new GregorianCalendar().getTime());
-	}
-
-	private DiningSession createFakeDiningSession(ParseUser user) throws ParseException {
-		return new DiningSession(1, 
-				new GregorianCalendar().getTime(), 
-				mUI, mRI);
-	}
-
 	@Override
 	protected void tearDown() throws Exception {
+		mUser.delete();
 		mRequest.deleteFromCloud();
 		mOrder.deleteFromCloud();
 		testSession.deleteFromCloud();
 		mUI.deleteFromCloud();
-		mRI.deleteFromCloud();
-		r.deleteFromCloud();
+		mRestaurant.deleteFromCloud();
 		mActivity.finish();
 		super.tearDown();
 	}

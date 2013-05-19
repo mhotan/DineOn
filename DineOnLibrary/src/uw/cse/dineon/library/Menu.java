@@ -184,4 +184,12 @@ public class Menu extends Storable {
 			return new Menu[size];
 		}
 	};
+	
+	@Override
+	public void deleteFromCloud() {
+		for (MenuItem item: mItems) {
+			item.deleteFromCloud();
+		}
+		super.deleteFromCloud();
+	}
 }
