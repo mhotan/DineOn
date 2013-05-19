@@ -153,7 +153,7 @@ public abstract class Storable implements Parcelable {
 	 * to eventually occur.
 	 */
 	public void deleteFromCloud() {
-		mCompleteObject.deleteEventually();
+		mCompleteObject.deleteInBackground();
 	}
 
 	/**
