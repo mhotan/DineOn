@@ -334,12 +334,6 @@ public class Restaurant extends LocatableStorable {
 					toRemove = sessionUser;
 					break;
 				}
-
-				// Remove and replace new user
-				if (toRemove != null) {
-					session.removeUser(toRemove);
-					session.addUser(user);
-				}
 			}
 
 		}

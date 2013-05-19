@@ -77,7 +77,7 @@ public abstract class TimeableStorable extends Storable {
 	 * @return Date that this object originated at
 	 */
 	public Date getOriginatingTime() {
-		return mDate;
+		return (Date) mDate.clone();
 	}
 
 	/**
