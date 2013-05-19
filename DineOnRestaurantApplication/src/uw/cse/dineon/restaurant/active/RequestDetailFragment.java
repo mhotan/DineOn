@@ -226,7 +226,6 @@ implements OnCheckedChangeListener, OnClickListener {
 			String staffMember = mStaffList.getSelectedItem().toString();
 			mListener.onSendTaskToStaff(mRequest, staffMember, mUrgency);
 		default:
-
 		}
 	}
 }

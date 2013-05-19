@@ -324,19 +324,22 @@ public class DiningSessionListFragment extends ListFragment {
 			custName.setText(name);
 
 			//Displays Order information as a string
-			String orderString = "";
-
+			StringBuffer buf = new StringBuffer();
+			
 			for (Order o : mDiningSession.getOrders()) {
 
 				int tableID = o.getTableID();
 				if(tableID != -1) {
-					orderString += "Table " + tableID;
+					buf.append("Table ");
+					buf.append(tableID);
 				}
 
-				orderString += "\n" + o.getOriginatingTime().toString() + "\n\n";
+				buf.append("\n");
+				buf.append(o.getOriginatingTime().toString());
+				buf.append("\n\n");
 			}
 			TextView orderText = (TextView) vwBot.findViewById(R.id.label_user_order_content);
-			orderText.setText(orderString);
+			orderText.setText(buf.toString());
 
 			return vw;
 		}
