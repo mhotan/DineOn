@@ -34,6 +34,8 @@ public class RestaurantProfileActivityTest extends
 
 	private MenuItem mMenuItem;
 
+	private Menu testMenu;
+	
 	View mView;
 
 	private static final String TEST_ADDR = "5513";
@@ -55,14 +57,19 @@ public class RestaurantProfileActivityTest extends
 		Parse.initialize(getInstrumentation().getTargetContext(),
 				"RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul",
 				"wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
-		mUser = ParseUser.logIn("vince", "v");
-
+		setActivityInitialTouchMode(false);
+		//mUser = ParseUser.logIn("vince", "v");
+		mUser = new ParseUser();
+		mUser.setPassword("password");
+		mUser.setUsername("vinceRestProfileActTest");
+		mUser.signUp();
+		
 		// construct fake restaurant for intent
 		r = createFakeRestaurant(mUser);
 		r.getInfo().setAddr(TEST_ADDR);
 		r.getInfo().setPhone(TEST_PHONE);
 
-		Menu testMenu = new Menu(TEST_MENU_TITLE);
+		testMenu = new Menu(TEST_MENU_TITLE);
 		mMenuItem = new MenuItem(TEST_ITEM_ID, TEST_ITEM_PRICE, TEST_ITEM_TITLE, TEST_ITEM_DESC);
 		testMenu.addNewItem(mMenuItem);
 		r.getInfo().addMenu(testMenu);
@@ -71,14 +78,15 @@ public class RestaurantProfileActivityTest extends
 		intent.putExtra(DineOnConstants.KEY_RESTAURANT, r);
 		setActivityIntent(intent);
 
-		setActivityInitialTouchMode(false);
-
 		mActivity = getActivity();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		mUser = null;
+		mUser.delete();
+		testMenu.deleteFromCloud();
+		r.deleteFromCloud();
+		mMenuItem.deleteFromCloud();
 		mActivity.finish();
 		for (Menu m : r.getInfo().getMenuList()) {
 			m.deleteFromCloud();
