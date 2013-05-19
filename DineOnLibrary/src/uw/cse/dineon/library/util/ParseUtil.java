@@ -10,25 +10,18 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.json.JSONObject;
 
-import uw.cse.dineon.library.DineOnUser;
-import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.Storable;
 import uw.cse.dineon.library.UserInfo;
 import android.app.Activity;
 import android.util.Log;
 
-import com.parse.FindCallback;
-import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -57,7 +50,6 @@ public final class ParseUtil {
 	 * Must not be already used by another user. 
 	 * @param passwd - The password to use with the new user will login
 	 * @param callback - the static method to call once the response returns from Parse Cloud
-	 * @throws IllegalArgumentException if any param is null.
 	 */
 	public static void createDineOnUser(String uname, String passwd, Method callback) {
 		//TODO handle exception cases.
@@ -107,31 +99,31 @@ public final class ParseUtil {
 	 * to call once the response is heard from the Parse Cloud.
 	 * @throws IllegalArgumentException if any param is null.
 	 */
-	public static void logInDineOnCreds(String uname, String passwd, Method callback) {
-		if(uname == null || passwd == null || callback == null) {
-			throw new IllegalArgumentException();
-		}
-
-		final Method M = callback;
-		ParseUser.logInInBackground(uname, passwd, new LogInCallback() {
-
-			@Override
-			public void done(ParseUser user, ParseException err) {
-				if(err == null && user != null) {
-					//TODO setup default user and call callback with 
-					//Storable User object.
-					Log.d(TAG, "Log in success, user returned with no error");
-				} 
-				else {
-					Log.d(TAG, "Log in error");
-				} 
-				// TODO
-				// Invoke our method with null notifying 
-				// User create account failed
-
-			}
-		});
-	}
+//	public static void logInDineOnCreds(String uname, String passwd, Method callback) {
+//		if(uname == null || passwd == null || callback == null) {
+//			throw new IllegalArgumentException();
+//		}
+//
+//		final Method M = callback;
+//		ParseUser.logInInBackground(uname, passwd, new LogInCallback() {
+//
+//			@Override
+//			public void done(ParseUser user, ParseException err) {
+//				if(err == null && user != null) {
+//					//TODO setup default user and call callback with 
+//					//Storable User object.
+//					Log.d(TAG, "Log in success, user returned with no error");
+//				} 
+//				else {
+//					Log.d(TAG, "Log in error");
+//				} 
+//				// TODO
+//				// Invoke our method with null notifying 
+//				// User create account failed
+//
+//			}
+//		});
+//	}
 	
 	/**
 	 * Save obj into the cloud and store the acquired objID into obj.
@@ -241,52 +233,52 @@ public final class ParseUtil {
 	 * 
 	 * Note: Returns a List<Storable> to the handler.
 	 */
-	public static void getDataFromCloud(Class<? extends Storable> c, Method handle, 
-			Map<String, String> attr) {
-
-		ParseQuery query = new ParseQuery(c.getSimpleName());
-		if(attr != null) {
-			Set<String> kSet = attr.keySet();
-			for (String k : kSet) {
-				String val = attr.get(k);
-				query.whereEqualTo(k, val);
-			}
-		}
-		final Method H = handle;
-		query.findInBackground(new FindCallback() {
-			public void done(List<ParseObject> list, ParseException e) {
-				if (e == null) {
-					if (list.size() > 0) {
-						String className = list.get(0).getClassName();
-						List<Storable> classList = new LinkedList<Storable>();
-
-						try {
-							Storable s;
-							for (ParseObject p : list) {
-								Class<?> clazz = 
-										Class.forName("uw.cse.dineon.library." + className);
-								Constructor<?> ctor = clazz.getConstructor(ParseObject.class);
-								Object object = ctor.newInstance(new Object[] {p});
-								classList.add((Storable) object);
-								
-//								s = (Storable) Class.forName("uw.cse.dineon.library."
-//									+ className).newInstance();
-//								s.unpackObject(p);
-//								classList.add(s);
-							}		   
-							H.invoke(null, classList);
-						} catch (Exception ex) {
-							Log.d(TAG, "Error: " + ex.getMessage());
-						}
-					}
-				} else {
-					Log.d(TAG, "Error: " + e.getMessage());
-				} // TODO
-				// Invoke our method with null notifying 
-				// User create account failed
-			}
-		});
-	}
+//	public static void getDataFromCloud(Class<? extends Storable> c, Method handle, 
+//			Map<String, String> attr) {
+//
+//		ParseQuery query = new ParseQuery(c.getSimpleName());
+//		if(attr != null) {
+//			Set<String> kSet = attr.keySet();
+//			for (String k : kSet) {
+//				String val = attr.get(k);
+//				query.whereEqualTo(k, val);
+//			}
+//		}
+//		final Method H = handle;
+//		query.findInBackground(new FindCallback() {
+//			public void done(List<ParseObject> list, ParseException e) {
+//				if (e == null) {
+//					if (list.size() > 0) {
+//						String className = list.get(0).getClassName();
+//						List<Storable> classList = new LinkedList<Storable>();
+//
+//						try {
+//							Storable s;
+//							for (ParseObject p : list) {
+//								Class<?> clazz = 
+//										Class.forName("uw.cse.dineon.library." + className);
+//								Constructor<?> ctor = clazz.getConstructor(ParseObject.class);
+//								Object object = ctor.newInstance(new Object[] {p});
+//								classList.add((Storable) object);
+//								
+////								s = (Storable) Class.forName("uw.cse.dineon.library."
+////									+ className).newInstance();
+////								s.unpackObject(p);
+////								classList.add(s);
+//							}		   
+//							H.invoke(null, classList);
+//						} catch (Exception ex) {
+//							Log.d(TAG, "Error: " + ex.getMessage());
+//						}
+//					}
+//				} else {
+//					Log.d(TAG, "Error: " + e.getMessage());
+//				} // TODO
+//				// Invoke our method with null notifying 
+//				// User create account failed
+//			}
+//		});
+//	}
 
 	/**
 	 * Retrieve data from the cloud based on the class name of the storable
@@ -305,53 +297,53 @@ public final class ParseUtil {
 	 * @param attr Relation attributes that will be true for all data you
 	 * receive.
 	 */
-	public static void getDataFromCloud(Activity activity, 
-										Class<? extends Storable> c, 
-										Method handle, 
-										Map<String, String> attr) {
-
-		ParseQuery query = new ParseQuery(c.getSimpleName());
-		if(attr != null) {
-			Set<String> kSet = attr.keySet();
-			for (String k : kSet) {
-				String val = attr.get(k);
-				query.whereEqualTo(k, val);
-			}
-		}
-		final Activity ACT = activity;
-		final Method H = handle;
-		query.findInBackground(new FindCallback() {
-			public void done(List<ParseObject> list, ParseException e) {
-				if (e == null) {
-					if (list.size() > 0) {
-						String className = list.get(0).getClassName();
-						List<Storable> classList = new LinkedList<Storable>();
-
-						try {
-							Storable s;
-							for (ParseObject p : list) {
-								Class<?> clazz = 
-										Class.forName("uw.cse.dineon.library." + className);
-								Constructor<?> ctor = clazz.getConstructor(ParseObject.class);
-								Object object = ctor.newInstance(new Object[] {p});
-								classList.add((Storable) object);
-							}
-							if (H != null && ACT != null) {
-								H.invoke(ACT, classList);
-							}
-						} catch (Exception ex) {
-							Log.d(TAG, "Error: " + ex.getMessage());
-						}
-					}
-				} else {
-					Log.d(TAG, "Error: " + e.getMessage());
-				} // TODO
-
-				// Invoke our method with null notifying 
-				// User create account failed
-			}
-		});
-	}
+//	public static void getDataFromCloud(Activity activity, 
+//										Class<? extends Storable> c, 
+//										Method handle, 
+//										Map<String, String> attr) {
+//
+//		ParseQuery query = new ParseQuery(c.getSimpleName());
+//		if(attr != null) {
+//			Set<String> kSet = attr.keySet();
+//			for (String k : kSet) {
+//				String val = attr.get(k);
+//				query.whereEqualTo(k, val);
+//			}
+//		}
+//		final Activity ACT = activity;
+//		final Method H = handle;
+//		query.findInBackground(new FindCallback() {
+//			public void done(List<ParseObject> list, ParseException e) {
+//				if (e == null) {
+//					if (list.size() > 0) {
+//						String className = list.get(0).getClassName();
+//						List<Storable> classList = new LinkedList<Storable>();
+//
+//						try {
+//							Storable s;
+//							for (ParseObject p : list) {
+//								Class<?> clazz = 
+//										Class.forName("uw.cse.dineon.library." + className);
+//								Constructor<?> ctor = clazz.getConstructor(ParseObject.class);
+//								Object object = ctor.newInstance(new Object[] {p});
+//								classList.add((Storable) object);
+//							}
+//							if (H != null && ACT != null) {
+//								H.invoke(ACT, classList);
+//							}
+//						} catch (Exception ex) {
+//							Log.d(TAG, "Error: " + ex.getMessage());
+//						}
+//					}
+//				} else {
+//					Log.d(TAG, "Error: " + e.getMessage());
+//				} // TODO
+//
+//				// Invoke our method with null notifying 
+//				// User create account failed
+//			}
+//		});
+//	}
 
 	/**
 	 * Notify a recipient that an action has occured or state has changed
@@ -478,7 +470,6 @@ public final class ParseUtil {
 	 * @param clazz Class definition of the particular instance
 	 * @param objects List of Objects that must have dynamic tyoes if ParseObjects
 	 * @return List of storables from ParesObjects
-	 * @throws ParseException 
 	 */
 	public static <T extends Storable> List<T> toListOfStorables(
 			Class<T> clazz, List<Object> objects) {
@@ -511,7 +502,7 @@ public final class ParseUtil {
 	
 	
 	/**
-	 * Returns the channel identifier for this Restaurant
+	 * Returns the channel identifier for this Restaurant.
 	 * @param user User to extract channel from
 	 * @return Channel as string
 	 */

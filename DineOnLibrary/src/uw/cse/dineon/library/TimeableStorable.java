@@ -77,7 +77,15 @@ public abstract class TimeableStorable extends Storable {
 	 * @return Date that this object originated at
 	 */
 	public Date getOriginatingTime() {
-		return mDate;
+		String dateStr = DineOnConstants.getCurrentDateFormat().format(mDate);		
+		Date temp = null;
+		try {
+			temp = DineOnConstants.getCurrentDateFormat().parse(dateStr);
+		} catch (ParseException e) {
+			Log.e(TAG, "Ill formatted date found while getting date"); 
+		}
+		assert (temp != null);
+		return temp;
 	}
 
 	/**

@@ -113,7 +113,7 @@ public class Restaurant extends LocatableStorable {
 				CustomerRequest.class, po.getList(CUSTOMER_REQUESTS));
 	}
 
-	
+
 
 	@Override
 	public ParseObject packObject() {
@@ -334,14 +334,13 @@ public class Restaurant extends LocatableStorable {
 					toRemove = sessionUser;
 					break;
 				}
-
-				// Remove and replace new user
-				if (toRemove != null) {
-					session.removeUser(toRemove);
-					session.addUser(user);
-				}
 			}
 
+			// Remove and replace new user
+			if (toRemove != null) {
+				session.removeUser(toRemove);
+				session.addUser(user);
+			}
 		}
 
 
@@ -364,14 +363,14 @@ public class Restaurant extends LocatableStorable {
 	public Restaurant(Parcel source) {
 		super(source);
 		mRestInfo = source.readParcelable(RestaurantInfo.class.getClassLoader());
-		
+
 		mPastOrders = new ArrayList<Order>();
 		mPendingOrders = new ArrayList<Order>();
 		mPastUsers = new ArrayList<UserInfo>();
 		mReservations = new ArrayList<Reservation>();
 		mSessions = new ArrayList<DiningSession>();
 		mCustomerRequests = new ArrayList<CustomerRequest>();
-		
+
 		source.readTypedList(mPastOrders, Order.CREATOR);
 		source.readTypedList(mPendingOrders, Order.CREATOR);
 		source.readTypedList(mPastUsers, UserInfo.CREATOR);
@@ -379,7 +378,7 @@ public class Restaurant extends LocatableStorable {
 		source.readTypedList(mSessions, DiningSession.CREATOR);
 		source.readTypedList(mCustomerRequests, CustomerRequest.CREATOR);
 	}
-	
+
 	/**
 	 * Write the object to a parcel object.
 	 * @param dest the Parcel to write to
