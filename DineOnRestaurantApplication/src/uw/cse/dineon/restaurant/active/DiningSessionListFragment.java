@@ -98,6 +98,7 @@ public class DiningSessionListFragment extends ListFragment {
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 		ArrayList<DiningSession> sessions = mAdapter.getCurrentSessions();
 		DiningSession[] dsArray = new DiningSession[sessions.size()];
 		for (int i = 0; i < dsArray.length; ++i) {
@@ -147,20 +148,11 @@ public class DiningSessionListFragment extends ListFragment {
 	public interface DiningSessionListListener {
 
 		/**
-		 * Retrieves the current diningsessions.
-		 * 
-		 * @return list of DiningSessions, or null if no restaurant is available
+		 * User request detail about a particular dining session.
+		 * @param ds Dining session of focus
 		 */
-		public List<DiningSession> getCurrentSessions();
-
-		/**
-		 * TODO Add more methods here as needed
-		 * To complete the full functionality of this fragment
-		 * These methods will probably be methods that signify the 
-		 * user wants do conduct a certain action for this User
-		 * 
-		 * IE: Send the user a message
-		 */
+		void onDiningSessionDetailRequested(DiningSession ds);
+		
 	}
 
 	/**
@@ -297,11 +289,15 @@ public class DiningSessionListFragment extends ListFragment {
 			arrowButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					expand(position);
+					if(expanded != position) {
+						mListener.onDiningSessionDetailRequested(mDiningSessions.get(position));
+						return;
+					}
+					
 					ImageButton arrowButton = 
 							(ImageButton) v.findViewById(R.id.button_expand_user);
 					setArrow(position, arrowButton);
-					Log.v(TAG, "Toggled position " + position);
-					//Stick *that* in your closure and smoke it
+					//Right arrow case -- goes to details fragment
 				}
 			});
 

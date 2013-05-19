@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/image_thumbnail_menuitem"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/imageButton1"
+        android:layout_toLeftOf="@+id/button_send_shout_out"
         android:layout_toRightOf="@+id/image_thumbnail_menuitem"
         android:gravity="center"
         android:text="@string/hint_menuitem_title"

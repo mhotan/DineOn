@@ -1,63 +1,72 @@
 package uw.cse.dineon.restaurant.active;
 
-import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
+import uw.cse.dineon.restaurant.active.DiningSessionDetailFragment.DiningSessionDetailListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
 /**
- * An Activity that just shows the detail of an Order.
+ * An Activity that presents the details of a particular dining session.
+ * 
  * @author mhotan
  */
-public class OrderDetailActivity extends DineOnRestaurantActivity implements
-OrderDetailFragment.OrderDetailListener {
+public class DiningSessionDetailActivity extends DineOnRestaurantActivity 
+implements DiningSessionDetailListener {
 
-	private static final String TAG = OrderDetailActivity.class.getSimpleName();
+	/**
+	 * Log tag.
+	 */
+	private static final String TAG = DiningSessionDetailActivity.class.getSimpleName();
 
-	public static final String EXTRA_ORDER = TAG + "_order";
+	/**
+	 * Extra to pass dining session with.
+	 */
+	public static final String EXTRA_DININGSESSION = TAG + "_diningsession";
 
-	private Order mOrder;
+	private DiningSession mDiningSession;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_order_details);
-		
+
+		setContentView(R.layout.activity_diningsession_detail);
+
 		// Grab reference to the extras
 		Bundle extras = getIntent().getExtras();
 
 		// Lets first check if the activity is being recreated after being
 		// destroyed but there was an already existing restuarant
-		if (savedInstanceState != null && savedInstanceState.containsKey(EXTRA_ORDER)) { 
+		if (savedInstanceState != null && savedInstanceState.containsKey(EXTRA_DININGSESSION)) { 
 			// Activity recreated
-			mOrder = savedInstanceState.getParcelable(EXTRA_ORDER);
+			mDiningSession = savedInstanceState.getParcelable(EXTRA_DININGSESSION);
 		} 
 		else if (extras != null && extras.containsKey(
 				DineOnConstants.KEY_RESTAURANT)) {
 			// Activity started and created for the first time
 			// Valid extras were passed into this
-			mOrder = extras.getParcelable(EXTRA_ORDER);
+			mDiningSession = extras.getParcelable(EXTRA_DININGSESSION);
 		}
 
-		if (mOrder == null) { 
+		if (mDiningSession == null) { 
 			return;
 		}
-
-		OrderDetailFragment frag = (OrderDetailFragment) getSupportFragmentManager().
+		
+		DiningSessionDetailFragment frag = 
+				(DiningSessionDetailFragment) getSupportFragmentManager().
 				findFragmentById(R.id.fragment1);
 		if (frag != null && frag.isInLayout()) {
-			frag.setOrder(mOrder);
+			frag.setDiningSession(mDiningSession);
 		}
 	}
 	
 	@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_ORDER, mOrder);
+        outState.putParcelable(EXTRA_DININGSESSION, mDiningSession);
     }
 
 	@Override
@@ -67,5 +76,5 @@ OrderDetailFragment.OrderDetailListener {
 		Log.d(TAG, log);
 		Toast.makeText(this, log, Toast.LENGTH_SHORT).show();
 	}
-
+	
 }

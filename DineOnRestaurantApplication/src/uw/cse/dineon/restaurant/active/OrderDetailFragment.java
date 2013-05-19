@@ -1,11 +1,20 @@
 package uw.cse.dineon.restaurant.active;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+import uw.cse.dineon.library.MenuItem;
+import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,13 +32,32 @@ import android.widget.TextView;
  */
 public class OrderDetailFragment extends Fragment implements OnClickListener {
 
+	private static final String TAG = OrderDetailFragment.class.getSimpleName();
+	
+	private static final String ORDER = TAG + "_order";
+	
 	private TextView mTitle, mTableInput, mTakenTime;
-	private ArrayAdapter<String/*Change to Menu item and quantity*/> mAdapter;
+	private MenuItemAdapter mAdapter;
 	private EditText mMessageInput;
 	private ImageButton mSendMessageButton;
+	private ListView mItemList;
 
 	private OrderDetailListener mListener;
-	private String mOrder;
+	private Order mOrder;
+	
+	/**
+	 * Creates a dining session that is ready to rock.
+	 * No need to call setOrder
+	 * @param order Order to use
+	 * @return Fragment to use.
+	 */
+	public static OrderDetailFragment newInstance(Order order) {
+		Bundle args = new Bundle();
+		args.putParcelable(ORDER, order);
+		OrderDetailFragment frag = new OrderDetailFragment();
+		frag.setArguments(args);
+		return frag;
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,13 +73,25 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		mMessageInput = (EditText) view.findViewById(R.id.edittext_message_block);
 		mSendMessageButton = (ImageButton) view.findViewById(R.id.button_send_message_fororder);
 		mSendMessageButton.setOnClickListener(this);
-
-		mAdapter = new ArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_1, new ArrayList<String>());
-		ListView itemList = (ListView) view.findViewById(R.id.list_order);
-		itemList.setAdapter(mAdapter);
-
+		mItemList = (ListView) view.findViewById(R.id.list_order);
+		
 		return view;
+	}
+	
+	@Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        
+        if (mOrder != null) {
+        	return;
+        }
+        
+        Bundle args = getArguments();
+        if (savedInstanceState != null) {
+        	setOrder((Order)savedInstanceState.getParcelable(ORDER));
+        } else if (args != null && args.containsKey(ORDER)) {
+			setOrder((Order) args.getParcelable(ORDER));
+		}
 	}
 
 	@Override
@@ -64,14 +105,29 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		}
 	}
 	
+	@Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ORDER, mOrder);
+    }
+	
 	/**
 	 * Updates the state of the view pending the whether there is a request.
 	 */
 	private void updateState() {
 		if (mOrder == null) {
 			mSendMessageButton.setEnabled(false);
+			mSendMessageButton.setVisibility(View.GONE);
 		} else {
+			// Here we have an order so lets update the state
+			mSendMessageButton.setVisibility(View.VISIBLE);
 			mSendMessageButton.setEnabled(true);
+			mTitle.setText("Order placed by: " + mOrder.getOriginalUser().getName());
+			mTableInput.setText(mOrder.getTableID());
+			mTakenTime.setText(mOrder.getOriginatingTime().toString());
+			mAdapter = new MenuItemAdapter(this.getActivity(), mOrder.getMenuItems());
+			mItemList.setAdapter(mAdapter);
+			mAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -86,27 +142,13 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	 * order requested.
 	 * @param order order to present
 	 */
-	public void setOrder(/*TODO Replace with Order class*/ String order) {
-		mOrder = order;
-		
-		// TODO Replace the fake the funk
-		
-		mTitle.setText("Order: " + order);
-		mTableInput.setText("4");
-		mTakenTime.setText("7:35pm");
-		
-		ArrayList<String> items = new ArrayList<String>();
-		items.add("Fried Chicken Qty: " + 5);
-		items.add("Sushi Qty: " + 1);
-		items.add("Coke Qty: " + 2);
-		
-		// Leave generally as is.
-		// Just change String to MenuItem or Convert Menu Item to a String
-		mAdapter.clear();
-		for (String item: items) {
-			mAdapter.add(item);
+	public void setOrder(Order order) {
+		if (order == null) {
+			Log.w(TAG, "Setting Order to null");
+			return;
 		}
-		mAdapter.notifyDataSetChanged();
+		
+		mOrder = order;
 		updateState();
 	}
 
@@ -126,11 +168,10 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		/**
 		 * Call back that shows that the user wishes to send a message 
 		 * to the customer pertaining that specific orders.
-		 * @param order Order to associate message to
+		 * @param user User to send message to
 		 * @param message Message to send for this order
 		 */
-		public void sendMessage(
-				/*TODO Replace with Order class*/String order, String message);
+		public void sendShoutOut(UserInfo user, String message);
 	}
 
 	//////////////////////////////////////////////////////
@@ -143,8 +184,77 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		if (message.length() == 0) {
 			return;
 		}
-		// TODO Implement
-		mListener.sendMessage("ORDER GOES HERE", message);
+		mListener.sendShoutOut(mOrder.getOriginalUser(), message);
+	}
+	
+	/**
+	 * View the relevant information of all the menu items.
+	 * @author mhotan
+	 */
+	private class MenuItemAdapter extends ArrayAdapter<MenuItem> {
+
+		private final Context mContext;
+		
+		/**
+		 * List of Menu Items with their associated quantity.
+		 */
+		private final List<Pair<MenuItem, Integer>> mItems;
+		
+		/**
+		 * Creates an adapter for displaying menu items.
+		 * @param context Owning context of this adapter
+		 * @param items Items to add to the List view
+		 */
+		public MenuItemAdapter(Context context, List<MenuItem> items) {
+			super(context, R.layout.listitem_menuitem_editable);
+			mContext = context;
+			
+			// Check for stupidity
+			Map<MenuItem, Integer> occurences = Utility.toQuantityMap(items);
+			
+			mItems = new ArrayList<Pair<MenuItem, Integer>>(occurences.keySet().size());
+			for (MenuItem item : occurences.keySet()) {
+				mItems.add(new Pair<MenuItem, Integer>(item, occurences.get(item)));
+			}
+		}
+		
+		/**
+		 * Use for restoring state. No copies are made.
+		 * Just a new lsit is returned
+		 * @return a list of the current menu items
+		 */
+		ArrayList<Pair<MenuItem, Integer>> getCurrentItems() {
+			return new ArrayList<Pair<MenuItem, Integer>>(mItems);
+		}
+	
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = (LayoutInflater) mContext
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View view = inflater.inflate(R.layout.listitem_menuitem_editable, null, true);
+		
+			MenuItem toShow = mItems.get(position).first;
+			int qty = mItems.get(position).second;
+			
+			ImageView menuItemImage = (ImageView) view.findViewById(R.id.image_thumbnail_menuitem);
+			TextView menuItemTitle = (TextView) view.findViewById(R.id.label_menuitem_title);
+			TextView menuItemDesc = (TextView) view.findViewById(R.id.label_menuitem_desc);
+			TextView menuItemPrice = (TextView) view.findViewById(R.id.label_menuitem_price);
+			ImageButton deleteButton = (ImageButton) view.findViewById(R.id.button_menuitem_delete);
+			
+			// Remove the delete button from restaurant context
+			deleteButton.setEnabled(false);
+			deleteButton.setVisibility(View.GONE);
+			
+			// TODO Download the Image Asyncronously
+			
+			menuItemTitle.setText(toShow.getTitle());
+			menuItemDesc.setText("ID: " + toShow.getProductID());
+			menuItemPrice.setText("QTY: " + qty);
+			
+			return view;
+		}
+		
 	}
 
 }

@@ -101,6 +101,7 @@ public class OrderListFragment extends ListFragment {
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 		ArrayList<Order> orders = mAdapter.getOrders();
 		Order[] orderArray = new Order[orders.size()];
 		for (int i = 0; i < orderArray.length; ++i) {
@@ -194,12 +195,12 @@ public class OrderListFragment extends ListFragment {
 		 */
 		void onOrderComplete(Order order);
 
-		/**
-		 * Used to get the most recent up to date list of items to show.
-		 * if returns null then no list will be added
-		 * @return List of items to show
-		 */
-		List<Order> getCurrentOrders();
+//		/**
+//		 * Used to get the most recent up to date list of items to show.
+//		 * if returns null then no list will be added
+//		 * @return List of items to show
+//		 */
+//		List<Order> getCurrentOrders();
 
 	}
 

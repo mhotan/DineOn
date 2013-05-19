@@ -1,23 +1,27 @@
 package uw.cse.dineon.restaurant.active;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.util.DevelopTools;
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
+import uw.cse.dineon.restaurant.active.DiningSessionDetailFragment.DiningSessionDetailListener;
 import uw.cse.dineon.restaurant.active.DiningSessionListFragment.DiningSessionListListener;
+import uw.cse.dineon.restaurant.active.OrderDetailFragment.OrderDetailListener;
+import uw.cse.dineon.restaurant.active.RequestDetailFragment.RequestDetailListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 /**
  * This activity supports the main features for this restaurant
@@ -32,7 +36,10 @@ import android.util.Log;
 public class RestauarantMainActivity extends DineOnRestaurantActivity implements
 OrderListFragment.OrderItemListener,
 RequestListFragment.RequestItemListener,
-DiningSessionListListener {
+DiningSessionListListener,
+DiningSessionDetailListener,
+OrderDetailListener, 
+RequestDetailListener {
 
 	private static final String TAG = RestauarantMainActivity.class.getSimpleName(); 
 
@@ -141,49 +148,80 @@ DiningSessionListListener {
 	//////////////////////////////////////////////////////////////////////
 
 	@Override
-	public List<DiningSession> getCurrentSessions() {
-		if (getRestaurant() != null) {
-			return getRestaurant().getSessions();
-		}
-		Log.w(TAG, "[getCurrentSessions] Restaurant is null");
-		return new ArrayList<DiningSession>();
-	}
-
-	@Override
-	public List<CustomerRequest> getCurrentRequests() {
-		if (getRestaurant() != null) {
-			return getRestaurant().getCustomerRequests();
-		}
-		Log.w(TAG, "[getCurrentRequests] Restaurant is null");
-		return new ArrayList<CustomerRequest>();
-	}
-
-	@Override
-	public List<Order> getCurrentOrders() {
-		if (getRestaurant() != null) {
-			return getRestaurant().getPendingOrders();
-		}
-		Log.w(TAG, "[getCurrentOrders] Restaurant is null");
-		return new ArrayList<Order>();
-	}
-
-	@Override
 	public void onRequestRequestDetail(CustomerRequest request) {
-		DevelopTools.getUnimplementedDialog(this, null);
+		if (request == null) { // Safety Check
+			return;
+		}
 
-				Intent intent = new Intent(getApplicationContext(),
-						RequestDetailActivity.class);
-				startActivity(intent);
+		if (replaceFragmentInContainer(RequestDetailFragment.newInstance(request))) {
+			return;
+		}
+		
+		// TODO Expand out a fragment
+		Intent intent = new Intent(getApplicationContext(),
+				RequestDetailActivity.class);
+		intent.putExtra(RequestDetailActivity.EXTRA_REQUEST, request);
+		startActivity(intent);
 	}
 
 	@Override
 	public void onRequestOrderDetail(Order order) {
-		DevelopTools.getUnimplementedDialog(this, null);
-				Intent intent = new Intent(getApplicationContext(),
-						OrderDetailActivity.class);
-				startActivity(intent);
+		if (order == null) { // Safety Check
+			return;
+		}
+
+		// If we were able to provide a fragment transaction
+		// Expand the fragment
+		if (replaceFragmentInContainer(OrderDetailFragment.newInstance(order))) {
+			return;
+		}
+
+		// TODO Expand out a fragment
+		Intent intent = new Intent(getApplicationContext(),
+				OrderDetailActivity.class);
+		intent.putExtra(OrderDetailActivity.EXTRA_ORDER, order);
+		startActivity(intent);
 	}
 
+	@Override
+	public void onDiningSessionDetailRequested(DiningSession ds) {
+		if (ds == null) { // Safety Check
+			return;
+		}
+
+		// If we were able to provide a fragment transaction
+		// Expand the fragment
+		if (replaceFragmentInContainer(DiningSessionDetailFragment.newInstance(ds))) {
+			return;
+		}
+
+		Intent intent = new Intent(getApplicationContext(),
+				DiningSessionDetailActivity.class);
+
+		intent.putExtra(DiningSessionDetailActivity.EXTRA_DININGSESSION, ds);
+		startActivity(intent);
+	}
+
+	/**
+	 * Replaces any fragment in the container with the inputed fragment.
+	 * If no container exists then nothing is added.
+	 * @param frag Fragment to add.
+	 * @return true if something was added or replaced, false other wise
+	 */
+	private boolean replaceFragmentInContainer(Fragment frag) {
+		View view = findViewById(R.id.container);
+		if (view != null) { // We are in a 7in or above tablet
+			FrameLayout container = (FrameLayout) view;
+			container.setVisibility(View.VISIBLE);
+
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+			ft.replace(R.id.container, frag);
+			ft.commit();
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public void onAssignStaffToRequest(CustomerRequest request, String staff) {
@@ -210,6 +248,23 @@ DiningSessionListListener {
 		// Use this and the super class to appropriately complete
 		// the Order
 		completeOrder(order);
+	}
+
+	@Override
+	public void sendShoutOut(UserInfo user, String message) {
+		// TODO Send push notification back to  
+		Toast.makeText(this, 
+				"Shout out to " + user.getName() 
+				+ " \"" + message + "\"", Toast.LENGTH_SHORT).show();
+	}
+	
+	@Override
+	public void onSendTaskToStaff(CustomerRequest request, String staff,
+			String urgency) {
+		// TODO Auto-generated method stub
+		Toast.makeText(this, 
+				"Sending customer request " + request.getDescription() 
+				+ " to " + staff, Toast.LENGTH_SHORT).show();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -239,7 +294,7 @@ DiningSessionListListener {
 
 			Restaurant restaurant = getRestaurant();
 			assert (restaurant != null); // WTF if that is null?
-			
+
 			// Narrow in position
 			position = Math.min(Math.max(position, 0), CONTENT.length - 1);
 
@@ -254,7 +309,7 @@ DiningSessionListListener {
 			case 2: // Should be 2
 				f = DiningSessionListFragment.newInstance(restaurant.getSessions());
 				break;
-			// TODO Add more options
+				// TODO Add more options
 			default:
 				Log.wtf(TAG, "ScreenSlidePagerAdapter weird index requested: " + position);
 				return null;
@@ -288,7 +343,7 @@ DiningSessionListListener {
 		public RequestListFragment getCurrentRequestListFragment() {
 			return (RequestListFragment) mFragments[1];
 		}
-		
+
 		/**
 		 * Returns current Dining Session list fragment instance.
 		 * @return Dining Session list fragment if it exists, else null
@@ -297,5 +352,7 @@ DiningSessionListListener {
 			return (DiningSessionListFragment) mFragments[2];
 		}
 	}
+
+	
 
 }

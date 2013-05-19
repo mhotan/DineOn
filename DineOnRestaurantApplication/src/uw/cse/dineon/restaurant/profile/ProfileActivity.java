@@ -72,12 +72,13 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 		 */
 
 		Fragment frag;
-		if (isLoggedIn() || DineOnConstants.DEBUG) {
+		if (isLoggedIn()) {
 			// If logged in fill views appropriately
 			// Set the actionbar with associated tabs
 			ActionBar ab = getActionBar();
 			ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			ab.setDisplayShowTitleEnabled(false);
+			ab.setTitle(getRestaurant().getName());
+			ab.setDisplayShowTitleEnabled(true);
 			if (ab != null) { // Support older builds
 				ab.addTab(ab.newTab()
 						.setText(R.string.tab_actionbar_restaurant_profile)

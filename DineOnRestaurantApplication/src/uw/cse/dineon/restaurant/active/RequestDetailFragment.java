@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
@@ -30,6 +31,10 @@ import android.widget.TextView;
 public class RequestDetailFragment extends Fragment 
 implements OnCheckedChangeListener, OnClickListener {
 
+	private static final String TAG = RequestDetailFragment.class.getSimpleName();
+	
+	private static final String REQUEST = TAG + "_request";
+	
 	private TextView mTitle, mDetails, mTableNumber, mTimeTaken;
 	private ArrayAdapter<String> mStaffAdapter;
 	private Map<RadioButton, String> mUrgencyMap;
@@ -42,6 +47,20 @@ implements OnCheckedChangeListener, OnClickListener {
 
 	private CustomerRequest mRequest;
 
+	/**
+	 * Creates a dining session that is ready to rock.
+	 * No need to call setOrder
+	 * @param request Order to use
+	 * @return Fragment to use.
+	 */
+	public static RequestDetailFragment newInstance(CustomerRequest request) {
+		Bundle args = new Bundle();
+		args.putParcelable(REQUEST, request);
+		RequestDetailFragment frag = new RequestDetailFragment();
+		frag.setArguments(args);
+		return frag;
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -96,6 +115,22 @@ implements OnCheckedChangeListener, OnClickListener {
 	}
 
 	@Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        
+        if (mRequest != null) {
+        	return;
+        }
+        
+        Bundle args = getArguments();
+        if (savedInstanceState != null) {
+        	setRequest((CustomerRequest)savedInstanceState.getParcelable(REQUEST));
+        } else if (args != null && args.containsKey(REQUEST)) {
+			setRequest((CustomerRequest) args.getParcelable(REQUEST));
+		}
+	}
+	
+	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		if (activity instanceof RequestDetailListener) {
@@ -105,6 +140,12 @@ implements OnCheckedChangeListener, OnClickListener {
 					+ " must implemenet RequestDetailFragment.RequestDetailListener");
 		}
 	}
+	
+	@Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(REQUEST, mRequest);
+    }
 
 	//////////////////////////////////////////////////////
 	//// Following are public setters.  That Activities can use
@@ -115,21 +156,9 @@ implements OnCheckedChangeListener, OnClickListener {
 	/**
 	 * Sets the state of this fragment to this request.
 	 * @param request request to update the fragment to
-	 * @param user UserInfo issuing the request
 	 */
-	public void setRequest(String request, UserInfo user) {
-		mRequest = new CustomerRequest(request, user);
-		if (mRequest != null) {
-			mMessageBlock.setText("");
-			// Set text TODO fix
-			mTitle.setText(mRequest.getDescription());
-			mDetails.setText("I'm Hungry!");
-			mTableNumber.setText("5");
-			mTimeTaken.setText("7:45pm");
-
-			//TODO Udpate the adapter
-		}
-
+	public void setRequest(CustomerRequest request) {
+		mRequest = request;
 		updateState();
 	}
 
@@ -137,12 +166,17 @@ implements OnCheckedChangeListener, OnClickListener {
 	 * Updates the state of the view pending the whether there is a request.
 	 */
 	private void updateState() {
-		if (mRequest == null) {
+		if (mRequest == null) { // No valid request
 			mSendMessage.setEnabled(false);
 			mSendTask.setEnabled(false);
-		} else {
+		} else { // Valid Request
 			mSendMessage.setEnabled(true);
 			mSendTask.setEnabled(true);
+			mMessageBlock.setHint("Quick Response");
+			mTitle.setText("From " + mRequest.getUserInfo().getName());
+			mDetails.setText(mRequest.getDescription());
+			mTableNumber.setText("??? TODO");
+			mTimeTaken.setText(mRequest.getOriginatingTime().toString());
 		}
 	}
 
@@ -166,11 +200,12 @@ implements OnCheckedChangeListener, OnClickListener {
 		public void onSendTaskToStaff(CustomerRequest request, String staff, String urgency);
 
 		/**
-		 * Send a message to the customer about their request.
-		 * @param request request to send
-		 * @param message message
+		 * Call back that shows that the user wishes to send a message 
+		 * to the customer pertaining that specific orders.
+		 * @param user User to send message to
+		 * @param message Message to send for this order
 		 */
-		public void onSendMessage(CustomerRequest request, String message);
+		public void sendShoutOut(UserInfo user, String message);
 
 	}
 
@@ -185,7 +220,7 @@ implements OnCheckedChangeListener, OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.button_send_message:
-			mListener.onSendMessage(mRequest, mMessageBlock.getText().toString());
+			mListener.sendShoutOut(mRequest.getUserInfo(), mMessageBlock.getText().toString());
 			break;
 		case R.id.button_send_to_staff:
 			String staffMember = mStaffList.getSelectedItem().toString();

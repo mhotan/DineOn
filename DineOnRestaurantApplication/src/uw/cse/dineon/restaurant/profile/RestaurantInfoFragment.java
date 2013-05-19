@@ -103,7 +103,9 @@ public class RestaurantInfoFragment extends Fragment {
 
 			mPhoneInput.setText(INFO.getPhone());
 			mAddressInput.setText(INFO.getAddr());
-			restName.setText(INFO.getName());
+//			restName.setText(INFO.getName());
+			restName.setEnabled(false);
+			restName.setVisibility(View.GONE);
 
 			mSaveButton.setOnClickListener(new View.OnClickListener() {
 

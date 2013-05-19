@@ -13,15 +13,9 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
-import uw.cse.dineon.restaurant.active.OrderDetailActivity;
-import uw.cse.dineon.restaurant.active.RequestDetailActivity;
-import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
-import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.TouchUtils;
-import android.view.KeyEvent;
 import android.widget.ImageButton;
 import android.widget.TextView;
 

@@ -121,8 +121,6 @@ implements SateliteListener {
 
 		mSatellite.register(mRestaurant, thisResActivity);
 		updateUI(); // This is the call that should trigger a lot of UI changes.
-		
-
 	}
 
 	@Override
@@ -534,6 +532,7 @@ implements SateliteListener {
 
 	/**
 	 * Instantiates a new progress dialog and shows it on the screen.
+	 * @param cancelable Allows the progress dialog to be cancelable.
 	 */
 	protected void createProgressDialog(boolean cancelable) {
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {

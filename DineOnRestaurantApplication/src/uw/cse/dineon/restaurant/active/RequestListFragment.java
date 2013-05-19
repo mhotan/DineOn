@@ -92,6 +92,7 @@ public class RequestListFragment extends ListFragment {
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 		ArrayList<CustomerRequest> requests = mAdapter.getCurrentRequests();
 		CustomerRequest[] requestArray = new CustomerRequest[requests.size()];
 		for (int i = 0; i < requestArray.length; ++i) {
@@ -187,12 +188,12 @@ public class RequestListFragment extends ListFragment {
 		 */
 		public void onRemoveRequest(CustomerRequest request);
 
-		/**
-		 * Used to get the most recent up to date list of items to show.
-		 * Cannot return null
-		 * @return List of requests to show
-		 */
-		public List<CustomerRequest> getCurrentRequests();
+//		/**
+//		 * Used to get the most recent up to date list of items to show.
+//		 * Cannot return null
+//		 * @return List of requests to show
+//		 */
+//		public List<CustomerRequest> getCurrentRequests();
 
 	}
 
