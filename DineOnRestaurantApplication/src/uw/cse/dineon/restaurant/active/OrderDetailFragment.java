@@ -33,9 +33,9 @@ import android.widget.TextView;
 public class OrderDetailFragment extends Fragment implements OnClickListener {
 
 	private static final String TAG = OrderDetailFragment.class.getSimpleName();
-	
+
 	private static final String ORDER = TAG + "_order";
-	
+
 	private TextView mTitle, mTableInput, mTakenTime;
 	private MenuItemAdapter mAdapter;
 	private EditText mMessageInput;
@@ -44,7 +44,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 
 	private OrderDetailListener mListener;
 	private Order mOrder;
-	
+
 	/**
 	 * Creates a dining session that is ready to rock.
 	 * No need to call setOrder
@@ -58,7 +58,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		frag.setArguments(args);
 		return frag;
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -74,22 +74,22 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		mSendMessageButton = (ImageButton) view.findViewById(R.id.button_send_message_fororder);
 		mSendMessageButton.setOnClickListener(this);
 		mItemList = (ListView) view.findViewById(R.id.list_order);
-		
+
 		return view;
 	}
-	
+
 	@Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        
-        if (mOrder != null) {
-        	return;
-        }
-        
-        Bundle args = getArguments();
-        if (savedInstanceState != null) {
-        	setOrder((Order)savedInstanceState.getParcelable(ORDER));
-        } else if (args != null && args.containsKey(ORDER)) {
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		if (mOrder != null) {
+			return;
+		}
+
+		Bundle args = getArguments();
+		if (savedInstanceState != null) {
+			setOrder((Order)savedInstanceState.getParcelable(ORDER));
+		} else if (args != null && args.containsKey(ORDER)) {
 			setOrder((Order) args.getParcelable(ORDER));
 		}
 	}
@@ -104,13 +104,13 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 					+ " must implemenet OrderDetailFragment.OrderDetailListener");
 		}
 	}
-	
+
 	@Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(ORDER, mOrder);
-    }
-	
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(ORDER, mOrder);
+	}
+
 	/**
 	 * Updates the state of the view pending the whether there is a request.
 	 */
@@ -147,7 +147,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			Log.w(TAG, "Setting Order to null");
 			return;
 		}
-		
+
 		mOrder = order;
 		updateState();
 	}
@@ -186,7 +186,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		}
 		mListener.sendShoutOut(mOrder.getOriginalUser(), message);
 	}
-	
+
 	/**
 	 * View the relevant information of all the menu items.
 	 * @author mhotan
@@ -194,12 +194,12 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	private class MenuItemAdapter extends ArrayAdapter<MenuItem> {
 
 		private final Context mContext;
-		
+
 		/**
 		 * List of Menu Items with their associated quantity.
 		 */
 		private final List<Pair<MenuItem, Integer>> mItems;
-		
+
 		/**
 		 * Creates an adapter for displaying menu items.
 		 * @param context Owning context of this adapter
@@ -208,16 +208,16 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		public MenuItemAdapter(Context context, List<MenuItem> items) {
 			super(context, R.layout.listitem_menuitem_editable);
 			mContext = context;
-			
+
 			// Check for stupidity
 			Map<MenuItem, Integer> occurences = Utility.toQuantityMap(items);
-			
+
 			mItems = new ArrayList<Pair<MenuItem, Integer>>(occurences.keySet().size());
-			for (MenuItem item : occurences.keySet()) {
-				mItems.add(new Pair<MenuItem, Integer>(item, occurences.get(item)));
+			for (Map.Entry<MenuItem, Integer> entry : occurences.entrySet()) {
+				mItems.add(new Pair<MenuItem, Integer>(entry.getKey(), entry.getValue()));
 			}
 		}
-		
+
 		/**
 		 * Use for restoring state. No copies are made.
 		 * Just a new lsit is returned
@@ -226,35 +226,37 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		ArrayList<Pair<MenuItem, Integer>> getCurrentItems() {
 			return new ArrayList<Pair<MenuItem, Integer>>(mItems);
 		}
-	
+
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view = inflater.inflate(R.layout.listitem_menuitem_editable, null, true);
-		
+
 			MenuItem toShow = mItems.get(position).first;
 			int qty = mItems.get(position).second;
-			
-			ImageView menuItemImage = (ImageView) view.findViewById(R.id.image_thumbnail_menuitem);
+
+			//Commented out for findbugs
+//			ImageView menuItemImage = (ImageView) 
+//					view.findViewById(R.id.image_thumbnail_menuitem);
 			TextView menuItemTitle = (TextView) view.findViewById(R.id.label_menuitem_title);
 			TextView menuItemDesc = (TextView) view.findViewById(R.id.label_menuitem_desc);
 			TextView menuItemPrice = (TextView) view.findViewById(R.id.label_menuitem_price);
 			ImageButton deleteButton = (ImageButton) view.findViewById(R.id.button_menuitem_delete);
-			
+
 			// Remove the delete button from restaurant context
 			deleteButton.setEnabled(false);
 			deleteButton.setVisibility(View.GONE);
-			
+
 			// TODO Download the Image Asyncronously
-			
+
 			menuItemTitle.setText(toShow.getTitle());
 			menuItemDesc.setText("ID: " + toShow.getProductID());
 			menuItemPrice.setText("QTY: " + qty);
-			
+
 			return view;
 		}
-		
+
 	}
 
 }

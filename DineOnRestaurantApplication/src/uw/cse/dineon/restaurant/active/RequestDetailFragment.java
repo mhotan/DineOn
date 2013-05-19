@@ -11,6 +11,7 @@ import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -226,6 +227,8 @@ implements OnCheckedChangeListener, OnClickListener {
 			String staffMember = mStaffList.getSelectedItem().toString();
 			mListener.onSendTaskToStaff(mRequest, staffMember, mUrgency);
 		default:
+			Log.wtf(TAG, "RequestDetailListener weird id requested: " + v.getId());
+			break;
 		}
 	}
 }

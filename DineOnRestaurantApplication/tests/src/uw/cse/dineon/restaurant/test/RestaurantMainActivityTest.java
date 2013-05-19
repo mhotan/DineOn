@@ -36,6 +36,10 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 
 	private RestaurantInfo mRI;
 
+	private CustomerRequest mRequest;
+	private Order mOrder;
+	private DiningSession testSession;
+	
 	int orderNum = 100;
 
 	private static String menuItemText = "Fake Menu Item 1"; 
@@ -54,10 +58,15 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 
 		mUI = new UserInfo(mUser);
 		mRI = new RestaurantInfo(mUser);
+		mRequest = createFakeRequest(mUser);
+		mOrder = createFakeOrder(mUser);
+		testSession = createFakeDiningSession(mUser);
 		r = createFakeRestaurant(mUser);
+		r.addCustomerRequest(mRequest);
+		r.addOrder(mOrder);
+		r.addDiningSession(testSession);
 
 		ArrayList<Parcelable> dSessions = new ArrayList<Parcelable>();
-		DiningSession testSession = createFakeDiningSession(mUser);
 		dSessions.add(testSession);
 
 		Intent intent = new Intent(getInstrumentation().getTargetContext(),
@@ -74,9 +83,6 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 
 	private Restaurant createFakeRestaurant(ParseUser user) throws ParseException{
 		Restaurant r = new Restaurant(user);
-		r.addOrder(createFakeOrder(user));
-		r.addCustomerRequest(createFakeRequest(user));
-		r.addDiningSession(createFakeDiningSession(user));
 		return r;
 	}
 
@@ -102,22 +108,14 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	}
 
 	protected void tearDown() throws Exception {
-		mUser = null;
-		mUI = null;
+		mRequest.deleteFromCloud();
+		mOrder.deleteFromCloud();
+		testSession.deleteFromCloud();
+		mUI.deleteFromCloud();
+		mRI.deleteFromCloud();
+		r.deleteFromCloud();
 		mActivity.finish();
 		super.tearDown();
-	}
-
-	public void testNumOrders() {
-		assertEquals(1, mActivity.getCurrentOrders().size());
-	}
-
-	public void testNumRequests() {
-		assertEquals(1, mActivity.getCurrentRequests().size());
-	}
-
-	public void testNumDiningSessions() {
-		assertEquals(1, mActivity.getCurrentSessions().size());
 	}
 
 	public void testOrderLayoutItemsPopulate() {
@@ -137,27 +135,5 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		assertNotNull(requestTime);
 		assertNotNull(arrowButton);
 	}
-
-//	  Uncomment -- Will pass once onRequestRequestDetail is implemented
-//	public void testLaunchRequestDetailActivity() {
-//		ActivityMonitor monitor = getInstrumentation().addMonitor(RequestDetailActivity.class.getName(), null, false);
-//		List<CustomerRequest> requests = mActivity.getCurrentRequests();
-//        mActivity.onRequestRequestDetail(requests.get(0));
-//		RequestDetailActivity startedActivity = (RequestDetailActivity) monitor.waitForActivityWithTimeout(2000);
-//		assertNotNull(startedActivity);
-//		startedActivity.finish();
-//	}
-
-//	  Uncomment -- Will pass once onOrderRequestDetail is implemented
-//		public void testGoToOrderDetailActivity() {
-//			ActivityMonitor monitor = getInstrumentation().addMonitor(OrderDetailActivity.class.getName(), null, false);
-//			ImageButton orderArrowButton = (ImageButton) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_expand_order);
-//			TouchUtils.clickView(this, orderArrowButton);
-//			TouchUtils.clickView(this, orderArrowButton);
-//			OrderDetailActivity startedActivity = (OrderDetailActivity) monitor.waitForActivityWithTimeout(2000);
-//			assertNotNull(startedActivity);
-//			this.sendKeys(KeyEvent.KEYCODE_BACK);
-//			startedActivity.finish();
-//		}
 
 }

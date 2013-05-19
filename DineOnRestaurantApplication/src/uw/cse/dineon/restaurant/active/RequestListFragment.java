@@ -385,6 +385,7 @@ public class RequestListFragment extends ListFragment {
 					mAdapter.notifyDataSetChanged();
 					break;
 				default:
+					Log.wtf(TAG, "AllAroundListener weird id requested: " + v.getId());
 					break;
 				}
 

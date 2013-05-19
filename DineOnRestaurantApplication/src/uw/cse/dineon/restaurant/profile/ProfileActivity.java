@@ -286,9 +286,9 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 			RestaurantInfo info = getRestaurant().getInfo();
 			assert (info != null);
 
-			Fragment frag;
-
-			frag = RestaurantInfoFragment.newInstance(info);
+			//Commented out for findbugs
+			//Fragment frag;
+			//frag = RestaurantInfoFragment.newInstance(info);
 
 			// Check if the fragment is already initialized
 			if (mFragment == null) {
