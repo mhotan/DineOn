@@ -111,8 +111,8 @@ public final class ParseUtil {
 		if(uname == null || passwd == null || callback == null) {
 			throw new IllegalArgumentException();
 		}
-
-		final Method M = callback;
+		//Commented out to pacify findbugs
+		//final Method M = callback;
 		ParseUser.logInInBackground(uname, passwd, new LogInCallback() {
 
 			@Override
@@ -246,10 +246,8 @@ public final class ParseUtil {
 
 		ParseQuery query = new ParseQuery(c.getSimpleName());
 		if(attr != null) {
-			Set<String> kSet = attr.keySet();
-			for (String k : kSet) {
-				String val = attr.get(k);
-				query.whereEqualTo(k, val);
+			for (Map.Entry<String, String> entry : attr.entrySet()) {
+			    query.whereEqualTo(entry.getKey(), entry.getValue());
 			}
 		}
 		final Method H = handle;
@@ -312,10 +310,8 @@ public final class ParseUtil {
 
 		ParseQuery query = new ParseQuery(c.getSimpleName());
 		if(attr != null) {
-			Set<String> kSet = attr.keySet();
-			for (String k : kSet) {
-				String val = attr.get(k);
-				query.whereEqualTo(k, val);
+			for (Map.Entry<String, String> entry : attr.entrySet()) {
+			    query.whereEqualTo(entry.getKey(), entry.getValue());
 			}
 		}
 		final Activity ACT = activity;
