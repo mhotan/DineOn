@@ -95,7 +95,7 @@ public class SubMenuFragment extends ListFragment {
 		 */
 		private final HashMap<NumberPicker, MenuItem> mPickerMapping;
 		
-		private final HashMap<String, MenuItem> mTitleMapping;
+		private final HashMap<View, MenuItem> mViewMapping;
 		
 		// Listeners for all row items
 		private final NumberPicker.OnValueChangeListener mNumPickerListener;
@@ -111,7 +111,7 @@ public class SubMenuFragment extends ListFragment {
 			mContext = context;
 			mMenuItems = new ArrayList<MenuItem>(items);
 			mPickerMapping = new HashMap<NumberPicker, MenuItem>();
-			mTitleMapping = new HashMap<String, MenuItem>();
+			mViewMapping = new HashMap<View, MenuItem>();
 			
 			// Inialize listener for number count
 			mNumPickerListener = new OnValueChangeListener() {
@@ -147,7 +147,8 @@ public class SubMenuFragment extends ListFragment {
 					TextView tView = (TextView) v.findViewById(R.id.label_menu_item);
 					String menuItem = tView.getText().toString();
 					
-					mListener.onMenuItemFocusedOn(mAdapter.mTitleMapping.get(menuItem));
+					MenuItem m = mAdapter.mViewMapping.get(v);
+					mListener.onMenuItemFocusedOn(m);
 				}
 			};
 
@@ -169,6 +170,7 @@ public class SubMenuFragment extends ListFragment {
 			// Get the right name and description from the list
 			MenuItem item = mMenuItems.get(position);
 			menuLabel.setText(item.getTitle() + "\n" + item.getDescription());
+			this.mViewMapping.put(menuLabel, item);
 			
 			NumberPicker np = (NumberPicker) rowView.findViewById(R.id.numberpicker_menuitem_qty);
 			mPickerMapping.put(np, item);

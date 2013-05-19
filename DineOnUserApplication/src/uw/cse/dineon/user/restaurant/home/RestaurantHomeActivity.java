@@ -1,5 +1,8 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
@@ -28,6 +31,8 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	
 	private DiningSession mDiningSession;
 
+	private List<MenuItem> mOrder;
+	
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
 	//////////////////////////////////////////////////////////////////////
@@ -66,6 +71,8 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 		}
 
 		setContentView(R.layout.activity_restaurant_home);
+		
+		this.mOrder = new ArrayList<MenuItem>();
 
 		// TODO FIX: Extract the value of the restaurant
 		// Pull out all its menus and information
@@ -105,25 +112,27 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	public void onRestaurantInfoRequested() {
 		// TODO Auto-generated method stub
 		// TODO Replace MenuItemDetailFragment with Restaurant Info Fragment
+		
 	}
 
 
 	@Override
 	public void onMenuItemIncremented(MenuItem menuItem) {
 		// TODO Auto-generated method stub
-
+		this.mOrder.add(menuItem);
 	}
 
 	@Override
 	public void onMenuItemDecremented(MenuItem menuItem) {
 		// TODO Auto-generated method stub
-
+		this.mOrder.remove(menuItem);
 	}
 
 	@Override
 	public void onViewCurrentBill() {
 		// TODO Auto-generated method stub
 		// TODO Take to Current Bill screen
+		
 	}
 
 	@Override

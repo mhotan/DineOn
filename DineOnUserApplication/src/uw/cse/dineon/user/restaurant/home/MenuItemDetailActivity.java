@@ -1,21 +1,24 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.widget.TextView;
 
 /**
  * 
  * @author 
  *
  */
-public class MenuItemDetailActivity extends DineOnUserActivity {
+public class MenuItemDetailActivity extends DineOnUserActivity implements 
+MenuItemDetailFragment.MenuItemDetailListener {
 
 	public static final String TAG = MenuItemDetailActivity.class.getSimpleName();
 	
 	public static final String EXTRA_MENUITEM = "menuitem";
+	
+	private MenuItem mItem;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +32,14 @@ public class MenuItemDetailActivity extends DineOnUserActivity {
 		}
 		setContentView(R.layout.activity_menuitem_detail);
 		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			String s = extras.getString(EXTRA_MENUITEM);
-			TextView view = (TextView) findViewById(R.id.label_menu_item_name);
-			view.setText(s);
+		if (extras != null && extras.containsKey(EXTRA_MENUITEM)) {
+			this.mItem = extras.getParcelable(EXTRA_MENUITEM);
 		}
+	}
+
+	@Override
+	public MenuItem getMenuItem() {
+		// TODO Auto-generated method stub
+		return this.mItem;
 	}
 }
