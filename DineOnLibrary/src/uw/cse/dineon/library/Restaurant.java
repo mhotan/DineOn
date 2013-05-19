@@ -342,9 +342,12 @@ public class Restaurant extends LocatableStorable {
 				session.addUser(user);
 			}
 		}
-
-
-
+	}
+	
+	@Override
+	public void deleteFromCloud() {
+		mRestInfo.deleteFromCloud();
+		super.deleteFromCloud();
 	}
 
 	/**
