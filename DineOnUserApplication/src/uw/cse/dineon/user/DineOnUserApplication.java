@@ -1,5 +1,6 @@
 package uw.cse.dineon.user;
 
+import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.app.Application;
 
@@ -13,7 +14,7 @@ import com.parse.ParseUser;
  * Application for DineOn user side.
  */
 public class DineOnUserApplication extends Application {
-
+	public static DineOnUser cachedUser = null;
 	@Override
 	public void onCreate() {
 		super.onCreate();

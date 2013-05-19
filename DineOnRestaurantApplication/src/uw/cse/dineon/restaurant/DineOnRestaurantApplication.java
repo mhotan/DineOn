@@ -1,5 +1,6 @@
 package uw.cse.dineon.restaurant;
 
+import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.app.Application;
 
@@ -14,7 +15,7 @@ import com.parse.ParseUser;
  *
  */
 public class DineOnRestaurantApplication extends Application {
-
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();

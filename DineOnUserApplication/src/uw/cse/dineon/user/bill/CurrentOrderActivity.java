@@ -1,16 +1,13 @@
 package uw.cse.dineon.user.bill;
 
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
-import android.app.Activity;
-import android.content.Context;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.EditText;
+
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 /**
  * 
@@ -29,15 +30,14 @@ import android.widget.Toast;
 public class CurrentOrderActivity extends DineOnUserActivity implements
 CurrentOrderFragment.OrderUpdateListener {
 	
-	private Button mReqButton;
+	
 	private final String TAG = "CurrentOrderActivity";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_current_order);
-		mReqButton = (Button) this.findViewById(R.id.button_request);
-		mReqButton.setOnClickListener(new OrderButtonListener());
+		
 	}
 	
 	@Override
@@ -76,9 +76,6 @@ CurrentOrderFragment.OrderUpdateListener {
 			intent.putExtra(CurrentBillActivity.EXTRA_DININGSESSION, 
 					"Dining session with accrued orders goes here");
 			startActivityForResult(intent, DineOnConstants.REQUEST_PAY_BILL);
-			break;
-		case R.id.button_request:
-			Toast.makeText(this, "Requested", 5000);
 			break;
 		default:
 			break;
@@ -122,11 +119,14 @@ CurrentOrderFragment.OrderUpdateListener {
 	}
 
 	/**
-	 * 
+	 * @param request String request description
 	 */
-	public void onRequestMade() {
+	public void onRequestMade(String request) {
 		UserInfo ui = new UserInfo(ParseUser.getCurrentUser());
-		final CustomerRequest C_REQ = new CustomerRequest("Refill my water!!!", ui);
+		
+		
+		final CustomerRequest C_REQ = new CustomerRequest(request, ui);
+		
 		final CurrentOrderActivity COACT = this;
 		C_REQ.saveInBackGround(new SaveCallback() {
 			
@@ -141,19 +141,5 @@ CurrentOrderFragment.OrderUpdateListener {
 		} );
 				
 	}
-	
-	/**
-	 * 
-	 * @author espeo196, jpmcneal
-	 *
-	 */
-	public class OrderButtonListener implements OnClickListener {
-
-		@Override
-		public void onClick(View arg0) {
-			onRequestMade();
-		}
-		
-	}
-
+			
 }

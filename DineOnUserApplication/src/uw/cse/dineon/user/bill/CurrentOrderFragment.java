@@ -5,20 +5,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 /**
  * 
@@ -46,7 +54,7 @@ extends Fragment implements OnClickListener {
 	private OrderUpdateListener mListener;
 
 	private TextView mSubtotal, mTax, mTotal;
-
+	private Button mReqButton;
 	private Button mPlaceOrderButton;
 
 	@Override
@@ -75,6 +83,8 @@ extends Fragment implements OnClickListener {
 		mTotal = (TextView) view.findViewById(R.id.value_total);
 		mPlaceOrderButton = (Button) view.findViewById(R.id.button_place_order);
 		mPlaceOrderButton.setOnClickListener(this);
+		mReqButton = (Button) view.findViewById(R.id.button_request);
+		mReqButton.setOnClickListener(this);
 
 		// TODO replace hard code value with value from order
 		mSubtotal.setText("1,000,000.00");
@@ -113,9 +123,47 @@ extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		mListener.onPlaceOrder("ORDER REQUESTED PLACE OBJECT HERE!");
+		if(v.getId() == R.id.button_request)
+			getRequestDescription();
+		else
+			mListener.onPlaceOrder("ORDER REQUESTED PLACE OBJECT HERE!");
+	}
+	
+	private void sendRequest(String str){
+		if(getActivity() instanceof CurrentOrderActivity){
+			CurrentOrderActivity act = (CurrentOrderActivity)getActivity();
+			Log.v(TAG, "About to send Req");
+			act.onRequestMade(str);
+		}
+	}
+	
+	private void getRequestDescription() {
+		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+		alert.setTitle("Add New Menu Item");
+		alert.setMessage("Input Menu Item Details");
+		final View alertView = getLayoutInflater(getArguments()).inflate(
+				R.layout.alert_build_request, null);
+		alert.setView(alertView);
+		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface d, int arg1) {
+				String desc = ((EditText) alertView
+						.findViewById(R.id.input_request_description)).getText()
+						.toString();
+				sendRequest(desc);
+			}
+		});
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				//Do nothing
+			}
+		});
+		alert.show();
 	}
 
+	
 	/**
 	 * Listener associated with this containing fragment.
 	 * <b>This allows any containing activity to receive
@@ -312,7 +360,4 @@ extends Fragment implements OnClickListener {
 		}
 
 	}
-
-
-
 }

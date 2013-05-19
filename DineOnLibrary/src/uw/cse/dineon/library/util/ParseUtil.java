@@ -446,7 +446,7 @@ public final class ParseUtil {
 					+ " constructor that takes one ParseObject not found!");
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException("Invocation Exception for: " + clazz.getSimpleName() 
-					+ " constructor that takes one ParseObject not found!");
+					+ " constructor that takes one ParseObject not found!\n" + e.getMessage());
 		}
 		if (object != null) {
 			return (T)object;

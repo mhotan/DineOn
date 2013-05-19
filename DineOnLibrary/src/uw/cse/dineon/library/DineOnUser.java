@@ -61,6 +61,7 @@ public class DineOnUser extends Storable {
 		mFavRestaurants = new ArrayList<RestaurantInfo>();
 		mReservations = new ArrayList<Reservation>();
 		mFriendsLists = new ArrayList<UserInfo>();
+		mDiningSession = null;
 		// Dining sessions are not instantiated until the user begins a dining session
 	}
 
@@ -97,10 +98,9 @@ public class DineOnUser extends Storable {
 		pobj.put(RESERVATIONS, ParseUtil.toListOfParseObjects(mReservations));
 		pobj.put(FRIEND_LIST, ParseUtil.toListOfParseObjects(mFriendsLists));
 		if (mDiningSession != null) {
-			pobj.put(DINING_SESSION, mDiningSession.packObject());
+			pobj.put(DineOnUser.DINING_SESSION, this.mDiningSession.packObject());			
 		} else {
-			pobj.put(DINING_SESSION, ParseObject.createWithoutData(
-					DiningSession.class.getSimpleName(), EMPTY_DS));
+			pobj.put(DineOnUser.DINING_SESSION, JSONObject.NULL);
 		}
 
 		return pobj;

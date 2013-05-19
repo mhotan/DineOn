@@ -5,6 +5,7 @@ import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.AlertDialog;
@@ -15,7 +16,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -36,8 +36,6 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 
 	private Context thisActivity;
 
-	private DineOnUser mUser;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,12 +47,13 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 	/**
 	 * This automates the addition of the User Intent.
 	 * Should never be called when mUser is null.
-	 * @param intent Intent to startactivity with
+
+	 * @param intent Intent to start activity with
 	 */
 	@Override
 	public void startActivity(Intent intent) {
-		intent.putExtra(DineOnConstants.KEY_USER, mUser);
 		super.startActivity(intent);
+		finish();
 	}
 
 	@Override
@@ -85,7 +84,7 @@ implements CreateNewAccountFragment.onCreateNewAccountListener {
 							public void done(ParseException e) {
 								if (e == null) {
 									// Success
-									mUser = USER;
+									DineOnUserApplication.cachedUser = USER;
 									Intent intent = 
 											new Intent(thisActivity,
 													RestaurantSelectionActivity.class);

@@ -7,6 +7,7 @@ import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.AlertDialog;
@@ -55,11 +56,6 @@ LoginFragment.OnLoginListener {
 	private Context thisCxt;
 	
 	/**
-	 * Reference to User object that is created or downloaded.
-	 */
-	private DineOnUser mUser;
-
-	/**
 	 * Progress bar dialog for showing user progress.
 	 */
 	private ProgressDialog mProgressDialog;
@@ -88,11 +84,10 @@ LoginFragment.OnLoginListener {
 	 */
 	@Override
 	public void startActivity(Intent intent) {
-		if (DineOnConstants.DEBUG && mUser == null) {
+		if (DineOnConstants.DEBUG && DineOnUserApplication.cachedUser == null) {
 			Toast.makeText(this, "Need to create or download a User", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		intent.putExtra(DineOnConstants.KEY_USER, mUser);
 		super.startActivity(intent);
 	}
 	
@@ -147,10 +142,11 @@ LoginFragment.OnLoginListener {
 	 */
 	private void startRestSelectionAct(DineOnUser user) {
 		// Destroy any running progress dialog
-		mUser = user;
+		DineOnUserApplication.cachedUser = user;
 		destroyProgressDialog();
 		Intent i = new Intent(this, RestaurantSelectionActivity.class);
 		startActivity(i);
+		this.finish();
 	}
 	
 	/**

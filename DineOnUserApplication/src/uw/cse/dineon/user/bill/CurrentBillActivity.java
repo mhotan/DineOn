@@ -4,6 +4,7 @@ import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.widget.Toast;
 
 /**
  * Activity to maintain current user bill.
@@ -30,6 +31,7 @@ public class CurrentBillActivity extends DineOnUserActivity {
 					.findFragmentById(R.id.fragment_current_bill);
 			frag.setDiningSession(s);
 		}
+		
 	}
 
 }

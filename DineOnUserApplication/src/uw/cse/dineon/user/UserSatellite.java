@@ -1,6 +1,5 @@
 package uw.cse.dineon.user;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +46,6 @@ public class UserSatellite extends BroadcastReceiver {
 	/**
 	 * User this station associates to.
 	 */
-	private DineOnUser mUser;
 
 	/**
 	 * Intent filter to control which actions to listen for.
@@ -109,11 +107,8 @@ public class UserSatellite extends BroadcastReceiver {
 		// Establish the activity 
 		mCurrentActivity = activity;
 
-		// Establish a reference to the restaurant
-		mUser = user;
-
 		// Establish the channel to make 
-		mChannel = ParseUtil.getChannel(mUser.getUserInfo());
+		mChannel = ParseUtil.getChannel(DineOnUserApplication.cachedUser.getUserInfo());
 
 		// Registers this activity to this receiver
 		mCurrentActivity.registerReceiver(this, mIF);

@@ -18,9 +18,9 @@ public class OrderTest extends AndroidTestCase {
 	MenuItem testItem;
 	Order testOrder;
 	ParseUser testUser;
-
 	
-	protected void setUpBeforeClass() throws Exception {
+	protected void setUp() throws Exception {
+		super.setUp();
 		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		
 		testUser = new ParseUser();
@@ -28,16 +28,7 @@ public class OrderTest extends AndroidTestCase {
 		testUser.setPassword("pass");
 		testUser.signUp();
 		testUser.save();
-
-	}
-	
-	protected void tearDownAfterClass() throws Exception {
-		super.tearDown();
-		testUser.delete();
-	}
-	
-	protected void setUp() throws Exception {
-		super.setUp();
+		
 		testUInfo = new UserInfo(testUser);
 		testItems = new ArrayList<MenuItem>();
 		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
@@ -47,6 +38,7 @@ public class OrderTest extends AndroidTestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		testUser.delete();
 	}
 
 	public void testPackObject() {
