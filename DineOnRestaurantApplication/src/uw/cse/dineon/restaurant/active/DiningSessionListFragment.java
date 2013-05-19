@@ -3,6 +3,8 @@ package uw.cse.dineon.restaurant.active;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
@@ -251,7 +253,7 @@ public class DiningSessionListFragment extends ListFragment {
 		}
 
 
-
+		@SuppressWarnings("BC_UNCONFIRMED_CAST")
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			LinearLayout vw;

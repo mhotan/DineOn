@@ -3,6 +3,8 @@ package uw.cse.dineon.restaurant.profile;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
@@ -34,6 +36,7 @@ import android.widget.Toast;
  * 
  * @author mhotan
  */
+@SuppressWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class MenuItemsFragment extends ListFragment {
 
 	/**

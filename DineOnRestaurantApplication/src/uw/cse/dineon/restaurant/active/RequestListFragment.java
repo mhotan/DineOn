@@ -21,6 +21,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 
 /**
  * A List fragment that contains pending Request.
@@ -269,7 +271,9 @@ public class RequestListFragment extends ListFragment {
 			notifyDataSetChanged();
 		}
 
-
+//		@edu.umd.cs.findbugs.annotations.SuppressWarnings(value =
+//		        "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "Spring init method")
+		@SuppressWarnings("BC_UNCONFIRMED_CAST")
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			View vwTop;

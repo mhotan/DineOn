@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
@@ -273,6 +275,7 @@ public class OrderListFragment extends ListFragment {
 			notifyDataSetChanged();
 		}
 
+		@SuppressWarnings("BC_UNCONFIRMED_CAST")
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 
