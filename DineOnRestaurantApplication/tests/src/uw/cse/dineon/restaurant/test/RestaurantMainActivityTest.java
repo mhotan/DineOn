@@ -13,6 +13,7 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.test.ActivityInstrumentationTestCase2;

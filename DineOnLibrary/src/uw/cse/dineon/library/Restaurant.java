@@ -279,7 +279,7 @@ public class Restaurant extends LocatableStorable {
 	 */
 	public void removeCustomerRequest(CustomerRequest oldReq) {
 		mCustomerRequests.remove(oldReq);
-		// TODO Delete the customer request if it existed
+		oldReq.deleteFromCloud();
 	}
 
 	/**

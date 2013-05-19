@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import uw.cse.dineon.library.CustomerRequest;
-import uw.cse.dineon.library.Order;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
@@ -212,7 +211,7 @@ public class RequestListFragment extends ListFragment {
 		private final List<CustomerRequest> mRequests;
 		private final Map<View, CustomerRequest> mViewToCustomerRequest;
 		private final ArrayList<String> mStaff;
-		private final Spinner mSpinner;
+
 		int expanded = -1;
 
 		/**
@@ -228,7 +227,6 @@ public class RequestListFragment extends ListFragment {
 			this.mViewToCustomerRequest = new HashMap<View, CustomerRequest>();
 			// For debug purposes we will add fake staff members
 			mStaff = new ArrayList<String>();
-			mSpinner = new Spinner(ctx);
 			mStaff.add("Bert");
 			mStaff.add("Ernie");
 			mStaff.add("Big Bird");
@@ -238,7 +236,7 @@ public class RequestListFragment extends ListFragment {
 		/**
 		 * @return Returns current list of requests.
 		 */
-		public ArrayList<CustomerRequest> getCurrentRequests(){
+		public ArrayList<CustomerRequest> getCurrentRequests() {
 			return new ArrayList<CustomerRequest>(mRequests);
 		}
 
@@ -307,20 +305,20 @@ public class RequestListFragment extends ListFragment {
 
 			ImageButton assignStaffButton = (ImageButton) vwBot.findViewById(R.id.button_assign);
 
-			// Add the onclick listener that listens 
-			arrowButton.setOnClickListener(new View.OnClickListener() {
+			View.OnClickListener listener = new View.OnClickListener() {
+				
+				@Override
 				public void onClick(View v) {
 					expand(position);
-
-					ImageButton arrowButton = 
-							(ImageButton) VIEW.findViewById(R.id.button_expand_request);
-					setArrow(position, arrowButton);
 					//Right arrow case -- goes to details fragment
 					if(expanded != position) {
 						mListener.onRequestRequestDetail(mRequests.get(position));
-					}				
+					}	
 				}
-			});
+			};
+			
+			title.setOnClickListener(listener);
+			time.setOnClickListener(listener);
 
 			if(expanded != position) {
 				vwBot.setVisibility(View.GONE);
@@ -334,14 +332,14 @@ public class RequestListFragment extends ListFragment {
 			Spinner spinner = (Spinner) VIEW.findViewById(
 					R.id.spinner_staff_to_assign);
 
-			//TODO: Load assigned staff into spinner
+			// TODO Load assigned staff into spinner
 			
 			spinner.setAdapter(new ArrayAdapter<String>(getActivity(), 
 					android.R.layout.simple_list_item_1, mStaff));
 
 			// Add to mapping to reference later
 			mViewToCustomerRequest.put(remove, REQUEST);
-			mViewToCustomerRequest.put(arrowButton, REQUEST);
+//			mViewToCustomerRequest.put(arrowButton, REQUEST);
 			mViewToCustomerRequest.put(spinner, REQUEST);
 			remove.setOnClickListener(new AllAroundListener(spinner));
 			assignStaffButton.setOnClickListener(new AllAroundListener(spinner));

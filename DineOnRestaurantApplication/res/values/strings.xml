@@ -43,7 +43,7 @@
     <string name="menu_add_menu_item">Add MenuItem</string>
     <string name="menu_switch_menu">Select Menu</string>
     <string name="husky_soft_logo">HuskySoft Logo</string>
-    <string name="label_assign_to">Assign To</string>
+    <string name="label_assign_to">Assign</string>
     <string name="button_assign">Assign Button</string>
     <string name="button_remove_request">Remove Request Button</string>
     <string name="label_request_default">Request Goes Here</string>
