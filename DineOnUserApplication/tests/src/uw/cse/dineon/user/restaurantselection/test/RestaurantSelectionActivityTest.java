@@ -1,5 +1,8 @@
 package uw.cse.dineon.user.restaurantselection.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -49,8 +52,9 @@ public class RestaurantSelectionActivityTest extends
 	}
 
 	public void testAddRestaurantInfo() throws ParseException {
-		
-		mActivity.addRestaurantInfo(testRInfo);
+		List<RestaurantInfo> tempList = new ArrayList<RestaurantInfo>();
+		tempList.add(testRInfo);
+		mActivity.addRestaurantInfos(tempList);
 	}
 
 	public void testOnRestaurantFocusedOn() {
