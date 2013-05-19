@@ -39,6 +39,8 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 	 */
 	private int mLastTabPosition;
 
+	public static final String LAST_FRAG_TAG = "LAST_FRAG";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,22 +57,6 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 		 * android.R.anim.fade_out); //ft.add(R.id.container_profile_fragment,
 		 * frag); ft.commit();
 		 */
-
-	}
-
-	@Override
-	public void updateUI() {
-
-		super.updateUI();
-		/*
-		 * Fragment frag; android.support.v4.app.FragmentTransaction ft =
-		 * getSupportFragmentManager() .beginTransaction();
-		 * //ft.setCustomAnimations(android.R.anim.fade_in,
-		 * android.R.anim.fade_out); frag =
-		 * MenuItemsFragment.newInstance(getRestaurant().getInfo());
-		 * ft.replace(android.R.id.content, frag); ft.commit();
-		 */
-
 		Fragment frag;
 		if (isLoggedIn()) {
 			// If logged in fill views appropriately
@@ -95,6 +81,23 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 			Log.w(TAG, "User not logged in cant show profile");
 			frag = new NotLoggedInFragment();
 		}
+
+	}
+
+	@Override
+	public void updateUI() {
+
+		super.updateUI();
+		/*
+		 * Fragment frag; android.support.v4.app.FragmentTransaction ft =
+		 * getSupportFragmentManager() .beginTransaction();
+		 * //ft.setCustomAnimations(android.R.anim.fade_in,
+		 * android.R.anim.fade_out); frag =
+		 * MenuItemsFragment.newInstance(getRestaurant().getInfo());
+		 * ft.replace(android.R.id.content, frag); ft.commit();
+		 */
+
+		
 	}
 
 	@Override
@@ -155,7 +158,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 		mLastTabPosition = pos;
 
 		if (frag != null) {
-			supFT.replace(android.R.id.content, frag);
+			supFT.replace(android.R.id.content, frag, LAST_FRAG_TAG );
 			supFT.commit();
 		}
 	}
