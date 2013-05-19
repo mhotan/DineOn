@@ -49,6 +49,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		super(RestauarantMainActivity.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Parse.initialize(getInstrumentation().getTargetContext(), 
@@ -107,6 +108,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 				mUI, mRI);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		mRequest.deleteFromCloud();
 		mOrder.deleteFromCloud();

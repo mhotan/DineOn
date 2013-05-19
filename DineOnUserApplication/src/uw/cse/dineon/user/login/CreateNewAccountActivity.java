@@ -4,7 +4,6 @@ import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DevelopTools;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
@@ -28,7 +27,7 @@ import com.parse.SignUpCallback;
  * @author mhotan
  */
 public class CreateNewAccountActivity extends FragmentActivity 
-implements CreateNewAccountFragment.onCreateNewAccountListener {
+implements CreateNewAccountFragment.OnCreateNewAccountListener {
 
 	public static final String TAG = CreateNewAccountActivity.class.getSimpleName();
 

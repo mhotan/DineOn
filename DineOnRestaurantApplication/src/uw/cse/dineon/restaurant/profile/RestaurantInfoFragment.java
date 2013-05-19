@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -72,17 +70,17 @@ public class RestaurantInfoFragment extends Fragment {
 //					.findViewById(R.id.button_add_new_image);
 //			ImageButton mButtonDelt = (ImageButton) view
 //					.findViewById(R.id.button_delete_image);
-			final TextView mPhoneInput = (TextView) view
+			final TextView M_PHONE_INPUT = (TextView) view
 					.findViewById(R.id.edittext_restaurant_phone);
-			final TextView mAddressInput = (TextView) view
+			final TextView M_ADDRESS_INPUT = (TextView) view
 					.findViewById(R.id.edittext_restaurant_address);
 			Button mSaveButton = (Button) view
 					.findViewById(R.id.button_save_restaurant_info);
 			TextView restName = (TextView) view
 					.findViewById(R.id.label_restaurant_name);
 
-			mPhoneInput.setText(INFO.getPhone());
-			mAddressInput.setText(INFO.getAddr());
+			M_PHONE_INPUT.setText(INFO.getPhone());
+			M_ADDRESS_INPUT.setText(INFO.getAddr());
 			restName.setEnabled(false);
 			restName.setVisibility(View.GONE);
 
@@ -91,8 +89,8 @@ public class RestaurantInfoFragment extends Fragment {
 				@Override
 				public void onClick(View v) {
 
-					INFO.setAddr(mAddressInput.getText().toString());
-					INFO.setPhone(mPhoneInput.getText().toString());
+					INFO.setAddr(M_ADDRESS_INPUT.getText().toString());
+					INFO.setPhone(M_PHONE_INPUT.getText().toString());
 
 					mListener.onRestaurantInfoUpdate(INFO);
 

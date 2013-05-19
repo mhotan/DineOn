@@ -16,6 +16,7 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		super(RestaurantLoginActivity.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		setActivityInitialTouchMode(false);
@@ -27,6 +28,7 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 				uw.cse.dineon.restaurant.R.id.input_password);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

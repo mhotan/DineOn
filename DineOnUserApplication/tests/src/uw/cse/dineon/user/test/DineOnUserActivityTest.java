@@ -41,6 +41,7 @@ public class DineOnUserActivityTest extends ActivityInstrumentationTestCase2<Din
 
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

@@ -29,7 +29,7 @@ import android.view.ViewGroup;
  */
 public class RestaurantHomeMainFragment extends Fragment {
 	
-	private final static String INFORMATION = "Information";
+	private static final String INFORMATION = "Information";
 
 	private final String TAG = this.getClass().getSimpleName();
 
@@ -86,6 +86,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 		/**
 		 * 
 		 * @param fm FragmentManager
+		 * @param r RestaurantInfo
 		 */
 		public RestaurantMenuCategoryAdapter(FragmentManager fm, RestaurantInfo r) {
 			super(fm);
@@ -109,7 +110,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 			default:
 				f = new SubMenuFragment();
 				data.putParcelable(SubMenuFragment.EXTRA_MENU, 
-						this.mRestaurantInfo.getMenuList().get(position -1));
+						this.mRestaurantInfo.getMenuList().get(position - 1));
 				f.setArguments(data);
 			}
 			
@@ -123,7 +124,8 @@ public class RestaurantHomeMainFragment extends Fragment {
 			case 0: 
 				return INFORMATION;
 			default:
-				position = Math.max(Math.min(position, this.mRestaurantInfo.getMenuList().size() - 1), 0);
+				position = Math.max(Math.min(position, 
+						this.mRestaurantInfo.getMenuList().size() - 1), 0);
 				return this.mRestaurantInfo.getMenuList().get(position).getName();
 			}
 		}

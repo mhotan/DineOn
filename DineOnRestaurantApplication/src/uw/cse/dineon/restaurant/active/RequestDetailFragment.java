@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uw.cse.dineon.library.CustomerRequest;
-import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;

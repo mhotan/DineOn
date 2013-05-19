@@ -1,13 +1,9 @@
 package uw.cse.dineon.library.util;
 
-import uw.cse.dineon.library.Restaurant;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-
-import com.parse.ParseException;
-import com.parse.ParseUser;
 
 /**
  * General Class that will help up build the project.

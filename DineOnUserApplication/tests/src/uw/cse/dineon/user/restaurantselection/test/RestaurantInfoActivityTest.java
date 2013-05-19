@@ -2,13 +2,10 @@ package uw.cse.dineon.user.restaurantselection.test;
 
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.RestaurantInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoActivity;
 
 import com.parse.Parse;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import android.content.Intent;
@@ -25,6 +22,7 @@ public class RestaurantInfoActivityTest extends ActivityInstrumentationTestCase2
 		super(RestaurantInfoActivity.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
@@ -43,6 +41,7 @@ public class RestaurantInfoActivityTest extends ActivityInstrumentationTestCase2
 		mActivity = getActivity();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

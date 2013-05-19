@@ -49,6 +49,7 @@ public class RestaurantProfileActivityTest extends
 		super(ProfileActivity.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Parse.initialize(getInstrumentation().getTargetContext(),
@@ -75,6 +76,7 @@ public class RestaurantProfileActivityTest extends
 		mActivity = getActivity();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		mUser = null;
 		mActivity.finish();

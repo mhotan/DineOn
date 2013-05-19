@@ -1,6 +1,5 @@
 package uw.cse.dineon.restaurant;
 
-import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.app.Application;
 

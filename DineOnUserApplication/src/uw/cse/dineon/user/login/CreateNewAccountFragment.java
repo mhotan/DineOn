@@ -18,7 +18,7 @@ import android.widget.EditText;
  */
 public class CreateNewAccountFragment extends Fragment {
 
-	private onCreateNewAccountListener mListener;
+	private OnCreateNewAccountListener mListener;
 
 	// Input from users
 	private EditText mUsername, mEmail, mPassword, mPasswordRepeat; 
@@ -58,8 +58,8 @@ public class CreateNewAccountFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if (activity instanceof onCreateNewAccountListener) {
-			mListener = (onCreateNewAccountListener) activity;
+		if (activity instanceof OnCreateNewAccountListener) {
+			mListener = (OnCreateNewAccountListener) activity;
 		} else {
 			throw new ClassCastException(activity.toString()
 					+ " must implemenet MyListFragment.OnItemSelectedListener");
@@ -84,7 +84,7 @@ public class CreateNewAccountFragment extends Fragment {
 	 * Listener for this class.
 	 * @author mhotan
 	 */
-	public interface onCreateNewAccountListener {
+	public interface OnCreateNewAccountListener {
 
 		/**
 		 * Attempts to create a new password.

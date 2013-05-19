@@ -13,6 +13,7 @@ public class MenuTest extends AndroidTestCase {
 	MenuItem testItem;
 	Menu testMenu;
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		testItems = new ArrayList<MenuItem>();
@@ -20,7 +21,8 @@ public class MenuTest extends AndroidTestCase {
 		testItems.add(testItem);
 		testMenu = new Menu("beverages");
 	}
-
+	
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

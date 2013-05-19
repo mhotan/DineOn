@@ -58,12 +58,13 @@ public class RestaurantListFragment extends ListFragment {
 	/**
 	 * Add a restaurantInfo to the list.
 	 * 
-	 * @param info info to add.
+	 * @param infos info to add.
 	 */
 	public void addRestaurantInfos(List<RestaurantInfo> infos) {
 		//this.mAdapter.clear();
-		for (RestaurantInfo r : infos)
+		for (RestaurantInfo r : infos) {
 			this.mAdapter.add(r);
+		}
 		this.mAdapter.notifyDataSetChanged();
 	}
 

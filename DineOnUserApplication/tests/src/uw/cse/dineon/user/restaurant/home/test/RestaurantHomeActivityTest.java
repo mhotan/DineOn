@@ -1,23 +1,10 @@
 package uw.cse.dineon.user.restaurant.home.test;
 
-import java.util.ArrayList;
-import java.util.Date;
-
-import com.parse.Parse;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
-import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
-import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
-import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
-import android.content.Intent;
-import android.os.Parcelable;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class RestaurantHomeActivityTest extends
@@ -33,6 +20,7 @@ public class RestaurantHomeActivityTest extends
 		super(RestaurantHomeActivity.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 //		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
@@ -58,12 +46,13 @@ public class RestaurantHomeActivityTest extends
 //		mActivity = getActivity();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
 
 	public void testOnMenuItemFocusedOn() {
-//		MenuItem m = new MenuItem(2, 2.3, "fries", "potato");
+//		MenuItem m = new MenuItem(1, 1, "Fries", "Yum");
 //		mActivity.onMenuItemFocusedOn(m);
 	}
 	

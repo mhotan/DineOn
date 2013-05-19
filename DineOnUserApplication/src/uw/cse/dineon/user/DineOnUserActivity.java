@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import uw.cse.dineon.library.CustomerRequest;
-import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.RestaurantInfo;
@@ -302,7 +301,8 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		// Save the ID if the user is not null
 		if (DineOnUserApplication.cachedUser != null) {
-			savedInstanceState.putString(DineOnConstants.KEY_USER, DineOnUserApplication.cachedUser.getObjId());
+			savedInstanceState
+				.putString(DineOnConstants.KEY_USER, DineOnUserApplication.cachedUser.getObjId());
 		}
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -333,7 +333,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		// DEBUG:
 		Log.d("GOT_DINING_SESSION_FROM_CLOUD", session.getTableID() + "");
 
-		final DiningSession mSession = session;
+		final DiningSession M_SESSION = session;
 		DineOnUserApplication.cachedUser.setDiningSession(session);
 		DineOnUserApplication.cachedUser.saveInBackGround(new SaveCallback() {
 			
@@ -344,7 +344,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 					
 					// start the restaurant home activity for selected restaurant
 					Intent i = new Intent(thisActivity, RestaurantHomeActivity.class);
-					i.putExtra(DineOnConstants.KEY_DININGSESSION, mSession);
+					i.putExtra(DineOnConstants.KEY_DININGSESSION, M_SESSION);
 					startActivity(i);
 				} else {
 					Log.e(TAG, "unable to save the updated dineon user " 

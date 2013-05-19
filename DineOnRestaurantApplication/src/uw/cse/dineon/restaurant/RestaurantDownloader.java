@@ -2,7 +2,6 @@ package uw.cse.dineon.restaurant;
 
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -60,7 +59,7 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 	 * @param user ParseUser to use to download the restaurant
 	 * @param callback Callback to listen for events
 	 */
-	public RestaurantDownloader(ParseUser user, RestaurantDownLoaderCallback callback){
+	public RestaurantDownloader(ParseUser user, RestaurantDownLoaderCallback callback) {
 		if (user == null) {
 			throw new NullPointerException(TAG + "Can't have null user");
 		}
@@ -191,7 +190,7 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 	}
 
 	@Override
-	protected void onPostExecute (Restaurant result) {
+	protected void onPostExecute(Restaurant result) {
 		if (result == null) {
 			Log.e(TAG, "Unable to download restaurant.");
 			// No need to call on fail.

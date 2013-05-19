@@ -95,10 +95,11 @@ RestaurantInfoFragment.RestaurantInfoListener {
 						}
 					}
 					destroyProgressDialog();
-					if (objects.size() == 0)
+					if (objects.size() == 0) {
 						showNoRestaurantsDialog("Couldn't get restaurants");
-					else 
+					} else {
 						addListOfRestaurantInfos();
+					}
 				} else { 
 					destroyProgressDialog();
 					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
@@ -109,6 +110,9 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		});
 	}
 	
+	/**
+	 * 
+	 */
 	public void addListOfRestaurantInfos() {
 		addRestaurantInfos(this.mRestaurants);
 	}
@@ -116,7 +120,7 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	/**
 	 * Add a new restaurant info object to the restaurant list.
 	 * 
-	 * @param info RestaurantInfo object to add to list.
+	 * @param infos RestaurantInfo object to add to list.
 	 */
 	public void addRestaurantInfos(List<RestaurantInfo> infos) {
 		// Update our UI for the new restaurant info

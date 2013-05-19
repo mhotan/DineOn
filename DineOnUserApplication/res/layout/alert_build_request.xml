@@ -11,7 +11,7 @@
         android:ems="10"
         android:hint="@string/request_description"
         android:imeOptions="actionNext"
-        android:inputType="textCapWords" >
+        android:inputType="text" >
 
         <requestFocus />
     </EditText>

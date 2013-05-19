@@ -47,6 +47,7 @@ public class DiningSessionTest extends AndroidTestCase {
 		super();
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		Log.i("progress", "start setup");
 
@@ -75,7 +76,7 @@ public class DiningSessionTest extends AndroidTestCase {
 		testUInfos.add(testUInfo1);
 		testUInfos.add(testUInfo);
 	}
-
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		ParseUser.logOut();

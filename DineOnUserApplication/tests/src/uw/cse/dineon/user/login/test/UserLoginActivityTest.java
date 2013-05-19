@@ -6,10 +6,8 @@ import com.parse.ParseUser;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.login.UserLoginActivity;
-import android.app.Activity;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.KeyEvent;
 import android.widget.EditText;
 
 public class UserLoginActivityTest extends
@@ -24,6 +22,7 @@ public class UserLoginActivityTest extends
 		super(UserLoginActivity.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
@@ -41,6 +40,7 @@ public class UserLoginActivityTest extends
 		
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

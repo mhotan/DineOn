@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,15 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 /**
  * 
@@ -123,35 +119,50 @@ extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		if(v.getId() == R.id.button_request)
+		if(v.getId() == R.id.button_request) {
 			getRequestDescription();
-		else
+		} else {
 			mListener.onPlaceOrder("ORDER REQUESTED PLACE OBJECT HERE!");
+		}
 	}
 	
-	private void sendRequest(String str){
-		if(getActivity() instanceof CurrentOrderActivity){
+	/**
+	 * @param str request to send
+	 */
+	private void sendRequest(String str) {
+		if(getActivity() instanceof CurrentOrderActivity) {
 			CurrentOrderActivity act = (CurrentOrderActivity)getActivity();
 			Log.v(TAG, "About to send Req");
 			act.onRequestMade(str);
 		}
 	}
 	
+	/**
+	 * Get request description from alert box.
+	 * @param alertView View
+	 */
+	public void getDescription(View alertView) {
+		String desc = ((EditText) alertView
+				.findViewById(R.id.input_request_description)).getText()
+				.toString();
+		sendRequest(desc);
+	}
+	
+	/**
+	 * Create alert dialog box for submitting requests.
+	 */
 	private void getRequestDescription() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 		alert.setTitle("Add New Menu Item");
 		alert.setMessage("Input Menu Item Details");
-		final View alertView = getLayoutInflater(getArguments()).inflate(
+		final View AV = getLayoutInflater(getArguments()).inflate(
 				R.layout.alert_build_request, null);
-		alert.setView(alertView);
+		alert.setView(AV);
 		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-
+			
 			@Override
 			public void onClick(DialogInterface d, int arg1) {
-				String desc = ((EditText) alertView
-						.findViewById(R.id.input_request_description)).getText()
-						.toString();
-				sendRequest(desc);
+				getDescription(AV);
 			}
 		});
 		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

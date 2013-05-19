@@ -1,9 +1,7 @@
 package uw.cse.dineon.user.restaurant.home;
 
 import uw.cse.dineon.library.MenuItem;
-import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.R;
-import uw.cse.dineon.user.restaurant.home.SubMenuFragment.MenuItemListListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,10 +37,11 @@ public class MenuItemDetailFragment extends Fragment {
 	}
 	
 	@Override 
-	public void onActivityCreated (Bundle savedInstanceState) {
+	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if (mListener != null)
+		if (mListener != null) {
 			setMenuItem(mListener.getMenuItem());
+		}
 	}
 	
 	@Override
@@ -84,7 +83,7 @@ public class MenuItemDetailFragment extends Fragment {
 	public interface MenuItemDetailListener {
 
 		/**
-		 * TODO get the current menu item
+		 * TODO get the current menu item.
 		 * @return MenuItem
 		 */
 		public MenuItem getMenuItem();

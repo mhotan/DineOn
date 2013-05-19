@@ -5,7 +5,6 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import uw.cse.dineon.library.DineOnUser;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.login.CreateNewAccountActivity;
 import android.content.Intent;
@@ -23,6 +22,7 @@ public class CreateNewAccountActivityTest extends ActivityInstrumentationTestCas
 		super(CreateNewAccountActivity.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
@@ -53,6 +53,7 @@ public class CreateNewAccountActivityTest extends ActivityInstrumentationTestCas
 		
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		try {

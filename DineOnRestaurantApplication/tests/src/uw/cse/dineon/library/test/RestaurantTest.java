@@ -21,9 +21,6 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.parse.Parse;
-import com.parse.ParseUser;
-
 public class RestaurantTest extends AndroidTestCase {
 	
 	Activity activity;
@@ -48,11 +45,11 @@ public class RestaurantTest extends AndroidTestCase {
 	List<DiningSession> testSessions;
 	
 
-	
+	@Override
 	protected void tearDown() throws Exception {
 		ParseUser.logOut();
 	}
-
+	@Override
 	protected void setUp() throws Exception {
 		Log.i("progress", "start setup");
 		mContext = this.getContext();

@@ -59,7 +59,7 @@ public class RestaurantInfoFragment extends Fragment {
 
 	/**
 	 * Sets display features for this fragment to this argument.
-	 * @param restaurantName Restaurant to present
+	 * @param restaurant Restaurant to present
 	 */
 	public void setRestaurantForDisplay(RestaurantInfo restaurant) {
 		TextView view = (TextView) getView().findViewById(R.id.label_restaurant_info);
@@ -99,6 +99,9 @@ public class RestaurantInfoFragment extends Fragment {
 		 */
 		RestaurantInfo getCurrentRestaurant();
 		
+		/**
+		 * @param r RestaurantInfo
+		 */
 		void setCurrentRestaurant(RestaurantInfo r);
 		
 	}

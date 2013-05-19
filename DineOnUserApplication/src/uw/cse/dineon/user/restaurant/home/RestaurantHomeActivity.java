@@ -63,7 +63,8 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 			}
 		} else if (savedInstanceState != null) {
 			if (savedInstanceState.containsKey(DineOnConstants.KEY_DININGSESSION)) {
-				mDiningSession = savedInstanceState.getParcelable(DineOnConstants.KEY_DININGSESSION);
+				mDiningSession = savedInstanceState
+						.getParcelable(DineOnConstants.KEY_DININGSESSION);
 				mRestaurant = mDiningSession.getRestaurantInfo();
 			} else if (savedInstanceState.containsKey(DineOnConstants.KEY_RESTAURANTINFO)) {
 				mRestaurant = savedInstanceState.getParcelable(DineOnConstants.KEY_RESTAURANTINFO);

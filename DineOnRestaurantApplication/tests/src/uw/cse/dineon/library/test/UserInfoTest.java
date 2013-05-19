@@ -22,7 +22,7 @@ public class UserInfoTest extends AndroidTestCase {
 	public UserInfoTest() {
 		super();
 	}
-	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
@@ -55,7 +55,7 @@ public class UserInfoTest extends AndroidTestCase {
 		testUInfo.setEmail("tester@cs.washington.edu");
 		assertEquals("tester@cs.washington.edu", testUInfo.getEmail());
 	}
-	
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		testUser.delete();

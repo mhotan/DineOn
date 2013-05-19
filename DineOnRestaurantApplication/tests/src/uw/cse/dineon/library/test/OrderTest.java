@@ -18,7 +18,7 @@ public class OrderTest extends AndroidTestCase {
 	MenuItem testItem;
 	Order testOrder;
 	ParseUser testUser;
-	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
@@ -35,7 +35,7 @@ public class OrderTest extends AndroidTestCase {
 		testItems.add(testItem);
 		testOrder = new Order(32, testUInfo, testItems);
 	}
-
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		testUser.delete();
