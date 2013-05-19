@@ -1,4 +1,4 @@
-package uw.cse.dineon.restaurant.login.test;
+package uw.cse.dineon.restaurant.test;
 
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
 import android.app.Activity;
