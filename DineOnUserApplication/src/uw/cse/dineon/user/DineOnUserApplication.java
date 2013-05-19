@@ -39,5 +39,9 @@ public class DineOnUserApplication extends Application {
 		
 		ParseInstallation.getCurrentInstallation().saveInBackground();
 	}
+	
+	public static void setDineOnUser(DineOnUser user) {
+		cachedUser = user;
+	}
 
 }

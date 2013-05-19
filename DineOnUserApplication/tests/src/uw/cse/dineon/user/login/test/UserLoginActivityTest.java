@@ -1,7 +1,13 @@
 package uw.cse.dineon.user.login.test;
 
+import com.parse.Parse;
+import com.parse.ParseUser;
+
+import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import android.app.Activity;
+import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.KeyEvent;
 import android.widget.EditText;
@@ -9,8 +15,10 @@ import android.widget.EditText;
 public class UserLoginActivityTest extends
 		ActivityInstrumentationTestCase2<UserLoginActivity> {
 
-	private Activity mActivity;
+	private UserLoginActivity mActivity;
 	private EditText mNameText;
+	private ParseUser testUser;
+	private DineOnUser dineOnUser;
 
 	public UserLoginActivityTest() {
 		super(UserLoginActivity.class);
@@ -18,7 +26,15 @@ public class UserLoginActivityTest extends
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		setActivityInitialTouchMode(false);
+		
+		testUser = ParseUser.logIn("zach", "zach");
+		dineOnUser = new DineOnUser(testUser);
+		DineOnUserApplication.setDineOnUser(dineOnUser);
+		
+	    Intent addEvent = new Intent();
+	    setActivityIntent(addEvent);
 		mActivity = getActivity();
 		
 		mNameText = (EditText) mActivity.findViewById(uw.cse.dineon.user.R.id.input_login_email);
@@ -29,23 +45,9 @@ public class UserLoginActivityTest extends
 		super.tearDown();
 	}
 	
-	public void testEmailLoginUI() {
-
-	    mActivity.runOnUiThread(
-	      new Runnable() {
-	        public void run() {
-	          mNameText.requestFocus();
-	          mNameText.setText("t");
-	        } // end of run() method definition
-	      } // end of anonymous Runnable object instantiation
-	    ); // end of invocation of runOnUiThread
-	    
-	    this.sendKeys(KeyEvent.KEYCODE_FORWARD_DEL);
-	    this.sendKeys("M E");
-	    this.sendKeys("AT");
-	    this.sendKeys("T E S T PERIOD C O M");
-	    	    
-	    assertEquals("me@test.com", mNameText.getText().toString());
+	public void testOnLogin() {
+		mActivity.onLogin("jordan", "12345");
+		getInstrumentation().waitForIdleSync();
 	}
-
+	
 }

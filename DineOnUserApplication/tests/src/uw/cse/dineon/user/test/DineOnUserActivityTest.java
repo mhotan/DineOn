@@ -4,6 +4,7 @@ import uw.cse.dineon.library.DineOnUser;
 
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
+import uw.cse.dineon.user.DineOnUserApplication;
 
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
@@ -33,7 +34,7 @@ public class DineOnUserActivityTest extends ActivityInstrumentationTestCase2<Din
 		dineOnUser = new DineOnUser(testUser);
 		
 	    Intent addEvent = new Intent();
-	    addEvent.putExtra(DineOnConstants.KEY_USER, dineOnUser);
+	    DineOnUserApplication.setDineOnUser(dineOnUser);
 	    setActivityIntent(addEvent);
 		mActivity = getActivity();
 		

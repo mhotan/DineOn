@@ -6,6 +6,7 @@ import com.parse.ParseUser;
 
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.login.CreateNewAccountActivity;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
@@ -29,9 +30,9 @@ public class CreateNewAccountActivityTest extends ActivityInstrumentationTestCas
 		
 		testUser = ParseUser.logIn("zach", "zach");
 		dineOnUser = new DineOnUser(testUser);
+		DineOnUserApplication.setDineOnUser(dineOnUser);
 		
 	    addEvent = new Intent();
-	    addEvent.putExtra(DineOnConstants.KEY_USER, dineOnUser);
 	    setActivityIntent(addEvent);
 		mActivity = getActivity();
 	}

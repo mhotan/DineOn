@@ -5,6 +5,7 @@ import com.parse.ParseUser;
 
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.bill.CurrentOrderActivity;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
@@ -25,9 +26,8 @@ public class CurrentOrderActivityTest extends
 		
 		ParseUser testUser = ParseUser.logIn("zach", "zach");
 		DineOnUser dineOnUser = new DineOnUser(testUser);
-		
+		DineOnUserApplication.setDineOnUser(dineOnUser);
 	    Intent addEvent = new Intent();
-	    addEvent.putExtra(DineOnConstants.KEY_USER, dineOnUser);
 	    setActivityIntent(addEvent);
 		mActivity = getActivity();
 	}
@@ -41,7 +41,7 @@ public class CurrentOrderActivityTest extends
 	}
 
 	public void testOnRequestMade() {
-		mActivity.onRequestMade();
+		mActivity.onRequestMade("MORE WATER!!!!");
 	}
 	
 	public void testDeleteResume() {
