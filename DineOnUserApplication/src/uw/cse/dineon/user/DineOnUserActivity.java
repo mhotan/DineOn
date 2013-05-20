@@ -352,11 +352,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 			public void done(ParseException e) {
 				if (e == null) {
 					//intializeUI();
-					
 					// start the restaurant home activity for selected restaurant
-					Intent i = new Intent(thisActivity, RestaurantHomeActivity.class);
-					i.putExtra(DineOnConstants.KEY_DININGSESSION, M_SESSION);
-					startActivity(i);
+					diningSessionChangeActivity(M_SESSION);
 				} else {
 					Log.e(TAG, "unable to save the updated dineon user " 
 							+ "after new dining session received.");
@@ -366,6 +363,11 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 
 	}
 
+	public void diningSessionChangeActivity(DiningSession dsession){
+		Intent i = new Intent(thisActivity, RestaurantHomeActivity.class);
+		i.putExtra(DineOnConstants.KEY_DININGSESSION, dsession);
+		startActivity(i);
+	}
 	@Override
 	public void onRestaurantInfoChanged(RestaurantInfo restaurant) {
 		// TODO Auto-generated method stub

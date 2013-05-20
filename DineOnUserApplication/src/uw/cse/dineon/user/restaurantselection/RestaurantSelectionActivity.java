@@ -5,6 +5,7 @@ package uw.cse.dineon.user.restaurantselection;
 import java.util.ArrayList;
 import java.util.List;
 
+import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
@@ -165,9 +166,14 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		// send over the restaurantInfo
 		i.putExtra(DineOnConstants.KEY_RESTAURANTINFO, restaurant);
 		startActivity(i);
-		
 		//Toast.makeText(this, "Restaurant \"" + restaurant + "\" Selected", 
 		//		Toast.LENGTH_SHORT).show();
+	}
+	
+	public void diningSessionChangeActivity(DiningSession dsession){
+		Intent i = new Intent(thisActivity, RestaurantHomeActivity.class);
+		i.putExtra(DineOnConstants.KEY_DININGSESSION, dsession);
+		startActivity(i);
 	}
 
 	@Override
