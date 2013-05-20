@@ -29,6 +29,9 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 	private Restaurant mRestaurant;
 	private ActivityMonitor mMonitor;
 
+	/**
+	 * Creates a new RestaurantLoginActivityTest.
+	 */
 	public RestaurantLoginActivityTest() {
 		super(RestaurantLoginActivity.class);
 	}
@@ -91,6 +94,9 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		assertNotNull(mSubmit);
 	}
 
+	/**
+	 * Asserts that a valid logged in user logs in.
+	 */
 	public void testLoginSucess() {
 		mActivity.runOnUiThread(new Runnable() {
 			public void run() {
@@ -117,4 +123,41 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		assertNotNull(mainAct);
 		mainAct.finish();
 	}
+	
+	/**
+	 * Asserts that a user can't log in without a username.
+	 */
+	public void testLoginNoUsernameFailure() {
+		ActivityMonitor monitor = getInstrumentation().addMonitor(
+				RestauarantMainActivity.class.getName(), null, false);
+		mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				mPassText.setText(fakePassword);
+				mSubmit.requestFocus();
+				mSubmit.performClick();
+			} // end of run() method definition
+		});
+		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
+		        .waitForActivityWithTimeout(WAIT_TIME);
+		assertNull(startedActivity);
+	}
+	
+	/**
+	 * Asserts that a user can't log in without a password.
+	 */
+	public void testLoginNoPasswordFailure() {
+		ActivityMonitor monitor = getInstrumentation().addMonitor(
+				RestauarantMainActivity.class.getName(), null, false);
+		mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				mNameText.setText(fakeUserName);
+				mSubmit.requestFocus();
+				mSubmit.performClick();
+			} // end of run() method definition
+		});
+		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
+		        .waitForActivityWithTimeout(WAIT_TIME);
+		assertNull(startedActivity);
+	}
+	
 }

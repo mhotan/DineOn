@@ -20,6 +20,8 @@ public final class CredentialValidator {
 			"Password must have more then " + MIN_LENGTH + " characters");
 	private static final Resolution SPACEIN_PW = new Resolution(false, 
 			"Password can't contain spaces");
+	private static final Resolution DIFFERENT_PW = new Resolution(false,
+			"Passwords don't match");
 	//TODO etc..
 
 	private static final Resolution NULL_UN = new Resolution(false, "Can't have a null username");
@@ -55,7 +57,7 @@ public final class CredentialValidator {
 		// Handle the validation
 		Resolution emailRes = CredentialValidator.isValidEmail(email);
 		Resolution pwRes = CredentialValidator.isValidPassword(pw);
-		Resolution pwRepRes = CredentialValidator.isValidPassword(pwRepeat);
+		Resolution pwRepRes = CredentialValidator.passwordsMatch(pw, pwRepeat);
 		Resolution userName = CredentialValidator.isValidEmail(email);
 
 		StringBuffer buf = new StringBuffer();
@@ -107,7 +109,7 @@ public final class CredentialValidator {
 		if (username == null) {
 			return NULL_UN;
 		} 
-		if (username.isEmpty()) {
+		if (username.isEmpty() || username.equals("")) {
 			return EMPTY_UN;
 		}
 		if (username.length() < MIN_LENGTH) {
@@ -139,25 +141,35 @@ public final class CredentialValidator {
 
 		return RESOLVED_INSTANCE;
 	}
-
+	
 	/**
-	 * TODO Might use later pending how we create messages
-	 * MH To lazy right now ;-)
-	 * Handles the distribution and creation of Resolution instances.
-	 * Allows memory conservation and virtualization of Resolution construction
-	 * @author mhotan
+	 * Makes sure the passwords are the same.
+	 * 
+	 * @param password String The first password 
+	 * @param passwordMatch The second password 
+	 * @return A resolution instance stating the result of matching the passwords
 	 */
-	private static class ResolutionFactory {
-		//		
-		//		/**
-		//		 * 
-		//		 * @param pw
-		//		 * @return
-		//		 */
-		//		static Resolution getNullOrEmptyResolution(String pw){
-		//			return NULL_PW;
-		//		}
+	public static Resolution passwordsMatch(String password, String passwordMatch) {
+		if (password == null || passwordMatch == null) {
+			return NULL_PW;
+		} 
+		if (!password.equals(passwordMatch)) {
+			return DIFFERENT_PW;
+		}
+
+		return RESOLVED_INSTANCE;
 	}
+
+//	/**
+//	 * TODO Might use later pending how we create messages
+//	 * MH To lazy right now ;-)
+//	 * Handles the distribution and creation of Resolution instances.
+//	 * Allows memory conservation and virtualization of Resolution construction
+//	 * @author mhotan
+//	 */
+//	private static class ResolutionFactory {
+//
+//	}
 
 	/**
 	 * General resolution class the has the ability to communicate

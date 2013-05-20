@@ -70,7 +70,7 @@ implements CreateNewAccountListener {
 
 		Resolution completeRes = CredentialValidator.validateAll(username, email, pw, pwRepeat);
 
-		if (completeRes.isValid()) { // Valid passwords
+		if (completeRes.isValid() && !username.equals("")) { // Valid passwords
 			final ParseUser USER = new ParseUser();
 			USER.setUsername(username);
 			USER.setPassword(pw);
