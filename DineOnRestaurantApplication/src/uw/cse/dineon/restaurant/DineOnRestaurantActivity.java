@@ -123,6 +123,7 @@ implements SateliteListener {
 
 	@Override
 	protected void onPause() {
+		destroyProgressDialog();
 		super.onPause();
 		mSatellite.unRegister();
 	}
@@ -533,7 +534,7 @@ implements SateliteListener {
 	 * @param cancelable Allows the progress dialog to be cancelable.
 	 */
 	protected void createProgressDialog(boolean cancelable) {
-		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+		if (mProgressDialog != null) {
 			return;
 		}
 		mProgressDialog = new ProgressDialog(this);

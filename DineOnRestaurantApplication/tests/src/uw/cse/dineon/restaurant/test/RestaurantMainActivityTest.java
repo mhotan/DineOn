@@ -10,7 +10,11 @@ import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.restaurant.active.DiningSessionDetailActivity;
+import uw.cse.dineon.restaurant.active.OrderDetailActivity;
+import uw.cse.dineon.restaurant.active.RequestDetailActivity;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
+import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
@@ -40,6 +44,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	private DiningSession testSession;
 
 	int orderNum = 100;
+	private int WAIT_LOGIN_TIME = 10000;
 
 	private static final String fakeUserName = "fakeLoginName";
 	private static final String fakePassword = "fakeLoginPassword";
@@ -133,6 +138,15 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 				button.performClick();
 			}
 		});
+		
+		ActivityMonitor monitor = getInstrumentation().addMonitor(
+				OrderDetailActivity.class.getName(), null, false);
+		
+		OrderDetailActivity startedActivity = (OrderDetailActivity) monitor
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
+		if (startedActivity != null) {
+			startedActivity.finish();
+		}
 	}
 
 	/**
@@ -174,6 +188,15 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 				button.performClick();
 			}
 		});
+		
+		ActivityMonitor monitor = getInstrumentation().addMonitor(
+				RequestDetailActivity.class.getName(), null, false);
+		
+		RequestDetailActivity startedActivity = (RequestDetailActivity) monitor
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
+		if (startedActivity != null) {
+			startedActivity.finish();
+		}
 	}
 	
 	/**
@@ -215,6 +238,15 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 				button.performClick();
 			}
 		});
+		
+		ActivityMonitor monitor = getInstrumentation().addMonitor(
+				DiningSessionDetailActivity.class.getName(), null, false);
+		
+		DiningSessionDetailActivity startedActivity = (DiningSessionDetailActivity) monitor
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME );
+		if (startedActivity != null) {
+			startedActivity.finish();
+		}
 	}
 
 	/**

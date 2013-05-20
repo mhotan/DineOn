@@ -81,6 +81,12 @@ implements CreateNewAccountListener {
 			Utility.getFailedToCreateAccountDialog(completeRes.getMessage(), This).show();
 		}
 	}
+	
+	@Override
+	protected void onPause() {
+		destroyProgressDialog();
+		super.onPause();
+	}
 
 	/**
 	 * Private Helper Class to help create a new ParseUser.
@@ -201,7 +207,7 @@ implements CreateNewAccountListener {
 	 * Instantiates a new progress dialog and shows it on the screen.
 	 */
 	protected void createProgressDialog() {
-		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+		if (mProgressDialog != null) {
 			return;
 		}
 		mProgressDialog = new ProgressDialog(this);

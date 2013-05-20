@@ -148,6 +148,12 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 		Intent i = new Intent(this, CreateNewRestaurantAccountActivity.class);
 		startActivity(i);
 	}
+	
+	@Override
+	protected void onPause() {
+		destroyProgressDialog();
+		super.onPause();
+	}
 
 	// //////////////////////////////////////////////////////////////////////
 	// //// Call
@@ -205,7 +211,7 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 	 * Hides the progress dialog if there is one.
 	 */
 	protected void destroyProgressDialog() {
-		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+		if (mProgressDialog != null) {
 			mProgressDialog.dismiss();
 		}
 	}
