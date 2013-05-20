@@ -17,15 +17,15 @@ import com.parse.ParseUser;
 public class RestaurantLoginActivityTest extends
 ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 
-	private static final int WAIT_TIME = 10000;
+	private static final int WAIT_TIME = 30000;
 	
 	private Activity mActivity;
 	private EditText mNameText;
 	private EditText mPassText;
 	private LoginFragment mFragment;
 	private Button mSubmit;
-	private static final String fakeUserName = "fakeLoginName";
-	private static final String fakePassword = "fakeLoginPassword";
+	private static final String fakeUserName = "fakeRestaurantLoginName";
+	private static final String fakePassword = "fakeRestaurantLoginPassword";
 	private ParseUser mUser;
 	private Restaurant mRestaurant;
 	private ActivityMonitor mMonitor;

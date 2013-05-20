@@ -122,7 +122,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			mSendMessageButton.setVisibility(View.VISIBLE);
 			mSendMessageButton.setEnabled(true);
 			mTitle.setText("Order placed by: " + mOrder.getOriginalUser().getName());
-			mTableInput.setText(mOrder.getTableID());
+			mTableInput.setText("" + mOrder.getTableID());
 			mTakenTime.setText(mOrder.getOriginatingTime().toString());
 			mAdapter = new MenuItemAdapter(this.getActivity(), mOrder.getMenuItems());
 			mItemList.setAdapter(mAdapter);

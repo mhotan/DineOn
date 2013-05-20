@@ -252,6 +252,15 @@ public class DineOnUser extends Storable {
 		}
 	};
 
-
+	@Override
+	public void deleteFromCloud() {
+		for (Reservation res: mReservations) {
+			res.deleteFromCloud();
+		}
+		mUserInfo.deleteFromCloud();
+		if (mDiningSession != null) {
+			mDiningSession.deleteFromCloud();
+		}
+	}
 
 }

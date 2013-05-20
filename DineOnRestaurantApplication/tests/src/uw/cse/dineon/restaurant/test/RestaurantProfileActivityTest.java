@@ -23,6 +23,10 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+/**
+ * Test class for testing restaurant profile
+ * @author mhotan
+ */
 @SuppressLint("DefaultLocale")
 public class RestaurantProfileActivityTest extends
 		ActivityInstrumentationTestCase2<ProfileActivity> {
@@ -47,6 +51,9 @@ public class RestaurantProfileActivityTest extends
 	private static final double TEST_ITEM_PRICE = 9.99;
 	private static final int TEST_ITEM_ID = 1;
 
+	private final static String fakeUserName = "vinceRestProfileActTest";
+	private final static String fakePassword = "password";
+	
 	public RestaurantProfileActivityTest() {
 		super(ProfileActivity.class);
 	}
@@ -58,11 +65,12 @@ public class RestaurantProfileActivityTest extends
 				"RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul",
 				"wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		setActivityInitialTouchMode(false);
-		//mUser = ParseUser.logIn("vince", "v");
 		mUser = new ParseUser();
+		mUser.setUsername(fakeUserName);
+		mUser.setPassword(fakePassword);
 		
 		try {
-			mUser = ParseUser.logIn("vinceRestProfileActTest", "password");
+			mUser = ParseUser.logIn(fakeUserName, fakeUserName);
 		} catch (ParseException e) {
 			mUser.signUp();
 		}

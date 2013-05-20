@@ -346,6 +346,19 @@ public class Restaurant extends LocatableStorable {
 	
 	@Override
 	public void deleteFromCloud() {
+		for (Order order: mPastOrders) {
+			order.deleteFromCloud();
+		}
+		for (Order order: mPendingOrders) {
+			order.deleteFromCloud();
+		}
+		for (Reservation reservation: mReservations) {
+			reservation.deleteFromCloud();
+		}
+		for (CustomerRequest request: mCustomerRequests) {
+			request.deleteFromCloud();
+		}
+		
 		mRestInfo.deleteFromCloud();
 		super.deleteFromCloud();
 	}

@@ -14,6 +14,10 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+/**
+ * Test for 
+ * @author mhotan
+ */
 public class OrderDetailActivityTest extends
 ActivityInstrumentationTestCase2<OrderDetailActivity> {
 
