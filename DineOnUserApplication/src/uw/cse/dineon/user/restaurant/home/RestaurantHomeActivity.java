@@ -1,8 +1,5 @@
 package uw.cse.dineon.user.restaurant.home;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;

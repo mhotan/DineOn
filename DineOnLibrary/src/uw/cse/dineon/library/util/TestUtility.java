@@ -1,31 +1,32 @@
 package uw.cse.dineon.library.util;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import android.util.Log;
-
-import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import uw.cse.dineon.library.DineOnUser;
-import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
-import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.UserInfo;
 
 /**
  * 
  * @author Espeo196, Jordan
  *
  */
-public class TestUtility {
+public final class TestUtility {
 	public static DineOnUser dineOnUser;
+	public static Restaurant rest;
+	public static ParseUser user;
+	public static ParseUser restUser;
 	
+	/**
+	 * Hidden constructor.
+	 */
+	private TestUtility() {	}
 	
+
 	/**
 	 * Returns a list of fake menu items.
 	 * 
@@ -43,7 +44,7 @@ public class TestUtility {
 	}
 	
 	/**
-	 * @return A Menu representing an Entree menu
+	 * @return A Menu representing a menu
 	 */
 	public static Menu getFakeMenu() {
 		Menu entreeMenu = new Menu("testEntrees");
@@ -51,6 +52,34 @@ public class TestUtility {
 			entreeMenu.addNewItem(item);
 		}
 		return entreeMenu;
+	}
+	
+	/**
+	 * @return DineOnUser
+	 */
+	public static DineOnUser getDineOnUser() {
+		return dineOnUser;
+	}
+
+	/**
+	 * @return Restaurant
+	 */
+	public static Restaurant getRest() {
+		return rest;
+	}
+
+	/**
+	 * @return ParseUser
+	 */
+	public static ParseUser getUser() {
+		return user;
+	}
+
+	/**
+	 * @return restaurant ParseUser
+	 */
+	public static ParseUser getRestUser() {
+		return restUser;
 	}
 	
 }

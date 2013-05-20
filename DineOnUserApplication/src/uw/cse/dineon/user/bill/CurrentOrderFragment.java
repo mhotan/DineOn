@@ -142,32 +142,39 @@ extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		if(v.getId() == R.id.button_request)
+		if(v.getId() == R.id.button_request) {
 			getRequestDescription();
 		//else
 		//	mListener.onPlaceOrder("ORDER REQUESTED PLACE OBJECT HERE!");
+		}
 	}
 	
-	private void sendRequest(String str){
-		if(getActivity() instanceof CurrentOrderActivity){
+	/**
+	 * @param str String request to send to Restaurant.
+	 */
+	private void sendRequest(String str) {
+		if(getActivity() instanceof CurrentOrderActivity) {
 			CurrentOrderActivity act = (CurrentOrderActivity)getActivity();
 			Log.v(TAG, "About to send Req");
 			act.onRequestMade(str);
 		}
 	}
 	
+	/**
+	 * Helper that brings up alert box for sending customer requests.
+	 */
 	private void getRequestDescription() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 		alert.setTitle("Add New Menu Item");
 		alert.setMessage("Input Menu Item Details");
-		final View alertView = getLayoutInflater(getArguments()).inflate(
+		final View AV = getLayoutInflater(getArguments()).inflate(
 				R.layout.alert_build_request, null);
-		alert.setView(alertView);
+		alert.setView(AV);
 		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface d, int arg1) {
-				String desc = ((EditText) alertView
+				String desc = ((EditText) AV
 						.findViewById(R.id.input_request_description)).getText()
 						.toString();
 				sendRequest(desc);
@@ -202,7 +209,6 @@ extends Fragment implements OnClickListener {
 		 * User wishes to increment the quantity of a particular item on their order.
 		 * TODO Enforce assertion that item is actually placed in that order
 		 * @param item Menu item to increment
-		 * @param order to increment item on
 		 */
 		public void onIncrementItemOrder(MenuItem item);
 
@@ -210,7 +216,6 @@ extends Fragment implements OnClickListener {
 		 * User wishes to decrement the quantity of a particular item on their order.
 		 * TODO Enforce assertion that item is actually placed in that order
 		 * @param item Menu item to decrement
-		 * @param order to increment item on
 		 */
 		public void onDecrementItemOrder(MenuItem item);
 
@@ -218,12 +223,11 @@ extends Fragment implements OnClickListener {
 		 * User wishes to remove a particular item on their order.
 		 * TODO Enforce assertion that item is actually placed in that order
 		 * @param item Menu item to remove
-		 * @param order to have the item removed from
 		 */
 		public void onRemoveItemFromOrder(MenuItem item);
 		
 		/**
-		 * Get the current items in the user's order
+		 * Get the current items in the user's order.
 		 * @return hash map of items
 		 */
 		public HashMap<MenuItem, CurrentOrderItem> getOrder();
@@ -271,7 +275,8 @@ extends Fragment implements OnClickListener {
 		/**
 		 * Creates an array adapter to display a Order.
 		 * @param ctx Context of owning activity
-		 * @param order List of menu items to display TODO Change type String to MenuItem
+		 * @param order List of menu items to display
+		 * @param orderItems Map of MenuItems to their current order.
 		 */
 		public OrderArrayAdapter(Context ctx, List<MenuItem> order, 
 				HashMap<MenuItem, CurrentOrderItem> orderItems) {
@@ -301,7 +306,6 @@ extends Fragment implements OnClickListener {
 			// with attributes determined by the order item
 
 			// Get the Order Item by associating with the position
-			/*TODO Change to Order item or menu item*/
 			position = Math.max(0, Math.min(position, this.mItems.size() - 1));
 			MenuItem item = mItems.get(position);	
 
@@ -384,8 +388,8 @@ extends Fragment implements OnClickListener {
 
 					break;
 				case R.id.button_delete:
-					priceChange = mAdapter.mOrderMapping.get(item).getQuantity() * 
-					item.getPrice() * -1;
+					priceChange = mAdapter.mOrderMapping.get(item).getQuantity() 
+							* item.getPrice() * -1;
 					mListener.onRemoveItemFromOrder(item);
 					mAdapter.remove(item);
 					mAdapter.mOrderMapping.remove(item);
@@ -404,8 +408,9 @@ extends Fragment implements OnClickListener {
 						// create and save the order
 						List<MenuItem> items = new ArrayList<MenuItem>();
 						for (MenuItem m : mAdapter.mOrderMapping.keySet()) {
-							for (int i = 0; i < mAdapter.mOrderMapping.get(m).getQuantity(); i++)
+							for (int i = 0; i < mAdapter.mOrderMapping.get(m).getQuantity(); i++) {
 								items.add(m);
+							}
 						}
 						final Order newOrder = new Order(session.getTableID(),  
 								DineOnUserApplication.cachedUser.getUserInfo(), 
@@ -443,7 +448,8 @@ extends Fragment implements OnClickListener {
 					mSubtotal = (TextView) mListView.findViewById(R.id.value_subtotal);
 					mTax = (TextView) mListView.findViewById(R.id.value_tax);
 					mTotal = (TextView) mListView.findViewById(R.id.value_total);
-					double newTotal = priceChange + Double.parseDouble(mSubtotal.getText().toString().substring(1));
+					double newTotal = priceChange 
+							+ Double.parseDouble(mSubtotal.getText().toString().substring(1));
 					mSubtotal.setText(mFormatter.format(newTotal));
 					mTax.setText(mFormatter.format((newTotal * TAX)));
 					mTotal.setText(mFormatter.format((newTotal * (1 + TAX))));

@@ -1,7 +1,7 @@
 package uw.cse.dineon.library;
 
 /**
- * Class that encapsulates a users order thats dynamically built
+ * Class that encapsulates a users order thats dynamically built.
  * 
  * @author mtrathjen08
  *
@@ -20,6 +20,9 @@ public class CurrentOrderItem extends Storable {
 	 */
 	private int mQuantity;
 	
+	/**
+	 * @param menuItem MenuItem to add to current order
+	 */
 	public CurrentOrderItem(MenuItem menuItem) {
 		super(CurrentOrderItem.class);
 		this.mMenuItem = menuItem;
@@ -35,22 +38,22 @@ public class CurrentOrderItem extends Storable {
 	}
 	
 	/**
-	 * Set the value of the quantity
-	 * @param quantity
+	 * Set the value of the quantity.
+	 * @param quantity int
 	 */
 	public void setQuantity(int quantity) {
 		this.mQuantity = quantity;
 	}
 	
 	/**
-	 * Increment the quantity
+	 * Increment the quantity.
 	 */
 	public void incrementQuantity() {
 		this.mQuantity++;
 	}
 	
 	/**
-	 * Decrement the quantity
+	 * Decrement the quantity.
 	 */
 	public void decrementQuantity() {
 		this.mQuantity--;

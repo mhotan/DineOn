@@ -314,15 +314,4 @@ public class RestaurantInfo extends Storable {
 			return new RestaurantInfo[size];
 		}
 	};
-	
-	@Override
-	public void deleteFromCloud() {
-		// For each image delete from cloud
-		
-		for (Menu menu: mMenus) {
-			menu.deleteFromCloud();
-		}
-		
-		super.deleteFromCloud();
-	}
 }

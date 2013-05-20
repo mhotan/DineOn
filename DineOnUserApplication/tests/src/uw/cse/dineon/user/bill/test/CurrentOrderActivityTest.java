@@ -19,21 +19,21 @@ public class CurrentOrderActivityTest extends
 	}
 
 	protected void setUp() throws Exception {
-		super.setUp();
-		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
-		setActivityInitialTouchMode(false);
-		
-		ParseUser testUser = ParseUser.logIn("zach", "zach");
-		DineOnUser dineOnUser = new DineOnUser(testUser);
-		
-	    Intent addEvent = new Intent();
-	    addEvent.putExtra(DineOnConstants.KEY_USER, dineOnUser);
-	    setActivityIntent(addEvent);
-		mActivity = getActivity();
+//		super.setUp();
+//		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
+//		setActivityInitialTouchMode(false);
+//		
+//		ParseUser testUser = ParseUser.logIn("zach", "zach");
+//		DineOnUser dineOnUser = new DineOnUser(testUser);
+//		
+//	    Intent addEvent = new Intent();
+//	    addEvent.putExtra(DineOnConstants.KEY_USER, dineOnUser);
+//	    setActivityIntent(addEvent);
+//		mActivity = getActivity();
 	}
 
 	protected void tearDown() throws Exception {
-		super.tearDown();
+//		super.tearDown();
 	}
 
 	public void testOnPlaceOrder() {
@@ -43,12 +43,4 @@ public class CurrentOrderActivityTest extends
 	public void testOnRequestMade() {
 		//mActivity.onRequestMade();
 	}
-	
-	public void testDeleteResume() {
-		getInstrumentation().waitForIdleSync();
-		mActivity.finish();
-
-		mActivity = getActivity();
-	}
-
 }
