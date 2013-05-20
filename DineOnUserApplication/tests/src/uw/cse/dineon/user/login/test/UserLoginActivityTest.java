@@ -14,17 +14,26 @@ import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.bill.CurrentBillActivity;
+import uw.cse.dineon.user.bill.CurrentOrderActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
+import uw.cse.dineon.user.restaurant.home.RestaurantHomeMainFragment;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoActivity;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
+import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -120,10 +129,67 @@ public class UserLoginActivityTest extends
 	          }
 	      });
 		mInstrumentation.waitForIdleSync();
-  	  	RestaurantHomeActivity ria = (RestaurantHomeActivity) monRia
+  	  	RestaurantHomeActivity rha = (RestaurantHomeActivity) monRia
   	  			.waitForActivityWithTimeout(time);
   	  	
-  	  	assertNotNull(ria);
+  	  	assertNotNull(rha);
+  	  	
+  	  	android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+				rha.findViewById(uw.cse.dineon.user.R.id.pager_menu_info);
+  	  	assertNotNull(pager);
+  	  	
+  	  	PagerAdapter adapter = pager.getAdapter(); 	
+  	  	assertNotNull(adapter);
+  	  	
+  	  	final android.support.v4.view.ViewPager PAGER = pager;
+  	  	rha.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  PAGER.setCurrentItem(1);
+	          }
+	      });
+  	  	
+		mInstrumentation.waitForIdleSync();
+		
+		ActivityMonitor monCurrOrder = this.mInstrumentation.addMonitor(
+				CurrentOrderActivity.class.getName(), null, false);
+		
+		assertNotNull(monCurrOrder);
+		final RestaurantHomeActivity RHA = rha; 
+		rha.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  Intent i = new Intent(RHA.getApplicationContext(), CurrentOrderActivity.class);
+	  			// Count all the elements that the user has currently selected
+	  			RHA.startActivityForResult(i, DineOnConstants.REQUEST_VIEW_CURRENT_ORDER); 
+	          }
+	      });
+	  	
+		mInstrumentation.waitForIdleSync();
+		
+		CurrentOrderActivity coa = (CurrentOrderActivity) monCurrOrder
+  	  			.waitForActivityWithTimeout(time);
+  	  	
+  	  	assertNotNull(coa);
+  	  	
+  	  ActivityMonitor monCurrBill = this.mInstrumentation.addMonitor(
+  			CurrentBillActivity.class.getName(), null, false);
+		
+  	  	
+  	  final CurrentOrderActivity COA = coa; 
+		COA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	Intent intent = new Intent(COA.getApplicationContext(),
+	      				CurrentBillActivity.class);
+	      		intent.putExtra(CurrentBillActivity.EXTRA_DININGSESSION, 
+	      				"Dining session with accrued orders goes here");
+	      		COA.startActivityForResult(intent, DineOnConstants.REQUEST_PAY_BILL); 
+	          }
+	      });
+		
+		CurrentBillActivity cob = (CurrentBillActivity) monCurrBill
+  	  			.waitForActivityWithTimeout(time);
+  	  	
+  	  	assertNotNull(cob);
+  	  	
   	  	
 	}
 	
