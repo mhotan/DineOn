@@ -140,7 +140,7 @@ LoginFragment.OnLoginListener {
 	 * TODO send a user instance through this bundle
 	 * @param user User to send of the
 	 */
-	private void startRestSelectionAct(DineOnUser user) {
+	public void startRestSelectionAct(DineOnUser user) {
 		// Destroy any running progress dialog
 		DineOnUserApplication.cachedUser = user;
 		destroyProgressDialog();

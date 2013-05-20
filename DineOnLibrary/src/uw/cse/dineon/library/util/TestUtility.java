@@ -26,52 +26,12 @@ public class TestUtility {
 	public static DineOnUser dineOnUser;
 	
 	
-	public static boolean testSetUp() {
-		try {
-			ParseUser user = new ParseUser();
-			user.setUsername("testUser");
-			user.setPassword("12345");
-			user.signUp();
-			ParseUser.logIn("testUser", "12345");
-	
-			ParseUser restUser = new ParseUser();
-			restUser.setUsername("testRestUser");
-			restUser.setPassword("12345");
-			restUser.signUp();
-			ParseUser.logIn("testRestUser", "12345");
-			
-			
-			dineOnUser = new DineOnUser(user);
-			
-			Restaurant rest = new Restaurant(restUser);
-			
-			DiningSession ds = 
-					new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
-			
-			List<MenuItem> mi = getFakeMenuItems();
-			Order one = new Order(1, dineOnUser.getUserInfo(), mi);
-			ds.addPendingOrder(one);
-			
-			Menu m = getFakeMenu();
-			m.addNewItem(mi.get(0));
-			rest.getInfo().addMenu(m);
-			
-		} catch (ParseException e) {
-			Log.e("TestUtility", "Failed in creation process.");
-			return false;
-		}
-		
-		
-		
-		return true;
-	}
-	
 	/**
 	 * Returns a list of fake menu items.
 	 * 
 	 * @return a list of fake menu items
 	 */
-	private static List<MenuItem> getFakeMenuItems() {
+	public static List<MenuItem> getFakeMenuItems() {
 		List<MenuItem> menuItems = new ArrayList<MenuItem>();
 		int itemCnt = 100;
 		MenuItem steak = new MenuItem(itemCnt++, 12.99, "testSteak", 
@@ -85,7 +45,7 @@ public class TestUtility {
 	/**
 	 * @return A Menu representing an Entree menu
 	 */
-	private static Menu getFakeMenu() {
+	public static Menu getFakeMenu() {
 		Menu entreeMenu = new Menu("testEntrees");
 		for (MenuItem item: getFakeMenuItems()) {
 			entreeMenu.addNewItem(item);
