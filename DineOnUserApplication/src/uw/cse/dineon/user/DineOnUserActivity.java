@@ -488,4 +488,10 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 		// TODO Auto-generated method stub
 		return DineOnUserApplication.cachedOrderMapping;
 	}
+
+	@Override
+	public void resetCurrentOrder() {
+		// TODO Auto-generated method stub
+		DineOnUserApplication.cachedOrderMapping.clear();
+	}
 }

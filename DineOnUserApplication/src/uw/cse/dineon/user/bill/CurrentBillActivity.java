@@ -12,6 +12,10 @@ public class CurrentBillActivity extends DineOnUserActivity {
 
 	public static final String EXTRA_DININGSESSION = "DININGSESSION";
 	
+	public static final String EXTRA_SUBTOTALPRICE = "SUBTOTALPRICE";
+	public static final String EXTRA_TAX = "TAX";
+	public static final String EXTRA_TOTALPRICE = "TOTALPRICE";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,10 +29,12 @@ public class CurrentBillActivity extends DineOnUserActivity {
 		setContentView(R.layout.activity_current_bill);
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			String s = extras.getString(EXTRA_DININGSESSION);
+			String subtotal = extras.getString(EXTRA_SUBTOTALPRICE);
+			String tax = extras.getString(EXTRA_TAX);
+			String total = extras.getString(EXTRA_TOTALPRICE);
 			CurrentBillFragment frag = (CurrentBillFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.fragment_current_bill);
-			frag.setDiningSession(s);
+			frag.setBill(subtotal, tax);
 		}
 		
 	}

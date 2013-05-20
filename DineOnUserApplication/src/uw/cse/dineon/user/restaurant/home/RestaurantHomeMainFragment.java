@@ -124,7 +124,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 			case 0: 
 				return INFORMATION;
 			default:
-				position = Math.max(Math.min(position, 
+				position = Math.max(Math.min(position - 1, 
 						this.mRestaurantInfo.getMenuList().size() - 1), 0);
 				return this.mRestaurantInfo.getMenuList().get(position).getName();
 			}

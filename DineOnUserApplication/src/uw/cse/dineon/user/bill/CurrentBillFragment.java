@@ -1,12 +1,20 @@
 package uw.cse.dineon.user.bill;
 
+import java.text.NumberFormat;
+
+import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
@@ -15,15 +23,22 @@ import android.widget.TextView;
  * @author mhotan
  *
  */
-public class CurrentBillFragment extends Fragment implements OnSeekBarChangeListener {
+public class CurrentBillFragment extends Fragment implements 
+OnSeekBarChangeListener,
+OnClickListener {
 
 	private TextView mTitle, mSubTotal, mTotalTax, mTotal, mTip;
 	
 	private SeekBar mTipBar;
 	private int mCurTipPercent;
+	private double mSubtotal;
 	private double mTotalAmount;
+	private double mTax;
+	private Button mPayButton;
 	
-	private String mSession;
+	private DiningSession mSession;
+	
+	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,6 +52,9 @@ public class CurrentBillFragment extends Fragment implements OnSeekBarChangeList
 		mTotal = (TextView) view.findViewById(R.id.value_final_total);
 		mTip = (TextView) view.findViewById(R.id.value_tip);
 		
+		mPayButton = (Button) view.findViewById(R.id.button_pay_with_magic);
+		mPayButton.setOnClickListener(this);
+		
 		mTipBar = (SeekBar) view.findViewById(R.id.seekBar_tip_variable);
 		mTipBar.setMax(100);
 		mTipBar.setProgress(0);
@@ -44,10 +62,10 @@ public class CurrentBillFragment extends Fragment implements OnSeekBarChangeList
 		mTip.setText("" + mCurTipPercent + "%");
 		mTipBar.setOnSeekBarChangeListener(this);
 		
-		mSession = null;
+		mSession = DineOnUserApplication.cachedUser.getDiningSession();
 		
-		// Total is currently zero
-		mTotalAmount = 0.0;
+		// Total is currently zer
+		//mTotalAmount = 0.0;
 		return view;
 	}
 	
@@ -56,25 +74,22 @@ public class CurrentBillFragment extends Fragment implements OnSeekBarChangeList
 	 * TODO Replace the Dining Session string with instance 
 	 * @param session to set
 	 */
-	public void setDiningSession(String session) {
-		if (session == null) {
-			return;
-		}
+	public void setBill(String subtotal, String tax) {
 		
-		mSession = session;
-		// Use the Dining session to assign the values appropiately
-		mTitle.setText("Current Bill for " + mSession);
+		if (this.mSession == null)
+			DineOnUserApplication.cachedUser.getDiningSession();
+
+		mTitle.setText("Current Bill for " + mSession.getRestaurantInfo().getName());
 		
-		double subTotal = 100; //Session get totals
-		double tax = (double) (subTotal * .1);
+		mSubTotal.setText(subtotal);
+		mTotalTax.setText(tax);
 		
-		mSubTotal.setText(String.format("%.2f", subTotal));
-		mTotalTax.setText(String.format("%.2f", tax));
-		
-		double tipAmount = ((double)mCurTipPercent / 100.0) * (tax + subTotal);
-		double total = subTotal + tax + tipAmount;
+		this.mSubtotal = Double.parseDouble(subtotal.substring(1));
+		this.mTax = Double.parseDouble(tax.substring(1));
+		double tipAmount = ((double)mCurTipPercent / 100.0) * (this.mTax + this.mSubtotal);
+		double totalPrice = this.mSubtotal + this.mTax + tipAmount;
 		mTip.setText(" " + mCurTipPercent + "%,  $" + String.format("%.2f", tipAmount));
-		mTotal.setText(String.format("%.2f", total));
+		mTotal.setText(this.mFormatter.format(totalPrice));
 	}
 
 	@Override
@@ -83,7 +98,10 @@ public class CurrentBillFragment extends Fragment implements OnSeekBarChangeList
 		if (fromUser) {
 			mCurTipPercent = progress;
 			
-			setDiningSession(mSession);
+			double tipAmount = ((double)mCurTipPercent / 100.0) * (this.mTax + this.mSubtotal);
+			mTip.setText(" " + mCurTipPercent + "%,  $" + String.format("%.2f", tipAmount));
+			double totalPrice = this.mSubtotal + this.mTax + tipAmount;
+			mTotal.setText(this.mFormatter.format(totalPrice));
 		}
 	}
 
@@ -92,5 +110,13 @@ public class CurrentBillFragment extends Fragment implements OnSeekBarChangeList
 
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) { }
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		Toast.makeText(getActivity(), "Your order has been paid for.", 
+				Toast.LENGTH_SHORT).show();
+		getActivity().onBackPressed();
+	}
 
 }

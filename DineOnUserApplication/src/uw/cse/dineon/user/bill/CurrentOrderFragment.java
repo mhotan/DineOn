@@ -188,7 +188,21 @@ extends Fragment implements OnClickListener {
 		});
 		alert.show();
 	}
+	
+	public String getSubtotal() {
+		return ((TextView)mListView.findViewById(R.id.value_subtotal)).
+				getText().toString();
+	}
 
+	public String getTax() {
+		return ((TextView) mListView.findViewById(R.id.value_tax)).
+				getText().toString();
+	}
+	
+	public String getTotal() {
+		return ((TextView) mListView.findViewById(R.id.value_total)).
+				getText().toString();
+	}
 	
 	/**
 	 * Listener associated with this containing fragment.
@@ -231,6 +245,11 @@ extends Fragment implements OnClickListener {
 		 * @return hash map of items
 		 */
 		public HashMap<MenuItem, CurrentOrderItem> getOrder();
+		
+		/**
+		 * Once an order is placed clear the current order.
+		 */
+		public void resetCurrentOrder();
 
 	}
 
@@ -438,9 +457,6 @@ extends Fragment implements OnClickListener {
 					
 					break;
 					
-				case R.id.button_request:
-					
-					break;
 				default:
 					break;
 				}

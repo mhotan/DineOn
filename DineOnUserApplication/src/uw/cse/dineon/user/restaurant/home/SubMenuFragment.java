@@ -177,6 +177,7 @@ public class SubMenuFragment extends ListFragment {
 	        np.setMinValue(0);
 	        np.setValue(0);
 	        np.setClickable(true);
+	        np.setWrapSelectorWheel(false);
 			np.setOnValueChangedListener(mNumPickerListener);
 			
 			return rowView;
