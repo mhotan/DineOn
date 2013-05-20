@@ -30,7 +30,7 @@ public class DiningSessionTest extends AndroidTestCase {
 	Context mContext = null;
 	
 	DiningSession testSession;
-	ParseUser testUser;
+	ParseUser mUser;
 	ParseUser testUser1;
 	UserInfo testUInfo;
 	UserInfo testUInfo1;
@@ -54,16 +54,20 @@ public class DiningSessionTest extends AndroidTestCase {
 		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		Log.i("progress", "init parse");
 
-		testUser1 = ParseUser.logIn("zach1", "zach1");
+		//testUser1 = ParseUser.logIn("zach1", "zach1");
 		
-		testUser = ParseUser.logIn("zach", "zach");
-		
+		//testUser = ParseUser.logIn("zach", "zach");
+		mUser = new ParseUser();
+		mUser.setEmail("dst@a.com");
+		mUser.setUsername("dst");
+		mUser.setPassword("dst");
+		mUser.signUp();
 
-		testUInfo1 = new UserInfo(testUser1);
-		testRInfo = new RestaurantInfo(testUser);
+		testUInfo1 = new UserInfo(mUser);
+		testRInfo = new RestaurantInfo(mUser);
 		testSession = new DiningSession(32, new Date(3254645), testUInfo1, testRInfo);
 		
-		testUInfo = new UserInfo(testUser);
+		testUInfo = new UserInfo(mUser);
 		testItems = new ArrayList<MenuItem>();
 		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
 		testItems.add(testItem);
@@ -79,7 +83,8 @@ public class DiningSessionTest extends AndroidTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		ParseUser.logOut();
+		mUser.delete();
+		//ParseUser.logOut();
 	}
 
 	public void testPackObject() throws ParseException {
@@ -98,10 +103,6 @@ public class DiningSessionTest extends AndroidTestCase {
 
 
 
-	public void testDiningSessionIntDate() {
-		assertEquals(32, testSession.getTableID());
-		assertEquals(new Date(3254645), testSession.getStartTime());
-	}
 
 	public void testDiningSessionParseObject() {
 		//TODO fail("Not yet implemented");
@@ -137,10 +138,6 @@ public class DiningSessionTest extends AndroidTestCase {
 		testSession.addUser(testUInfo);
 		
 		assertEquals(testUInfos, testSession.getUsers());
-	}
-
-	public void testGetStartTime() {
-		assertEquals(new Date(3254645), testSession.getStartTime());
 	}
 
 }

@@ -22,14 +22,11 @@ import com.parse.ParseUser;
 public class CreateRestaurantAccountTest extends
 ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 
-	private CreateNewRestaurantAccountActivity activity;
-
 	private static final int WAIT_TIME = 10000;
 	
 	private static final String fakeUserName = "createRestaurantFakeUserName";
 	private static final String fakePassword = "createRestaurantFakePassword";
 	private static final String fakeEmail = "fakeemail@yourmomhouse.com";
-	private ParseUser mFakeUser;
 	private CreateNewRestaurantAccountActivity mActivity;
 
 	public CreateRestaurantAccountTest() throws ParseException {
