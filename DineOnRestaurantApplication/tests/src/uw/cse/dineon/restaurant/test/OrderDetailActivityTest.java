@@ -1,6 +1,8 @@
 package uw.cse.dineon.restaurant.test;
 
+import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Restaurant;
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.active.OrderDetailActivity;
@@ -28,6 +30,8 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 	private ParseUser mUser;
 	private Restaurant mRestaurant;
 	private UserInfo mUI;
+	private RestaurantInfo mRI;
+	private DiningSession mDiningSession;
 
 	public OrderDetailActivityTest() {
 		super(OrderDetailActivity.class);
@@ -51,8 +55,10 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 		}
 		
 		mRestaurant = TestUtility.createFakeRestaurant(mUser);
+		mRI = new RestaurantInfo(mUser);
 		mUI = new UserInfo(mUser);
 		mRestaurant.addOrder(TestUtility.createFakeOrder(1, mUI));
+		mRestaurant.addDiningSession(mDiningSession);
 		Intent intent = new Intent(getInstrumentation().getTargetContext(),
 				OrderDetailActivity.class);
 		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
