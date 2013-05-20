@@ -36,8 +36,7 @@ OrderDetailFragment.OrderDetailListener {
 			// Activity recreated
 			mOrder = savedInstanceState.getParcelable(EXTRA_ORDER);
 		} 
-		else if (extras != null && extras.containsKey(
-				DineOnConstants.KEY_RESTAURANT)) {
+		else if (extras != null && extras.containsKey(EXTRA_ORDER)) {
 			// Activity started and created for the first time
 			// Valid extras were passed into this
 			mOrder = extras.getParcelable(EXTRA_ORDER);
