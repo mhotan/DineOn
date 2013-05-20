@@ -53,7 +53,6 @@
     <string name="label_my_favorites">Sort By My Favorites </string>
     <string name="label_call">Call Restaurant</string>
     <string name="label_add_to_favorites">Add to Favorites</string>
-    <string name="label_make_reservation">Make Reservation</string>
     <string name="activity_start_login">startLoginActivity</string>
     <string name="hint_username">Username</string>
     <string name="facebook_app_id">505185672873933</string>

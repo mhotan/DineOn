@@ -32,7 +32,7 @@ public class DineOnUserApplication extends Application {
 		
 		// TODO Initialize Facebook
 		// https://www.parse.com/docs/android_guide#fbusers-setup		
-		ParseFacebookUtils.initialize(DineOnConstants.FACEBOOK_APP_ID);
+		//ParseFacebookUtils.initialize(DineOnConstants.FACEBOOK_APP_ID);
 		
 		ParseUser.enableAutomaticUser();
 		ParseACL defaultACL = new ParseACL();
