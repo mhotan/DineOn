@@ -22,7 +22,6 @@ public class DineOnRestaurantApplication extends Application {
 		// Add your initialization code here
 		Parse.initialize(this, DineOnConstants.APPLICATION_ID, DineOnConstants.CLIENT_KEY);
 
-
 		ParseUser.enableAutomaticUser();
 		ParseACL defaultACL = new ParseACL();
 	    

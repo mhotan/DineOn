@@ -17,6 +17,8 @@ import com.parse.ParseUser;
 
 public class TestUtility {
 	
+	static final int WAIT_TIME = 120000; // 2 minutes wait time
+	
 	public static Restaurant createFakeRestaurant(ParseUser user) throws ParseException{
 		Restaurant r = new Restaurant(user);
 		return r;

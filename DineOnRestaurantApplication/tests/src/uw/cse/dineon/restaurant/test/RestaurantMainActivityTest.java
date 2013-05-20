@@ -1,16 +1,18 @@
 package uw.cse.dineon.restaurant.test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import android.content.Intent;
-import android.os.Parcelable;
+import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -57,26 +59,28 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		mUser = new ParseUser();
 		mUser.setUsername(fakeUserName);
 		mUser.setPassword(fakePassword);
-		mUser.signUp();
+		
+		try {
+			mUser = ParseUser.logIn(fakeUserName, fakePassword);
+		} catch (ParseException e) {
+			mUser.signUp();
+		}
 
 		mUI = new DineOnUser(mUser);
 		mRestaurant = new Restaurant(mUser);
-		mRequest = TestUtility.createFakeRequest(mUI.getUserInfo());
-		mOrder = TestUtility.createFakeOrder(orderNum++, mUI.getUserInfo());
-		testSession = TestUtility.createFakeDiningSession(mUI.getUserInfo(), mRestaurant.getInfo());
-		mRestaurant = TestUtility.createFakeRestaurant(mUser);
+		mRequest = new CustomerRequest("Me Hungy", mUI.getUserInfo());
+		
+		List<MenuItem> items = new ArrayList<MenuItem>();
+		items.add(new MenuItem(123, 1.99, "Yum yums", "description"));
+		mOrder = new Order(1, mUI.getUserInfo(), items);
+		testSession = new DiningSession(1, mUI.getUserInfo(), mRestaurant.getInfo());
 		mRestaurant.addCustomerRequest(mRequest);
 		mRestaurant.addOrder(mOrder);
 		mRestaurant.addDiningSession(testSession);
 
-		ArrayList<Parcelable> dSessions = new ArrayList<Parcelable>();
-		dSessions.add(testSession);
-
 		Intent intent = new Intent(getInstrumentation().getTargetContext(),
 				RestauarantMainActivity.class);
-		intent.putExtra(DineOnConstants.KEY_USER, mUI);
 		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
-		intent.putExtra(DineOnConstants.DINING_SESSION, dSessions);
 		setActivityIntent(intent);
 
 		setActivityInitialTouchMode(false);
@@ -96,6 +100,16 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		super.tearDown();
 	}
 
+	public void testNavigateTabs() { 
+		android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+				mActivity.findViewById(uw.cse.dineon.restaurant.R.id.pager_restaurant_main);
+		PagerAdapter adapter = pager.getAdapter();
+		assertNotNull(adapter);
+		
+		pager.setCurrentItem(0);
+		
+	}
+	
 	public void testOrderLayoutItemsPopulate() {
 		TextView orderTitle = (TextView) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_order_title);
 		TextView orderTime = (TextView) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.label_order_time);

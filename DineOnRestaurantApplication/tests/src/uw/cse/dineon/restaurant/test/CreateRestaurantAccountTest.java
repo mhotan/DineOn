@@ -141,7 +141,7 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 		assertEquals(justMade.getName(), fakeUserName);
 		
 		justMade.deleteFromCloud();
-		curUser.deleteInBackground();
+		curUser.delete();
 		
 		mainAct.finish();
 	}

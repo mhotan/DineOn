@@ -60,9 +60,13 @@ public class RestaurantProfileActivityTest extends
 		setActivityInitialTouchMode(false);
 		//mUser = ParseUser.logIn("vince", "v");
 		mUser = new ParseUser();
-		mUser.setPassword("password");
-		mUser.setUsername("vinceRestProfileActTest");
-		mUser.signUp();
+		
+		try {
+			mUser = ParseUser.logIn("vinceRestProfileActTest", "password");
+		} catch (ParseException e) {
+			mUser.signUp();
+		}
+		
 		
 		// construct fake restaurant for intent
 		r = createFakeRestaurant(mUser);

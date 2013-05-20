@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class RestaurantLoginActivityTest extends
@@ -66,8 +67,13 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		mUser = new ParseUser();
 		mUser.setUsername(fakeUserName);
 		mUser.setPassword(fakePassword);
-		mUser.signUp();
 		
+		try {
+			mUser = ParseUser.logIn(fakeUserName, fakePassword);
+		} catch (ParseException e) {
+			mUser.signUp();
+		}
+	
 		// Have to create the restaurant for this user
 		mRestaurant = new Restaurant(mUser);
 		mRestaurant.saveOnCurrentThread();
