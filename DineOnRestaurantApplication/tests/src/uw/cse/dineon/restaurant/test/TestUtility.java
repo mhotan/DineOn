@@ -19,19 +19,39 @@ public class TestUtility {
 	
 	static final int WAIT_TIME = 120000; // 2 minutes wait time
 	
+	/**
+	 * Returns a fake restaurant.
+	 * 
+	 * @return a fake restaurant
+	 */
 	public static Restaurant createFakeRestaurant(ParseUser user) throws ParseException{
 		Restaurant r = new Restaurant(user);
 		return r;
 	}
 
+	/**
+	 * Returns a fake order.
+	 * 
+	 * @return a fake order
+	 */
 	public static Order createFakeOrder(int orderNum, UserInfo info){
 		return new Order(orderNum, info, createFakeMenuItems(2));
 	}
 
+	/**
+	 * Returns a fake customer request.
+	 * 
+	 * @return a fake customer request
+	 */
 	public static CustomerRequest createFakeRequest(UserInfo info){
 		return new CustomerRequest("[fake] I want my food now!", info, new GregorianCalendar().getTime());
 	}
 
+	/**
+	 * Returns a fake list of menu items.
+	 * 
+	 * @return a fake list of menu items
+	 */
 	public static List<MenuItem> createFakeMenuItems(int qty){
 		qty = Math.max(0, qty);
 		List<MenuItem> items = new ArrayList<MenuItem>();
@@ -43,6 +63,11 @@ public class TestUtility {
 		return items;
 	}
 
+	/**
+	 * Returns a fake Dining Session.
+	 * 
+	 * @return a fake DiningSession
+	 */
 	public static DiningSession createFakeDiningSession(UserInfo user, RestaurantInfo restInfo) throws ParseException {
 		return new DiningSession(1, 
 				new GregorianCalendar().getTime(), 

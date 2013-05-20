@@ -41,11 +41,11 @@ public class OrderTest extends AndroidTestCase {
 		testUser.delete();
 	}
 
-	public void testPackObject() {
-		//TODO fail("Not yet implemented");
-	}
-
-	//tests getters and constructor, error could be in either
+	/**
+	 * Asserts that the Order correctly stores the expected data.
+	 * 
+	 * White box
+	 */
 	public void testOrderIntUserInfoListOfMenuItem() {
 		assertEquals(testItems, testOrder.getMenuItems());
 		assertEquals(testUInfo, testOrder.getOriginalUser());

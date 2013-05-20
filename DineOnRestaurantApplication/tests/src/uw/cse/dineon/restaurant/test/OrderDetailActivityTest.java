@@ -71,6 +71,11 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 		super.tearDown();
 	}
 	
+	/**
+	 * Tests editing the message text.
+	 * 
+	 * White box
+	 */
 	public void testEditMessageText() {
 		mActivity.runOnUiThread(new Runnable() {
 		    public void run() {
@@ -82,6 +87,11 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 		});
 	}
 	
+	/**
+	 * Asserts that the activity correctly restarts.
+	 * 
+	 * White box
+	 */
 	public void testDeleteResume() {
 		getInstrumentation().waitForIdleSync();
 		mActivity.finish();
@@ -89,6 +99,11 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 		assertNotNull(mActivity);
 	}
 
+	/**
+	 * Tests sending a message to the user.
+	 * 
+	 * White box
+	 */
 	public void testSendShoutOut(){
 		mActivity.sendShoutOut(mUI, "Your order is on its way.");
 	}

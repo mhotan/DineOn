@@ -71,6 +71,11 @@ ActivityInstrumentationTestCase2<DiningSessionDetailActivity> {
 		super.tearDown();
 	}
 	
+	/**
+	 * Asserts that the activity correctly restarts.
+	 * 
+	 * White box
+	 */
 	public void testDeleteResume() {
 		getInstrumentation().waitForIdleSync();
 		mActivity.finish();
@@ -78,6 +83,11 @@ ActivityInstrumentationTestCase2<DiningSessionDetailActivity> {
 		assertNotNull(mActivity);
 	}
 
+	/**
+	 * Tests sending a message to the user.
+	 * 
+	 * White box
+	 */
 	public void testSetDiningSession(){
 		mActivity.sendShoutOut(mUI, "Wazzup home slice???");
 	}

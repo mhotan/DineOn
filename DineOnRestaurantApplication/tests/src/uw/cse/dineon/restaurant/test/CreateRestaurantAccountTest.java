@@ -1,5 +1,7 @@
 package uw.cse.dineon.restaurant.test;
 
+import java.util.Random;
+
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
@@ -16,15 +18,15 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 
 public class CreateRestaurantAccountTest extends
 ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 
 	private static final int WAIT_TIME = 10000;
+	private static final int WAIT_LOGIN_TIME = 500;
 	
-	private static final String fakeUserName = "createRestAcctFakeUserName";
+	private static String fakeUserName = "createRestAcctUN";
 	private static final String fakePassword = "createRestAcctFakePassword";
 	private static final String fakeEmail = "createRestAcct@yourmomhouse.com";
 	private CreateNewRestaurantAccountActivity mActivity;
@@ -37,7 +39,6 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	
 	public CreateRestaurantAccountTest() throws ParseException {
 		super(CreateNewRestaurantAccountActivity.class);
-
 	}
 
 	@Override
@@ -77,7 +78,7 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 
 	@Override
 	protected void tearDown() throws Exception {
-//		mActivity.finish();
+		mActivity.finish();
 		super.tearDown();
 	}
 	
@@ -96,9 +97,12 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	 * Asserts that a user correctly creates an account
 	 * with valid credentials.
 	 * 
-	 * White-box
+	 * Black-box
 	 */
 	public void testCreateNewAccount() throws ParseException {
+		Random r = new Random();
+		int randomNum = r.nextInt(1000000);
+		fakeUserName = "" + randomNum;
 		
 		ActivityMonitor monitor = getInstrumentation().addMonitor(
 				RestauarantMainActivity.class.getName(), null, false);
@@ -149,7 +153,7 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	/**
 	 * Asserts that a user can't create an account without a username.
 	 * 
-	 * White-box
+	 * Black-box
 	 */
 	public void testNoUsernameFailure() {
 		ActivityMonitor monitor = getInstrumentation().addMonitor(
@@ -165,14 +169,37 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 			} // end of run() method definition
 		});
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
-		        .waitForActivityWithTimeout(WAIT_TIME);
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
+		assertNull(startedActivity);
+	}
+	
+	/**
+	 * Asserts that a user can't create an account without an email.
+	 * 
+	 * Black-box
+	 */
+	public void testNoEmailFailure() {
+		ActivityMonitor monitor = getInstrumentation().addMonitor(
+				RestauarantMainActivity.class.getName(), null, false);
+		
+		mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				username.setText(fakeUserName);
+				password.setText(fakePassword);
+				passwordrepeat.setText(fakePassword);
+				submit.requestFocus();
+				submit.performClick();
+			} // end of run() method definition
+		});
+		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
 	}
 	
 	/**
 	 * Asserts that a user can't create an account without a password.
 	 * 
-	 * White-box
+	 * Black-box
 	 */
 	public void testNoPasswordFailure() {
 		ActivityMonitor monitor = getInstrumentation().addMonitor(
@@ -182,19 +209,20 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 			public void run() {
 				username.setText(fakeUserName);
 				email.setText(fakeEmail);
+				password.setText(null);
 				submit.requestFocus();
 				submit.performClick();
 			} // end of run() method definition
 		});
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
-		        .waitForActivityWithTimeout(WAIT_TIME);
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
 	}
 	
 	/**
 	 * Asserts that a user can't create an account with different passwords.
 	 * 
-	 * White-box
+	 * Black-box
 	 */
 	public void testNoPasswordMatchFailure() {
 		ActivityMonitor monitor = getInstrumentation().addMonitor(
@@ -211,30 +239,7 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 			} // end of run() method definition
 		});
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
-		        .waitForActivityWithTimeout(WAIT_TIME);
-		assertNull(startedActivity);
-	}
-	
-	/**
-	 * Asserts that a user can't create an account without an email.
-	 * 
-	 * White-box
-	 */
-	public void testNoEmailFailure() {
-		ActivityMonitor monitor = getInstrumentation().addMonitor(
-				RestauarantMainActivity.class.getName(), null, false);
-		
-		mActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				username.setText(fakeUserName);
-				password.setText(fakePassword);
-				passwordrepeat.setText(fakePassword);
-				submit.requestFocus();
-				submit.performClick();
-			} // end of run() method definition
-		});
-		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
-		        .waitForActivityWithTimeout(2000);
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
 	}
 	

@@ -18,6 +18,7 @@ public class RestaurantLoginActivityTest extends
 ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 
 	private static final int WAIT_TIME = 30000;
+	private static final int WAIT_LOGIN_TIME = 1000;
 	
 	private Activity mActivity;
 	private EditText mNameText;
@@ -144,7 +145,7 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 			} // end of run() method definition
 		});
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
-		        .waitForActivityWithTimeout(WAIT_TIME);
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
 	}
 	
@@ -162,7 +163,7 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 			} // end of run() method definition
 		});
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
-		        .waitForActivityWithTimeout(WAIT_TIME);
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
 	}
 	

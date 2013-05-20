@@ -67,6 +67,11 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 		super.tearDown();
 	}
 	
+	/**
+	 * Asserts that the activity correctly restarts.
+	 * 
+	 * White box
+	 */
 	public void testDeleteResume() {
 		getInstrumentation().waitForIdleSync();
 		mActivity.finish();
@@ -74,10 +79,20 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 		assertNotNull(mActivity);
 	}
 
+	/**
+	 * Tests sending a request to a staff.
+	 * 
+	 * White box
+	 */
 	public void testOnSendRequestToStaff(){
 		mActivity.onSendTaskToStaff(mRequest, "Marty", "");
 	}
 	
+	/**
+	 * Tests sending a message to the user.
+	 * 
+	 * White box
+	 */
 	public void testSendShoutOut(){
 		mActivity.sendShoutOut(mUI, "Your order is on its way.");
 	}

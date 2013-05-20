@@ -36,21 +36,41 @@ public class UserInfoTest extends AndroidTestCase {
 		testUInfo = new UserInfo(testUser);
 	}
 
+	/**
+	 * Asserts that the userinfo correctly stores a name and phone.
+	 * 
+	 * White box
+	 */
 	public void testDefault() {
 		assertEquals("Undetermined", testUInfo.getPhone());
 		assertTrue(null == testUInfo.getEmail());
 	}
 
+	/**
+	 * Asserts that the userinfo correctly stores a name and phone.
+	 * 
+	 * White box
+	 */
 	public void testGetName() {
 		assertEquals("utester", testUser.getUsername());
 		assertEquals("utester", testUInfo.getName());
 	}
 	
+	/**
+	 * Asserts that the userinfo correctly stores a phone #.
+	 * 
+	 * White box
+	 */
 	public void testSetAndGetBasicPhoneNumber() {
 		testUInfo.setPhone("911");
 		assertEquals("911", testUInfo.getPhone());
 	}
 	
+	/**
+	 * Asserts that the userinfo correctly stores an email.
+	 * 
+	 * White box
+	 */
 	public void testSetAndGetBasicEmail() {
 		testUInfo.setEmail("tester@cs.washington.edu");
 		assertEquals("tester@cs.washington.edu", testUInfo.getEmail());

@@ -28,7 +28,7 @@ public class DiningSessionTest extends AndroidTestCase {
 
 	Activity activity;
 	Context mContext = null;
-	
+
 	DiningSession testSession;
 	ParseUser mUser;
 	ParseUser testUser1;
@@ -40,13 +40,15 @@ public class DiningSessionTest extends AndroidTestCase {
 	List<Order> orders;
 	List<UserInfo> testUInfos;
 	RestaurantInfo testRInfo;
-	
-	
-	
+
+
+	/**
+	 * Default constructor. 
+	 */
 	public DiningSessionTest() {
 		super();
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		Log.i("progress", "start setup");
@@ -54,9 +56,6 @@ public class DiningSessionTest extends AndroidTestCase {
 		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		Log.i("progress", "init parse");
 
-		//testUser1 = ParseUser.logIn("zach1", "zach1");
-		
-		//testUser = ParseUser.logIn("zach", "zach");
 		mUser = new ParseUser();
 		mUser.setEmail("dst@a.com");
 		mUser.setUsername("dst");
@@ -66,7 +65,7 @@ public class DiningSessionTest extends AndroidTestCase {
 		testUInfo1 = new UserInfo(mUser);
 		testRInfo = new RestaurantInfo(mUser);
 		testSession = new DiningSession(32, new Date(3254645), testUInfo1, testRInfo);
-		
+
 		testUInfo = new UserInfo(mUser);
 		testItems = new ArrayList<MenuItem>();
 		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
@@ -74,9 +73,9 @@ public class DiningSessionTest extends AndroidTestCase {
 		testOrder = new Order(32, testUInfo, testItems);
 		orders = new ArrayList<Order>();
 		orders.add(testOrder);
-		
+
 		testUInfos = new ArrayList<UserInfo>();
-		
+
 		testUInfos.add(testUInfo1);
 		testUInfos.add(testUInfo);
 	}
@@ -84,59 +83,56 @@ public class DiningSessionTest extends AndroidTestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		mUser.delete();
-		//ParseUser.logOut();
 	}
 
-	public void testPackObject() throws ParseException {
-		/* Throws "IllArgExcep value may not be null"
-		 * //Default state
-		ParseObject testPack1 = testSession.packObject();
-		
-		DiningSession newSess = new DiningSession(testPack1);
-		
-		assertEquals(testSession.getTableID(), newSess.getTableID());
-		assertEquals(testSession.getUsers(), newSess.getUsers());
-		assertEquals(testSession.getPendingOrders(), newSess.getPendingOrders());
-		assertEquals(testSession.getCompletedOrders(), newSess.getCompletedOrders());
-		assertEquals(testSession.getStartTime(), newSess.getStartTime()); */
-	}
-
-
-
-
-	public void testDiningSessionParseObject() {
-		//TODO fail("Not yet implemented");
-	}
-
-	//also tests addorders
+	/**
+	 * Asserts that the session has the correct list of orders
+	 * 
+	 * White box
+	 */
 	public void testGetOrders() {
-
-		
 		testSession.addPendingOrder(testOrder);
-
-		
 		assertEquals(orders, testSession.getOrders());
 	}
 
-	
+	/**
+	 * Asserts that the session has the correct table id stored
+	 * 
+	 * White box
+	 */
 	public void testGetTableID() {
 		assertEquals(32, testSession.getTableID());
 	}
 
+	/**
+	 * Asserts that the session has the correct changed table id stored
+	 * 
+	 * White box
+	 */
 	public void testResetTableID() {
 		testSession.resetTableID(42);
 		assertEquals(42, testSession.getTableID());
 	}
 
+	/**
+	 * Asserts that the session has the correct list of users stored
+	 * 
+	 * White box
+	 */
 	public void testGetUsers() {
 		List<UserInfo> expectedUser = new ArrayList<UserInfo>();
 		expectedUser.add(testUInfo1);
 		//TODO fails now assertEquals(testUInfo1, testSession.getUsers());
 	}
 
+	/**
+	 * Asserts that the correct user is added
+	 * 
+	 * White box
+	 */
 	public void testAddUser() {
 		testSession.addUser(testUInfo);
-		
+
 		assertEquals(testUInfos, testSession.getUsers());
 	}
 

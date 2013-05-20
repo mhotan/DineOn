@@ -93,6 +93,11 @@ public class RestaurantTest extends AndroidTestCase {
 		Log.i("progress", "end setup");
 	}
 
+	/**
+	 * Asserts that the restaurant correctly stores the expected data.
+	 * 
+	 * White box
+	 */
 	public void testRestaurantParseUser() {
 		assertEquals(testRestaurantInfo.getName(), testRestaurant.getName());
 		assertEquals(testRestaurantInfo.getName(), testRestaurant.getInfo().getName());
@@ -104,16 +109,31 @@ public class RestaurantTest extends AndroidTestCase {
 		
 	}
 
+	/**
+	 * Asserts that the restaurant correctly adds a request.
+	 * 
+	 * White box
+	 */
 	public void testAddCustomerRequest() {
 		testRestaurant.addCustomerRequest(testRequest);
 		assertEquals(testRequests, testRestaurant.getCustomerRequests());
 	}
 
+	/**
+	 * Asserts that the restaurant correctly adds a reservation.
+	 * 
+	 * White box
+	 */
 	public void testAddReservation() {
 		testRestaurant.addReservation(testReservation);
 		assertEquals(testReservations, testRestaurant.getReservationList());
 	}
 
+	/**
+	 * Asserts that the restaurant correctly completes an order.
+	 * 
+	 * White box
+	 */
 	public void testCompleteOrder() {
 		testRestaurant.addOrder(testOrder);
 		testRestaurant.completeOrder(testOrder);
@@ -121,34 +141,64 @@ public class RestaurantTest extends AndroidTestCase {
 		assertEquals(orders, testRestaurant.getPastOrders());
 	}
 
+	/**
+	 * Asserts that the restaurant correctly adds an order.
+	 * 
+	 * White box
+	 */
 	public void testAddOrder() {
 		testRestaurant.addOrder(testOrder);
 		assertEquals(orders, testRestaurant.getPendingOrders());
 	}
 
+	/**
+	 * Asserts that the restaurant correctly adds a dining session.
+	 * 
+	 * White box
+	 */
 	public void testAddDiningSession() {
 		testRestaurant.addDiningSession(testSession);
 		assertEquals(testSessions, testRestaurant.getSessions());
 	}
 
+	/**
+	 * Asserts that the restaurant correctly removes a dining session.
+	 * 
+	 * White box
+	 */
 	public void testRemoveDiningSession() {
 		testRestaurant.addDiningSession(testSession);
 		testRestaurant.removeDiningSession(testSession);
 		assertEquals(new ArrayList<DiningSession>(), testRestaurant.getSessions());
 	}
 
+	/**
+	 * Asserts that the restaurant correctly removes a request.
+	 * 
+	 * White box
+	 */
 	public void testRemoveCustomerRequest() {
 		testRestaurant.addCustomerRequest(testRequest);
 		testRestaurant.removeCustomerRequest(testRequest);
 		assertEquals(new ArrayList<CustomerRequest>(), testRestaurant.getCustomerRequests());
 	}
 
+	/**
+	 * Asserts that the restaurant correctly removes a reservation.
+	 * 
+	 * White box
+	 */
 	public void testRemoveReservation() {
 		testRestaurant.addReservation(testReservation);
 		testRestaurant.removeReservation(testReservation);
 		assertEquals(new ArrayList<Reservation>(), testRestaurant.getReservationList());
 	}
 
+	/**
+	 * Asserts that the restaurant correctly clears past orders.
+	 * 
+	 * White box
+	 */
 	public void testClearPastOrders() {
 		testRestaurant.addOrder(testOrder);
 		testRestaurant.completeOrder(testOrder);

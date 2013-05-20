@@ -27,21 +27,32 @@ public class MenuTest extends AndroidTestCase {
 		super.tearDown();
 	}
 
-	public void testPackObject() {
-		//TODO fail("Not yet implemented");
-	}
-
+	/**
+	 * Asserts that the menu saves the correct title
+	 * 
+	 * White box
+	 */
 	public void testMenuString() {
 		
 		assertEquals("beverages", testMenu.getName());
 		assertEquals(new ArrayList<MenuItem>(), testMenu.getItems());
 	}
 
+	/**
+	 * Asserts that the menu correctly adds an item
+	 * 
+	 * White box
+	 */
 	public void testAddNewItem() {
 		testMenu.addNewItem(testItem);
 		assertEquals(testItems, testMenu.getItems());
 	}
 
+	/**
+	 * Asserts that the menu correctly removes an item
+	 * 
+	 * White box
+	 */
 	public void testRemoveItem() {
 		testMenu.addNewItem(testItem);
 		testMenu.removeItem(testItem);

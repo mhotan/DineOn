@@ -5,8 +5,11 @@ import android.test.AndroidTestCase;
 
 public class MenuItemTest extends AndroidTestCase {
 
-
-
+	/**
+	 * Asserts that the menu item has the correct fields stored
+	 * 
+	 * White box
+	 */
 	public void testMenuItemIntDoubleStringString() {
 		MenuItem testMenuItem = new MenuItem(12, 13.53, "Fried Chicken", "Chicken...that's been fried");
 		assertEquals(12, testMenuItem.getProductID());
@@ -15,8 +18,4 @@ public class MenuItemTest extends AndroidTestCase {
 		assertEquals("Chicken...that's been fried", testMenuItem.getDescription());
 	}
 	
-	public void testMenuItemParseObject() {
-		//TODO
-	}
-
 }
