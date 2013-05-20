@@ -1,32 +1,36 @@
 package uw.cse.dineon.user;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.MenuItem;
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.UserSatellite.SatelliteListener;
 import uw.cse.dineon.user.bill.CurrentOrderActivity;
+import uw.cse.dineon.user.bill.CurrentOrderFragment.OrderUpdateListener;
 import uw.cse.dineon.user.checkin.IntentIntegrator;
 import uw.cse.dineon.user.checkin.IntentResult;
 import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
+import uw.cse.dineon.user.restaurant.home.SubMenuFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
@@ -43,7 +47,10 @@ import com.parse.SaveCallback;
  * In Particular their user specific preferences
  * @author mhotan
  */
-public class DineOnUserActivity extends FragmentActivity implements SatelliteListener {
+public class DineOnUserActivity extends FragmentActivity implements 
+SatelliteListener,
+SubMenuFragment.MenuItemListListener, /* manipulation of order from sub menu */
+OrderUpdateListener /* manipulation of list from the current order activity */{ 
 
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
 
@@ -57,6 +64,8 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	 */
 	private DineOnUserActivity thisActivity;
 
+	private HashMap<MenuItem, CurrentOrderItem> mMenuItemMappings;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -69,6 +78,8 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 			Utility.getBackToLoginAlertDialog(this, 
 					"Unable to find your information", UserLoginActivity.class).show();
 		}
+		
+		this.mMenuItemMappings = new HashMap<MenuItem, CurrentOrderItem>();
 	}
 
 	/**
@@ -144,22 +155,22 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		}
 	}
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(android.view.Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		// Note that override this method does not mean the actualy
 		//  UI Menu is updated this is done manually
 		//  See basic_menu under res/menu for ids
 		inflater.inflate(R.menu.basic_menu, menu);
 		//Hides the 
-		final MenuItem ITEM = menu.findItem(R.id.option_bill);
+		final android.view.MenuItem ITEM = menu.findItem(R.id.option_bill);
 		ITEM.setEnabled(false);
 		ITEM.setVisible(false);
 
-		final Menu M = menu;
+		final android.view.Menu M = menu;
 
 		//Sets the necessary onClickListeners for the menu
 		//items with an action layout.
-		List<MenuItem> customActionBarButtons = new ArrayList<MenuItem>();
+		List<android.view.MenuItem> customActionBarButtons = new ArrayList<android.view.MenuItem>();
 		customActionBarButtons.add(menu.findItem(R.id.option_bill));
 		customActionBarButtons.add(menu.findItem(R.id.option_check_in));
 
@@ -186,8 +197,8 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	 * @param m the parent menu
 	 * @param items the list of MenuItems to create listeners for
 	 */
-	private void setOnClick(final Menu m, List<MenuItem> items) {
-		for (final MenuItem ITEM : items) {
+	private void setOnClick(final android.view.Menu m, List<android.view.MenuItem> items) {
+		for (final android.view.MenuItem ITEM : items) {
 			ITEM.getActionView().setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -204,7 +215,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	 * @return true if the options menu is successfully prepared
 	 */
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
+	public boolean onPrepareOptionsMenu(android.view.Menu menu) {
 
 		// This is for the case where nothing is updated yet
 		// There is no User class
@@ -232,8 +243,8 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	 * @param menu The specified menu
 	 * @param rID The id of the specified menu item
 	 */
-	private void disableMenuItem(Menu menu, int rID) {
-		MenuItem item = menu.findItem(rID);
+	private void disableMenuItem(android.view.Menu menu, int rID) {
+		android.view.MenuItem item = menu.findItem(rID);
 		if(item != null) {
 			item.setEnabled(false);
 			item.setVisible(false);
@@ -247,8 +258,8 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	 * @param menu The specified menu
 	 * @param rID The id of the specified menu item
 	 */
-	private void enableMenuItem(Menu menu, int rID) {
-		MenuItem item = menu.findItem(rID);
+	private void enableMenuItem(android.view.Menu menu, int rID) {
+		android.view.MenuItem item = menu.findItem(rID);
 		if(item == null) {
 			menu.add(rID);
 		}
@@ -258,7 +269,7 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(android.view.MenuItem item) {
 		Intent i = null;
 		switch (item.getItemId()) {
 		case R.id.option_profile:
@@ -387,5 +398,92 @@ public class DineOnUserActivity extends FragmentActivity implements SatelliteLis
 		mSat.requestCustomerRequest(DineOnUserApplication.cachedUser.getDiningSession(), cr, 
 				DineOnUserApplication.cachedUser.getDiningSession().getRestaurantInfo());
 		Toast.makeText(this, "Made Request", Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	public void onMenuItemFocusedOn(uw.cse.dineon.library.MenuItem menuItem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRestaurantInfoRequested() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onViewCurrentBill() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public RestaurantInfo getCurrentRestaurant() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onPlaceOrder(Order order) {
+		// TODO Auto-generated method stub
+		mSat.requestOrder(DineOnUserApplication.cachedUser.getDiningSession(), 
+				order, 
+				DineOnUserApplication.cachedUser.getDiningSession().getRestaurantInfo());
+	}
+
+	@Override
+	public void onIncrementItemOrder(MenuItem item) {
+		// TODO Auto-generated method stub
+		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
+			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
+			orderItem.incrementQuantity();
+		} else {
+			DineOnUserApplication.cachedOrderMapping.put(item, new CurrentOrderItem(item));
+		}
+	}
+
+	@Override
+	public void onDecrementItemOrder(MenuItem item) {
+		// TODO Auto-generated method stub
+		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
+			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
+			orderItem.decrementQuantity();
+		}
+	}
+
+	@Override
+	public void onRemoveItemFromOrder(MenuItem item) {
+		// TODO Auto-generated method stub
+		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
+			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
+			orderItem.setQuantity(0);
+		}
+	}
+	
+	@Override
+	public void onMenuItemIncremented(MenuItem item) {
+		// TODO Auto-generated method stub
+		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
+			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
+			orderItem.incrementQuantity();
+		} else {
+			DineOnUserApplication.cachedOrderMapping.put(item, new CurrentOrderItem(item));
+		}
+	}
+
+	@Override
+	public void onMenuItemDecremented(MenuItem item) {
+		// TODO Auto-generated method stub
+		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
+			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
+			orderItem.decrementQuantity();
+		}
+	}
+
+	@Override
+	public HashMap<MenuItem, CurrentOrderItem> getOrder() {
+		// TODO Auto-generated method stub
+		return DineOnUserApplication.cachedOrderMapping;
 	}
 }

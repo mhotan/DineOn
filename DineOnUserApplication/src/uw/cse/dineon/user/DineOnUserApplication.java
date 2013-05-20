@@ -1,6 +1,10 @@
 package uw.cse.dineon.user;
 
+import java.util.HashMap;
+
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.app.Application;
 
@@ -15,6 +19,7 @@ import com.parse.ParseUser;
  */
 public class DineOnUserApplication extends Application {
 	public static DineOnUser cachedUser = null;
+	public static HashMap<MenuItem, CurrentOrderItem> cachedOrderMapping;
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -38,6 +43,8 @@ public class DineOnUserApplication extends Application {
 		ParseACL.setDefaultACL(defaultACL, true);
 		
 		ParseInstallation.getCurrentInstallation().saveInBackground();
+		
+		this.cachedOrderMapping = new HashMap<MenuItem, CurrentOrderItem>();
 	}
 	
 	/**

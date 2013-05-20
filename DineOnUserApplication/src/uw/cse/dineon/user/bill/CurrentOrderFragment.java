@@ -1,10 +1,19 @@
 package uw.cse.dineon.user.bill;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.parse.ParseException;
+import com.parse.SaveCallback;
+
+import uw.cse.dineon.library.CurrentOrderItem;
+import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.MenuItem;
+import uw.cse.dineon.library.Order;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 
@@ -32,6 +42,8 @@ public class CurrentOrderFragment
 extends Fragment implements OnClickListener {
 
 	private static final String TAG = CurrentBillFragment.class.getSimpleName();
+	
+	private static final double TAX = 0.08;
 
 	/**
 	 * an argument that can be used to pass this bundle explicit.
@@ -43,6 +55,10 @@ extends Fragment implements OnClickListener {
 	 * Current adapter for holding values to store on our list.
 	 */
 	private OrderArrayAdapter mAdapter;
+	
+	private View mListView;
+	
+	private NumberFormat mFormatter;
 
 	/**
 	 * Activity which serves as a Listener. 
@@ -59,33 +75,7 @@ extends Fragment implements OnClickListener {
 		View view = inflater.inflate(R.layout.fragment_view_order,
 				container, false);
 
-		// Attempt to extract argument if this fragment was created with them
-		List<String> order;
-		if (getArguments() != null && (order = getArguments().getStringArrayList(ARGUMENT_ORDER)) 
-				!= null) {
-			order = getArguments().getStringArrayList(ARGUMENT_ORDER);
-		} else {
-			order = new ArrayList<String>();
-		}
-
-			ListView listview = (ListView)view.findViewById(R.id.list_order);
-
-		// Create the adapter to handles 
-		mAdapter = new OrderArrayAdapter(this.getActivity(), order);
-		listview.setAdapter(mAdapter);
-
-		mSubtotal = (TextView) view.findViewById(R.id.value_subtotal);
-		mTax = (TextView) view.findViewById(R.id.value_tax);
-		mTotal = (TextView) view.findViewById(R.id.value_total);
-		mPlaceOrderButton = (Button) view.findViewById(R.id.button_place_order);
-		mPlaceOrderButton.setOnClickListener(this);
-		mReqButton = (Button) view.findViewById(R.id.button_request);
-		mReqButton.setOnClickListener(this);
-
-		// TODO replace hard code value with value from order
-		mSubtotal.setText("1,000,000.00");
-		mTax.setText("100,000.00");
-		mTotal.setText("1,100,000.00");
+		this.mFormatter = NumberFormat.getCurrencyInstance();
 
 		return view;
 	}
@@ -100,11 +90,44 @@ extends Fragment implements OnClickListener {
 					+ " must implemenet CurrentOrderFragment.OrderUpdateListener");
 		}
 	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		// Attempt to extract argument if this fragment was created with them
+		ListView listview = (ListView) getView().findViewById(R.id.list_order);
+		this.mListView = getView();
+
+		mSubtotal = (TextView) getView().findViewById(R.id.value_subtotal);
+		mTax = (TextView) getView().findViewById(R.id.value_tax);
+		mTotal = (TextView) getView().findViewById(R.id.value_total);
+		mPlaceOrderButton = (Button) getView().findViewById(R.id.button_place_order);
+		//mPlaceOrderButton.setOnClickListener(this);
+		mReqButton = (Button) getView().findViewById(R.id.button_request);
+		mReqButton.setOnClickListener(this);
+		
+		// Create the adapter to handles 
+		if (this.mListener != null) {
+			HashMap<MenuItem, CurrentOrderItem> orderItems = this.mListener.getOrder();
+			List<MenuItem> items = new ArrayList<MenuItem>();
+			double totalPrice = 0.0;
+			for (MenuItem m : orderItems.keySet()) {
+				items.add(m);
+				totalPrice += m.getPrice() * orderItems.get(m).getQuantity();
+			}
+			mAdapter = new OrderArrayAdapter(this.getActivity(), items, orderItems);
+			
+			mSubtotal.setText(mFormatter.format(totalPrice));
+			mTax.setText(mFormatter.format(totalPrice * TAX));
+			mTotal.setText(mFormatter.format(totalPrice * (1 + TAX)));
+		}
+		listview.setAdapter(mAdapter);
+	}
 
 	/**
 	 * @param newItem TODO Replace with OrderItem
 	 */
-	public void addNewItem(String newItem) {
+	public void addNewItem(MenuItem newItem) {
 		mAdapter.add(newItem);
 
 	}
@@ -112,57 +135,42 @@ extends Fragment implements OnClickListener {
 	/**
 	 * @param item MenuItem to remove from this
 	 */
-	public void removeItem(String item) {
+	public void removeItem(MenuItem item) {
 		mAdapter.remove(item); // Remove the item
 		mAdapter.notifyDataSetChanged(); // Notify the data set changed
 	}
 
 	@Override
 	public void onClick(View v) {
-		if(v.getId() == R.id.button_request) {
+		if(v.getId() == R.id.button_request)
 			getRequestDescription();
-		} else {
-			mListener.onPlaceOrder("ORDER REQUESTED PLACE OBJECT HERE!");
-		}
+		//else
+		//	mListener.onPlaceOrder("ORDER REQUESTED PLACE OBJECT HERE!");
 	}
 	
-	/**
-	 * @param str request to send
-	 */
-	private void sendRequest(String str) {
-		if(getActivity() instanceof CurrentOrderActivity) {
+	private void sendRequest(String str){
+		if(getActivity() instanceof CurrentOrderActivity){
 			CurrentOrderActivity act = (CurrentOrderActivity)getActivity();
 			Log.v(TAG, "About to send Req");
 			act.onRequestMade(str);
 		}
 	}
 	
-	/**
-	 * Get request description from alert box.
-	 * @param alertView View
-	 */
-	public void getDescription(View alertView) {
-		String desc = ((EditText) alertView
-				.findViewById(R.id.input_request_description)).getText()
-				.toString();
-		sendRequest(desc);
-	}
-	
-	/**
-	 * Create alert dialog box for submitting requests.
-	 */
 	private void getRequestDescription() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 		alert.setTitle("Add New Menu Item");
 		alert.setMessage("Input Menu Item Details");
-		final View AV = getLayoutInflater(getArguments()).inflate(
+		final View alertView = getLayoutInflater(getArguments()).inflate(
 				R.layout.alert_build_request, null);
-		alert.setView(AV);
+		alert.setView(alertView);
 		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface d, int arg1) {
-				getDescription(AV);
+				String desc = ((EditText) alertView
+						.findViewById(R.id.input_request_description)).getText()
+						.toString();
+				sendRequest(desc);
 			}
 		});
 		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -188,7 +196,7 @@ extends Fragment implements OnClickListener {
 		 * User wishes place current order.
 		 * @param order to place
 		 */
-		public void onPlaceOrder(/*Replace with order class*/String order);
+		public void onPlaceOrder(Order order);
 
 		/**
 		 * User wishes to increment the quantity of a particular item on their order.
@@ -196,8 +204,7 @@ extends Fragment implements OnClickListener {
 		 * @param item Menu item to increment
 		 * @param order to increment item on
 		 */
-		public void onIncrementItemOrder(/*Replace with item order class*/String item, 
-				String order);
+		public void onIncrementItemOrder(MenuItem item);
 
 		/**
 		 * User wishes to decrement the quantity of a particular item on their order.
@@ -205,8 +212,7 @@ extends Fragment implements OnClickListener {
 		 * @param item Menu item to decrement
 		 * @param order to increment item on
 		 */
-		public void onDecrementItemOrder(/*Replace with item order class*/String item, 
-				String order);
+		public void onDecrementItemOrder(MenuItem item);
 
 		/**
 		 * User wishes to remove a particular item on their order.
@@ -214,8 +220,13 @@ extends Fragment implements OnClickListener {
 		 * @param item Menu item to remove
 		 * @param order to have the item removed from
 		 */
-		public void onRemoveItemFromOrder(/*Replace with item order class*/String item, 
-				String order);
+		public void onRemoveItemFromOrder(MenuItem item);
+		
+		/**
+		 * Get the current items in the user's order
+		 * @return hash map of items
+		 */
+		public HashMap<MenuItem, CurrentOrderItem> getOrder();
 
 	}
 
@@ -226,7 +237,7 @@ extends Fragment implements OnClickListener {
 	 * TODO Change layout of item 
 	 * @author mhotan
 	 */
-	private class OrderArrayAdapter extends ArrayAdapter<String> {
+	private class OrderArrayAdapter extends ArrayAdapter<MenuItem> {
 
 		/**
 		 * Owning context.
@@ -237,7 +248,9 @@ extends Fragment implements OnClickListener {
 		 * List of menu items.
 		 * TODO Change String to MenuItem
 		 */
-		private final List<String> mItems;
+		private final List<MenuItem> mItems;
+		
+		private final HashMap<MenuItem, CurrentOrderItem> mOrderMapping;
 
 		/**
 		 * This is a runtime mapping between "More Info buttons"
@@ -245,7 +258,7 @@ extends Fragment implements OnClickListener {
 		 * TODO Change String to restaurant;
 		 * NOTE (MH): Not exactly sure if this works
 		 */
-		private final HashMap<View, String> mViewToItem;
+		private final HashMap<View, MenuItem> mViewToItem;
 
 		/**
 		 * Mapping to increment and decrement button
@@ -260,16 +273,22 @@ extends Fragment implements OnClickListener {
 		 * @param ctx Context of owning activity
 		 * @param order List of menu items to display TODO Change type String to MenuItem
 		 */
-		public OrderArrayAdapter(Context ctx, List<String> order) {
+		public OrderArrayAdapter(Context ctx, List<MenuItem> order, 
+				HashMap<MenuItem, CurrentOrderItem> orderItems) {
 			super(ctx, R.layout.listitem_orderitem, order);
 
 			mContext = ctx;
-			mItems = new ArrayList<String>(order);
+			mItems = new ArrayList<MenuItem>(order);
 
-			mViewToItem = new HashMap<View, String>();
+			mViewToItem = new HashMap<View, MenuItem>();
 			mButtonToTextView = new HashMap<Button, TextView>();
 
 			privateListener = new OnItemClickListener();
+			
+			mPlaceOrderButton.setOnClickListener(privateListener);
+			//mReqButton.setOnClickListener(privateListener);
+			
+			this.mOrderMapping = new HashMap<MenuItem, CurrentOrderItem>(orderItems);
 		}
 
 		@Override
@@ -283,12 +302,8 @@ extends Fragment implements OnClickListener {
 
 			// Get the Order Item by associating with the position
 			/*TODO Change to Order item or menu item*/
-			String itemName = mItems.get(position);	
-
-			// TODO Set the current count of the item order to 
-			// to what it was set to by the user
-			// Right now its just a place holder
-			int itemCount = 1; //TODO Fix appropiately
+			position = Math.max(0, Math.min(position, this.mItems.size() - 1));
+			MenuItem item = mItems.get(position);	
 
 			// Assign the buttons to this order
 			Button incButton = (Button) rowView.findViewById(R.id.button_increment_item);
@@ -297,13 +312,19 @@ extends Fragment implements OnClickListener {
 			ImageButton deleteButton = (ImageButton) rowView.findViewById(R.id.button_delete);
 			TextView label = (TextView) rowView.findViewById(R.id.label_order_item);
 
+			// set the quantity
+			int itemCount = this.mOrderMapping.get(item).getQuantity();
 			itemQuantity.setText("" + itemCount);
+			
+			// set the label and description
+			label.setText(item.getTitle() + "\n" + item.getDescription());
 
 			// Place mapping from all the clickable view to the Order item
-			mViewToItem.put(incButton, itemName);
-			mViewToItem.put(decButton, itemName);
-			mViewToItem.put(deleteButton, itemName);
-			mViewToItem.put(label, itemName);
+			mViewToItem.put(incButton, item);
+			mViewToItem.put(decButton, item);
+			mViewToItem.put(deleteButton, item);
+			mViewToItem.put(label, item);
+			mViewToItem.put(itemQuantity, item);
 
 			// Place a mapping from the increment 
 			// and decrement button to the Text View representing the
@@ -332,9 +353,10 @@ extends Fragment implements OnClickListener {
 			@Override
 			public void onClick(View v) {
 
-				String item = mViewToItem.get(v);
+				MenuItem item = mViewToItem.get(v);
 				int toAdd = -1;
 
+				double priceChange = 0.0;
 				switch (v.getId()) {
 				case R.id.button_increment_item:
 					toAdd = 1;
@@ -347,24 +369,84 @@ extends Fragment implements OnClickListener {
 					int newVal = Math.max(0, curVal + toAdd); // Can't have negative amounts
 
 					// Notify the listener appropiately
+					priceChange = 0.0;
 					if (newVal - curVal > 0) {
-						mListener.onIncrementItemOrder(item, "Order goes here");
+						mListener.onIncrementItemOrder(item);
+						mAdapter.mOrderMapping.get(item).incrementQuantity();
+						priceChange = item.getPrice();
 					} else if (newVal - curVal < 0) {
-						mListener.onDecrementItemOrder(item, "Order goes here");
+						mListener.onDecrementItemOrder(item);
+						mAdapter.mOrderMapping.get(item).decrementQuantity();
+						priceChange = item.getPrice() * -1;
 					}
 
 					mButtonToTextView.get(v).setText("" + newVal);
 
 					break;
 				case R.id.button_delete:
-					mListener.onRemoveItemFromOrder(item, "Order goes here");
+					priceChange = mAdapter.mOrderMapping.get(item).getQuantity() * 
+					item.getPrice() * -1;
+					mListener.onRemoveItemFromOrder(item);
+					mAdapter.remove(item);
+					mAdapter.mOrderMapping.remove(item);
+					mAdapter.mItems.remove(item);
+					//mAdapter.mOrderMapping.remove(item);
 					// TODO Do something to remove this item
 					break;
 				case R.id.label_order_item:
 					// TODO Add some way to show focus
 					break;
+					
+				case R.id.button_place_order:
+					// check to see if user is currently in a dining session
+					DiningSession session = DineOnUserApplication.cachedUser.getDiningSession();
+					if (session != null) {
+						// create and save the order
+						List<MenuItem> items = new ArrayList<MenuItem>();
+						for (MenuItem m : mAdapter.mOrderMapping.keySet()) {
+							for (int i = 0; i < mAdapter.mOrderMapping.get(m).getQuantity(); i++)
+								items.add(m);
+						}
+						final Order newOrder = new Order(session.getTableID(),  
+								DineOnUserApplication.cachedUser.getUserInfo(), 
+								items);
+						
+						// save the new order
+						newOrder.saveInBackGround(new SaveCallback() {
+
+							@Override
+							public void done(ParseException e) {
+								// TODO Auto-generated method stub
+								if (e == null) {
+									// successful, send the push notification
+									mListener.onPlaceOrder(newOrder);
+								} else {
+									Log.d(TAG, "Couldn't save the new order: " + e.getMessage());
+								}
+							}
+						});
+						
+					} else {
+						Toast.makeText((Context)mListener, "Must checkin before placing order.", 
+								Toast.LENGTH_SHORT).show();
+					}
+					
+					break;
+					
+				case R.id.button_request:
+					
+					break;
 				default:
 					break;
+				}
+				if (priceChange != 0.0) {
+					mSubtotal = (TextView) mListView.findViewById(R.id.value_subtotal);
+					mTax = (TextView) mListView.findViewById(R.id.value_tax);
+					mTotal = (TextView) mListView.findViewById(R.id.value_total);
+					double newTotal = priceChange + Double.parseDouble(mSubtotal.getText().toString().substring(1));
+					mSubtotal.setText(mFormatter.format(newTotal));
+					mTax.setText(mFormatter.format((newTotal * TAX)));
+					mTotal.setText(mFormatter.format((newTotal * (1 + TAX))));
 				}
 			}
 

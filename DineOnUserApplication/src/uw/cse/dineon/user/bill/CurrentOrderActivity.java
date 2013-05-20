@@ -20,8 +20,8 @@ import com.parse.SaveCallback;
  * 
  * @author mhotan
  */
-public class CurrentOrderActivity extends DineOnUserActivity implements
-CurrentOrderFragment.OrderUpdateListener {
+public class CurrentOrderActivity extends DineOnUserActivity { //implements
+//CurrentOrderFragment.OrderUpdateListener {
 	
 	
 	private final String TAG = "CurrentOrderActivity";
@@ -77,39 +77,6 @@ CurrentOrderFragment.OrderUpdateListener {
 		return true;
 	}
 
-	@Override
-	public void onPlaceOrder(String order) {
-		// TODO Auto-generated method stub
-
-		// TODO Add order to dining session
-
-		// Update the fragment by adding the adding session again
-
-		CurrentBillFragment fragment = (CurrentBillFragment)
-				getSupportFragmentManager().findFragmentById(R.id.fragment_current_bill);
-		if (fragment != null && fragment.isInLayout()) {
-			// Update the fragment
-			fragment.setDiningSession(order);
-		}
-	}
-
-	@Override
-	public void onIncrementItemOrder(String item, String order) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDecrementItemOrder(String item, String order) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRemoveItemFromOrder(String item, String order) {
-		// TODO Auto-generated method stub
-
-	}
 
 	/**
 	 * @param request String request description

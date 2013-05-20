@@ -31,7 +31,7 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	
 	private DiningSession mDiningSession;
 
-	private List<MenuItem> mOrder;
+	
 	
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
@@ -73,7 +73,7 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 
 		setContentView(R.layout.activity_restaurant_home);
 		
-		this.mOrder = new ArrayList<MenuItem>();
+		
 
 		// TODO FIX: Extract the value of the restaurant
 		// Pull out all its menus and information
@@ -120,13 +120,13 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	@Override
 	public void onMenuItemIncremented(MenuItem menuItem) {
 		// TODO Auto-generated method stub
-		this.mOrder.add(menuItem);
+		super.onMenuItemIncremented(menuItem);
 	}
 
 	@Override
 	public void onMenuItemDecremented(MenuItem menuItem) {
 		// TODO Auto-generated method stub
-		this.mOrder.remove(menuItem);
+		super.onMenuItemDecremented(menuItem);
 	}
 
 	@Override

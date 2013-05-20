@@ -136,7 +136,6 @@ public class SubMenuFragment extends ListFragment {
 					for (int i = 0; i < decrementAmount; ++i) {
 						mListener.onMenuItemDecremented(menuItem);
 					}
-					
 				}
 			};
 			
@@ -174,6 +173,10 @@ public class SubMenuFragment extends ListFragment {
 			
 			NumberPicker np = (NumberPicker) rowView.findViewById(R.id.numberpicker_menuitem_qty);
 			mPickerMapping.put(np, item);
+			np.setMaxValue(10);
+	        np.setMinValue(0);
+	        np.setValue(0);
+	        np.setClickable(true);
 			np.setOnValueChangedListener(mNumPickerListener);
 			
 			return rowView;
