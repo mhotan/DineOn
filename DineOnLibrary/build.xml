@@ -116,7 +116,9 @@
         </findbugs>
 	<xslt in="findbugs.xml" out="findbugs.html" style="${findbugs.home}/src/xsl/default.xsl"/>
         <fail if="findbugsError" message="FindBugs detected at least one error." />
+	<!--
         <fail if="findbugsWarning" message="FindBugs detected at least one warning." />
+	-->
     </target>
     
 </project>
