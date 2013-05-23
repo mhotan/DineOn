@@ -3,7 +3,6 @@ package uw.cse.dineon.library.image;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.content.ContentValues;
@@ -11,6 +10,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.util.Log;
 
 /**
@@ -25,12 +25,15 @@ import android.util.Log;
  */
 public class ImageCache {
 
+	// Time before Image is marked as invalid.
+	private static final long EXPIRATION_TIME = 604800000; // 1 week in ms
+	
 	private static final String TAG = ImageCache.class.getSimpleName();
 
 	private final ImageSQLiteHelper mSQLHelper;
 	private final java.text.DateFormat mDateFormat;
+	private CacheCleaner mCleaner;
 	private SQLiteDatabase mDb;
-	private final Calendar mCalendar;
 
 	private static final String[] RELEVANT_COLUMNS = { 
 		ImageSQLiteHelper.COLUMN_PARSEID,
@@ -45,7 +48,6 @@ public class ImageCache {
 	public ImageCache(Context context) {
 		mSQLHelper = new ImageSQLiteHelper(context);
 		mDateFormat = DineOnConstants.getCurrentDateFormat();
-		mCalendar = new GregorianCalendar();
 	}
 
 	/**
@@ -117,6 +119,13 @@ public class ImageCache {
 					byte[] byteImg = cursor.getBlob(2);
 					Bitmap toReturn = DineOnImage.byteArrayToBitmap(byteImg);
 					callback.onImageReceived(null, toReturn);
+
+					// Update our database with this Image's last used to NOW.
+					Date lastUsed = Calendar.getInstance().getTime();
+					ContentValues cv = new ContentValues();
+					cv.put(ImageSQLiteHelper.COLUMN_LAST_USED, mDateFormat.format(lastUsed));
+					String where = ImageSQLiteHelper.COLUMN_PARSEID + " = " + cursor.getString(0);
+					mDb.update(ImageSQLiteHelper.TABLE_IMAGES, cv, where, null);
 					return;
 				}
 			} 
@@ -156,12 +165,36 @@ public class ImageCache {
 		values.put(ImageSQLiteHelper.COLUMN_PARSEID, image.getObjId());
 		values.put(ImageSQLiteHelper.COLUMN_LAST_UDPATED, 
 				mDateFormat.format(image.getLastUpdatedTime()));
-		values.put(ImageSQLiteHelper.COLUMN_LAST_USED, mDateFormat.format(mCalendar.getTime()));
+		values.put(ImageSQLiteHelper.COLUMN_LAST_USED, 
+				mDateFormat.format(Calendar.getInstance().getTime()));
 		values.put(ImageSQLiteHelper.COLUMN_IMG, DineOnImage.bitmapToByteArray(b));
 		long insertId = mDb.insert(ImageSQLiteHelper.TABLE_IMAGES, null, values);
 		if (insertId == -1) {
 			Log.e(TAG, 
 					"Unable to \"insert\" SQLite database because of some unknown reason");
+		}
+	}
+
+	/**
+	 * Deletes this image from the Cache if it exists.
+	 * @param image Image to delete.
+	 */
+	public void deleteImage(DineOnImage image) {
+		mDb.delete(
+				ImageSQLiteHelper.TABLE_IMAGES, 
+				ImageSQLiteHelper.COLUMN_PARSEID + " = " + image.getObjId(),
+				null);
+	}
+
+	/**
+	 * Single call that sparks an asycnronous cleaning of the cache.
+	 * Good to call toward the end of an application instance.
+	 */
+	public void cleanUpCache() {
+		// If there is already a cleaner running don't worry about it.
+		if (mCleaner == null) {
+			mCleaner = new CacheCleaner();
+			mCleaner.execute();
 		}
 	}
 
@@ -181,5 +214,56 @@ public class ImageCache {
 		 * @param b Bitmap if success.
 		 */
 		public void onImageReceived(Exception e, Bitmap b);
+	}
+
+	private static final String[] DELETE_COLUMNS = {
+		ImageSQLiteHelper.COLUMN_ID,
+		ImageSQLiteHelper.COLUMN_LAST_USED,
+	};
+
+	/**
+	 * Helper class that cleans up the data base in the background.
+	 * @author mhotan 
+	 */
+	private class CacheCleaner extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			try {
+				Cursor cursor = mDb.query(ImageSQLiteHelper.TABLE_IMAGES,
+						DELETE_COLUMNS, null, null, null, null, null);
+				
+				// Current time
+				Date now = Calendar.getInstance().getTime();
+				
+				// Iterate through all files in the database
+				while (!cursor.isAfterLast()) {
+					
+					// Get the last used date and compare with the current date
+					Date lastUsed = mDateFormat.parse(cursor.getString(1));
+					
+					// See if the time since last use is longer then expiration.
+					if (now.getTime() - lastUsed.getTime() > EXPIRATION_TIME) {
+						mDb.delete(ImageSQLiteHelper.TABLE_IMAGES,
+								ImageSQLiteHelper.COLUMN_ID + " = " + cursor.getLong(0),
+								null);
+					}
+					
+					// Make sure we continue the iteration.
+					cursor.moveToNext();
+				}
+			} catch (ParseException e) {
+				String message = "We (Mike) Screwed the pooch parsing Strings into Dates";
+				Log.e(TAG, message);
+				throw new RuntimeException(e);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			mCleaner = null;
+		}
+
 	}
 }

@@ -3,6 +3,7 @@ package uw.cse.dineon.library;
 import java.util.ArrayList;
 import java.util.List;
 
+import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.util.ParseUtil;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -39,7 +40,7 @@ public class RestaurantInfo extends Storable {
 	private String mAddress;
 	private String mPhone;
 	private int mMainImageIndex; // Index of Main image
-	private final List<String> mImageList; // Mapping of Parse Object IDs
+	private final List<DineOnImage> mImageList; // Mapping of Parse Object IDs
 	private final List<Menu> mMenus; // All menus
 	//private String mRestaurantHours;
 
@@ -56,7 +57,7 @@ public class RestaurantInfo extends Storable {
 		mAddress = UNDETERMINED;
 		mPhone = UNDETERMINED;
 		mMainImageIndex = 0;
-		mImageList = new ArrayList<String>();
+		mImageList = new ArrayList<DineOnImage>();
 		mMenus = new ArrayList<Menu>();
 		//TODO mRestaurantHours = ;
 	}
@@ -74,7 +75,7 @@ public class RestaurantInfo extends Storable {
 		mAddress = po.getString(ADDR);
 		mPhone = po.getString(PHONE);
 		mMainImageIndex = po.getInt(IMAGE_MAIN);
-		mImageList = po.getList(IMAGE_LIST);
+		mImageList = ParseUtil.toListOfStorables(DineOnImage.class, po.getList(IMAGE_LIST));
 		mMenus = ParseUtil.toListOfStorables(Menu.class, po.getList(MENUS));
 		//TODO mRestaurantHours = ;
 	}
@@ -89,7 +90,7 @@ public class RestaurantInfo extends Storable {
 		po.put(ADDR, mAddress);
 		po.put(PHONE, mPhone);
 		po.put(IMAGE_MAIN, mMainImageIndex);
-		po.put(IMAGE_LIST, mImageList);
+		po.put(IMAGE_LIST, ParseUtil.toListOfParseObjects(mImageList));
 		po.put(MENUS, ParseUtil.toListOfParseObjects(mMenus));	
 		// TODO po.put(HOURS, mRestaurantHours);
 		return po;
@@ -148,26 +149,44 @@ public class RestaurantInfo extends Storable {
 	}
 
 	/**
-	 * @return imageMain
+	 * Returns the main image if it exists.
+	 * @return the main image if it exists, null if no image is set to default
 	 */
-	public int getImageMain() {
-		return mMainImageIndex;
+	public DineOnImage getMainImage() {
+		if (mImageList.isEmpty()) {
+			return null;
+		} else if (mMainImageIndex < 0 || mMainImageIndex >= mImageList.size()) {
+			return mImageList.get(0);
+		}
+		return mImageList.get(mMainImageIndex);
 	}
 
 	/**
 	 * @param pos int
 	 */
-	public void setImageMain(int pos) {
+	public void setMainImage(int pos) {
+		// This can be -1;
 		pos = Math.min(Math.max(0, pos), mImageList.size() - 1);
 		this.mMainImageIndex = pos;
 	}
 
 	/**
-	 * @return list of integers
-	 * TODO make copy
+	 * Returns a list of all the general images of this restaurant.
+	 * @return List of images.
 	 */
-	public List<String> getImageList() {
-		return mImageList;
+	public List<DineOnImage> getImageList() {
+		return new ArrayList<DineOnImage>(mImageList);
+	}
+	
+	/**
+	 * Adds an image to the end of the group of images.
+	 * @param image Image to add to the restaurant.
+	 */
+	void addImage(DineOnImage image) {
+		if (image == null) {
+			return;
+		}
+		mImageList.add(image);
 	}
 
 	/**
@@ -279,7 +298,7 @@ public class RestaurantInfo extends Storable {
 		mAddress = source.readString();
 		mPhone = source.readString();
 		mMainImageIndex = source.readInt();
-		mImageList = new ArrayList<String>();
+		mImageList = new ArrayList<DineOnImage>();
 		source.readList(mImageList, String.class.getClassLoader());
 		mMenus = new ArrayList<Menu>();
 		source.readTypedList(mMenus, Menu.CREATOR);

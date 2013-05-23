@@ -4,6 +4,7 @@ package uw.cse.dineon.library;
 import java.util.ArrayList;
 import java.util.List;
 
+import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.util.ParseUtil;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -297,6 +298,23 @@ public class Restaurant extends LocatableStorable {
 	public void clearPastOrders() {
 		// TODO For each of the Orders delete from parse
 		mPastOrders.clear();
+	}
+	
+	/**
+	 * Adds image associated to this image.
+	 * @param image Image to add.
+	 */
+	public void addImage(DineOnImage image) {
+		mRestInfo.addImage(image);
+	}
+	
+	/**
+	 * Sets the main image of this to the one
+	 * at zero based index which.
+	 * @param which Index of the image to set as the main
+	 */
+	public void setImageMain(int which) {
+		mRestInfo.setMainImage(which);
 	}
 
 	/**

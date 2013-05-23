@@ -1,15 +1,17 @@
 package uw.cse.dineon.library.image;
 
-import java.io.File;
 import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.provider.MediaStore;
 
 /**
  * Helper class to take or select image via Android resources.
+ * There are two current ways to get images for this application.
+ * 
+ * 1. Choose an existing image via the gallery
+ * 2. Take a picture via the camera.
  * @author mhotan
  */
 public final class ImageObtainer {
@@ -25,30 +27,22 @@ public final class ImageObtainer {
 	 * Any context that wishes to take an via the camera can call this method
 	 * and the result will be passed back via the file or in the extras.
 	 * 
-	 * IE if Activity A calls launchTakePictureIntent(this, 1, file)
-	 * then the user will be prompted to take an image.
+	 * IE if Activity A calls launchTakePictureIntent(this, 1)
+	 * then the user will be prompted to take a picture.
 	 * 
 	 * Upon conclusion A.onActivityResult(int requestCode, int resultCode, Intent data) is called
 	 * requestCode will be equal to the argument passed in by A (1 in this example)
 	 * 
-	 * If user successfully took image then resultCode == RESULT_OK
-	 * 
-	 * If argument file was valid then image will be placed there.
-	 * If not Bitmap can be found with by doing something like this
-	 * Bitmap b = (Bitmap) data.getExtras().get("data");
+	 * Upon successful selection then the resultCode == RESULT_OK
+	 * and data.getData() will contain the Uri of the image.
 	 * 
 	 * @param activity Activity to launch intent.
 	 * @param resultCode Result code that will be passed back to onActivityResult
-	 * @param file File that will be the image
 	 * @throws IOException If the method is not able to create a temporary file directory
 	 */
-	public static void launchTakePictureIntent(Activity activity, int resultCode, File file) 
-			throws IOException {
+	public static void launchTakePictureIntent(Activity activity, int resultCode) {
 		// Launch the intent to actually capture the image
 		Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		if (file != null && file.exists()) {
-			i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-		}
 		activity.startActivityForResult(i, resultCode);
 	}
 

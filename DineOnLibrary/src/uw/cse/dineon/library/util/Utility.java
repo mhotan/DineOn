@@ -28,7 +28,7 @@ public final class Utility {
 	 * Prevents construction of a utility class.
 	 */
 	private Utility() { }
-
+	
 	/**
 	 * Returns whether the screen can be split horizontally into two panes
 	 * for optimal user interaction.  Currently the restriction is 

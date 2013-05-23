@@ -33,10 +33,24 @@ public final class DineOnConstants {
 
 	// Request Code for multiple Activity use
 	public static final int REQUEST_CHECK_IN = 0x1;
-	public static final int REQUEST_VIEW_CURRENT_ORDER = 0x2;
-	public static final int REQUEST_PAY_BILL = 0x2;
+	public static final int REQUEST_VIEW_CURRENT_ORDER = 0x1 << 1;
+	public static final int REQUEST_PAY_BILL = 0x1 << 2;
+	public static final int REQUEST_TAKE_PHOTO = 0x1 << 3;
+	public static final int REQUEST_CHOOSE_PHOTO = 0x1 << 4;
 	// some change
 
+	/**
+	 * Images stored on the parse cloud must maintain a maximum size.
+	 * Images must be able to be viewed in both orientations.  This static constant
+	 * represents the longest dimension a single image can have.  This dimension
+	 * is not discriminate on whether its the image width or height.
+	 * 
+	 * In other words It maintains this invariant on our images:
+	 * For unskewed image with height h and width w
+	 * w <= LONGEST_IMAGE_DIMENSION && h <= LONGEST_IMAGE_DIMENSION
+	 */
+	public static final int LONGEST_IMAGE_DIMENSION = 2048;
+	
 	/**
 	 * This can be used as a generalized key for Bundles.
 	 * If a RESTAURANT_OBJECT needs to be passed between activities
@@ -54,6 +68,11 @@ public final class DineOnConstants {
 	 */
 	public static final String KEY_RESTAURANT = "RESTAURANT";
 
+	/**
+	 * Associated action tag for a Parse push notification.
+	 * The corresponding value pertains to the requires action to take
+	 * upon receipt of the push notification.
+	 */
 	public static final String KEY_ACTION = "action";
 
 	/**
@@ -65,6 +84,7 @@ public final class DineOnConstants {
 	 * Reference KEY_RESTAURANT, but for Restaurant Info.
 	 */
 	public static final String KEY_USER = "USER";
+	
 	
 	public static final String KEY_DININGSESSION = "DININGSESSION";
 

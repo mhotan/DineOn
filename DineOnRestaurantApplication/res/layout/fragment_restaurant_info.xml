@@ -29,67 +29,7 @@
             android:layout_weight="1"
             android:text="Default" />
 
-        <ImageButton
-            android:id="@+id/button_add_new_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@android:drawable/ic_input_add" />
-
-        <ImageButton
-            android:id="@+id/button_delete_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/discard_content" />
-
     </LinearLayout>
-
-    <Button
-        android:id="@+id/button_save_restaurant_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:text="Save Changes" />
-
-    <EditText
-        android:id="@+id/edittext_restaurant_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/label_restaurant_name"
-        android:ems="10"
-        android:inputType="textPostalAddress" />
-
-    <EditText
-        android:id="@+id/edittext_restaurant_phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/edittext_restaurant_address"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/edittext_restaurant_address"
-        android:ems="10"
-        android:inputType="phone" />
-
-    <TextView
-        android:id="@+id/label_restaurant_phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/edittext_restaurant_phone"
-        android:layout_alignParentLeft="true"
-        android:text="Phone"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/label_restaurant_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/edittext_restaurant_address"
-        android:layout_alignParentLeft="true"
-        android:text="Address"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/label_restaurant_name"
@@ -99,5 +39,76 @@
         android:layout_centerHorizontal="true"
         android:text="Restaurant Name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/button_save_restaurant_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Save Changes" />
+
+    <TextView
+        android:id="@+id/label_restaurant_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_save_restaurant_info"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/edittext_restaurant_phone"
+        android:gravity="right|center_vertical"
+        android:text="Phone"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/edittext_restaurant_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_save_restaurant_info"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/label_restaurant_phone"
+        android:ems="10"
+        android:inputType="phone" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/label_restaurant_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/label_restaurant_phone"
+        android:layout_alignParentLeft="true"
+        android:text="Address"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/edittext_restaurant_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/label_restaurant_address"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/label_restaurant_address"
+        android:ems="10"
+        android:inputType="textPostalAddress" />
+
+    <ImageButton
+        android:id="@+id/button_delete_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/label_restaurant_name"
+        android:layout_marginTop="52dp"
+        android:layout_weight="1"
+        android:src="@drawable/discard_content" />
+
+    <ImageButton
+        android:id="@+id/button_add_new_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/edittext_restaurant_address"
+        android:layout_alignLeft="@+id/button_save_restaurant_info"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="18dp"
+        android:layout_weight="1"
+        android:src="@android:drawable/ic_input_add" />
 
 </RelativeLayout>
