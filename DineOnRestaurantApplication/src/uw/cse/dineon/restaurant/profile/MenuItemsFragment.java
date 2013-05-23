@@ -1,9 +1,8 @@
 package uw.cse.dineon.restaurant.profile;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
@@ -30,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
  * Fragment that presents a editable list of menu items of this restaurant.
@@ -421,7 +421,8 @@ public class MenuItemsFragment extends ListFragment {
 			MenuItem item = super.getItem(position);
 			title.setText(item.getTitle());
 			description.setText(item.getDescription());
-			price.setText(Double.toString(item.getPrice()));
+			DecimalFormat formatter = new DecimalFormat("$0.00");
+			price.setText(formatter.format(item.getPrice()));
 			return view;
 		}
 	}

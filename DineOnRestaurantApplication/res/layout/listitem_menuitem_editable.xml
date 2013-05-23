@@ -1,55 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <ImageView
-        android:id="@+id/image_thumbnail_menuitem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:src="@android:drawable/ic_search_category_default" />
-
-    <TextView
-        android:id="@+id/label_menuitem_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/image_thumbnail_menuitem"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/button_send_shout_out"
-        android:layout_toRightOf="@+id/image_thumbnail_menuitem"
-        android:gravity="center"
-        android:text="@string/hint_menuitem_title"
-        android:textAppearance="?android:attr/textAppearanceMedium" >
-
-    </TextView>
-
-    <TextView
-        android:id="@+id/label_menuitem_desc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/image_thumbnail_menuitem"
-        android:ems="10"
-        android:text="@string/hint_description" />
-
-    <TextView
-        android:id="@+id/label_menuitem_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/label_menuitem_desc"
-        android:ems="10"
-        android:text="@string/hint_price" />
+    android:layout_height="wrap_content" >
 
     <ImageButton
         android:id="@+id/button_menuitem_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/label_menuitem_title"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/discard_content" />
+        android:layout_marginRight="5dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/button_remove_menu_item"
+        android:src="@drawable/remove" />
 
-</RelativeLayout>
+    <ImageView
+        android:id="@+id/image_thumbnail_menuitem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="10dp"
+        android:contentDescription="@string/label_menu_item_thumbnail"
+        android:src="@drawable/placeholdermenuitem" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/label_menuitem_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hint_menuitem_title"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/label_menuitem_desc"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:text="@string/hint_description" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/label_menuitem_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/hint_price" />
+    </LinearLayout>
+
+</LinearLayout>
