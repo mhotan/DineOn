@@ -11,7 +11,6 @@ import com.parse.ParseUser;
 /**
  * 
  * @author espeo196
- *
  */
 public class UserInfoTest extends AndroidTestCase {
 

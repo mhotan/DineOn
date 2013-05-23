@@ -5,6 +5,7 @@ import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
+import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.CreateNewAccountFragment.CreateNewAccountListener;
@@ -29,11 +30,6 @@ implements CreateNewAccountListener {
 	private static final String TAG = CreateNewRestaurantAccountActivity.class.getSimpleName();
 
 	/**
-	 * String representation of restaurant id.
-	 */
-	private Restaurant mRestaurant;
-
-	/**
 	 * Progress bar dialog for showing user progress.
 	 */
 	private ProgressDialog mProgressDialog;
@@ -51,16 +47,16 @@ implements CreateNewAccountListener {
 		This = this;
 	}
 
-	/**
-	 * This automates the addition of the User Intent. Should never be called
-	 * when mUser is null.
-	 * @param intent Intent
-	 */
-	@Override
-	public void startActivity(Intent intent) {
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
-		super.startActivity(intent);
-	}
+//	/**
+//	 * This automates the addition of the User Intent. Should never be called
+//	 * when mUser is null.
+//	 * @param intent Intent
+//	 */
+//	@Override
+//	public void startActivity(Intent intent) {
+////		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
+//		super.startActivity(intent);
+//	}
 
 	@Override
 	public void submitNewAccount(String username, String email, String pw,
@@ -117,7 +113,7 @@ implements CreateNewAccountListener {
 						public void done(ParseException e) {
 							destroyProgressDialog();
 							if (e == null) {
-								mRestaurant = NEWREST;
+								DineOnRestaurantApplication.logIn(NEWREST);
 								startMainActivity();
 							} else {
 								Utility.getFailedToCreateAccountDialog(
@@ -138,57 +134,6 @@ implements CreateNewAccountListener {
 			}
 		}
 	}
-	
-	// //////////////////////////////////////////////////////////////////////
-	// /// Restaurant Downlaod Callback
-	// //////////////////////////////////////////////////////////////////////
-
-//	@Override
-//	public void onFailToDownLoadRestaurant(String message) {
-//		ParseUser.logOut();
-//		Utility.getFailedToCreateAccountDialog(message, This).show();
-//	}
-//
-//	@Override
-//	public void onDownloadedRestaurant(Restaurant rest) {
-//		if (rest != null) {
-//			if (!DineOnConstants.DEBUG) {
-//				destroyProgressDialog();
-//				mRestaurant = rest;
-//				startMainActivity();
-//				return;
-//			}
-//			
-//			FakeRestaurantInformation fakey = 
-//					new FakeRestaurantInformation(ParseUser.getCurrentUser());
-//			
-//			// Add fake restaurant orders and requests
-//			for (Order o : fakey.getFakeOrders()) {
-//				rest.addOrder(o);
-//			}
-//			
-//			// Add fake Requests
-//			for (CustomerRequest c : fakey.getFakeRequests()) {
-//				rest.addCustomerRequest(c);
-//			}
-//			
-//			rest.getInfo().addMenu(fakey.getEntreeMenu());
-//			rest.getInfo().addMenu(fakey.getDrinkMenu());
-//			
-//			final Restaurant REST2 = rest;
-//			REST2.saveInBackGround(new SaveCallback() {
-//				
-//				@Override
-//				public void done(ParseException e) {
-//					destroyProgressDialog();
-//					if (e == null) {
-//						mRestaurant = REST2;
-//						startMainActivity();
-//					}
-//				}
-//			});
-//		}
-//	}
 	
 	/**
 	 * Starts the Main activity for this restaurant.

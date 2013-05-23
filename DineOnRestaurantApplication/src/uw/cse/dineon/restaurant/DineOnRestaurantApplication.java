@@ -1,5 +1,6 @@
 package uw.cse.dineon.restaurant;
 
+import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.app.Application;
 
@@ -9,11 +10,47 @@ import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
 /**
+ * Application class for the entire restaurant application.
  * 
- * @author 
- *
+ * @author mhotan, mrathjen, jmcneal
  */
 public class DineOnRestaurantApplication extends Application {
+	
+	/**
+	 * Reference to the current restaurant.
+	 */
+	private static Restaurant mRestaurant;
+	
+	/**
+	 * Logs out of this current restaurant.
+	 */
+	public static void logOut() {
+		mRestaurant = null;
+		ParseUser.logOut();
+	}
+	
+	/**
+	 * Logs into the application with the inputted restaurant.
+	 * @param restaurant restaurant to log in with.
+	 */
+	public static void logIn(Restaurant restaurant) {
+		if (restaurant == null) {
+			throw new IllegalArgumentException("Restaurant can't be null on log in");
+		}
+		mRestaurant = restaurant;
+	}
+	
+	/**
+	 * Returns a reference to the current restaurant.
+	 * 
+	 * (MH) I hate this.  I don't like exposing the internal representation of the restaurant.
+	 * This gives clients a reference to the current restaurant which they could accidently or
+	 * purposely null out. 
+	 * @return A reference  to the Current Restaurant instance
+	 */
+	public static Restaurant getRestaurant() {
+		return mRestaurant;
+	}
 	
 	@Override
 	public void onCreate() {

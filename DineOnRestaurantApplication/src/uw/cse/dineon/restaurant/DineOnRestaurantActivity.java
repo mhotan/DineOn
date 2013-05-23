@@ -93,20 +93,21 @@ implements SateliteListener {
 
 		// Lets first check if the activity is being recreated after being
 		// destroyed but there was an already existing restuarant
-		if (savedInstanceState != null && savedInstanceState.containsKey(
-				DineOnConstants.KEY_RESTAURANT)) { 
-			// Activity recreated
-			mRestaurant = savedInstanceState.getParcelable(
-					DineOnConstants.KEY_RESTAURANT);
-		} 
-		else if (extras != null && extras.containsKey(
-				DineOnConstants.KEY_RESTAURANT)) {
-			// Activity started and created for the first time
-			// Valid extras were passed into this
-			mRestaurant = extras.getParcelable(
-					DineOnConstants.KEY_RESTAURANT);
-		}
-
+//		if (savedInstanceState != null && savedInstanceState.containsKey(
+//				DineOnConstants.KEY_RESTAURANT)) { 
+//			// Activity recreated
+//			mRestaurant = savedInstanceState.getParcelable(
+//					DineOnConstants.KEY_RESTAURANT);
+//		} 
+//		else if (extras != null && extras.containsKey(
+//				DineOnConstants.KEY_RESTAURANT)) {
+//			// Activity started and created for the first time
+//			// Valid extras were passed into this
+//			mRestaurant = extras.getParcelable(
+//					DineOnConstants.KEY_RESTAURANT);
+//		}
+		mRestaurant = DineOnRestaurantApplication.getRestaurant();
+		
 		if (mRestaurant == null) {
 			Utility.getGeneralAlertDialog("Uh OH!", "Doesn't look like your logged in"
 					, this).show();
@@ -400,7 +401,6 @@ implements SateliteListener {
 		}
 
 		// TODO Validate Reservation
-		
 		mSatellite.confirmReservation(reservation.getUserInfo(), reservation);
 	
 		// We are not updating the dining session
@@ -441,8 +441,7 @@ implements SateliteListener {
 			if (mRestaurant != null) {
 				mRestaurant.saveEventually(null);
 			}
-			// TODO Notify Users that Restaurant is closing
-			ParseUser.logOut();
+			DineOnRestaurantApplication.logOut();
 			startLoginActivity();
 			return true;
 		default:
@@ -496,7 +495,6 @@ implements SateliteListener {
 	public void startLoginActivity() {
 		Intent i = new Intent(this, RestaurantLoginActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		mRestaurant = null;
 		startActivity(i);
 	}
 
@@ -508,22 +506,22 @@ implements SateliteListener {
 		startActivity(i);
 	}
 
-	@Override
-	public void startActivity(Intent intent) {
-		if (mRestaurant != null) {
-			intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
-		}
-		super.startActivity(intent);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle savedInstanceState) {
-		// Place the correct Key for the restaurant
-		if (mRestaurant != null) {
-			savedInstanceState.putParcelable(DineOnConstants.KEY_RESTAURANT, mRestaurant);
-		}
-		super.onSaveInstanceState(savedInstanceState);
-	}
+//	@Override
+//	public void startActivity(Intent intent) {
+//		if (mRestaurant != null) {
+//			intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
+//		}
+//		super.startActivity(intent);
+//	}
+//
+//	@Override
+//	public void onSaveInstanceState(Bundle savedInstanceState) {
+//		// Place the correct Key for the restaurant
+////		if (mRestaurant != null) {
+////			savedInstanceState.putParcelable(DineOnConstants.KEY_RESTAURANT, mRestaurant);
+////		}
+//		super.onSaveInstanceState(savedInstanceState);
+//	}
 
 	// //////////////////////////////////////////////////////////////////////
 	// /// UI Specific methods

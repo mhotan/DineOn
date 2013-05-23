@@ -6,6 +6,8 @@ import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
+import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
+import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.RestaurantDownloader;
 import uw.cse.dineon.restaurant.RestaurantDownloader.RestaurantDownLoaderCallback;
@@ -79,7 +81,7 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 	 */
 	@Override
 	public void startActivity(Intent intent) {
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
+//		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		super.startActivity(intent);
 	}
 
@@ -156,7 +158,7 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 	}
 
 	// //////////////////////////////////////////////////////////////////////
-	// //// Call
+	// //// Callback for logging in
 	// //////////////////////////////////////////////////////////////////////
 
 	/**
@@ -172,8 +174,6 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 				// because create Restaurant activity always handles first time
 				// users we know that this user is returning
 				// Therefore there has to be a Restaurant instance in the cloud
-//				RestaurantFinder callback = new RestaurantFinder(user);
-//				callback.findRestaurant();
 				RestaurantDownloader downloader = new LoginRestaurantDownloader(user, This);
 				downloader.execute(CachePolicy.NETWORK_ONLY);
 				
@@ -226,7 +226,7 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 	@Override
 	public void onDownloadedRestaurant(Restaurant rest) {
 		if (rest != null) {
-			mRestaurant = rest;
+			DineOnRestaurantApplication.logIn(rest);
 			startMainActivity();
 		}
 	}
