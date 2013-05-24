@@ -84,7 +84,7 @@ LoginFragment.OnLoginListener {
 	 */
 	@Override
 	public void startActivity(Intent intent) {
-		if (DineOnConstants.DEBUG && DineOnUserApplication.cachedUser == null) {
+		if (DineOnConstants.DEBUG && DineOnUserApplication.getDineOnUser() == null) {
 			Toast.makeText(this, "Need to create or download a User", Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -142,7 +142,7 @@ LoginFragment.OnLoginListener {
 	 */
 	public void startRestSelectionAct(DineOnUser user) {
 		// Destroy any running progress dialog
-		DineOnUserApplication.cachedUser = user;
+		DineOnUserApplication.setDineOnUser(user);
 		destroyProgressDialog();
 		Intent i = new Intent(this, RestaurantSelectionActivity.class);
 		startActivity(i);

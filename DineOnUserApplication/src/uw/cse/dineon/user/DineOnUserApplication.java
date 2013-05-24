@@ -4,7 +4,9 @@ import java.util.HashMap;
 
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.app.Application;
 
@@ -18,8 +20,9 @@ import com.parse.ParseUser;
  * Application for DineOn user side.
  */
 public class DineOnUserApplication extends Application {
-	public static DineOnUser cachedUser = null;
-	public static HashMap<MenuItem, CurrentOrderItem> cachedOrderMapping;
+	public static DineOnUser currentUser = null;
+	public static HashMap<MenuItem, CurrentOrderItem> currentOrderMapping;
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -44,7 +47,7 @@ public class DineOnUserApplication extends Application {
 		
 		ParseInstallation.getCurrentInstallation().saveInBackground();
 		
-		this.cachedOrderMapping = new HashMap<MenuItem, CurrentOrderItem>();
+		this.currentOrderMapping = new HashMap<MenuItem, CurrentOrderItem>();
 	}
 	
 	/**
@@ -52,7 +55,85 @@ public class DineOnUserApplication extends Application {
 	 * @param user DineOnUser
 	 */
 	public static void setDineOnUser(DineOnUser user) {
-		cachedUser = user;
+		currentUser = user;
+	}
+	
+	/**
+	 * Returns cachedUser.
+	 * @return cachedUser
+	 */
+	public static DineOnUser getDineOnUser() {
+		return currentUser;
+	}
+	
+	/**
+	 * Return the userinfo for current user.
+	 * @return user
+	 */
+	public static UserInfo getUserInfo() {
+		return currentUser.getUserInfo();
+	}
+	
+	/**
+	 * Returns the current DiningSession. Null if no current dining session.
+	 * @param session dining session for current user
+	 */
+	public static void setCurrentDiningSession(DiningSession session) {
+		currentUser.setDiningSession(session);
+	}
+	
+	/**
+	 * Returns the current DiningSession. Null if no current dining session
+	 * @return the current DiningSession
+	 */
+	public static DiningSession getCurrentDiningSession() {
+		return currentUser.getDiningSession();
+	}
+	
+	/**
+	 * Returns the current order.
+	 * @return current order
+	 */
+	public static HashMap<MenuItem, CurrentOrderItem> getCurrentOrder() {
+		return currentOrderMapping;
 	}
 
+	/**
+	 * Reset the current order.
+	 */
+	public static void clearCurrentOrder() {
+		currentOrderMapping.clear();
+	}
+	
+	/**
+	 * Increment the menuitem quantity in the current order.
+	 * @param item to increment
+	 */
+	public static void incrementItemInCurrentOrder(MenuItem item) {
+		if (!currentOrderMapping.containsKey(item)) {
+			currentOrderMapping.put(item, new CurrentOrderItem(item));
+		} else {
+			currentOrderMapping.get(item).incrementQuantity();
+		}
+	}
+	 
+	/**
+	 * Deccrement the menuitem quantity in the current order.
+	 * @param item to decrement
+	 */
+	public static void decrementItemInCurrentOrder(MenuItem item) {
+		if (currentOrderMapping.containsKey(item)) {
+			currentOrderMapping.get(item).decrementQuantity();
+		}
+	}
+	
+	/**
+	 * Remove item from the current order.
+	 * @param item to remove
+	 */
+	public static void removeItemInCurrentOrder(MenuItem item) {
+		if (currentOrderMapping.containsKey(item)) {
+			currentOrderMapping.remove(item);
+		}
+	}
 }

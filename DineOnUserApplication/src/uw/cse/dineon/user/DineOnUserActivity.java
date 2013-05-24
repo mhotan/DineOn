@@ -74,7 +74,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 
 		mSat = new UserSatellite();
 
-		if (DineOnUserApplication.cachedUser == null) {
+		if (DineOnUserApplication.getDineOnUser() == null) {
 			Utility.getBackToLoginAlertDialog(this, 
 					"Unable to find your information", UserLoginActivity.class).show();
 		}
@@ -110,7 +110,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mSat.register(DineOnUserApplication.cachedUser, thisActivity);
+		mSat.register(DineOnUserApplication.getDineOnUser(), thisActivity);
 		intializeUI();
 		
 	}
@@ -143,7 +143,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 				if(data.has(DineOnConstants.KEY_RESTAURANT) 
 						&& data.has(DineOnConstants.TABLE_NUM)) {
 
-					mSat.requestCheckIn(DineOnUserApplication.cachedUser.getUserInfo(),
+					mSat.requestCheckIn(DineOnUserApplication.getUserInfo(),
 							data.getInt(DineOnConstants.TABLE_NUM), 
 							data.getString(DineOnConstants.KEY_RESTAURANT));
 				}
@@ -187,7 +187,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 
 		// Making this null makes sure there is no 
 		// data leakage to the login page
-		DineOnUserApplication.cachedUser = null;
+		DineOnUserApplication.setDineOnUser(null);
 		startActivity(i);
 	}
 
@@ -219,13 +219,13 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 
 		// This is for the case where nothing is updated yet
 		// There is no User class
-		if (DineOnUserApplication.cachedUser == null) {
+		if (DineOnUserApplication.getDineOnUser() == null) {
 			disableMenuItem(menu, R.id.option_check_in);
 			disableMenuItem(menu, R.id.option_bill);
 			return true;
 		}
 
-		if(DineOnUserApplication.cachedUser.getDiningSession() != null) {
+		if(DineOnUserApplication.getCurrentDiningSession() != null) {
 			disableMenuItem(menu, R.id.option_check_in);
 			enableMenuItem(menu, R.id.option_bill);
 		} 
@@ -311,9 +311,9 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		// Save the ID if the user is not null
-		if (DineOnUserApplication.cachedUser != null) {
+		if (DineOnUserApplication.getDineOnUser() != null) {
 			savedInstanceState
-				.putString(DineOnConstants.KEY_USER, DineOnUserApplication.cachedUser.getObjId());
+				.putString(DineOnConstants.KEY_USER, DineOnUserApplication.getDineOnUser().getObjId());
 		}
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -345,8 +345,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 		Log.d("GOT_DINING_SESSION_FROM_CLOUD", session.getTableID() + "");
 
 		final DiningSession M_SESSION = session;
-		DineOnUserApplication.cachedUser.setDiningSession(session);
-		DineOnUserApplication.cachedUser.saveInBackGround(new SaveCallback() {
+		DineOnUserApplication.setCurrentDiningSession(session);
+		DineOnUserApplication.getDineOnUser().saveInBackGround(new SaveCallback() {
 			
 			@Override
 			public void done(ParseException e) {
@@ -363,11 +363,16 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 
 	}
 
-	public void diningSessionChangeActivity(DiningSession dsession){
+	/**
+	 * Got the confirmation for a dining session, so open restaurant's home.
+	 * @param dsession new dining session
+	 */
+	public void diningSessionChangeActivity(DiningSession dsession) {
 		Intent i = new Intent(thisActivity, RestaurantHomeActivity.class);
-		i.putExtra(DineOnConstants.KEY_DININGSESSION, dsession);
+		DineOnUserApplication.setCurrentDiningSession(dsession);
 		startActivity(i);
 	}
+	
 	@Override
 	public void onRestaurantInfoChanged(RestaurantInfo restaurant) {
 		// TODO Auto-generated method stub
@@ -397,8 +402,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 	 * @param cr CustomerRequest to place
 	 */
 	public void placeRequest(CustomerRequest cr) {
-		mSat.requestCustomerRequest(DineOnUserApplication.cachedUser.getDiningSession(), cr, 
-				DineOnUserApplication.cachedUser.getDiningSession().getRestaurantInfo());
+		mSat.requestCustomerRequest(DineOnUserApplication.getCurrentDiningSession(), cr, 
+				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
 		Toast.makeText(this, "Made Request", Toast.LENGTH_LONG).show();
 	}
 
@@ -417,81 +422,53 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 	@Override
 	public void onViewCurrentBill() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public RestaurantInfo getCurrentRestaurant() {
-		// TODO Auto-generated method stub
-		return null;
+		return DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo();
 	}
 
 	@Override
 	public void onPlaceOrder(Order order) {
 		// TODO Auto-generated method stub
-		mSat.requestOrder(DineOnUserApplication.cachedUser.getDiningSession(), 
+		mSat.requestOrder(DineOnUserApplication.getCurrentDiningSession(), 
 				order, 
-				DineOnUserApplication.cachedUser.getDiningSession().getRestaurantInfo());
+				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
 	}
 
 	@Override
 	public void onIncrementItemOrder(MenuItem item) {
-		// TODO Auto-generated method stub
-		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
-			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
-			orderItem.incrementQuantity();
-		} else {
-			DineOnUserApplication.cachedOrderMapping.put(item, new CurrentOrderItem(item));
-		}
+		DineOnUserApplication.incrementItemInCurrentOrder(item);
 	}
 
 	@Override
 	public void onDecrementItemOrder(MenuItem item) {
-		// TODO Auto-generated method stub
-		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
-			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
-			orderItem.decrementQuantity();
-		}
+		DineOnUserApplication.decrementItemInCurrentOrder(item);
 	}
 
 	@Override
 	public void onRemoveItemFromOrder(MenuItem item) {
-		// TODO Auto-generated method stub
-		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
-			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
-			orderItem.setQuantity(0);
-		}
+		DineOnUserApplication.removeItemInCurrentOrder(item);
 	}
 	
 	@Override
 	public void onMenuItemIncremented(MenuItem item) {
-		// TODO Auto-generated method stub
-		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
-			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
-			orderItem.incrementQuantity();
-		} else {
-			DineOnUserApplication.cachedOrderMapping.put(item, new CurrentOrderItem(item));
-		}
+		DineOnUserApplication.incrementItemInCurrentOrder(item);
 	}
 
 	@Override
 	public void onMenuItemDecremented(MenuItem item) {
-		// TODO Auto-generated method stub
-		if (DineOnUserApplication.cachedOrderMapping.containsKey(item)) {
-			CurrentOrderItem orderItem = DineOnUserApplication.cachedOrderMapping.get(item);
-			orderItem.decrementQuantity();
-		}
+		DineOnUserApplication.decrementItemInCurrentOrder(item);
 	}
 
 	@Override
 	public HashMap<MenuItem, CurrentOrderItem> getOrder() {
-		// TODO Auto-generated method stub
-		return DineOnUserApplication.cachedOrderMapping;
+		return DineOnUserApplication.getCurrentOrder();
 	}
 
 	@Override
 	public void resetCurrentOrder() {
-		// TODO Auto-generated method stub
-		DineOnUserApplication.cachedOrderMapping.clear();
+		DineOnUserApplication.clearCurrentOrder();
 	}
 }

@@ -83,7 +83,7 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 							public void done(ParseException e) {
 								if (e == null) {
 									// Success
-									DineOnUserApplication.cachedUser = USER;
+									DineOnUserApplication.setDineOnUser(USER);
 									Intent intent = 
 											new Intent(thisActivity,
 													RestaurantSelectionActivity.class);

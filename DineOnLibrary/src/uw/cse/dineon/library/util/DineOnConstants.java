@@ -85,8 +85,12 @@ public final class DineOnConstants {
 	 */
 	public static final String KEY_USER = "USER";
 	
-	
 	public static final String KEY_DININGSESSION = "DININGSESSION";
+	
+	/**
+	 * Tax for determining price of orders.
+	 */
+	public static final double TAX = 0.08;
 
 	// Callback Key for braodcast receiver callbacks
 	public static final String OBJ_ID = "objectId";

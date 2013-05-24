@@ -5,6 +5,7 @@ import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoFragment;
 import android.content.Intent;
@@ -51,31 +52,17 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 
 		Bundle extras = getIntent().getExtras();
 		
-		if (extras != null) {
-			if (extras.containsKey(DineOnConstants.KEY_DININGSESSION)) {
-				mDiningSession = extras.getParcelable(DineOnConstants.KEY_DININGSESSION);
-				mRestaurant = mDiningSession.getRestaurantInfo();
-			} else if (extras.containsKey(DineOnConstants.KEY_RESTAURANTINFO)) {
-				mRestaurant = extras.getParcelable(DineOnConstants.KEY_RESTAURANTINFO);
-			}
-		} else if (savedInstanceState != null) {
-			if (savedInstanceState.containsKey(DineOnConstants.KEY_DININGSESSION)) {
-				mDiningSession = savedInstanceState
-						.getParcelable(DineOnConstants.KEY_DININGSESSION);
-				mRestaurant = mDiningSession.getRestaurantInfo();
-			} else if (savedInstanceState.containsKey(DineOnConstants.KEY_RESTAURANTINFO)) {
-				mRestaurant = savedInstanceState.getParcelable(DineOnConstants.KEY_RESTAURANTINFO);
-			}
+		if (extras != null && extras.containsKey(DineOnConstants.KEY_RESTAURANTINFO)) {
+			this.mRestaurant = extras.getParcelable(DineOnConstants.KEY_RESTAURANTINFO);
+		} else if (savedInstanceState != null 
+				&& savedInstanceState.containsKey(DineOnConstants.KEY_RESTAURANTINFO)) {
+			this.mRestaurant = savedInstanceState.getParcelable(DineOnConstants.KEY_RESTAURANTINFO);
+		} else if (DineOnUserApplication.getCurrentDiningSession() != null) {
+			this.mDiningSession = DineOnUserApplication.getCurrentDiningSession();
+			this.mRestaurant = this.mDiningSession.getRestaurantInfo();
 		}
-
 		setContentView(R.layout.activity_restaurant_home);
 		
-		
-
-		// TODO FIX: Extract the value of the restaurant
-		// Pull out all its menus and information
-
-		// Then Replace fragments as appropriately
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -113,19 +100,6 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 		
 	}
 
-
-	@Override
-	public void onMenuItemIncremented(MenuItem menuItem) {
-		// TODO Auto-generated method stub
-		super.onMenuItemIncremented(menuItem);
-	}
-
-	@Override
-	public void onMenuItemDecremented(MenuItem menuItem) {
-		// TODO Auto-generated method stub
-		super.onMenuItemDecremented(menuItem);
-	}
-
 	@Override
 	public void onViewCurrentBill() {
 		// TODO Auto-generated method stub
@@ -135,13 +109,11 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 
 	@Override
 	public RestaurantInfo getCurrentRestaurant() {
-		// TODO Auto-generated method stub
-		return mRestaurant;
+		return this.mRestaurant;
 	}
 
 	@Override
 	public void setCurrentRestaurant(RestaurantInfo r) {
-		// TODO Auto-generated method stub
-		mRestaurant = r;
+		this.mRestaurant = r;
 	}
 }

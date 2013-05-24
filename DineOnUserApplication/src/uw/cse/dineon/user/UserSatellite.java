@@ -108,7 +108,7 @@ public class UserSatellite extends BroadcastReceiver {
 		mCurrentActivity = activity;
 
 		// Establish the channel to make 
-		mChannel = ParseUtil.getChannel(DineOnUserApplication.cachedUser.getUserInfo());
+		mChannel = ParseUtil.getChannel(DineOnUserApplication.getUserInfo());
 
 		// Registers this activity to this receiver
 		mCurrentActivity.registerReceiver(this, mIF);
