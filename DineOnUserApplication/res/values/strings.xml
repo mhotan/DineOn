@@ -59,5 +59,6 @@
     <string name="facebook_app_id">505185672873933</string>
     <string name="make_request">Request</string>
     <string name="request_description">Description...</string>
+    <string name="save_changes">Save Changes</string>
 
 </resources>

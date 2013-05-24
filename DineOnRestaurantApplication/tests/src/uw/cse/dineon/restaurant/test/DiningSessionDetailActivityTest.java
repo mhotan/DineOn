@@ -5,6 +5,7 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.restaurant.active.DiningSessionDetailActivity;
 import uw.cse.dineon.restaurant.active.OrderDetailActivity;
 import android.content.Intent;

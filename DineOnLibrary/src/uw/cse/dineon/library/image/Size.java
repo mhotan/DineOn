@@ -14,7 +14,7 @@ public class Size {
 	 * @param w width
 	 * @param h height
 	 */
-	public Size(int w, int h){
+	public Size(int w, int h) {
 		width = w;
 		height = h;
 	}

@@ -42,8 +42,9 @@ public class CurrentOrderItem extends Storable {
 	 * @param quantity int
 	 */
 	public void setQuantity(int quantity) {
-		if (quantity >= 0)
+		if (quantity >= 0) {
 			this.mQuantity = quantity;
+		}
 	}
 	
 	/**
@@ -57,7 +58,8 @@ public class CurrentOrderItem extends Storable {
 	 * Decrement the quantity.
 	 */
 	public void decrementQuantity() {
-		if (this.mQuantity > 0)
+		if (this.mQuantity > 0) {
 			this.mQuantity--;
+		}
 	}
 }

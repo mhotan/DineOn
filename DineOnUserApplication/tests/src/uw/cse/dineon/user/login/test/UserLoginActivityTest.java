@@ -16,24 +16,17 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
-import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.bill.CurrentBillActivity;
 import uw.cse.dineon.user.bill.CurrentOrderActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
-import uw.cse.dineon.user.restaurant.home.RestaurantHomeMainFragment;
-import uw.cse.dineon.user.restaurantselection.RestaurantInfoActivity;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -67,11 +60,11 @@ public class UserLoginActivityTest extends
 		DiningSession ds = 
 				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
 		
-		List<MenuItem> mi = TestUtility.getFakeMenuItems();
+		List<MenuItem> mi = TestUtility.createFakeMenuItems(3);
 		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
 		ds.addPendingOrder(one);
 		dineOnUser.setDiningSession(ds);
-		Menu m = TestUtility.getFakeMenu();
+		Menu m = TestUtility.createFakeMenu();
 		m.addNewItem(mi.get(0));
 		rest.getInfo().addMenu(m);
 		this.setActivityInitialTouchMode(false);

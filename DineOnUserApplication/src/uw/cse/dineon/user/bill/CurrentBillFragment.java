@@ -5,7 +5,6 @@ import java.text.NumberFormat;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -75,6 +74,7 @@ OnClickListener {
 	public void setBill(String subtotal, String tax) {
 		
 		if (this.mSession == null) {
+
 			DineOnUserApplication.getCurrentDiningSession();
 		}
 

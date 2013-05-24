@@ -162,6 +162,17 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		// send over the restaurantInfo
 		i.putExtra(DineOnConstants.KEY_RESTAURANTINFO, restaurant);
 		startActivity(i);
+		//Toast.makeText(this, "Restaurant \"" + restaurant + "\" Selected", 
+		//		Toast.LENGTH_SHORT).show();
+	}
+	
+	/**
+	 * @param dsession DiningSession to change to
+	 */
+	public void diningSessionChangeActivity(DiningSession dsession) {
+		Intent i = new Intent(thisActivity, RestaurantHomeActivity.class);
+		i.putExtra(DineOnConstants.KEY_DININGSESSION, dsession);
+		startActivity(i);
 	}
 
 	@Override

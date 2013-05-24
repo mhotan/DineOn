@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.general;
 
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -14,19 +15,21 @@ import android.widget.TextView;
  * 
  * @author mhotan
  */
-public class ProfileFragment extends Fragment {
+public class ProfileImageFragment extends Fragment {
 
+	
 	private ImageView mProfileImage;
 	private TextView mProfileName;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_profile,
+		View view = inflater.inflate(R.layout.profile_image_fragment,
 				container, false);
 
 		mProfileImage = (ImageView) view.findViewById(R.id.image_profile_picture);
 		mProfileName = (TextView) view.findViewById(R.id.label_profile_name);
+		mProfileName.setText(DineOnUserApplication.getDineOnUser().getName());
 		
 		return view;
 	}

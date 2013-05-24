@@ -50,7 +50,7 @@ import com.parse.SaveCallback;
 public class DineOnUserActivity extends FragmentActivity implements 
 SatelliteListener,
 SubMenuFragment.MenuItemListListener, /* manipulation of order from sub menu */
-OrderUpdateListener /* manipulation of list from the current order activity */{ 
+OrderUpdateListener /* manipulation of list from the current order activity */ { 
 
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
 
@@ -339,7 +339,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */{
 
 	@Override
 	public void onInitialDiningSessionReceived(DiningSession session) {
-		// TODO Auto-generated method stub
 
 		// DEBUG:
 		Log.d("GOT_DINING_SESSION_FROM_CLOUD", session.getTableID() + "");

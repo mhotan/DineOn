@@ -6,7 +6,6 @@ import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.RestaurantSatellite.SateliteListener;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
@@ -23,7 +22,6 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Toast;
 
 import com.parse.ParseException;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 /**
