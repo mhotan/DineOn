@@ -1,56 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/DineOnLoginBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <LinearLayout
+        style="@style/DineOnLoginLinear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/label_login"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/dine_on_logo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:gravity="center"
-            android:text="@string/login_label"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_marginBottom="20dp"
+             android:layout_marginTop="20dp"
+            android:contentDescription="@string/dineonlogo"
+            android:src="@drawable/dineonlogo" />
 
         <EditText
             android:id="@+id/input_login_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/DineOnLoginForm"
             android:layout_marginTop="8dp"
-            android:ems="10"
-            android:gravity="center"
             android:hint="@string/hint_username"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"  >
+            <requestFocus />
+        </EditText>
 
         <EditText
             android:id="@+id/input_login_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/DineOnLoginForm"
             android:layout_marginTop="18dp"
-            android:ems="10"
-            android:gravity="center"
             android:hint="@string/password_label"
-            android:inputType="textPassword" >
-
-            <requestFocus android:layout_width="wrap_content" />
-        </EditText>
+            android:inputType="textPassword" />
 
         <Button
             android:id="@+id/button_login"
-            android:layout_width="215dp"
-            android:layout_height="wrap_content"
+            style="@style/DineOnLoginButton"
             android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="@string/button_login" />
+            android:background="@drawable/login" />
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/label_or"
+            style="@style/DineOnLoginForm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Or" />
@@ -60,19 +53,18 @@
             android:layout_width="215dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textColor="#FFFFFF"
             android:background="@drawable/com_facebook_loginbutton_blue_normal"
-            android:text="@string/button_login" />
+            android:text="@string/button_login"
+            android:textColor="#FFFFFF" />
 
         <ImageView
             android:id="@+id/huskysoftlogo"
-            android:layout_width="wrap_content"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:contentDescription="@string/content_description_huskysoft_logo"
             android:src="@drawable/husky_soft_logo" />
-
     </LinearLayout>
 
 </ScrollView>

@@ -1,88 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/create_new_user_account"
+    style="@style/DineOnLoginBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/label_create_new_account"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        style="@style/DineOnLoginLinear"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/create_new_account"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/input_createnewaccount_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/input_createnewaccount_email"
-        android:layout_below="@+id/input_createnewaccount_email"
-        android:ems="10"
-        android:hint="@string/password_label"
-        android:inputType="textPassword" />
+        <ImageView
+            android:id="@+id/dine_on_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/dineonlogo"
+            android:src="@drawable/dineonlogo" />
 
-    <EditText
-        android:id="@+id/input_createnewaccount_repeat_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/input_createnewaccount_email"
-        android:layout_below="@+id/input_createnewaccount_password"
-        android:ems="10"
-        android:hint="@string/password_repeat_label"
-        android:inputType="textPassword" >
+        <EditText
+            android:id="@+id/input_createnewaccount_username"
+            style="@style/DineOnLoginForm"
+            android:layout_marginBottom="14dp"
+            android:hint="@string/hint_username"
+            android:inputType="textEmailAddress" >
 
-        <requestFocus />
-    </EditText>
+            <requestFocus />
+        </EditText>
 
-    <Button
-        android:id="@+id/button_create_account"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/input_createnewaccount_repeat_password"
-        android:layout_alignRight="@+id/input_createnewaccount_repeat_password"
-        android:layout_below="@+id/input_createnewaccount_repeat_password"
-        android:text="@string/create_account" />
+        <EditText
+            android:id="@+id/input_createnewaccount_email"
+            style="@style/DineOnLoginForm"
+            android:layout_marginBottom="15dp"
+            android:hint="@string/hint_email_address"
+            android:inputType="textEmailAddress" />
 
-    <TextView
-        android:id="@+id/label_or1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button_create_account"
-        android:layout_centerHorizontal="true"
-        android:text="@string/or"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <EditText
+            android:id="@+id/input_createnewaccount_password"
+            style="@style/DineOnLoginForm"
+            android:hint="@string/password_label"
+            android:inputType="textPassword" />
 
-    <Button
-        android:id="@+id/button_createnewaccount_facebook"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button_create_account"
-        android:layout_alignRight="@+id/button_create_account"
-        android:background="@drawable/com_facebook_loginbutton_blue_normal"
-        android:textColor="#FFFFFF"
-        android:layout_below="@+id/label_or1"
-        android:text="@string/button_login" />
+        <EditText
+            android:id="@+id/input_createnewaccount_repeat_password"
+            style="@style/DineOnLoginForm"
+            android:layout_marginTop="18dp"
+            android:hint="@string/password_repeat_label"
+            android:inputType="textPassword" />
 
-    <EditText
-        android:id="@+id/input_createnewaccount_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/intput_createnewaccount_username"
-        android:layout_below="@+id/intput_createnewaccount_username"
-        android:ems="10"
-        android:hint="@string/hint_email_address"
-        android:inputType="textEmailAddress" />
+        <Button
+            android:id="@+id/button_create_account"
+            style="@style/DineOnLoginButton"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/createnewacct" />
 
-    <EditText
-        android:id="@+id/intput_createnewaccount_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/label_create_new_account"
-        android:layout_below="@+id/label_create_new_account"
-        android:layout_marginTop="18dp"
-        android:ems="10"
-        android:hint="@string/hint_username"
-        android:inputType="textEmailAddress" />
+        <TextView
+            android:id="@+id/label_or1"
+            style="@style/DineOnLoginForm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Or" />
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/button_createnewaccount_facebook"
+            android:layout_width="215dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/com_facebook_loginbutton_blue_normal"
+            android:text="@string/button_login"
+            android:textColor="#FFFFFF" />
+
+        <ImageView
+            android:id="@+id/husky_soft_logo"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:contentDescription="@string/husky_soft_logo"
+            android:src="@drawable/husky_soft_logo" />
+    </LinearLayout>
+
+</ScrollView>

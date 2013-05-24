@@ -5,10 +5,9 @@
     android:orientation="vertical" >
 
     <fragment
+        android:id="@+id/loginFragment"
         android:name="uw.cse.dineon.user.login.LoginFragment"
-        android:id="@+id/loginFragment"        
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?android:attr/actionBarSize" />
-    
+        android:layout_height="match_parent" />
+
 </LinearLayout>

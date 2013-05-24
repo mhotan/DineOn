@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/create_new_rest_account"
+    style="@style/DineOnLoginBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <LinearLayout
+        style="@style/DineOnLoginLinear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/label_create_new_account"
+        <ImageView
+            android:id="@+id/dine_on_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="21dp"
-            android:text="@string/create_new_account"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/dineonlogo"
+            android:src="@drawable/dineonrestlogo" />
 
         <EditText
             android:id="@+id/input_createnewaccount_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/DineOnLoginForm"
             android:layout_marginBottom="14dp"
-            android:ems="10"
             android:hint="@string/hint_restaurant_name"
             android:inputType="textEmailAddress" >
 
@@ -31,35 +32,37 @@
 
         <EditText
             android:id="@+id/input_createnewaccount_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/DineOnLoginForm"
             android:layout_marginBottom="15dp"
-            android:ems="10"
             android:hint="@string/hint_email_address"
             android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/input_createnewaccount_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
+            style="@style/DineOnLoginForm"
             android:hint="@string/hint_password"
             android:inputType="textPassword" />
 
         <EditText
             android:id="@+id/input_createnewaccount_repeat_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/DineOnLoginForm"
             android:layout_marginTop="18dp"
-            android:ems="10"
             android:hint="@string/hint_password_repeat"
             android:inputType="textPassword" />
 
         <Button
             android:id="@+id/button_create_account"
-            android:layout_width="wrap_content"
+            style="@style/DineOnLoginButton"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/createnewrest" />
+
+        <ImageView
+            android:id="@+id/husky_soft_logo"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
-            android:text="@string/option_create_new_account" />
+            android:layout_marginBottom="20dp"
+            android:contentDescription="@string/husky_soft_logo"
+            android:src="@drawable/husky_soft_logo" />
     </LinearLayout>
 
 </ScrollView>

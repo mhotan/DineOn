@@ -66,7 +66,7 @@ public class CreateNewAccountActivityTest extends ActivityInstrumentationTestCas
 		View current = frag.getView();
 		final EditText username = (EditText) 
 				current.findViewById(
-						uw.cse.dineon.user.R.id.intput_createnewaccount_username);
+						uw.cse.dineon.user.R.id.input_createnewaccount_username);
 		final EditText password = (EditText) 
 				current.findViewById(
 						uw.cse.dineon.user.R.id.input_createnewaccount_password);

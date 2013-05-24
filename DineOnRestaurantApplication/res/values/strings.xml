@@ -55,5 +55,6 @@
     <string name="label_message_customer">Message Customer</string>
     <string name="button_remove_menu_item">Remove Menu Item</string>
     <string name="label_menu_item_thumbnail">Menu Item Image</string>
+    <string name="dineonlogo">DineOn Logo</string>
 
 </resources>

@@ -1,56 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/DineOnLoginBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <LinearLayout
+        style="@style/DineOnLoginLinear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/label_order_title"
+        <ImageView
+            android:id="@+id/dine_on_rest_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:layout_marginBottom="30dp"
-            android:text="@string/label_login_title"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/dineonlogo"
+            android:src="@drawable/dineonrestlogo" />
 
         <EditText
             android:id="@+id/input_restaurant_login_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/DineOnLoginForm"
             android:layout_marginBottom="30dp"
-            android:ems="10"
             android:hint="@string/hint_restaurant_name" >
-
             <requestFocus />
         </EditText>
 
         <EditText
             android:id="@+id/input_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/DineOnLoginForm"
             android:layout_marginBottom="30dp"
-            android:ems="10"
             android:hint="@string/hint_password"
             android:inputType="textPassword" />
 
         <Button
             android:id="@+id/button_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_login" />
+            style="@style/DineOnLoginButton"
+            android:background="@drawable/login"/>
 
         <ImageView
-            android:contentDescription="@string/husky_soft_logo"
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
+            android:id="@+id/husky_soft_logo"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
+            android:contentDescription="@string/husky_soft_logo"
             android:src="@drawable/husky_soft_logo" />
     </LinearLayout>
 

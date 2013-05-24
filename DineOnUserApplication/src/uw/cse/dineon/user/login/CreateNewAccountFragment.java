@@ -29,7 +29,7 @@ public class CreateNewAccountFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_create_new_account,
 				container, false);
 
-		mUsername = (EditText) view.findViewById(R.id.intput_createnewaccount_username);
+		mUsername = (EditText) view.findViewById(R.id.input_createnewaccount_username);
 		mEmail = (EditText) view.findViewById(R.id.input_createnewaccount_email);
 		mPassword = (EditText) view.findViewById(R.id.input_createnewaccount_password);
 		mPasswordRepeat = (EditText) view.findViewById(
