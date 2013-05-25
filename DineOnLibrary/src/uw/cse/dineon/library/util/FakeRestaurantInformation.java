@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
+
 import com.parse.ParseUser;
 
 /**
@@ -48,11 +50,11 @@ public class FakeRestaurantInformation {
 		int[] thirdOrderIndices = {6, 7, 8};
 
 		Order one = new Order(1, mUser.getUserInfo(), 
-				getFakeMenuItems(firstOrderIndices));
+				getFakeOrderItems(firstOrderIndices));
 		Order two = new Order(2, mUser.getUserInfo(), 
-				getFakeMenuItems(secondOrderIndices));
+				getFakeOrderItems(secondOrderIndices));
 		Order three = new Order(3, mUser.getUserInfo(), 
-				getFakeMenuItems(thirdOrderIndices));
+				getFakeOrderItems(thirdOrderIndices));
 
 		orders.add(one);
 		orders.add(two);
@@ -139,6 +141,23 @@ public class FakeRestaurantInformation {
 		menuItems.add(shake);
 		menuItems.add(cockroaches);
 		return new ArrayList<MenuItem>(menuItems);
+	}
+	
+	/**
+	 * Returns a specific list of fake order items.
+	 * 
+	 * @param indices an array of int indices representing
+	 * the specified order items you want
+	 * @return a list of fake order items
+	 */
+	public List<CurrentOrderItem> getFakeOrderItems(int[] indices) {
+		List<MenuItem> menuItems = getFakeMenuItems(indices);
+		List<CurrentOrderItem> selectedItems = new ArrayList<CurrentOrderItem>();
+		for (MenuItem m : menuItems) {
+			selectedItems.add(new CurrentOrderItem(m));
+		}
+
+		return selectedItems;
 	}
 
 	/**

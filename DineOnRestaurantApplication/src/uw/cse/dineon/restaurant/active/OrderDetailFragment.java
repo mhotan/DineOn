@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
@@ -190,31 +191,28 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	 * View the relevant information of all the menu items.
 	 * @author mhotan
 	 */
-	private static class MenuItemAdapter extends ArrayAdapter<MenuItem> {
+	private static class MenuItemAdapter extends ArrayAdapter<CurrentOrderItem> {
 
 		private final Context mContext;
 
 		/**
 		 * List of Menu Items with their associated quantity.
 		 */
-		private final List<Pair<MenuItem, Integer>> mItems;
+		private final List<CurrentOrderItem> mItems;
 
 		/**
 		 * Creates an adapter for displaying menu items.
 		 * @param context Owning context of this adapter
 		 * @param items Items to add to the List view
 		 */
-		public MenuItemAdapter(Context context, List<MenuItem> items) {
+		public MenuItemAdapter(Context context, List<CurrentOrderItem> items) {
 			super(context, R.layout.listitem_menuitem_editable);
 			mContext = context;
 
 			// Check for stupidity
-			Map<MenuItem, Integer> occurences = Utility.toQuantityMap(items);
+			//Map<CurrentOrderItem, Integer> occurences = Utility.toQuantityMap(items);
 
-			mItems = new ArrayList<Pair<MenuItem, Integer>>(occurences.keySet().size());
-			for (Map.Entry<MenuItem, Integer> entry : occurences.entrySet()) {
-				mItems.add(new Pair<MenuItem, Integer>(entry.getKey(), entry.getValue()));
-			}
+			mItems = new ArrayList<CurrentOrderItem>(items);
 		}
 
 		/**
@@ -222,8 +220,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		 * Just a new lsit is returned
 		 * @return a list of the current menu items
 		 */
-		ArrayList<Pair<MenuItem, Integer>> getCurrentItems() {
-			return new ArrayList<Pair<MenuItem, Integer>>(mItems);
+		ArrayList<CurrentOrderItem> getCurrentItems() {
+			return new ArrayList<CurrentOrderItem>(mItems);
 		}
 
 		@Override
@@ -232,8 +230,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view = inflater.inflate(R.layout.listitem_menuitem_editable, null, true);
 
-			MenuItem toShow = mItems.get(position).first;
-			int qty = mItems.get(position).second;
+			CurrentOrderItem toShow = mItems.get(position);
+			int qty = toShow.getQuantity();
 
 			//Commented out for findbugs
 //			ImageView menuItemImage = (ImageView) 
@@ -249,8 +247,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 
 			// TODO Download the Image Asyncronously
 
-			menuItemTitle.setText(toShow.getTitle());
-			menuItemDesc.setText("ID: " + toShow.getProductID());
+			menuItemTitle.setText(toShow.getMenuItem().getTitle());
+			menuItemDesc.setText("ID: " + toShow.getMenuItem().getProductID());
 			menuItemPrice.setText("QTY: " + qty);
 
 			return view;

@@ -4,13 +4,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.parse.Parse;
-import com.parse.ParseUser;
-
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
-import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
@@ -29,6 +26,9 @@ import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.parse.Parse;
+import com.parse.ParseUser;
 
 public class UserLoginActivityTest extends
 		ActivityInstrumentationTestCase2<UserLoginActivity> {
@@ -60,12 +60,12 @@ public class UserLoginActivityTest extends
 		DiningSession ds = 
 				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
 		
-		List<MenuItem> mi = TestUtility.createFakeMenuItems(3);
+		List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
 		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
 		ds.addPendingOrder(one);
 		dineOnUser.setDiningSession(ds);
 		Menu m = TestUtility.createFakeMenu();
-		m.addNewItem(mi.get(0));
+		m.addNewItem(mi.get(0).getMenuItem());
 		rest.getInfo().addMenu(m);
 		this.setActivityInitialTouchMode(false);
 		mInstrumentation = this.getInstrumentation();

@@ -2,7 +2,9 @@ package uw.cse.dineon.restaurant.test;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
@@ -140,7 +142,8 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	public void onTestOrderRequested() { 
 		Order order = null;
 		try {
-			order = new Order(10, mDineOnUser.getUserInfo(), new ArrayList<MenuItem>());
+			List<CurrentOrderItem> list = new ArrayList<CurrentOrderItem>();
+			order = new Order(10, mDineOnUser.getUserInfo(), list);
 			order.saveOnCurrentThread();
 			mActivity.onOrderRequest(order, testSession.getObjId());
 			order.deleteFromCloud();

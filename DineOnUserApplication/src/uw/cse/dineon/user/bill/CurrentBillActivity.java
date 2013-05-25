@@ -1,6 +1,10 @@
 package uw.cse.dineon.user.bill;
 
+import java.util.List;
+
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.user.DineOnUserActivity;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.bill.CurrentBillFragment.PayBillListener;
 import android.content.res.Configuration;
@@ -30,14 +34,25 @@ implements PayBillListener {
 		}
 		setContentView(R.layout.activity_current_bill);
 		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			String subtotal = extras.getString(EXTRA_SUBTOTALPRICE);
-			String tax = extras.getString(EXTRA_TAX);
-			CurrentBillFragment frag = (CurrentBillFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.fragment_current_bill);
-			frag.setBill(subtotal, tax);
-		}
+//		if (extras != null) {
+//			String subtotal = extras.getString(EXTRA_SUBTOTALPRICE);
+//			String tax = extras.getString(EXTRA_TAX);
+//			CurrentBillFragment frag = (CurrentBillFragment) getSupportFragmentManager()
+//					.findFragmentById(R.id.fragment_current_bill);
+//			frag.setBill(subtotal, tax);
+//		}
 		
+		calculateBill();
+	}
+	
+	/**
+	 * 
+	 */
+	public void calculateBill() {
+		List<Order> orders = DineOnUserApplication.getCurrentDiningSession().getOrders();
+		for (Order order : orders) {
+			
+		}
 	}
 
 	@Override

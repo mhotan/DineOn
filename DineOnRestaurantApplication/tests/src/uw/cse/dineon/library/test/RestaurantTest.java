@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
@@ -12,14 +13,13 @@ import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
-
-import com.parse.Parse;
-import com.parse.ParseUser;
-
 import android.app.Activity;
 import android.content.Context;
 import android.test.AndroidTestCase;
 import android.util.Log;
+
+import com.parse.Parse;
+import com.parse.ParseUser;
 
 public class RestaurantTest extends AndroidTestCase {
 	
@@ -29,7 +29,7 @@ public class RestaurantTest extends AndroidTestCase {
 	DiningSession testSession;
 	ParseUser mUser;
 	UserInfo testUInfo;
-	List<MenuItem> testItems;
+	List<CurrentOrderItem> testItems;
 	MenuItem testItem;
 	Order testOrder;
 	List<Order> orders;
@@ -67,9 +67,9 @@ public class RestaurantTest extends AndroidTestCase {
 		testSession = new DiningSession(32, new Date(3254645), testUInfo, testRestaurantInfo);
 		
 		testUInfo = new UserInfo(mUser);
-		testItems = new ArrayList<MenuItem>();
+		testItems = new ArrayList<CurrentOrderItem>();
 		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
-		testItems.add(testItem);
+		testItems.add(new CurrentOrderItem(testItem));
 		testOrder = new Order(32, testUInfo, testItems);
 		orders = new ArrayList<Order>();
 		orders.add(testOrder);

@@ -90,7 +90,13 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		this.mMenuItemMappings = new HashMap<MenuItem, CurrentOrderItem>();
 		
 		this.mLocationListener = new UserLocationListener();
-		this.mLocationListener.requestLocationUpdates();
+		try {
+			this.mLocationListener.requestLocationUpdates();
+		} catch (IllegalArgumentException ex) {
+			// The provider doesn't exist because its emulator
+			Toast.makeText(this, "Your running on an emulator dip shit.", 
+					Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	/**

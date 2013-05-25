@@ -3,6 +3,7 @@ package uw.cse.dineon.restaurant.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
@@ -77,8 +78,8 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		mRestaurant = new Restaurant(mUser);
 		mRequest = new CustomerRequest("Me Hungy", mUI.getUserInfo());
 
-		List<MenuItem> items = new ArrayList<MenuItem>();
-		items.add(new MenuItem(123, 1.99, "Yum yums", "description"));
+		List<CurrentOrderItem> items = new ArrayList<CurrentOrderItem>();
+		items.add(new CurrentOrderItem(new MenuItem(123, 1.99, "Yum yums", "description")));
 		mOrder = new Order(1, mUI.getUserInfo(), items);
 		testSession = new DiningSession(1, mUI.getUserInfo(), mRestaurant.getInfo());
 		mRestaurant.addCustomerRequest(mRequest);

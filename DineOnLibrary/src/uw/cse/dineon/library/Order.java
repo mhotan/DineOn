@@ -24,7 +24,7 @@ public class Order extends TimeableStorable {
 
 	private final int mTableID;		// ID for table the order is from
 	private final UserInfo mUserInfo;			// Info of user who placed order
-	private final List<MenuItem> mMenuItems;	// list of items in this order
+	private final List<CurrentOrderItem> mMenuItems;	// list of items in this order
 
 	/**
 	 * Creates a new Order object from the given parameters.
@@ -33,11 +33,11 @@ public class Order extends TimeableStorable {
 	 * @param originator Info of user placing order
 	 * @param menuItems List of items in the order
 	 */
-	public Order(int tableID, UserInfo originator, List<MenuItem> menuItems) {
+	public Order(int tableID, UserInfo originator, List<CurrentOrderItem> menuItems) {
 		super(Order.class);
 		this.mTableID = tableID;
 		this.mUserInfo = originator;
-		this.mMenuItems = new ArrayList<MenuItem>(menuItems);
+		this.mMenuItems = new ArrayList<CurrentOrderItem>(menuItems);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class Order extends TimeableStorable {
 		super(po);
 		mTableID = po.getInt(TABLE_ID);
 		mUserInfo = new UserInfo(po.getParseObject(USER_INFO));
-		mMenuItems = ParseUtil.toListOfStorables(MenuItem.class, po.getList(MENU_ITEMS));
+		mMenuItems = ParseUtil.toListOfStorables(CurrentOrderItem.class, po.getList(MENU_ITEMS));
 
 	}
 
@@ -78,8 +78,8 @@ public class Order extends TimeableStorable {
 	/**
 	 * @return the menuItems
 	 */
-	public List<MenuItem> getMenuItems() {
-		return new ArrayList<MenuItem>(mMenuItems);
+	public List<CurrentOrderItem> getMenuItems() {
+		return new ArrayList<CurrentOrderItem>(mMenuItems);
 	}
 
 	/**
@@ -122,8 +122,8 @@ public class Order extends TimeableStorable {
 		super(source);
 		mTableID = source.readInt();
 		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
-		mMenuItems = new ArrayList<MenuItem>();
-		source.readTypedList(mMenuItems, MenuItem.CREATOR);
+		mMenuItems = new ArrayList<CurrentOrderItem>();
+		source.readTypedList(mMenuItems, CurrentOrderItem.CREATOR);
 	}
 
 	/**

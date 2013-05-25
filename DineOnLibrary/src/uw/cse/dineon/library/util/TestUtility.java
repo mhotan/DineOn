@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
@@ -49,7 +50,12 @@ public final class TestUtility {
 	 * @return a fake order
 	 */
 	public static Order createFakeOrder(int orderNum, UserInfo info) {
-		return new Order(orderNum, info, createFakeMenuItems(2));
+		List<MenuItem> items = createFakeMenuItems(2);
+		List<CurrentOrderItem> orderItems = new ArrayList<CurrentOrderItem>();
+		for (MenuItem i : items) {
+			orderItems.add(new CurrentOrderItem(i));
+		}
+		return new Order(orderNum, info, orderItems);
 	}
 
 	/**
@@ -61,6 +67,20 @@ public final class TestUtility {
 	public static CustomerRequest createFakeRequest(UserInfo info) {
 		return new CustomerRequest("[fake] I want my food now!", 
 				info, new GregorianCalendar().getTime());
+	}
+	
+	/**
+	 * Returns a fake list of order items.
+	 * 
+	 * @param qty int quantity of items to return
+	 * @return a fake list of order items
+	 */
+	public static List<CurrentOrderItem> createFakeOrderItems(int qty) {
+		List<CurrentOrderItem> items = new ArrayList<CurrentOrderItem>();
+		for (MenuItem m : createFakeMenuItems(qty)) {
+			items.add(new CurrentOrderItem(m));
+		}
+		return items;
 	}
 
 	/**

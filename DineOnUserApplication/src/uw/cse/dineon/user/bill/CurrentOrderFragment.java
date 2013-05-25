@@ -436,12 +436,8 @@ extends Fragment implements OnClickListener {
 					DiningSession session = DineOnUserApplication.getCurrentDiningSession();
 					if (session != null) {
 						// create and save the order
-						List<MenuItem> items = new ArrayList<MenuItem>();
-						for (MenuItem m : mAdapter.mOrderMapping.keySet()) {
-							for (int i = 0; i < mAdapter.mOrderMapping.get(m).getQuantity(); i++) {
-								items.add(m);
-							}
-						}
+						List<CurrentOrderItem> items = 
+								new ArrayList<CurrentOrderItem>(mAdapter.mOrderMapping.values());
 
 						final Order NEW_ORDER = new Order(session.getTableID(),  
 								DineOnUserApplication.getUserInfo(), 
