@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.LocatableStorable;
+import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
@@ -18,6 +20,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -26,6 +29,7 @@ import android.view.MenuItem;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -71,44 +75,10 @@ RestaurantInfoFragment.RestaurantInfoListener {
 			ACTION_BAR.setTitle(R.string.actionbar_title_restaurant_selection);
 		}
 		
-		createProgressDialog();
-		
 		mRestaurants = new ArrayList<RestaurantInfo>();
 		
-		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
-		query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
-		// TODO add attributes as filters are used
-		// TODO Limit will need to change later
-		query.setLimit(6); 
-		query.findInBackground(new FindCallback() {
-
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					
-					for (int i = 0; i < objects.size(); i++) {
-						try {
-							ParseObject p = objects.get(i);
-							RestaurantInfo r = new RestaurantInfo(p);
-							mRestaurants.add(r);
-						} catch (ParseException e1) {
-							Log.d(TAG, e1.getMessage());
-						}
-					}
-					destroyProgressDialog();
-					if (objects.size() == 0) {
-						showNoRestaurantsDialog("Couldn't get restaurants");
-					} else {
-						addListOfRestaurantInfos();
-					}
-				} else { 
-					destroyProgressDialog();
-					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
-					Log.d(TAG, "No restaurants where found in the cloud.");
-				}
-			}
-			
-		});
+		// By default show nearby restaurants
+		onShowNearbyRestaurants();
 	}
 	
 	/**
@@ -162,8 +132,6 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		// send over the restaurantInfo
 		i.putExtra(DineOnConstants.KEY_RESTAURANTINFO, restaurant);
 		startActivity(i);
-		//Toast.makeText(this, "Restaurant \"" + restaurant + "\" Selected", 
-		//		Toast.LENGTH_SHORT).show();
 	}
 	
 	/**
@@ -192,22 +160,83 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		}
 	}
 
+	/**
+	 * Search for a restaurant by name.
+	 * @param name name of restaurant
+	 */
+	public void onSearchForRestaurantByName(String name) {
+		createProgressDialog();
+		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		query.whereEqualTo(RestaurantInfo.NAME, name);
+		queryForRestaurants(query);
+	}
 
 	@Override
 	public void onShowNearbyRestaurants() {
-		// TODO Implement by communicating with the list fragment 
+		createProgressDialog();
+		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		Location lastLoc = super.getLastKnownLocation();
+		if (lastLoc != null) {
+			query.whereWithinMiles(LocatableStorable.LOCATION, 
+					new ParseGeoPoint(lastLoc.getLatitude(), lastLoc.getLongitude()), 
+					DineOnConstants.MAX_RESTAURANT_DISTANCE);
+			queryForRestaurants(query);
+		} else {
+			Log.d(TAG, "Don't have current location info.");
+		}
 	}
 
 	@Override
 	public void onShowFriendsFavoriteRestaurants() {
-		// TODO Implement by communicating with the list fragment 
-
+		// TODO
+		//createProgressDialog();
+		//ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 	}
 
 	@Override
 	public void onShowUserFavorites() {
-		// TODO Implement by communicating with the list fragment 
+		// TODO
+		//createProgressDialog();
+		//ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+	}
+	
+	/**
+	 * Query for restaurants using attributes set and populate selection list.
+	 * on return
+	 * @param query parse query object to query restaurants.
+	 */
+	public void queryForRestaurants(ParseQuery query) {
+		query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
+		query.setLimit(DineOnConstants.MAX_RESTAURANTS); 
+		query.findInBackground(new FindCallback() {
 
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					
+					for (int i = 0; i < objects.size(); i++) {
+						try {
+							ParseObject p = objects.get(i);
+							RestaurantInfo r = new RestaurantInfo(p);
+							mRestaurants.add(r);
+						} catch (ParseException e1) {
+							Log.d(TAG, e1.getMessage());
+						}
+					}
+					destroyProgressDialog();
+					if (objects.size() == 0) {
+						showNoRestaurantsDialog("Couldn't get restaurants");
+					} else {
+						addListOfRestaurantInfos();
+					}
+				} else { 
+					destroyProgressDialog();
+					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
+					Log.d(TAG, "No restaurants where found in the cloud.");
+				}
+			}
+			
+		});
 	}
 
 	@Override
