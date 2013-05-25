@@ -15,6 +15,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -53,7 +54,13 @@ implements CreateNewAccountListener {
 		setContentView(R.layout.activity_create_new_account);
 
 		this.mLocationListener = new RestaurantLocationListener();
-		this.mLocationListener.requestLocationUpdate();
+		try {
+			this.mLocationListener.requestLocationUpdate();
+		} catch (IllegalArgumentException ex) {
+			// provider is not available because using emulator
+			Toast.makeText(this, "Stop using an emulator idiot!", 
+					Toast.LENGTH_SHORT).show();
+		}
 		
 		This = this;
 	}
@@ -203,7 +210,15 @@ implements CreateNewAccountListener {
 									startMainActivity();
 								} else {
 									DineOnRestaurantApplication.logIn(NEWREST);
-									mLocationListener.waitForLocation();
+									if (mLocationListener.mLocationManager.
+											getProvider(LocationManager.NETWORK_PROVIDER) == null) {
+										// we're in an emulator so don't wait
+										NEWREST.getInfo().updateLocation(0.0, 0.0);
+										NEWREST.getInfo().saveInBackGround(null);
+										startMainActivity();
+									} else {
+										mLocationListener.waitForLocation();
+									}
 								}
 							} else {
 								Utility.getFailedToCreateAccountDialog(
