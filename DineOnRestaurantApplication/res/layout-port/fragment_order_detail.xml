@@ -6,16 +6,15 @@
 
     <TextView
         android:id="@+id/label_order_title_detail"
+        style="@style/DineOnHeadingBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:background="#14140E"
         android:paddingBottom="4dp"
         android:paddingTop="4dp"
         android:gravity="center"
         android:text="@string/label_order_blank"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#46C4F2" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/label_order_table"
@@ -37,16 +36,15 @@
 
     <TextView
         android:id="@+id/label_order_contents"
+        style="@style/DineOnHeadingBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="#14140E"
         android:gravity="center"
         android:paddingBottom="4dp"
         android:paddingTop="4dp"
         android:text="@string/label_order_contents"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#46C4F2" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ListView
         android:id="@+id/list_order"
@@ -56,17 +54,16 @@
 
     <TextView
         android:id="@+id/label_message_customer"
+        style="@style/DineOnHeadingBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
-        android:background="#14140E"
         android:gravity="center"
         android:paddingBottom="4dp"
         android:paddingTop="4dp"
         android:text="@string/label_message_customer"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#46C4F2" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <LinearLayout
         android:layout_width="match_parent"

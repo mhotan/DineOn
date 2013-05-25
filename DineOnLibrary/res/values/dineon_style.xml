@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Custom DineOn Application theme. -->
+    <style name="DineOnHeadingBackground" parent="android:Theme.Holo.Light">
+        <item name="android:background">#b10202</item>
+        <item name="android:textColor">#fedbb5</item>
+        
+    </style>
+    
+    <style name="DineOnBackground" parent="android:Theme.Holo.Light">
+        <item name="android:background">#fedbb5</item>
+        <item name="android:textColor">#b10202</item>
+        
+    </style>
+    
+    <style name="DineOnAd" parent="android:Theme.Holo.Light">
+        <item name="android:background">#595959</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">50dp</item>
+        
+    </style>
+
+</resources>

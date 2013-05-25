@@ -3,7 +3,8 @@
     android:id="@+id/create_new_user_account"
     style="@style/DineOnLoginBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/login_selector" >
 
     <LinearLayout
         style="@style/DineOnLoginLinear"
