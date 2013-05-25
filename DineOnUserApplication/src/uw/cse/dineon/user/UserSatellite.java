@@ -97,10 +97,10 @@ public class UserSatellite extends BroadcastReceiver {
 		// Check for null values
 		if (user == null) {
 			throw new IllegalArgumentException(
-					"Null restaurant when registering broadcast receiver");
+					"Null user when registering broadcast receiver");
 		}
 		if (activity == null) {
-			Log.w(TAG, "RestaurantSatelite attempted to register null activity");
+			Log.w(TAG, "UserSatelite attempted to register null activity");
 			return;
 		}
 

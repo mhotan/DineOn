@@ -62,5 +62,6 @@
     <string name="dineonlogo">DineOn Logo</string>
     <string name="husky_soft_logo">HuskySoft Logo</string>
     <string name="save_changes">Save Changes</string>
+    <string name="option_edit_profile">Edit Profile</string>
 
 </resources>

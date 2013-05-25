@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.general;
 
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.graphics.Bitmap;
@@ -32,6 +33,20 @@ public class ProfileImageFragment extends Fragment {
 		mProfileName.setText(DineOnUserApplication.getDineOnUser().getName());
 		
 		return view;
+	}
+	
+	/**
+	 * Creates a new instance of this fragment.
+	 * @param info UserInfo of current user
+	 * @return ProfileImageFragment instance
+	 */
+	public static ProfileImageFragment newInstance(UserInfo info) {
+		// Prepare a Bundle argument
+		// for starting an activity with
+		ProfileImageFragment frag = new ProfileImageFragment();
+		Bundle args = new Bundle();
+		frag.setArguments(args);
+		return frag;
 	}
 	
 	/**
