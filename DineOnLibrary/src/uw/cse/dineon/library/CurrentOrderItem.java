@@ -105,7 +105,7 @@ public class CurrentOrderItem extends Storable {
 	@Override
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
-		po.put(MENUITEM, this.mMenuItem);
+		po.put(MENUITEM, this.mMenuItem.packObject());
 		po.put(QUANTITY, this.mQuantity);
 		return po;
 	}
@@ -121,7 +121,8 @@ public class CurrentOrderItem extends Storable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
-		dest.writeParcelable(mMenuItem, flags);
+		dest.writeParcelable(this.mMenuItem, flags);
+		dest.writeInt(this.mQuantity);
 	}
 	
 	/**
