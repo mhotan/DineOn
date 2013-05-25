@@ -2,7 +2,6 @@ package uw.cse.dineon.restaurant.active;
 
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import android.os.Bundle;

@@ -1,12 +1,6 @@
 package uw.cse.dineon.user.bill.test;
 
-import com.parse.Parse;
-import com.parse.ParseUser;
-
-import uw.cse.dineon.library.DineOnUser;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.bill.CurrentOrderActivity;
-import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class CurrentOrderActivityTest extends

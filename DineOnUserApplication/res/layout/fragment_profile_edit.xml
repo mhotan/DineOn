@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp" >
 
         <ImageButton
             android:id="@+id/image_profile_picture"
@@ -22,26 +23,29 @@
         
         <Button
             android:id="@+id/button_save_changes"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.26"
-            android:text="Save Changes" />
+            android:text="@string/save_changes" />
     </LinearLayout>
+
     <EditText
-        android:id="@+id/user_name"
+        android:id="@+id/user_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName" >
+        android:inputType="textEmailAddress" >
 
         <requestFocus />
     </EditText>
+
     <TextView
-        android:id="@+id/label_user_name"
+        android:id="@+id/label_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="@string/user_email"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginBottom="10dp" />
 
     <EditText
         android:id="@+id/user_phone"
@@ -53,8 +57,9 @@
         android:id="@+id/label_user_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phone Number"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="@string/user_phone"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginBottom="10dp" />
     
     
     <EditText
@@ -67,8 +72,9 @@
         android:id="@+id/label_old_pass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Current Password"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="@string/user_old_password"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginBottom="10dp" />
     
     <EditText
         android:id="@+id/user_new_pass"
@@ -80,7 +86,8 @@
         android:id="@+id/label_new_pass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Password"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="@string/user_new_password"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginBottom="10dp" />
     
 </LinearLayout>

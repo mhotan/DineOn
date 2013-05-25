@@ -53,7 +53,7 @@ MenuItemsFragment.MenuItemListener {
 	/**
 	 * Last used fragment string.  used to reference for fragment substitution.
 	 */
-	private static final String LAST_FRAG_TAG = "LAST_FRAG";
+	public static final String LAST_FRAG_TAG = "LAST_FRAG";
 
 	private MenuItemsFragment mItemsFragment;
 	private RestaurantInfoFragment mRestInfoFragment;

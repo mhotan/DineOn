@@ -33,21 +33,20 @@ public class ProfileActivity extends DineOnUserActivity implements
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 
 	private static final String TAG = ProfileActivity.class.getSimpleName();
-	private Fragment frag;
-
+	private final int CONTAINER_ID = 10101010;	// ID of dynamically added frame layout
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		FrameLayout frame = new FrameLayout(this);
-		frame.setId(10101010);
+		frame.setId(CONTAINER_ID);
 		setContentView(frame, 
 				new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		
-	//	setContentView(R.layout.activity_profile_and_settings);
 		if(savedInstanceState == null) {
-		frag = ProfileImageFragment.newInstance(DineOnUserApplication.getUserInfo());
+			Fragment imageFrag = ProfileImageFragment.newInstance(getInfo());
 			FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
-			ft.add(10101010, frag, "image_frag");
+			ft.add(CONTAINER_ID, imageFrag, "imageFrag");
 			ft.addToBackStack(null);
 			ft.commit();	
 		}
@@ -104,7 +103,7 @@ public class ProfileActivity extends DineOnUserActivity implements
 				ProfileEditFragment.newInstance(DineOnUserApplication.getUserInfo());
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			
-			ft.replace(10101010, frag);
+			ft.replace(CONTAINER_ID, frag);
 			ft.addToBackStack(null);
 			
 			ft.commit();

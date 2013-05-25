@@ -5,7 +5,6 @@ import java.text.NumberFormat;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
-import uw.cse.dineon.user.bill.CurrentOrderFragment.OrderUpdateListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

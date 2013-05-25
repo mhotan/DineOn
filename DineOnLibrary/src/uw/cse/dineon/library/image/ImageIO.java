@@ -3,13 +3,9 @@ package uw.cse.dineon.library.image;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
-
-import edu.umd.cs.findbugs.annotations.CleanupObligation;
 
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.content.ContentResolver;

@@ -7,7 +7,6 @@ import java.util.List;
 
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.LocatableStorable;
-import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;

@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.general;
 
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.user.R;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -45,6 +46,20 @@ public class ProfileTabsFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+	}
+	
+	/**
+	 * Creates a new instance of this fragment.
+	 * @param info UserInfo of current user
+	 * @return ProfileImageFragment instance
+	 */
+	public static ProfileTabsFragment newInstance(UserInfo info) {
+		// Prepare a Bundle argument
+		// for starting an activity with
+		ProfileTabsFragment frag = new ProfileTabsFragment();
+		Bundle args = new Bundle();
+		frag.setArguments(args);
+		return frag;
 	}
 	
 	/**
