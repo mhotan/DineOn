@@ -15,7 +15,7 @@
 
     <application
         android:name="DineOnUserApplication"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/dineonicon"
         android:label="@string/app_name" android:theme="@android:style/Theme.Holo.Light">
         <activity
             android:name="uw.cse.dineon.user.login.UserLoginActivity"

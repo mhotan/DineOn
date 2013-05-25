@@ -17,7 +17,7 @@
     
     <application
         android:name="DineOnRestaurantApplication"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/dineonicon"
         android:label="@string/app_name" 
         android:allowBackup="true" android:theme="@android:style/Theme.Holo.Light">
         <activity
