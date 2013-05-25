@@ -19,7 +19,7 @@ import com.parse.ParseUser;
  * and old restaurant transactions.
  * @author zachr81, mhotan
  */
-public class Restaurant extends LocatableStorable {
+public class Restaurant extends Storable {
 
 	/*
 	 * Abstract Representation:

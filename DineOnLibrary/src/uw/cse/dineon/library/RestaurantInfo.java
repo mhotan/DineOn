@@ -19,7 +19,7 @@ import com.parse.ParseUser;
  * @author Espeo196, mhotan
  *
  */
-public class RestaurantInfo extends Storable {
+public class RestaurantInfo extends LocatableStorable {
 
 	private static final String TAG = RestaurantInfo.class.getSimpleName();
 

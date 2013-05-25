@@ -61,8 +61,8 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 			this.mDiningSession = DineOnUserApplication.getCurrentDiningSession();
 			this.mRestaurant = this.mDiningSession.getRestaurantInfo();
 		}
-		setContentView(R.layout.activity_restaurant_home);
 		
+		setContentView(R.layout.activity_restaurant_home);
 	}
 
 	//////////////////////////////////////////////////////////////////////

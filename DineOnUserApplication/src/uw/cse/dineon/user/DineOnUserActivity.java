@@ -57,7 +57,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	/**
 	 * Satellite for communication.
 	 */
-	private UserSatellite mSat;
+	protected UserSatellite mSat;
 
 	/**
 	 * A self reference.
@@ -312,8 +312,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		// Save the ID if the user is not null
 		if (DineOnUserApplication.getDineOnUser() != null) {
-			savedInstanceState
-				.putString(DineOnConstants.KEY_USER, DineOnUserApplication.getDineOnUser().getObjId());
+			savedInstanceState.putString(DineOnConstants.KEY_USER, 
+					DineOnUserApplication.getDineOnUser().getObjId());
 		}
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -404,6 +404,18 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		mSat.requestCustomerRequest(DineOnUserApplication.getCurrentDiningSession(), cr, 
 				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
 		Toast.makeText(this, "Made Request", Toast.LENGTH_LONG).show();
+	}
+	
+	/**
+	 * Pay bill for current order.
+	 */
+	public void payBill() {
+		mSat.requestCheckOut(DineOnUserApplication.getCurrentDiningSession(), 
+				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
+		
+		// TODO Need to add a confirmation from restaurant that the user
+		// has successfully paid
+		DineOnUserApplication.setCurrentDiningSession(null);
 	}
 
 	@Override

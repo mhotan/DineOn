@@ -2,13 +2,15 @@ package uw.cse.dineon.user.bill;
 
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.bill.CurrentBillFragment.PayBillListener;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
 /**
  * Activity to maintain current user bill.
  */
-public class CurrentBillActivity extends DineOnUserActivity {
+public class CurrentBillActivity extends DineOnUserActivity
+implements PayBillListener {
 
 	public static final String EXTRA_DININGSESSION = "DININGSESSION";
 	
@@ -31,7 +33,6 @@ public class CurrentBillActivity extends DineOnUserActivity {
 		if (extras != null) {
 			String subtotal = extras.getString(EXTRA_SUBTOTALPRICE);
 			String tax = extras.getString(EXTRA_TAX);
-			String total = extras.getString(EXTRA_TOTALPRICE);
 			CurrentBillFragment frag = (CurrentBillFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.fragment_current_bill);
 			frag.setBill(subtotal, tax);
@@ -39,4 +40,8 @@ public class CurrentBillActivity extends DineOnUserActivity {
 		
 	}
 
+	@Override
+	public void payCurrentBill() {
+		super.payBill();
+	}
 }

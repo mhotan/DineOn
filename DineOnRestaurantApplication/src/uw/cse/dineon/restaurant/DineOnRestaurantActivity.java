@@ -11,7 +11,10 @@ import uw.cse.dineon.restaurant.RestaurantSatellite.SateliteListener;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -61,6 +64,11 @@ implements SateliteListener {
 	protected Restaurant mRestaurant;
 
 	private DineOnRestaurantActivity thisResActivity;
+	
+	/**
+	 * Location Listener for location based services.
+	 */
+	private RestaurantLocationListener mLocationListener;
 
 
 	/**
@@ -110,6 +118,8 @@ implements SateliteListener {
 			Utility.getGeneralAlertDialog("Uh OH!", "Doesn't look like your logged in"
 					, this).show();
 		}
+		
+		this.mLocationListener = new RestaurantLocationListener();
 	}
 
 	@Override
@@ -548,6 +558,72 @@ implements SateliteListener {
 	protected void destroyProgressDialog() {
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
+		}
+	}
+	
+	/**
+	 * Listener for getting restaurant location at creation time.
+	 * @author mtrathjen08
+	 *
+	 */
+	private class RestaurantLocationListener implements android.location.LocationListener {
+
+		/**
+		 * Location Manager for location services.
+		 */
+		private LocationManager mLocationManager;
+		
+		/**
+		 * Last received location from mananger. Initially null.
+		 */
+		private Location mLocation;
+		
+		/**
+		 * Constructor for the location listener.
+		 */
+		public RestaurantLocationListener() {
+			this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			this.mLocation = null;
+		}
+		
+		/**
+		 * Return the last recorder location of the user. Null if no update.
+		 * @return last recorder location.
+		 */
+		private Location getLastLocation() {
+			return this.mLocation;
+			// TODO add support for gps
+		}
+		
+		/**
+		 * Request a location reading from the Location Manager.
+		 */
+		private void requestLocationUpdate() {
+			this.mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
+			// TODO add support for gps
+		}
+		
+		@Override
+		public void onLocationChanged(Location loc) {
+			this.mLocation = loc;
+		}
+
+		@Override
+		public void onProviderDisabled(String arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onProviderEnabled(String arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 

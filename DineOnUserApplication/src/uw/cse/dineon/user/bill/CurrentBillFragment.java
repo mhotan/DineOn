@@ -5,6 +5,8 @@ import java.text.NumberFormat;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.bill.CurrentOrderFragment.OrderUpdateListener;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,9 +15,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 
@@ -31,13 +33,14 @@ OnClickListener {
 	private SeekBar mTipBar;
 	private int mCurTipPercent;
 	private double mSubtotal;
-	private double mTotalAmount;
 	private double mTax;
 	private Button mPayButton;
 	
 	private DiningSession mSession;
 	
-	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();;
+	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
+	
+	private PayBillListener mListener;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +69,17 @@ OnClickListener {
 		return view;
 	}
 	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if (activity instanceof PayBillListener) {
+			this.mListener = (PayBillListener) activity;
+		} else {
+			throw new ClassCastException(activity.toString()
+					+ " must implemenet CurrentBillFragment.PayBillListener");
+		}
+	}
+	
 	/**
 	 * Update the UI fragment to reflect current bill.
 	 * @param subtotal of current order
@@ -74,7 +88,6 @@ OnClickListener {
 	public void setBill(String subtotal, String tax) {
 		
 		if (this.mSession == null) {
-
 			DineOnUserApplication.getCurrentDiningSession();
 		}
 
@@ -112,10 +125,26 @@ OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		Toast.makeText(getActivity(), "Your order has been paid for.", 
+		this.mListener.payCurrentBill();
+		
+		Toast.makeText(getActivity(), "Payment Sent!", 
 				Toast.LENGTH_SHORT).show();
+		
 		getActivity().onBackPressed();
+	}
+	
+	/**
+	 * Defines an interface for the CurrentBillActivity to implement.
+	 * so that it can pay the bill using UserSatelite
+	 * @author mtrathjen08
+	 *
+	 */
+	public interface PayBillListener {
+		
+		/**
+		 * Pay the current bill by sending payment info to restaurant.
+		 */
+		public void payCurrentBill();
 	}
 
 }

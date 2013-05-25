@@ -20,8 +20,7 @@ import com.parse.SaveCallback;
  * 
  * @author mhotan
  */
-public class CurrentOrderActivity extends DineOnUserActivity { //implements
-//CurrentOrderFragment.OrderUpdateListener {
+public class CurrentOrderActivity extends DineOnUserActivity { 
 	
 	
 	private final String TAG = "CurrentOrderActivity";
