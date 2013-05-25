@@ -56,6 +56,12 @@
     <string name="button_remove_menu_item">Remove Menu Item</string>
     <string name="label_menu_item_thumbnail">Menu Item Image</string>
     <string name="dineonlogo">DineOn Logo</string>
+    <string name="content_description_delete_current_image">Delete the current selected image</string>
+    <string name="content_description_take_new_picture">Take a new picture to add it to your restaurant</string>
+    <string name="content_description_get_image_from_gallery">Select a pre existing image on your phone to add to your restaurant</string>
+    <string name="checkbox_default_image">Default</string>
+    <string name="label_address">Address</string>
+    <string name="label_phone">Phone</string>
     <string name="dineonad">DineOn Ad</string>
 
 </resources>

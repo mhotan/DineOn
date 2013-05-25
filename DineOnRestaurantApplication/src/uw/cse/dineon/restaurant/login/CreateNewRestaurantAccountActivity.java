@@ -58,17 +58,6 @@ implements CreateNewAccountListener {
 		This = this;
 	}
 
-//	/**
-//	 * This automates the addition of the User Intent. Should never be called
-//	 * when mUser is null.
-//	 * @param intent Intent
-//	 */
-//	@Override
-//	public void startActivity(Intent intent) {
-////		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
-//		super.startActivity(intent);
-//	}
-
 	@Override
 	public void submitNewAccount(String username, String email, String pw,
 			String pwRepeat) {

@@ -190,6 +190,19 @@ public class RestaurantInfo extends LocatableStorable {
 	}
 
 	/**
+	 * For a zero based index it removes the image at index.
+	 * @param index Index to remove
+	 * @return True upon success, false on failure
+	 */
+	public boolean removeImageAt(int index) {
+		if (index < 0 || index >= mImageList.size()) {
+			return false;
+		}
+		mImageList.remove(index);
+		return true;
+	}
+	
+	/**
 	 * Retrieves menu with associated name menuName.
 	 * 
 	 * @param menuName MenuName to search for

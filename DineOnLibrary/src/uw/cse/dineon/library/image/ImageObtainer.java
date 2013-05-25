@@ -1,9 +1,11 @@
 package uw.cse.dineon.library.image;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.MediaStore;
 
 /**
@@ -38,11 +40,12 @@ public final class ImageObtainer {
 	 * 
 	 * @param activity Activity to launch intent.
 	 * @param resultCode Result code that will be passed back to onActivityResult
-	 * @throws IOException If the method is not able to create a temporary file directory
+	 * @param f File to save image at
 	 */
-	public static void launchTakePictureIntent(Activity activity, int resultCode) {
+	public static void launchTakePictureIntent(Activity activity, int resultCode, File f) {
 		// Launch the intent to actually capture the image
 		Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f)); // Store the image in tis file
 		activity.startActivityForResult(i, resultCode);
 	}
 

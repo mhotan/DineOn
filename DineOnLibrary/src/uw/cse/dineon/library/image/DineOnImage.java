@@ -24,7 +24,7 @@ import com.parse.SaveCallback;
 public class DineOnImage extends TimeableStorable {
 
 	private static final String TAG = DineOnImage.class.getSimpleName();
-	
+
 	/**
 	 * Static constants to send Parse data through.
 	 */
@@ -34,13 +34,29 @@ public class DineOnImage extends TimeableStorable {
 	 * The ParseFile of this image.
 	 */
 	private ParseFile mImgFile;
+	
+	/**
+	 * Synchronized constructor for a DineOnImage.
+	 * Do not call on main thread.
+	 * 
+	 * @param b Bitmap to create image from
+	 * @throws ParseException Error occured while saving the photo 
+	 */
+	public DineOnImage(Bitmap b) throws ParseException {
+		super(DineOnImage.class);
+		updateImage(b);
+	}
 
 	/**
 	 * Create an image for the given bitmap.
 	 * Bitmap cannot be null or an Illegal Argument Exception will occur.
+	 * 
+	 * Must have network connection for this to work.
+	 * 
 	 * @param b Bitmap to create file from.
+	 * @param onSave process to call the image is finished updating.
 	 */
-	public DineOnImage(Bitmap b) {
+	public DineOnImage(Bitmap b, SaveCallback onSave) {
 		super(DineOnImage.class);
 		updateImg(b, null);
 	}
@@ -63,6 +79,22 @@ public class DineOnImage extends TimeableStorable {
 	}
 
 	/**
+	 * Synchronized call to update the bitmap image on the current thread.
+	 * This will save the image using the current thread.  Therefore asynchronous attributes
+	 * have to be supported by client. 
+	 * 
+	 * @param b bitmap to update file to.
+	 * @throws ParseException when there is no network connection.
+	 */
+	public void updateImage(Bitmap b) throws ParseException {
+		if (b == null) {
+			throw new IllegalArgumentException("DineOnImage Constructor, Bitmap cannot be null");
+		}
+		mImgFile = new ParseFile(bitmapToByteArray(b));
+		mImgFile.save(); // Asyncronous call
+	}
+	
+	/**
 	 * Updates the image content of this image.
 	 * If callback is null then the image is saved eventually at some time in the future
 	 * @param b Bitmap to update to.
@@ -73,10 +105,10 @@ public class DineOnImage extends TimeableStorable {
 			throw new IllegalArgumentException("DineOnImage Constructor, Bitmap cannot be null");
 		}
 		mImgFile = new ParseFile(bitmapToByteArray(b));
-		if (onSave == null) {
-			this.saveEventually(null);
+		if (onSave != null) {
+			mImgFile.saveInBackground(onSave);
 		} else {
-			this.saveInBackGround(onSave);
+			mImgFile.saveInBackground();
 		}
 	}
 
@@ -105,12 +137,12 @@ public class DineOnImage extends TimeableStorable {
 			} catch (ParseException e) { 
 				// Strange error happened
 				Log.e(TAG, "Unable to get data for this Image when it exists " 
-				+ "Exception: " + e.getMessage());
+						+ "Exception: " + e.getMessage());
 				callback.onImageReceived(e, null);
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets the last time the object was updated.
 	 * @return Date that this object was last updated
@@ -118,7 +150,7 @@ public class DineOnImage extends TimeableStorable {
 	public Date getLastUpdatedTime() {
 		return mCompleteObject.getUpdatedAt();
 	}
-	
+
 	/**
 	 * Checks if the data is available locally.
 	 * @return true if Image is available
@@ -137,7 +169,7 @@ public class DineOnImage extends TimeableStorable {
 		b.compress(Bitmap.CompressFormat.PNG, 100, stream);
 		return stream.toByteArray();
 	}
-	
+
 	/**
 	 * Converts a valid byte array to a Bitmap.
 	 * byte array must have been converted via bitmapToByteArray method.
@@ -147,5 +179,5 @@ public class DineOnImage extends TimeableStorable {
 	public static Bitmap byteArrayToBitmap(byte[] imgArray) {
 		return BitmapFactory.decodeByteArray(imgArray, 0, imgArray.length);
 	}
-	
+
 }

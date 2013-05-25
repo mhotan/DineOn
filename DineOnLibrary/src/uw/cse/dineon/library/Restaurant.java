@@ -304,7 +304,7 @@ public class Restaurant extends Storable {
 	 * Adds image associated to this image.
 	 * @param image Image to add.
 	 */
-	public void addImage(DineOnImage image) {
+	public synchronized void addImage(DineOnImage image) {
 		mRestInfo.addImage(image);
 	}
 	

@@ -101,8 +101,9 @@ public class ImageCache {
 		Cursor cursor = mDb.query(
 				ImageSQLiteHelper.TABLE_IMAGES, 
 				RELEVANT_COLUMNS,
-				ImageSQLiteHelper.COLUMN_PARSEID + " = " + image.getObjId(),
-				null, null, null, null);
+				ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
+				new String[] {image.getObjId()}
+				, null, null, null);
 		try {
 			// If we have something in the cache
 			// Check if we are up to date.
@@ -121,9 +122,9 @@ public class ImageCache {
 					callback.onImageReceived(null, toReturn);
 
 					// Update our database with this Image's last used to NOW.
-					Date lastUsed = Calendar.getInstance().getTime();
 					ContentValues cv = new ContentValues();
-					cv.put(ImageSQLiteHelper.COLUMN_LAST_USED, mDateFormat.format(lastUsed));
+					cv.put(ImageSQLiteHelper.COLUMN_LAST_USED, 
+							mDateFormat.format(lastUpdatedCloud));
 					String where = ImageSQLiteHelper.COLUMN_PARSEID + " = " + cursor.getString(0);
 					mDb.update(ImageSQLiteHelper.TABLE_IMAGES, cv, where, null);
 					return;
@@ -166,7 +167,7 @@ public class ImageCache {
 		values.put(ImageSQLiteHelper.COLUMN_LAST_UDPATED, 
 				mDateFormat.format(image.getLastUpdatedTime()));
 		values.put(ImageSQLiteHelper.COLUMN_LAST_USED, 
-				mDateFormat.format(Calendar.getInstance().getTime()));
+				mDateFormat.format(image.getLastUpdatedTime()));
 		values.put(ImageSQLiteHelper.COLUMN_IMG, DineOnImage.bitmapToByteArray(b));
 		long insertId = mDb.insert(ImageSQLiteHelper.TABLE_IMAGES, null, values);
 		if (insertId == -1) {
@@ -182,8 +183,8 @@ public class ImageCache {
 	public void deleteImage(DineOnImage image) {
 		mDb.delete(
 				ImageSQLiteHelper.TABLE_IMAGES, 
-				ImageSQLiteHelper.COLUMN_PARSEID + " = " + image.getObjId(),
-				null);
+				ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
+				new String[] {image.getObjId()});
 	}
 
 	/**

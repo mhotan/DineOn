@@ -49,7 +49,7 @@ public final class DineOnConstants {
 	 * For unskewed image with height h and width w
 	 * w <= LONGEST_IMAGE_DIMENSION && h <= LONGEST_IMAGE_DIMENSION
 	 */
-	public static final int LONGEST_IMAGE_DIMENSION = 2048;
+	public static final int LONGEST_IMAGE_DIMENSION = 1024;
 	
 	/**
 	 * This can be used as a generalized key for Bundles.
