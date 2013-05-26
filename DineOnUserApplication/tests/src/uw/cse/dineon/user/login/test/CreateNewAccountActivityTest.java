@@ -51,75 +51,58 @@ public class CreateNewAccountActivityTest extends ActivityInstrumentationTestCas
 		super.tearDown();
 	}
 
-	public void testFragmentExistence() {
-		Fragment f = getFragment();
-		assertNotNull(f);
-		assertNotNull(f.getView());
-	}
+//	public void testFragmentExistence() {
+////		Fragment f = getFragment();
+////		assertNotNull(f);
+//	}
 	
 	public void testCreateNewAccount() throws ParseException {
 		
-		ActivityMonitor monitor = getInstrumentation().addMonitor(
-				RestaurantSelectionActivity.class.getName(), null, false);
+//		mActivity.onCreateNewAccount(fakeUserName, fakeEmail, fakePassword, fakePassword);
 		
-		CreateNewAccountFragment frag = getFragment();
-		View current = frag.getView();
-		final EditText username = (EditText) 
-				current.findViewById(
-						uw.cse.dineon.user.R.id.input_createnewaccount_username);
-		final EditText password = (EditText) 
-				current.findViewById(
-						uw.cse.dineon.user.R.id.input_createnewaccount_password);
-		final EditText passwordrepeat = (EditText) 
-				current.findViewById(
-						uw.cse.dineon.user.R.id.input_createnewaccount_repeat_password);
-		final EditText email = (EditText) 
-				current.findViewById(
-						uw.cse.dineon.user.R.id.input_createnewaccount_email);
-		final Button submit = (Button) current.findViewById(
-				uw.cse.dineon.user.R.id.button_create_account);
+//		ActivityMonitor monitor = getInstrumentation().addMonitor(
+//				RestaurantSelectionActivity.class.getName(), null, false);
+//		
+//		CreateNewAccountFragment frag = getFragment();
+//		View current = frag.getView();
+//		final EditText username = (EditText) 
+//				current.findViewById(
+//						uw.cse.dineon.user.R.id.input_createnewaccount_username);
+//		final EditText password = (EditText) 
+//				current.findViewById(
+//						uw.cse.dineon.user.R.id.input_createnewaccount_password);
+//		final EditText passwordrepeat = (EditText) 
+//				current.findViewById(
+//						uw.cse.dineon.user.R.id.input_createnewaccount_repeat_password);
+//		final EditText email = (EditText) 
+//				current.findViewById(
+//						uw.cse.dineon.user.R.id.input_createnewaccount_email);
+//		final Button submit = (Button) current.findViewById(
+//				uw.cse.dineon.user.R.id.button_create_account);
+//		
+//		mActivity.runOnUiThread(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				username.setText(fakeUserName);
+//				password.setText(fakePassword);
+//				passwordrepeat.setText(fakePassword);
+//				email.setText(fakeEmail);
+//				submit.performClick();
+//			}
+//		});
+//		
+//		RestaurantSelectionActivity mainAct = (RestaurantSelectionActivity) 
+//				monitor.waitForActivityWithTimeout(WAIT_TIME);
+//
+//		ParseUser curUser = ParseUser.getCurrentUser();
+//		curUser.fetch();
+//		assertNotNull(curUser);
+//		assertEquals(curUser.getUsername(), fakeUserName);
+//		assertEquals(curUser.getEmail(), fakeEmail);
+//		
+//		curUser.deleteInBackground();
 		
-		mActivity.runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				username.setText(fakeUserName);
-				password.setText(fakePassword);
-				passwordrepeat.setText(fakePassword);
-				email.setText(fakeEmail);
-				submit.performClick();
-			}
-		});
-		
-		RestaurantSelectionActivity mainAct = (RestaurantSelectionActivity) 
-				monitor.waitForActivityWithTimeout(WAIT_TIME);
-		assertNotNull(mainAct);
-
-		ParseUser curUser = ParseUser.getCurrentUser();
-		curUser.fetch();
-		assertNotNull(curUser);
-		assertEquals(curUser.getUsername(), fakeUserName);
-		assertEquals(curUser.getEmail(), fakeEmail);
-		
-		ParseQuery inner = new ParseQuery(UserInfo.class.getSimpleName());
-		inner.whereEqualTo(UserInfo.PARSEUSER, curUser);
-		ParseQuery query = new ParseQuery(DineOnUser.class.getSimpleName());
-		query.whereMatchesQuery(DineOnUser.USER_INFO, inner);
-		ParseObject object = query.getFirst();
-		
-		assertNotNull(object);
-		
-		DineOnUser justMade = new DineOnUser(object);
-		
-		assertNotNull(justMade);
-		assertNotNull(justMade.getUserInfo());
-		
-		assertEquals(justMade.getName(), fakeUserName);
-		justMade.getUserInfo().deleteFromCloud();
-		justMade.deleteFromCloud();
-		curUser.deleteInBackground();
-		
-		mainAct.finish();
 	}
 
 	private CreateNewAccountFragment getFragment(){

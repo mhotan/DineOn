@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.parse.ParseUser;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
@@ -17,6 +18,7 @@ import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.test.ActivityInstrumentationTestCase2;
@@ -30,6 +32,8 @@ public class RestaurantHomeActivityTest extends
 	private ParseUser testUser1;
 	private DineOnUser dineOnUser;
 	private RestaurantInfo testRInfo;
+	private Restaurant rest;
+	private Instrumentation mInstrumentation;
 
 	public RestaurantHomeActivityTest() {
 		super(RestaurantHomeActivity.class);
@@ -37,44 +41,43 @@ public class RestaurantHomeActivityTest extends
 
 	@Override
 	protected void setUp() throws Exception {
-//		super.setUp();
-//		setActivityInitialTouchMode(false);
-//		
-//		testUser = new ParseUser();
-//		testUser.setUsername("testUser");
-//		testUser.setPassword("12345");
-//		
-//		ParseUser restUser = new ParseUser();
-//		restUser.setUsername("testRestUser");
-//		restUser.setPassword("12345");
-//		
-//		dineOnUser = new DineOnUser(testUser);
-//		
-//		Restaurant rest = new Restaurant(restUser);
-//		DiningSession ds = 
-//				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
-//		
-//		List<MenuItem> mi = TestUtility.getFakeMenuItems();
-//		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
-//		ds.addPendingOrder(one);
-//		
-//		Menu m = TestUtility.getFakeMenu();
-//		m.addNewItem(mi.get(0));
-//		rest.getInfo().addMenu(m);
-//			
-//	    Intent addEvent = new Intent();
-//	    ArrayList<Parcelable> addIntent = new ArrayList<Parcelable>();
-//	    addIntent.add(testSession);
-//	    addEvent.putParcelableArrayListExtra(DineOnConstants.KEY_DININGSESSION, addIntent);
-//	    DineOnUserApplication.setDineOnUser(dineOnUser);
-//	    setActivityIntent(addEvent);
-//		mActivity = getActivity();
+		super.setUp();
+		ParseUser user = new ParseUser();
+		user.setUsername("testUser");
+		user.setPassword("12345");
+		
+		ParseUser restUser = new ParseUser();
+		restUser.setUsername("testRestUser");
+		restUser.setPassword("12345");
+		
+		dineOnUser = new DineOnUser(user);
+		
+		rest = new Restaurant(restUser);
+		DiningSession ds = 
+				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
+		
+		List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
+		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
+		ds.addPendingOrder(one);
+		dineOnUser.setDiningSession(ds);
+		Menu m = TestUtility.createFakeMenu();
+		m.addNewItem(mi.get(0).getMenuItem());
+		rest.getInfo().addMenu(m);
+		this.setActivityInitialTouchMode(false);
+		mInstrumentation = this.getInstrumentation();
+	    Intent addEvent = new Intent();
+	    setActivityIntent(addEvent);
+	    
+	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setCurrentDiningSession(ds);
+	    
+		mActivity = getActivity();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-//		mActivity.finish();
-//		super.tearDown();
+		mActivity.finish();
+		super.tearDown();
 	}
 
 	public void testOnMenuItemFocusedOn() {

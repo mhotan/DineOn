@@ -15,41 +15,45 @@ import com.parse.ParseUser;
 
 public class DineOnUserActivityTest extends ActivityInstrumentationTestCase2<DineOnUserActivity> {
 	
+	private DineOnUser dineOnUser;
+	private DineOnUserActivity mActivity;
+
 	public DineOnUserActivityTest() {
 		super(DineOnUserActivity.class);
 	}
 
 	@Override
 	protected void setUp() throws Exception {
-//		super.setUp();
-//		setActivityInitialTouchMode(false);
-//		
-//		testUser.setUsername("User");
-//		testUser.setPassword("pass");
-//		dineOnUser = new DineOnUser(testUser);
-//		
-//	    Intent addEvent = new Intent();
-//	    DineOnUserApplication.setDineOnUser(dineOnUser);
-//	    setActivityIntent(addEvent);
-//		mActivity = getActivity();
+		super.setUp();
+		setActivityInitialTouchMode(false);
+		
+		ParseUser testUser = new ParseUser();
+		testUser.setUsername("User");
+		testUser.setPassword("pass");
+		dineOnUser = new DineOnUser(testUser);
+		
+	    Intent addEvent = new Intent();
+	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    setActivityIntent(addEvent);
+		mActivity = getActivity();
 		
 
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-//		super.tearDown();
+		super.tearDown();
 	}
 
 	public void testOnActivityResultIntIntIntent() {
-//		Intent addEvent = new Intent();
-//	    addEvent.putExtra(DineOnConstants.KEY_USER, "zach");
-//	    setActivityIntent(addEvent);
-//		mActivity.onActivityResult(1, 1, addEvent);
+		Intent addEvent = new Intent();
+	    addEvent.putExtra(DineOnConstants.KEY_USER, "User");
+	    setActivityIntent(addEvent);
+		mActivity.onActivityResult(1, 1, addEvent);
 	}
 
 	public void testStartLoginActivity() {
-//		mActivity.startLoginActivity();
+		mActivity.startLoginActivity();
 	}
 
 //	public void testOnPrepareOptionsMenuMenu() {
@@ -60,16 +64,5 @@ public class DineOnUserActivityTest extends ActivityInstrumentationTestCase2<Din
 //		assertTrue(true);
 //	}
 
-	
-	public void testOnDiningSessionRecievedCallback() {	
-//		mActivity.onInitialDiningSessionReceived(new DiningSession(2, new UserInfo(ParseUser.logIn("zach", "zach"))));
-	}
 
-	public void testOnInitialDiningSessionReceived() {
-		assertTrue(true);
-	}
-
-	public void testOnRestaurantInfoChanged() {
-		assertTrue(true);
-	} 
 }

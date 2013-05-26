@@ -1,13 +1,23 @@
 package uw.cse.dineon.user.restaurantselection.test;
 
+import java.util.Date;
+import java.util.List;
+
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.Menu;
+import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.restaurantselection.RestaurantInfoActivity;
 
 import com.parse.Parse;
 import com.parse.ParseUser;
 
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
@@ -17,6 +27,8 @@ public class RestaurantInfoActivityTest extends ActivityInstrumentationTestCase2
 	private DineOnUser dineOnUser;
 	private RestaurantInfoActivity mActivity;
 	private RestaurantInfo rInf;
+	private Instrumentation mInstrumentation;
+	private Restaurant rest;
 
 	public RestaurantInfoActivityTest() {
 		super(RestaurantInfoActivity.class);
@@ -24,21 +36,39 @@ public class RestaurantInfoActivityTest extends ActivityInstrumentationTestCase2
 
 	@Override
 	protected void setUp() throws Exception {
-//		super.setUp();
-//		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
-//		setActivityInitialTouchMode(false);
-//		
-//		testUser = ParseUser.logIn("zach", "zach");
-//		dineOnUser = new DineOnUser(testUser);
-//		DineOnUserApplication.setDineOnUser(dineOnUser);
-//		
-//		ParseUser restUser = ParseUser.logIn("r", "r");
-//		rInf = new RestaurantInfo(restUser);
-//		
-//	    Intent addEvent = new Intent();
-//	    addEvent.putExtra("RESTAURANT", rInf);
-//	    setActivityIntent(addEvent);
-//		mActivity = getActivity();
+		super.setUp();
+		ParseUser user = new ParseUser();
+		user.setUsername("testUser");
+		user.setPassword("12345");
+		
+		ParseUser restUser = new ParseUser();
+		restUser.setUsername("testRestUser");
+		restUser.setPassword("12345");
+		
+		dineOnUser = new DineOnUser(user);
+		
+		rest = new Restaurant(restUser);
+		rest.getInfo().setObjId("325rw");
+		DiningSession ds = 
+				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
+		
+		List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
+		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
+		ds.addPendingOrder(one);
+		dineOnUser.setDiningSession(ds);
+		Menu m = TestUtility.createFakeMenu();
+		m.addNewItem(mi.get(0).getMenuItem());
+		rest.getInfo().addMenu(m);
+		this.setActivityInitialTouchMode(false);
+		mInstrumentation = this.getInstrumentation();
+	    Intent addEvent = new Intent();
+	    addEvent.putExtra("RESTAURANT", rest.getInfo());
+	    setActivityIntent(addEvent);
+	    
+	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setCurrentDiningSession(ds);
+	    
+		mActivity = getActivity();
 	}
 
 	@Override
@@ -47,14 +77,7 @@ public class RestaurantInfoActivityTest extends ActivityInstrumentationTestCase2
 	}
 
 	public void testGetCurrentRestaurant() {
-//		assertEquals(rInf, mActivity.getCurrentRestaurant());
+		assertEquals(rest.getInfo(), mActivity.getCurrentRestaurant());
 	}
 	
-	public void testDeleteResume() {
-//		getInstrumentation().waitForIdleSync();
-//		mActivity.finish();
-//
-//		mActivity = getActivity();
-	}
-
 }

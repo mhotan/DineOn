@@ -177,6 +177,10 @@ public abstract class Storable implements Parcelable {
 		Storable s = (Storable) o;
 		String objId1 =s.mCompleteObject.getObjectId();
 		String objId2 = this.mCompleteObject.getObjectId();
+		
+		if(objId1 == null || objId2 == null) {
+			return false;
+		}
 		boolean eq = objId1.equals(objId2);
 		return eq;
 	}
@@ -239,5 +243,13 @@ public abstract class Storable implements Parcelable {
 	//	protected void readFromParcel(Parcel source) {
 	//		this.setObjId(source.readString());
 	//	} 
+	
+	/**
+	 * 
+	 * @param objId string to set the Parse ID to.
+	 */
+	public void setObjId(String objId) {
+		mCompleteObject.setObjectId(objId);
+	}
 
 }

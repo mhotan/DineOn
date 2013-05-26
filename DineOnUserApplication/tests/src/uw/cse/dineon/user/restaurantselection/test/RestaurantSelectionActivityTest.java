@@ -1,15 +1,25 @@
 package uw.cse.dineon.user.restaurantselection.test;
 
+import java.util.Date;
+import java.util.List;
+
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.Menu;
+import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
@@ -20,6 +30,7 @@ public class RestaurantSelectionActivityTest extends
 	private DineOnUser dineOnUser;
 	private RestaurantSelectionActivity mActivity;
 	private RestaurantInfo testRInfo;
+	private Instrumentation mInstrumentation;
 
 	public RestaurantSelectionActivityTest() {
 		super(RestaurantSelectionActivity.class);
@@ -27,22 +38,35 @@ public class RestaurantSelectionActivityTest extends
 
 	@Override
 	protected void setUp() throws Exception {
-//		super.setUp();
-//		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
-//		setActivityInitialTouchMode(false);
-//		
-//		testUser = ParseUser.logIn("zach", "zach");
-//		dineOnUser = new DineOnUser(testUser);
-//		DineOnUserApplication.setDineOnUser(dineOnUser);
-//		
-//	    Intent addEvent = new Intent();
-//	    setActivityIntent(addEvent);
-//		mActivity = getActivity();
-//		
-//		ParseQuery inner = new ParseQuery(RestaurantInfo.class.getSimpleName());
-//		inner.whereEqualTo(RestaurantInfo.PARSEUSER, ParseUser.logIn("r", "r"));
-//		ParseObject tempObj = inner.getFirst();
-//		testRInfo = new RestaurantInfo(tempObj);
+		super.setUp();
+		ParseUser user = new ParseUser();
+		user.setUsername("testUser");
+		user.setPassword("12345");
+		
+		ParseUser restUser = new ParseUser();
+		restUser.setUsername("testRestUser");
+		restUser.setPassword("12345");
+		
+		dineOnUser = new DineOnUser(user);
+		
+		Restaurant rest = new Restaurant(restUser);
+		DiningSession ds = 
+				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
+		
+		List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
+		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
+		ds.addPendingOrder(one);
+		dineOnUser.setDiningSession(ds);
+		Menu m = TestUtility.createFakeMenu();
+		m.addNewItem(mi.get(0).getMenuItem());
+		rest.getInfo().addMenu(m);
+		this.setActivityInitialTouchMode(false);
+		mInstrumentation = this.getInstrumentation();
+	    Intent addEvent = new Intent();
+	    setActivityIntent(addEvent);
+	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setCurrentDiningSession(ds);
+		mActivity = getActivity();
 	}
 
 	@Override

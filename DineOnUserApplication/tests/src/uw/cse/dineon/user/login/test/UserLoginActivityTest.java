@@ -13,6 +13,7 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.bill.CurrentBillActivity;
 import uw.cse.dineon.user.bill.CurrentOrderActivity;
@@ -37,6 +38,7 @@ public class UserLoginActivityTest extends
 	private DineOnUser dineOnUser;
 	private EditText et_uname, et_passwd;
 	private Instrumentation mInstrumentation;
+	private Restaurant rest;
 	public UserLoginActivityTest() {
 		super(UserLoginActivity.class);
 	}
@@ -44,8 +46,6 @@ public class UserLoginActivityTest extends
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
-		ParseUser.enableAutomaticUser();
 		ParseUser user = new ParseUser();
 		user.setUsername("testUser");
 		user.setPassword("12345");
@@ -56,7 +56,7 @@ public class UserLoginActivityTest extends
 		
 		dineOnUser = new DineOnUser(user);
 		
-		Restaurant rest = new Restaurant(restUser);
+		rest = new Restaurant(restUser);
 		DiningSession ds = 
 				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
 		
@@ -71,6 +71,10 @@ public class UserLoginActivityTest extends
 		mInstrumentation = this.getInstrumentation();
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);
+	    
+	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setCurrentDiningSession(ds);
+	    
 		mActivity = getActivity();
 	}
 
