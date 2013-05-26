@@ -1,13 +1,21 @@
 package uw.cse.dineon.user.restaurantselection;
 
+import com.parse.ParseException;
+import com.parse.SaveCallback;
+
+import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 /**
@@ -16,6 +24,8 @@ import android.widget.TextView;
  */
 public class RestaurantInfoFragment extends Fragment {
 
+	private final String TAG = this.getClass().getSimpleName(); 
+	
 	private RestaurantInfoListener mListener;
 	
 	private RestaurantInfo mRestaurant;
@@ -52,6 +62,14 @@ public class RestaurantInfoFragment extends Fragment {
 			// TODO set the ratings
 			
 			// TODO set the image
+			
+			View v =  view.findViewById(R.id.button_user_favorites);
+			if(v != null && v instanceof ImageButton){
+				this.determineFavorite((ImageButton) v, this.mRestaurant); 
+			}
+			else{
+				Log.d(TAG, "Button not found.");
+			}
 		}
 		
 		return view;
@@ -80,6 +98,79 @@ public class RestaurantInfoFragment extends Fragment {
 		}
 	}
 	
+	public void determineFavorite(ImageButton ib, RestaurantInfo ri){
+		DineOnUser dou = DineOnUserApplication.getDineOnUser();
+		if(dou == null){
+			Log.d(TAG, "Your DineOnUser was null.");
+			return;
+		}
+		if(this.mRestaurant == null){
+			Log.d(TAG, "The RestaurantInfo was null for some reason.");
+			return;
+		}
+		assignFavoriteImageResource(ib, dou, ri);
+		ib.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				ImageButton ib = (ImageButton) v;
+				if(ib.getTag().equals("notFavorite")){
+					favoriteRestaurant(mRestaurant);
+				}
+				else if(ib.getTag().equals("isFavorite")){
+					unFavoriteRestaurant(mRestaurant);
+				}	
+			}
+		});
+
+	}
+	
+	public void assignFavoriteImageResource(ImageButton ib,
+											DineOnUser dou,
+											RestaurantInfo ri){
+		if(! dou.isFavorite(ri)){
+			ib.setImageResource(R.drawable.addtofavorites);
+			ib.setTag("notFavorite");
+		}else{
+			ib.setImageResource(R.drawable.is_favorite);
+			ib.setTag("isFavorite");
+		}
+	}
+	
+	public void favoriteRestaurant(RestaurantInfo ri){
+		DineOnUserApplication.getDineOnUser().addFavorite(ri);
+		ImageButton ib = (ImageButton) this.getView().findViewById(R.id.button_user_favorites);
+		if(ib != null){
+			this.assignFavoriteImageResource(ib, DineOnUserApplication.getDineOnUser(), ri);
+		}
+		DineOnUserApplication.getDineOnUser().saveInBackGround(new SaveCallback(){
+			@Override
+			public void done(ParseException e) {
+				if(e != null){
+					Log.d(TAG, "the callback for saving favorited failed.\n" + e.getMessage());
+				}
+			}
+		});
+	}
+	
+	public void unFavoriteRestaurant(RestaurantInfo ri){
+		DineOnUserApplication.getDineOnUser().removeFavorite(ri);
+		ImageButton ib = (ImageButton) this.getView().findViewById(R.id.button_user_favorites);
+		if(ib != null){
+			this.assignFavoriteImageResource(ib, DineOnUserApplication.getDineOnUser(), ri);
+		}
+		DineOnUserApplication.getDineOnUser().saveInBackGround(new SaveCallback(){
+			@Override
+			public void done(ParseException e) {
+				if(e != null){
+					Log.d(TAG, "the callback for saving unfavorited failed.\n" + e.getMessage());
+				}
+			}
+		});
+	}
+
+	
+	
 	/**
 	 * Interface for Activity callbacks.
 	 * @author mhotan
@@ -105,4 +196,5 @@ public class RestaurantInfoFragment extends Fragment {
 		void setCurrentRestaurant(RestaurantInfo r);
 		
 	}
+	
 }

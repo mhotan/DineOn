@@ -57,7 +57,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 
 		// Set initial page to the menu page
 		pager.setCurrentItem(0);
-		
+				
 		return view;
 	}
 
@@ -135,6 +135,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 			return this.mRestaurantInfo.getMenuList().size() + 1;
 		}
 	}
+	
 
 	/**
 	 * TODO implement.
@@ -149,5 +150,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 		public RestaurantInfo getCurrentRestaurant();
 
 	}
+	
+	
 
 }

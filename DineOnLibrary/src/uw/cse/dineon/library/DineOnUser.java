@@ -262,5 +262,8 @@ public class DineOnUser extends Storable {
 			mDiningSession.deleteFromCloud();
 		}
 	}
-
+	
+	public boolean isFavorite(RestaurantInfo ri){
+		return this.mFavRestaurants.contains(ri);
+	}
 }

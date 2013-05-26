@@ -174,12 +174,15 @@ public abstract class Storable implements Parcelable {
 			return false;
 		}
 		Storable s = (Storable) o;
-		return s.mCompleteObject.equals(this.mCompleteObject);
+		String objId1 =s.mCompleteObject.getObjectId();
+		String objId2 = this.mCompleteObject.getObjectId();
+		boolean eq = objId1.equals(objId2);
+		return eq;
 	}
 
 	@Override
 	public int hashCode() {
-		return mCompleteObject.hashCode();
+		return mCompleteObject.getObjectId().hashCode();
 	}
 
 	/**

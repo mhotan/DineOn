@@ -11,6 +11,7 @@ import uw.cse.dineon.user.restaurantselection.RestaurantInfoFragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+
 /**
  * TODO finish.
  * @author mhotan
@@ -63,6 +64,7 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 		}
 		
 		setContentView(R.layout.activity_restaurant_home);
+		
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -116,4 +118,6 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	public void setCurrentRestaurant(RestaurantInfo r) {
 		this.mRestaurant = r;
 	}
+	
+
 }
