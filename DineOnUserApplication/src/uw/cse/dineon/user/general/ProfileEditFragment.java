@@ -68,6 +68,9 @@ public class ProfileEditFragment extends Fragment {
 			final TextView OLD_PASS = (TextView) EDIT_VIEW.findViewById(R.id.user_old_pass);
 			final TextView NEW_PASS = (TextView) EDIT_VIEW.findViewById(R.id.user_new_pass);
 			
+			((TextView)EDIT_VIEW.findViewById(R.id.label_profile_name_edit))
+					.setText(DineOnUserApplication.getUserInfo().getName());
+			
 			EMAIL.setText(DineOnUserApplication.getUserInfo().getEmail());
 			if(DineOnUserApplication.getUserInfo().getPhone() != null) {
 				PHONENUMBER.setText(DineOnUserApplication.getUserInfo().getPhone());

@@ -27,7 +27,7 @@ public class ProfileImageFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.profile_image_fragment,
+		View view = inflater.inflate(R.layout.profile_fragment,
 				container, false);
 
 		mProfileImage = (ImageView) view.findViewById(R.id.image_profile_picture);

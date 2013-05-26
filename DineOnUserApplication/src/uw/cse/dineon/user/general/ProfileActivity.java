@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -31,7 +32,9 @@ public class ProfileActivity extends DineOnUserActivity implements
 		ProfileEditFragment.InfoChangeListener {
 
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
-
+	public enum State { DEFAULT, EDIT, BACK };
+	private State state;
+	
 	private static final String TAG = ProfileActivity.class.getSimpleName();
 	private final int CONTAINER_ID = 10101010;	// ID of dynamically added frame layout
 	
@@ -50,30 +53,50 @@ public class ProfileActivity extends DineOnUserActivity implements
 			ft.addToBackStack(null);
 			ft.commit();	
 		}
+		state = State.DEFAULT;
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(android.view.Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		// Note that override this method does not mean the actualy
+		// Note that override this method does not mean the actually
 		//  UI Menu is updated this is done manually
-		//  See basic_menu under res/menu for ids
 		inflater.inflate(R.menu.profile_menu, menu);
-
-		final android.view.MenuItem ITEM = menu.findItem(R.id.option_bill);
-		ITEM.setEnabled(true);
-		ITEM.setVisible(true);
-
+	
 		final android.view.Menu M = menu;
 
 		//Sets the necessary onClickListeners for the menu
 		//items with an action layout.
+		final android.view.MenuItem ITEM = menu.findItem(R.id.option_bill);
+		ITEM.setEnabled(true);
+		ITEM.setVisible(true);
 		List<android.view.MenuItem> customActionBarButtons = new ArrayList<android.view.MenuItem>();
 		customActionBarButtons.add(menu.findItem(R.id.option_bill));
 
 		setOnClick(M, customActionBarButtons);
-
 		return true;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(android.view.Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		MenuItem m = menu.findItem(R.id.option_edit_profile);
+		if(state == State.EDIT) {
+			m.setEnabled(false);
+			m.setVisible(false);
+		} else if(state == State.BACK) {
+			state = State.DEFAULT;
+			m.setEnabled(true);
+			m.setVisible(true);
+		}
+		return true;
+		
+	}
+	
+	@Override
+	public void onBackPressed() {
+		state = State.BACK;
+		super.onBackPressed();
 	}
 	
 	/**
@@ -107,6 +130,8 @@ public class ProfileActivity extends DineOnUserActivity implements
 			ft.replace(CONTAINER_ID, frag);
 			ft.addToBackStack(null);
 			ft.commit();
+			
+			state = State.EDIT;
 			break;
 		case R.id.option_logout:
 			ParseUser.logOut();
@@ -121,7 +146,6 @@ public class ProfileActivity extends DineOnUserActivity implements
 
 	@Override
 	public void onUserInfoUpdate(UserInfo user) {
-		
 		user.saveInBackGround(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {

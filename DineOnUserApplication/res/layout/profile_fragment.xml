@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="20dp" >
+        android:layout_marginBottom="0dp"
+        android:gravity="center" >
 
         <ImageButton
             android:id="@+id/image_profile_picture"
@@ -19,27 +20,27 @@
             android:padding="0dp"
             android:contentDescription="@string/image_profile_picture_placeholder"
             android:src="@drawable/user_default_placeholder" />
-        
-        
-        <TextView
-            android:id="@+id/label_profile_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="2dp"
-            android:layout_weight="0.26"
-            android:layout_marginTop="10dp"
-            android:text="@string/label_name_placeholder"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-   
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/label_profile_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="12pt"
+        android:text="@string/label_name_placeholder"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginLeft="5dp" />
+    
     <TextView
         android:id="@+id/user_email_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/user_email"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:ems="10" />
+        android:ems="10"
+        android:layout_marginLeft="5dp" />
 
     <TextView
         android:id="@+id/label_email"
@@ -47,7 +48,9 @@
         android:layout_height="wrap_content"
         android:text="@string/user_email"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="5dp" />
 
     <TextView
         android:id="@+id/user_phone_display"
@@ -55,13 +58,17 @@
         android:layout_height="wrap_content"
         android:text="@string/user_phone"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:ems="10" />
+        android:ems="10"
+        android:layout_marginLeft="5dp" />
+    
     <TextView
         android:id="@+id/label_user_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/user_phone"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="5dp" />
     
 </LinearLayout>
