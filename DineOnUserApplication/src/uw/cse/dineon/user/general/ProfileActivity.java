@@ -25,7 +25,7 @@ import android.widget.Toast;
 /**
  * Activity that manages the profile and settings fragments.
  * 
- * @author mhotan
+ * @author mhotan, espeo196
  */
 public class ProfileActivity extends DineOnUserActivity implements 
 		ProfileEditFragment.InfoChangeListener {
@@ -59,7 +59,7 @@ public class ProfileActivity extends DineOnUserActivity implements
 		//  UI Menu is updated this is done manually
 		//  See basic_menu under res/menu for ids
 		inflater.inflate(R.menu.profile_menu, menu);
-		//Hides the 
+
 		final android.view.MenuItem ITEM = menu.findItem(R.id.option_bill);
 		ITEM.setEnabled(true);
 		ITEM.setVisible(true);
@@ -99,13 +99,13 @@ public class ProfileActivity extends DineOnUserActivity implements
 		switch (item.getItemId()) {
 		case R.id.option_edit_profile:
 			
+			// swap current fragments with editable text fields
 			Fragment frag = 
 				ProfileEditFragment.newInstance(DineOnUserApplication.getUserInfo());
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			
 			ft.replace(CONTAINER_ID, frag);
 			ft.addToBackStack(null);
-			
 			ft.commit();
 			break;
 		case R.id.option_logout:
@@ -127,7 +127,7 @@ public class ProfileActivity extends DineOnUserActivity implements
 			public void done(ParseException e) {
 				if (e == null) {
 					Toast.makeText(getApplicationContext(),
-							"User Info Updated!", Toast.LENGTH_LONG)
+							"Profile Updated!", Toast.LENGTH_LONG)
 							.show();
 				} else {
 					Log.e(TAG, e.getMessage() + " #" + e.getCode());

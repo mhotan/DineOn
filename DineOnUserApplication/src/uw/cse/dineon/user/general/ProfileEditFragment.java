@@ -54,19 +54,19 @@ public class ProfileEditFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		final UserInfo INFO = mListener.getInfo();
-		View view = inflater.inflate(R.layout.fragment_profile_edit,
+		final View EDIT_VIEW = inflater.inflate(R.layout.fragment_profile_edit,
 				container, false);
 		
 		if (INFO != null) {
 	
-			mProfileImage = (ImageButton) view.findViewById(R.id.image_profile_picture);
+			mProfileImage = (ImageButton) EDIT_VIEW.findViewById(R.id.image_profile_picture);
 			
 			
 			// Grab all of the editable text fields so that you can grab their values
-			final TextView EMAIL = (TextView) view.findViewById(R.id.user_email);
-			final TextView PHONENUMBER = (TextView) view.findViewById(R.id.user_phone);
-			final TextView OLD_PASS = (TextView) view.findViewById(R.id.user_old_pass);
-			final TextView NEW_PASS = (TextView) view.findViewById(R.id.user_new_pass);
+			final TextView EMAIL = (TextView) EDIT_VIEW.findViewById(R.id.user_email);
+			final TextView PHONENUMBER = (TextView) EDIT_VIEW.findViewById(R.id.user_phone);
+			final TextView OLD_PASS = (TextView) EDIT_VIEW.findViewById(R.id.user_old_pass);
+			final TextView NEW_PASS = (TextView) EDIT_VIEW.findViewById(R.id.user_new_pass);
 			
 			EMAIL.setText(DineOnUserApplication.getUserInfo().getEmail());
 			if(DineOnUserApplication.getUserInfo().getPhone() != null) {
@@ -76,37 +76,67 @@ public class ProfileEditFragment extends Fragment {
 			}
 			
 			
-			Button mSaveButton = (Button) view.findViewById(R.id.button_save_changes);
+			Button mSaveButton = (Button) EDIT_VIEW.findViewById(R.id.button_save_changes);
 			mSaveButton.setOnClickListener(new View.OnClickListener() {
 				
 				@Override
-				public void onClick(View v) {	
+				public void onClick(View v) {							
+					// if nothing was changed, don't make network calls
+					if(infoChanged(EDIT_VIEW)) {
+						INFO.setEmail(EMAIL.getText().toString());
+						INFO.setPhone(PhoneNumberUtils.formatNumber(
+								PHONENUMBER.getText().toString()));
 						
-					
-					INFO.setEmail(EMAIL.getText().toString());
-					INFO.setPhone(PhoneNumberUtils.formatNumber(PHONENUMBER.getText().toString()));
-					
-					// if password fields are empty don't attempt to login/change passwords
-					if(OLD_PASS.getText().toString() != null 
-							&& !OLD_PASS.getText().toString().equals("")
-							&& NEW_PASS.getText().toString() != null
+						// if password fields are empty don't attempt to login/change passwords
+						if(!OLD_PASS.getText().toString().equals("")
 							&& !NEW_PASS.getText().toString().equals("")) {
-						try {
-							ParseUser.logIn(DineOnUserApplication.getUserInfo().getName(), 
-									OLD_PASS.getText().toString());
-							DineOnUserApplication.getUserInfo()
-									.setPassword(NEW_PASS.getText().toString());
-						} catch (ParseException e) {
-							Toast.makeText(getActivity(), 
-									"Old Password doesn't match.", Toast.LENGTH_LONG).show();
-							return;
+							
+							try {
+								// login to see if old pass is valid
+								ParseUser.logIn(DineOnUserApplication.getUserInfo().getName(), 
+										OLD_PASS.getText().toString());
+								// old pass is valid, so set NEW_PASS
+								DineOnUserApplication.getUserInfo()
+										.setPassword(NEW_PASS.getText().toString());
+							} catch (ParseException e) {
+								Toast.makeText(getActivity(), 
+										"Old Password doesn't match.", Toast.LENGTH_LONG).show();
+								return;
+							}
 						}
+						mListener.onUserInfoUpdate(INFO);
+						
+						// reset password fields to empty
+						// (avoids problems with consecutive button presses)
+						OLD_PASS.setText("");
+						NEW_PASS.setText("");
 					}
-					mListener.onUserInfoUpdate(INFO);
 				}
 			});
 		}
-		return view;
+		return EDIT_VIEW;
+	}
+	
+	/**
+	 * 
+	 * @param view inflater.inflate(R.layout.fragment_profile_edit,
+					container, false)
+	 * @return true if any of the text fields were changed
+	 */
+	public boolean infoChanged(View view) {
+		// Grab all of the editable text fields so that you can grab their values
+		final TextView EMAIL = (TextView) view.findViewById(R.id.user_email);
+		final TextView PHONENUMBER = (TextView) view.findViewById(R.id.user_phone);
+		final TextView OLD_PASS = (TextView) view.findViewById(R.id.user_old_pass);
+		final TextView NEW_PASS = (TextView) view.findViewById(R.id.user_new_pass);
+		
+		
+		
+		return !EMAIL.getText().toString().equals(DineOnUserApplication.getUserInfo().getEmail())
+				|| !PHONENUMBER.getText().toString().
+					equals(DineOnUserApplication.getUserInfo().getPhone())
+				|| !OLD_PASS.getText().toString().equals("") 
+				|| !NEW_PASS.getText().toString().equals("");
 	}
 	
 	@Override

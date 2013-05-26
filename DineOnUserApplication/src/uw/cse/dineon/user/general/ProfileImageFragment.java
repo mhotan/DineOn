@@ -21,6 +21,8 @@ public class ProfileImageFragment extends Fragment {
 	
 	private ImageView mProfileImage;
 	private TextView mProfileName;
+	private TextView mProfileEmail;
+	private TextView mProfilePhone;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,8 +31,15 @@ public class ProfileImageFragment extends Fragment {
 				container, false);
 
 		mProfileImage = (ImageView) view.findViewById(R.id.image_profile_picture);
+		
 		mProfileName = (TextView) view.findViewById(R.id.label_profile_name);
 		mProfileName.setText(DineOnUserApplication.getDineOnUser().getName());
+		
+		mProfileEmail = (TextView) view.findViewById(R.id.user_email_display);
+		mProfileEmail.setText(DineOnUserApplication.getUserInfo().getEmail());
+		
+		mProfilePhone = (TextView) view.findViewById(R.id.user_phone_display);
+		mProfilePhone.setText(DineOnUserApplication.getUserInfo().getPhone());
 		
 		return view;
 	}
