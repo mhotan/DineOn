@@ -327,7 +327,7 @@ public class OrderListFragment extends ListFragment {
 			setArrow(position, arrowButton);
 
 			// Add the onclick listener that listens 
-			arrowButton.setOnClickListener(new View.OnClickListener() {
+			vwTop.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					expand(position);
 

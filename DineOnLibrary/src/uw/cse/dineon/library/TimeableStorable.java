@@ -1,6 +1,7 @@
 package uw.cse.dineon.library;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 import uw.cse.dineon.library.util.DineOnConstants;
@@ -38,7 +39,7 @@ public abstract class TimeableStorable extends Storable {
 	public TimeableStorable(Class<?> clazz, Date startDate) {
 		super(clazz);
 		if (startDate == null) {
-			startDate = new Date();
+			startDate = Calendar.getInstance().getTime();
 		}
 		mDate = startDate;
 	}

@@ -288,7 +288,7 @@ public class DiningSessionListFragment extends ListFragment {
 			//Set up expand button
 			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_user);
 			setArrow(position, arrowButton);
-			arrowButton.setOnClickListener(new View.OnClickListener() {
+			vwTop.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					expand(position);
 					if(expanded != position) {

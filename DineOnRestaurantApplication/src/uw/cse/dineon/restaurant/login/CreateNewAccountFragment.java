@@ -62,14 +62,14 @@ public class CreateNewAccountFragment extends Fragment implements OnClickListene
 	 */
 	@Override
 	public void onClick(View v) {
-		String username = mUsername.getText().toString();
-		String email = mEmail.getText().toString();
-		String pw = mPassword.getText().toString();
-		String pwRepeat = mPasswordRepeat.getText().toString();
-		mUsername.setText("");
-		mEmail.setText("");
-		mPassword.setText("");
-		mPasswordRepeat.setText("");
+		String username = mUsername.getText().toString().trim();
+		String email = mEmail.getText().toString().trim();
+		String pw = mPassword.getText().toString().trim();
+		String pwRepeat = mPasswordRepeat.getText().toString().trim();
+		mUsername.setText(username);
+		mEmail.setText(email);
+		mPassword.setText(pw);
+		mPasswordRepeat.setText(pwRepeat);
 		mListener.submitNewAccount(username, email, pw, pwRepeat);
 	}
 

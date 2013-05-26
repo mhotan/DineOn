@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
@@ -31,7 +32,7 @@ public class CreateNewRestaurantAccountActivity extends FragmentActivity
 implements CreateNewAccountListener {
 
 	private static final String TAG = CreateNewRestaurantAccountActivity.class.getSimpleName();
-	
+
 
 	/**
 	 * Progress bar dialog for showing user progress.
@@ -47,7 +48,7 @@ implements CreateNewAccountListener {
 	 * Location Listener for location based services.
 	 */
 	private RestaurantLocationListener mLocationListener;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,7 +62,7 @@ implements CreateNewAccountListener {
 			Toast.makeText(this, "Stop using an emulator idiot!", 
 					Toast.LENGTH_SHORT).show();
 		}
-		
+
 		This = this;
 	}
 
@@ -74,23 +75,19 @@ implements CreateNewAccountListener {
 		Resolution completeRes = CredentialValidator.validateAll(username, email, pw, pwRepeat);
 
 		if (completeRes.isValid() && !username.equals("")) { // Valid passwords
-			final ParseUser USER = new ParseUser();
-			USER.setUsername(username);
-			USER.setPassword(pw);
-			USER.setEmail(email);
-			USER.signUpInBackground(new RestaurantSignUpCallback(USER));
-		} 
-		else {
+			AsyncRestaurantCreator creator =  new AsyncRestaurantCreator(username, pw, email);
+			creator.execute();
+		} else {
 			Utility.getFailedToCreateAccountDialog(completeRes.getMessage(), This).show();
 		}
 	}
-	
+
 	@Override
 	protected void onPause() {
 		destroyProgressDialog();
 		super.onPause();
 	}
-	
+
 	/**
 	 * Listener for getting restaurant location at creation time.
 	 * @author mtrathjen08
@@ -102,11 +99,11 @@ implements CreateNewAccountListener {
 		 * Location Manager for location services.
 		 */
 		private LocationManager mLocationManager;
-		
+
 		private boolean waitingForLocation;
-		
+
 		private Location mLocation;
-		
+
 		/**
 		 * Constructor for the location listener.
 		 */
@@ -115,7 +112,7 @@ implements CreateNewAccountListener {
 			this.waitingForLocation = false;
 			this.mLocation = null;
 		}
-		
+
 		/**
 		 * Return the last recorder location of the user.
 		 * @return last recorder location.
@@ -124,7 +121,7 @@ implements CreateNewAccountListener {
 			return this.mLocation;
 			// TODO add support for gps
 		}
-		
+
 		/**
 		 * Request a location reading from the Location Manager.
 		 */
@@ -132,21 +129,22 @@ implements CreateNewAccountListener {
 			this.mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
 			// TODO add support for gps
 		}
-		
+
 		/**
 		 * The location was not returned before login, wait for return.
 		 */
 		public void waitForLocation() {
 			this.waitingForLocation = true;
 		}
-		
+
 		@Override
 		public void onLocationChanged(Location loc) {
 			this.mLocation = loc;
-			
+
 			if (this.waitingForLocation) {
+				destroyProgressDialog();
 				DineOnRestaurantApplication.getRestaurant().getInfo().
-					updateLocation(loc.getLongitude(), loc.getLatitude());
+				updateLocation(loc.getLongitude(), loc.getLatitude());
 				DineOnRestaurantApplication.getRestaurant().getInfo().saveInBackGround(null);
 				startMainActivity();
 			}
@@ -155,91 +153,102 @@ implements CreateNewAccountListener {
 		@Override
 		public void onProviderDisabled(String arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onProviderEnabled(String arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
 
 	/**
-	 * Private Helper Class to help create a new ParseUser.
-	 * @author mhotan 
+	 * Creates a restaurant in the back ground.
+	 * @author mhotan
 	 */
-	private class RestaurantSignUpCallback extends SignUpCallback {
+	private class AsyncRestaurantCreator extends AsyncTask<Void, Exception, Restaurant> {
 
-		private final ParseUser mCallbackParseUser;
-		
+		private final ParseUser mUser;
+
+		private Exception mError;
+
 		/**
-		 * Creates a Restaurant Sign up callback.
-		 * @param user User to sign up.
+		 * Starts the framework for creating a restaurant from credentials. 
+		 * @param name Name of the user
+		 * @param password password chosen
+		 * @param email email of the user.
 		 */
-		public RestaurantSignUpCallback(ParseUser user) {
-			mCallbackParseUser = user;
+		public AsyncRestaurantCreator(String name, String password, String email) {
+			mUser = new ParseUser();
+			mUser.setUsername(name);
+			mUser.setPassword(password);
+			mUser.setEmail(email);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			createProgressDialog();
 		}
 		
 		@Override
-		public void done(ParseException e) {
+		protected Restaurant doInBackground(Void... params) {
+			try {
+				mUser.signUp();
+				Restaurant newRest = new Restaurant(mUser);
+				newRest.saveOnCurrentThread();
+				return newRest;
+			} catch (Exception e) {
+				onProgressUpdate(e);
+			}
+			return null;
+		}
 
-			if (e == null) {
-				// Download the Restaurant
-				try {
-					final Restaurant NEWREST = new Restaurant(mCallbackParseUser);
-					NEWREST.saveInBackGround(new SaveCallback() {
-						
-						@Override
-						public void done(ParseException e) {
-							destroyProgressDialog();
-							if (e == null) {
-								// get the location of the restaurant
-								Location loc = mLocationListener.getLastLocation();
-								if (loc != null) {
-									NEWREST.getInfo().updateLocation(loc.getLongitude(), 
-												loc.getLatitude());
-									NEWREST.getInfo().saveInBackGround(null);
-									DineOnRestaurantApplication.logIn(NEWREST);
-									startMainActivity();
-								} else {
-									DineOnRestaurantApplication.logIn(NEWREST);
-									if (mLocationListener.mLocationManager.
-											getProvider(LocationManager.NETWORK_PROVIDER) == null) {
-										// we're in an emulator so don't wait
-										NEWREST.getInfo().updateLocation(0.0, 0.0);
-										NEWREST.getInfo().saveInBackGround(null);
-										startMainActivity();
-									} else {
-										mLocationListener.waitForLocation();
-									}
-								}
-							} else {
-								Utility.getFailedToCreateAccountDialog(
-										e.getMessage(), This).show();
-							}
-						}
-					});
-				} catch (ParseException e1) {
-					Utility.getFailedToCreateAccountDialog(
-							"Need to be connected to internet", This).show();
-				}
-			} else {
+		@Override
+		protected void onProgressUpdate(Exception... exception) {
+			mError = exception[0];
+		}
+
+		@Override
+		protected void onPostExecute(Restaurant rest) {
+			if (mError != null) {
 				destroyProgressDialog();
-				// Sign up didn't succeed. Look at the ParseException
-				// to figure out what went wrong
-				Utility.getFailedToCreateAccountDialog(e.getMessage(), This).show();
-				
+				Utility.getFailedToCreateAccountDialog(mError.getMessage(), This).show();
+				return;
+			} else {
+				// Obtain the location of the current restaurant
+				Location loc = mLocationListener.getLastLocation();
+				if (loc != null) {
+					destroyProgressDialog();
+					rest.getInfo().updateLocation(loc.getLongitude(), 
+							loc.getLatitude());
+					rest.getInfo().saveInBackGround(null);
+					DineOnRestaurantApplication.logIn(rest);
+					startMainActivity();
+				} else {
+					DineOnRestaurantApplication.logIn(rest);
+					if (mLocationListener.mLocationManager.
+							getProvider(LocationManager.NETWORK_PROVIDER) == null) {
+						destroyProgressDialog();
+						// we're in an emulator so don't wait
+						rest.getInfo().updateLocation(0.0, 0.0);
+						rest.getInfo().saveInBackGround(null);
+						startMainActivity();
+					} else {
+						mLocationListener.waitForLocation();
+					}
+				}
 			}
 		}
+
 	}
-	
+
 	/**
 	 * Starts the Main activity for this restaurant.
 	 */
@@ -247,6 +256,7 @@ implements CreateNewAccountListener {
 		Intent i = new Intent(this, RestauarantMainActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(i);
+		finish();
 	}
 
 	// //////////////////////////////////////////////////////////////////////
@@ -276,6 +286,6 @@ implements CreateNewAccountListener {
 			mProgressDialog.dismiss();
 		}
 	}
-	
+
 
 }

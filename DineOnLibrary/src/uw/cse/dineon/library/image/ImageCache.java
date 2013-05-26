@@ -1,10 +1,11 @@
 package uw.cse.dineon.library.image;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
-import uw.cse.dineon.library.util.DineOnConstants;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -26,7 +27,10 @@ import android.util.Log;
 public class ImageCache {
 
 	// Time before Image is marked as invalid.
+	private static final long SECOND_MS = 1000;
+	private static final long MINUTE_MS = SECOND_MS * 60;
 	private static final long EXPIRATION_TIME = 604800000; // 1 week in ms
+	private static final long OUTDATED_TIME = MINUTE_MS; // 1 minute
 	
 	private static final String TAG = ImageCache.class.getSimpleName();
 
@@ -47,7 +51,8 @@ public class ImageCache {
 	 */
 	public ImageCache(Context context) {
 		mSQLHelper = new ImageSQLiteHelper(context);
-		mDateFormat = DineOnConstants.getCurrentDateFormat();
+		// Create a date format that stays constant for data base writing and reading.
+		mDateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, Locale.US);
 	}
 
 	/**
@@ -104,54 +109,76 @@ public class ImageCache {
 				ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
 				new String[] {image.getObjId()}
 				, null, null, null);
-		try {
-			// If we have something in the cache
-			// Check if we are up to date.
-			if (cursor.moveToFirst()) {
+
+		// If we have something in the cache
+		// Check if we are up to date.
+		if (cursor.moveToFirst()) {
+
+			boolean getFromCache = false;
+			Date lastUpdatedCloud = null;
+			try {
 				// We have the image in the cache and but we have to compare if 
 				// the last time it was updated is after our last time in the cache.
-				Date lastUpdatedCloud = image.getLastUpdatedTime();
+				lastUpdatedCloud = image.getLastUpdatedTime();
 				String ourDateString = cursor.getString(1);
 				Date ourDate = mDateFormat.parse(ourDateString);
 
-				// Check if our image is the most recent one 
-				// on the server.
-				if (!ourDate.before(lastUpdatedCloud)) {
-					byte[] byteImg = cursor.getBlob(2);
-					Bitmap toReturn = DineOnImage.byteArrayToBitmap(byteImg);
-					callback.onImageReceived(null, toReturn);
+				// If our date precedes that date the image
+				// was last updated then don't get it from the cache
+				getFromCache = !isOutdated(ourDate, lastUpdatedCloud);
+			} catch (ParseException e) {
+				String message = "We (Mike) Screwed the pooch parsing Strings into Dates";
+				Log.e(TAG, message);
+				throw new RuntimeException(e);
+			}
 
-					// Update our database with this Image's last used to NOW.
-					ContentValues cv = new ContentValues();
-					cv.put(ImageSQLiteHelper.COLUMN_LAST_USED, 
-							mDateFormat.format(lastUpdatedCloud));
-					String where = ImageSQLiteHelper.COLUMN_PARSEID + " = " + cursor.getString(0);
-					mDb.update(ImageSQLiteHelper.TABLE_IMAGES, cv, where, null);
-					return;
-				}
-			} 
-			// Can reach here with two cases
-			// Case 1. Our image's last updated value in the cache is before the one on the server
-			// Case 2. We have never seen this image before.
-			// In either case we have to attempt to get the latest copy
-			// of the image. Upon successful retrieval save to Cache.
-			// Always notify the callback what has happened
-			image.getImageBitmap(new ImageGetCallback() {
+			// Check if our image is the most recent one 
+			// on the server.
+			if (getFromCache) {
+				byte[] byteImg = cursor.getBlob(2);
+				Bitmap toReturn = DineOnImage.byteArrayToBitmap(byteImg);
+				callback.onImageReceived(null, toReturn);
 
-				@Override
-				public void onImageReceived(Exception e, Bitmap b) {
-					if (e == null) {
-						// Got it from the cloud!
-						addImageToDB(image, b);
-					} // pass back the result.
-					callback.onImageReceived(e, b);
-				}
-			});
-		} catch (ParseException e) {
-			String message = "We (Mike) Screwed the pooch parsing Strings into Dates";
-			Log.e(TAG, message);
-			throw new RuntimeException(e);
-		}
+				// Update our database with this Image's last used to NOW.
+				ContentValues cv = new ContentValues();
+				cv.put(ImageSQLiteHelper.COLUMN_LAST_USED, 
+						mDateFormat.format(lastUpdatedCloud));
+				String where = ImageSQLiteHelper.COLUMN_PARSEID + " = ?";
+				mDb.update(ImageSQLiteHelper.TABLE_IMAGES, 
+						cv, where, new String[] {cursor.getString(0)});
+				return;
+			}
+		} 
+		// Can reach here with two cases
+		// Case 1. Our image's last updated value in the cache is before the one on the server
+		// Case 2. We have never seen this image before.
+		// In either case we have to attempt to get the latest copy
+		// of the image. Upon successful retrieval save to Cache.
+		// Always notify the callback what has happened
+		image.getImageBitmap(new ImageGetCallback() {
+
+			@Override
+			public void onImageReceived(Exception e, Bitmap b) {
+				if (e == null) {
+					// Got it from the cloud!
+					addImageToDB(image, b);
+				} // pass back the result.
+				callback.onImageReceived(e, b);
+			}
+		});
+
+	}
+	
+	/**
+	 * Compares our date vs the last updated date to check if our version is not to old.
+	 * 
+	 * @param ourDate Date that we save
+	 * @param lastUpdated The date th
+	 * @return true if our test is outdated compared to the last updated Date
+	 */
+	private static boolean isOutdated(Date ourDate, Date lastUpdated) {
+		long timeDiff = lastUpdated.getTime() - ourDate.getTime();
+		return timeDiff > OUTDATED_TIME;
 	}
 
 	/**
@@ -162,12 +189,13 @@ public class ImageCache {
 	 */
 	private void addImageToDB(DineOnImage image, Bitmap b) {
 		// We have all the data
+		Date lastAnything = image.getLastUpdatedTime();
+		String dateString = mDateFormat.format(lastAnything);
+
 		ContentValues values = new ContentValues();
 		values.put(ImageSQLiteHelper.COLUMN_PARSEID, image.getObjId());
-		values.put(ImageSQLiteHelper.COLUMN_LAST_UDPATED, 
-				mDateFormat.format(image.getLastUpdatedTime()));
-		values.put(ImageSQLiteHelper.COLUMN_LAST_USED, 
-				mDateFormat.format(image.getLastUpdatedTime()));
+		values.put(ImageSQLiteHelper.COLUMN_LAST_UDPATED, dateString);
+		values.put(ImageSQLiteHelper.COLUMN_LAST_USED, dateString);
 		values.put(ImageSQLiteHelper.COLUMN_IMG, DineOnImage.bitmapToByteArray(b));
 		long insertId = mDb.insert(ImageSQLiteHelper.TABLE_IMAGES, null, values);
 		if (insertId == -1) {
@@ -233,23 +261,23 @@ public class ImageCache {
 			try {
 				Cursor cursor = mDb.query(ImageSQLiteHelper.TABLE_IMAGES,
 						DELETE_COLUMNS, null, null, null, null, null);
-				
+
 				// Current time
 				Date now = Calendar.getInstance().getTime();
-				
+
 				// Iterate through all files in the database
 				while (!cursor.isAfterLast()) {
-					
+
 					// Get the last used date and compare with the current date
 					Date lastUsed = mDateFormat.parse(cursor.getString(1));
-					
+
 					// See if the time since last use is longer then expiration.
 					if (now.getTime() - lastUsed.getTime() > EXPIRATION_TIME) {
 						mDb.delete(ImageSQLiteHelper.TABLE_IMAGES,
 								ImageSQLiteHelper.COLUMN_ID + " = " + cursor.getLong(0),
 								null);
 					}
-					
+
 					// Make sure we continue the iteration.
 					cursor.moveToNext();
 				}

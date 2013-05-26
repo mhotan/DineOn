@@ -399,7 +399,6 @@ MenuItemsFragment.MenuItemListener {
 				DineOnImage image = new DineOnImage(mBitmap);
 				image.saveOnCurrentThread();
 				mRestaurant.addImage(image);
-				mRestaurant.saveOnCurrentThread();
 				return image;
 			} catch (ParseException e) {
 				Log.e(TAG, "Unable to save image exception: " + e.getMessage());

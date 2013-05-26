@@ -1,6 +1,7 @@
 package uw.cse.dineon.library.util;
 
 import java.text.DateFormat;
+import java.util.Locale;
 
 
 /**
@@ -178,7 +179,8 @@ public final class DineOnConstants {
 	 * @return Date format to use.
 	 */
 	public static DateFormat getCurrentDateFormat() { 
-		return DateFormat.getDateInstance();
+		return DateFormat.getDateTimeInstance(
+				DateFormat.FULL, DateFormat.FULL, Locale.getDefault());
 	}
 	
 }

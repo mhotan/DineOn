@@ -261,7 +261,7 @@ implements SateliteListener {
 
 	@Override
 	public void onFail(String message) {
-		Toast.makeText(this, "onFail " + message, Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "Failed to do something: " + message, Toast.LENGTH_LONG).show();
 	}
 
 	@Override
@@ -312,7 +312,6 @@ implements SateliteListener {
 		}
 
 		// TODO Validate Order
-
 		for (final DiningSession SESSION: mRestaurant.getSessions()) {
 			if (SESSION.getObjId().equals(sessionID)) {
 				// Found the correct session.
@@ -424,10 +423,17 @@ implements SateliteListener {
 			return true;
 		case R.id.item_logout:
 			if (mRestaurant != null) {
-				mRestaurant.saveEventually(null);
+				createProgressDialog(true, "Saving...", "Cleaning up and loggin out");
+				mRestaurant.saveInBackGround(new SaveCallback() {
+					
+					@Override
+					public void done(ParseException e) {
+						destroyProgressDialog();
+						DineOnRestaurantApplication.logOut();
+						startLoginActivity();
+					}
+				});
 			}
-			DineOnRestaurantApplication.logOut();
-			startLoginActivity();
 			return true;
 		default:
 		}
@@ -487,6 +493,7 @@ implements SateliteListener {
 		Intent i = new Intent(this, RestaurantLoginActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(i);
+		finish();
 	}
 
 	/**
@@ -506,14 +513,16 @@ implements SateliteListener {
 	/**
 	 * Instantiates a new progress dialog and shows it on the screen.
 	 * @param cancelable Allows the progress dialog to be cancelable.
+	 * @param title Title to show in dialog
+	 * @param message Message to show in box
 	 */
-	protected void createProgressDialog(boolean cancelable) {
+	protected void createProgressDialog(boolean cancelable, String title, String message) {
 		if (mProgressDialog != null) {
 			return;
 		}
 		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setTitle("Loading...");
-		mProgressDialog.setMessage("Getting you your restaurant");
+		mProgressDialog.setTitle(title);
+		mProgressDialog.setMessage(message);
 		mProgressDialog.setIndeterminate(true);
 		mProgressDialog.setCancelable(cancelable);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
