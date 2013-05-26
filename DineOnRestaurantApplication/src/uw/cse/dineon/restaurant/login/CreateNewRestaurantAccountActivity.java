@@ -1,5 +1,7 @@
 package uw.cse.dineon.restaurant.login;
 
+import java.util.Locale;
+
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
@@ -68,6 +70,13 @@ implements CreateNewAccountListener {
 	@Override
 	public void submitNewAccount(String username, String email, String pw,
 			String pwRepeat) {
+		
+		username = username.trim();
+		username = username.toLowerCase(Locale.getDefault());
+		email = email.trim();
+		pw = pw.trim();
+		pwRepeat = pwRepeat.trim();
+		
 		// Handle the validation
 		Resolution completeRes = CredentialValidator.validateAll(username, email, pw, pwRepeat);
 

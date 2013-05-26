@@ -3,7 +3,7 @@ package uw.cse.dineon.library.image;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
-import uw.cse.dineon.library.TimeableStorable;
+import uw.cse.dineon.library.Storable;
 import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,7 +21,7 @@ import com.parse.SaveCallback;
  * a serious performance hit depending on the size of the image. 
  * @author Michael Hotan, mhotan@cs.washington.edu
  */
-public class DineOnImage extends TimeableStorable {
+public class DineOnImage extends Storable {
 
 	private static final String TAG = DineOnImage.class.getSimpleName();
 
@@ -67,15 +67,15 @@ public class DineOnImage extends TimeableStorable {
 	 * @throws ParseException if there is not internet connection
 	 */
 	public DineOnImage(ParseObject po) throws ParseException {
-		super(po);
+		super(po); // This does an implicit fetch
 		mImgFile = po.getParseFile(IMAGE);
 	}
 
 	@Override
 	public ParseObject packObject() {
-		ParseObject po = super.packObject();
-		po.put(IMAGE, mImgFile);
-		return po;
+		// Just create a pointer so the image does not have to be updated.
+		return ParseObject.createWithoutData(
+				DineOnImage.class.getSimpleName(), getObjId());
 	}
 
 	/**
@@ -92,6 +92,8 @@ public class DineOnImage extends TimeableStorable {
 		}
 		mImgFile = new ParseFile(bitmapToByteArray(b));
 		mImgFile.save(); // Asyncronous call
+		mCompleteObject.put(IMAGE, mImgFile);
+		mCompleteObject.save();
 	}
 	
 	/**
@@ -104,12 +106,24 @@ public class DineOnImage extends TimeableStorable {
 		if (b == null) {
 			throw new IllegalArgumentException("DineOnImage Constructor, Bitmap cannot be null");
 		}
-		mImgFile = new ParseFile(bitmapToByteArray(b));
-		if (onSave != null) {
-			mImgFile.saveInBackground(onSave);
-		} else {
-			mImgFile.saveInBackground();
-		}
+		final SaveCallback LOCALCALLBACK = onSave;
+		final ParseFile FILE = new ParseFile(bitmapToByteArray(b));
+		FILE.saveInBackground(new SaveCallback() {
+			
+			@Override
+			public void done(ParseException arg0) {
+				// We successfully saved our file
+				// Now update our container object
+				mImgFile = FILE;
+				mCompleteObject.put(IMAGE, mImgFile);
+				if (LOCALCALLBACK != null) {
+					mCompleteObject.saveInBackground(LOCALCALLBACK);
+				} else {
+					mCompleteObject.saveInBackground();
+				}
+				
+			}
+		});
 	}
 
 	/**

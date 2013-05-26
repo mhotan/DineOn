@@ -104,9 +104,15 @@ MenuItemsFragment.MenuItemListener {
 		android.view.MenuItem itemProfile = menu
 				.findItem(R.id.item_restaurant_profile);
 		// Already at profile page so remove the button
+		// for profile and menu
 		if (itemProfile != null) { // If exists
 			itemProfile.setEnabled(false);
 			itemProfile.setVisible(false);
+		}
+		android.view.MenuItem itemMenu = menu.findItem(R.id.item_restaurant_menu);
+		if (itemMenu != null) {
+			itemMenu.setEnabled(false);
+			itemMenu.setVisible(false);
 		}
 
 		android.view.MenuItem itemDownload = menu.findItem(R.id.item_progress);

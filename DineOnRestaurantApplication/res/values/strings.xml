@@ -63,5 +63,6 @@
     <string name="label_address">Address</string>
     <string name="label_phone">Phone</string>
     <string name="dineonad">DineOn Ad</string>
+    <string name="item_rest_menu">Update your Menu!</string>
 
 </resources>

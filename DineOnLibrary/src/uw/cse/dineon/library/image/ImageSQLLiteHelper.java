@@ -31,12 +31,12 @@ class ImageSQLiteHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_IMG = "image";
 
 	private static final String DATABASE_NAME = "images.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_CREATE = "create table " + TABLE_IMAGES 
 			+ "(" + COLUMN_ID + " integer primary key autoincrement, " 
 			+ COLUMN_PARSEID + " text not null, "
-			+ COLUMN_LAST_UDPATED + " text not null, "
-			+ COLUMN_LAST_USED + " text not null, "
+			+ COLUMN_LAST_UDPATED + " long, "
+			+ COLUMN_LAST_USED + " long, "
 			+ COLUMN_IMG + " BLOB);";
 
 	/**

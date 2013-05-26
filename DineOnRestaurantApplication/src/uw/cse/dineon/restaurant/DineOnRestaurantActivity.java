@@ -443,7 +443,7 @@ implements SateliteListener {
 			return true;
 		case R.id.item_logout:
 			if (mRestaurant != null) {
-				createProgressDialog(true, "Saving...", "Cleaning up and loggin out");
+				createProgressDialog(true, "Saving...", "Cleaning up and logging out");
 				mRestaurant.saveInBackGround(new SaveCallback() {
 
 					@Override
@@ -454,6 +454,9 @@ implements SateliteListener {
 					}
 				});
 			}
+			return true;
+		case R.id.item_restaurant_menu:
+			startProfileActivity();
 			return true;
 		default:
 		}
