@@ -32,6 +32,10 @@ public class ProfileActivity extends DineOnUserActivity implements
 		ProfileEditFragment.InfoChangeListener {
 
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+	
+	/**
+	 * Enums for keeping track of state.
+	 */
 	public enum State { DEFAULT, EDIT, BACK };
 	private State state;
 	
@@ -79,7 +83,6 @@ public class ProfileActivity extends DineOnUserActivity implements
 	
 	@Override
 	public boolean onPrepareOptionsMenu(android.view.Menu menu) {
-		super.onPrepareOptionsMenu(menu);
 		MenuItem m = menu.findItem(R.id.option_edit_profile);
 		if(state == State.EDIT) {
 			m.setEnabled(false);
@@ -88,9 +91,17 @@ public class ProfileActivity extends DineOnUserActivity implements
 			state = State.DEFAULT;
 			m.setEnabled(true);
 			m.setVisible(true);
+		}		
+
+		// If checked in
+		if(DineOnUserApplication.getCurrentDiningSession() != null) {
+			disableMenuItem(menu, R.id.option_check_in);
+			enableMenuItem(menu, R.id.option_bill);
+		} else { // If not checked in
+			enableMenuItem(menu, R.id.option_check_in);
+			disableMenuItem(menu, R.id.option_bill);
 		}
-		return true;
-		
+		return true;		
 	}
 	
 	@Override
