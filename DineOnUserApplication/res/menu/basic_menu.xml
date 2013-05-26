@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/option_search"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="@drawable/action_search"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:title="@string/search_restaurant">
+    </item>
+    <item
         android:id="@+id/option_profile"
         android:showAsAction="never"
         android:title="@string/option_profile">
@@ -19,18 +26,16 @@
     <item
         android:id="@+id/option_check_in"
         android:layout_width="wrap_content"
-        android:showAsAction="always"
-        android:title="@string/button_check_in"
         android:actionLayout="@layout/action_button_checkin"
-        >
+        android:showAsAction="always"
+        android:title="@string/button_check_in">
     </item>
     <item
         android:id="@+id/option_bill"
         android:layout_width="wrap_content"
-        android:showAsAction="always"
-        android:title="@string/button_bill"
         android:actionLayout="@layout/action_button_bill"
-        >
+        android:showAsAction="always"
+        android:title="@string/button_bill">
     </item>
 
 </menu>

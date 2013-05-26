@@ -26,6 +26,7 @@ import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import uw.cse.dineon.user.restaurant.home.SubMenuFragment;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -36,6 +37,8 @@ import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -68,12 +71,12 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	private DineOnUserActivity thisActivity;
 
 	private HashMap<MenuItem, CurrentOrderItem> mMenuItemMappings;
-	
+
 	/**
 	 * Location Listener for location based services.
 	 */
 	private UserLocationListener mLocationListener;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,9 +89,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			Utility.getBackToLoginAlertDialog(this, 
 					"Unable to find your information", UserLoginActivity.class).show();
 		}
-		
-		this.mMenuItemMappings = new HashMap<MenuItem, CurrentOrderItem>();
-		
+
+		this.mMenuItemMappings = new HashMap<MenuItem, CurrentOrderItem>();		
 		this.mLocationListener = new UserLocationListener();
 		try {
 			this.mLocationListener.requestLocationUpdates();
@@ -97,6 +99,37 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			Toast.makeText(this, "Your running on an emulator dip shit.", 
 					Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		handleSearchIntent(intent);
+	}
+
+
+	/**
+	 * Given an intent where the user request to search something, 
+	 * process the query and react accordingly.
+	 * 
+	 * @param intent intent
+	 */
+	private void handleSearchIntent(Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			this.onSearch(intent.getStringExtra(SearchManager.QUERY));
+		}
+	}
+
+	/**
+	 * Method where sub activities can override to receive specific search request for example.
+	 * 
+	 * IE the activity can expose a search view and to the user and just react to user request
+	 * with this method.
+	 * 
+	 * @param query Query user is requesting
+	 */
+	protected void onSearch(String query) {
+		// TODO Implement Parse Query
+		Log.d(TAG, "User requested a search for " + query);
 	}
 
 	/**
@@ -129,7 +162,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		super.onResume();
 		mSat.register(DineOnUserApplication.getDineOnUser(), thisActivity);
 		intializeUI();
-		
+
 	}
 
 	@Override
@@ -189,8 +222,32 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		List<android.view.MenuItem> customActionBarButtons = new ArrayList<android.view.MenuItem>();
 		customActionBarButtons.add(menu.findItem(R.id.option_bill));
 		customActionBarButtons.add(menu.findItem(R.id.option_check_in));
-
 		setOnClick(M, customActionBarButtons);
+
+		final SearchView SEARCHVIEW = (SearchView) 
+				menu.findItem(R.id.option_search).getActionView();
+
+		// Enable the search widget in the action bar
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		if (searchManager != null) {
+			SEARCHVIEW.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+		}
+
+		SEARCHVIEW.setIconified(true);
+		SEARCHVIEW.setOnQueryTextListener(new OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				// Make the call to search for a particular restaurant
+				onSearch(query);
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) { // Do nothing
+				return false;
+			}
+		});
 
 		return true;
 	}
@@ -242,13 +299,25 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			return true;
 		}
 
+		SearchView searchView = (SearchView) menu.findItem(R.id.option_search).getActionView();
+
+		// If checked in
 		if(DineOnUserApplication.getCurrentDiningSession() != null) {
 			disableMenuItem(menu, R.id.option_check_in);
 			enableMenuItem(menu, R.id.option_bill);
+			if (searchView != null) {
+				searchView.setEnabled(false);
+				searchView.setVisibility(View.INVISIBLE);
+			}
 		} 
-		else {
+		else { // If not checked in
 			enableMenuItem(menu, R.id.option_check_in);
+			enableMenuItem(menu, R.id.option_search);
 			disableMenuItem(menu, R.id.option_bill);
+			if (searchView != null) {
+				searchView.setEnabled(true);
+				searchView.setVisibility(View.VISIBLE);
+			}
 		}
 
 		return true;
@@ -363,7 +432,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		final DiningSession M_SESSION = session;
 		DineOnUserApplication.setCurrentDiningSession(session);
 		DineOnUserApplication.getDineOnUser().saveInBackGround(new SaveCallback() {
-			
+
 			@Override
 			public void done(ParseException e) {
 				if (e == null) {
@@ -388,7 +457,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		DineOnUserApplication.setCurrentDiningSession(dsession);
 		startActivity(i);
 	}
-	
+
 	@Override
 	public void onRestaurantInfoChanged(RestaurantInfo restaurant) {
 		// TODO Auto-generated method stub
@@ -412,7 +481,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "onConfirmReservation", Toast.LENGTH_SHORT).show();
 	}
-	
+
 	/**
 	 * 
 	 * @param cr CustomerRequest to place
@@ -422,14 +491,14 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
 		Toast.makeText(this, "Made Request", Toast.LENGTH_LONG).show();
 	}
-	
+
 	/**
 	 * Pay bill for current order.
 	 */
 	public void payBill() {
 		mSat.requestCheckOut(DineOnUserApplication.getCurrentDiningSession(), 
 				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
-		
+
 		// TODO Need to add a confirmation from restaurant that the user
 		// has successfully paid
 		DineOnUserApplication.setCurrentDiningSession(null);
@@ -438,13 +507,13 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	@Override
 	public void onMenuItemFocusedOn(uw.cse.dineon.library.MenuItem menuItem) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onRestaurantInfoRequested() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -479,7 +548,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	public void onRemoveItemFromOrder(MenuItem item) {
 		DineOnUserApplication.removeItemInCurrentOrder(item);
 	}
-	
+
 	@Override
 	public void onMenuItemIncremented(MenuItem item) {
 		DineOnUserApplication.incrementItemInCurrentOrder(item);
@@ -499,7 +568,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	public void resetCurrentOrder() {
 		DineOnUserApplication.clearCurrentOrder();
 	}
-	
+
 	/**
 	 * Listener for getting restaurant location at creation time.
 	 * @author mtrathjen08
@@ -511,12 +580,12 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		 * Location Manager for location services.
 		 */
 		private LocationManager mLocationManager;
-		
+
 		/**
 		 * Last received location from mananger. Initially null.
 		 */
 		private Location mLocation;
-		
+
 		/**
 		 * Constructor for the location listener.
 		 */
@@ -524,7 +593,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 			this.mLocation = null;
 		}
-		
+
 		/**
 		 * Return the last recorder location of the user. Null if no update.
 		 * @return last recorder location.
@@ -533,7 +602,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			return this.mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 			// TODO add support for gps
 		}
-		
+
 		/**
 		 * Request a location reading from the Location Manager.
 		 */
@@ -547,7 +616,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 					this);
 			// TODO add support for gps
 		}
-		
+
 		@Override
 		public void onLocationChanged(Location loc) {
 			this.mLocation = loc;
@@ -556,22 +625,22 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		@Override
 		public void onProviderDisabled(String arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onProviderEnabled(String arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
-	
+
 	/**
 	 * Return the last location updated by the location manager.
 	 * @return last known location.

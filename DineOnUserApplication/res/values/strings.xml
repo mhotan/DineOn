@@ -63,6 +63,7 @@
     <string name="husky_soft_logo">HuskySoft Logo</string>
     <string name="save_changes">Save Changes</string>
     <string name="option_edit_profile">Edit Profile</string>
+    <string name="search_restaurant">Search for Restaurant</string>
     <string name="user_old_password">Old Password</string>
     <string name="user_email">Email</string>
     <string name="user_new_password">New Password</string>

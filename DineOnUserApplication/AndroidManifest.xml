@@ -4,67 +4,101 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="17"/>
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	<uses-permission android:name="android.permission.VIBRATE" />
-	
-	<uses-permission android:name="android.permission.CAMERA"/>
-	
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name="DineOnUserApplication"
         android:icon="@drawable/dineonicon"
-        android:label="@string/app_name" android:theme="@android:style/Theme.Holo.Light">
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Holo.Light" >
         <activity
             android:name="uw.cse.dineon.user.login.UserLoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <receiver android:name="com.parse.ParseBroadcastReceiver">
-	  		<intent-filter>
-	    		<action android:name="android.intent.action.BOOT_COMPLETED" />
-	    		<action android:name="android.intent.action.USER_PRESENT" />
-	  		</intent-filter>
-		</receiver>
-		
-        <activity android:name="com.google.zxing.client.android.CaptureActivity"
-   			android:screenOrientation="landscape"
-   			android:configChanges="orientation|keyboardHidden"
-   			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-   			android:windowSoftInputMode="stateAlwaysHidden">
-   			<intent-filter>
-      			<action android:name="android.intent.action.MAIN"/>
-      			<category android:name="android.intent.category.DEFAULT"/>
-   			</intent-filter>
-   			<intent-filter>
-      			<action android:name="com.google.zxing.client.android.SCAN"/>
-      			<category android:name="android.intent.category.DEFAULT"/>
-    		</intent-filter>
-		</activity>
- 
+
+        <receiver android:name="com.parse.ParseBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="com.google.zxing.client.android.CaptureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.zxing.client.android.SCAN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <service android:name="com.parse.PushService" />
-        <activity android:name=".login.CreateNewAccountActivity"></activity>
-        <activity android:name=".restaurantselection.RestaurantInfoActivity"></activity>
-        <activity android:name=".restaurantselection.RestaurantSelectionActivity"></activity>
-        <activity android:name=".restaurant.home.MenuItemDetailActivity"></activity>
-        <activity android:name=".restaurant.home.RestaurantHomeActivity"></activity>
-        <activity android:name=".checkin.CheckInActivity"></activity>
-        <activity android:name=".bill.CurrentBillActivity"></activity>
-        <activity android:name=".bill.CurrentOrderActivity"></activity>
-        <activity android:name="DineOnUserActivity"></activity>
-        <activity android:name=".general.UserPreferencesActivity"></activity>
-        <activity android:name=".general.ProfileActivity"></activity>
-        <meta-data android:value="@string/facebook_app_id" android:name="com.facebook.sdk.ApplicationId"/>
-        <activity android:name="com.facebook.LoginActivity" android:label="@string/app_name"></activity>
-        <activity android:name=".general.ProfileEditActivity"></activity>
+
+        <activity android:name=".login.CreateNewAccountActivity" >
+        </activity>
+        <activity android:name=".restaurantselection.RestaurantInfoActivity" >
+        </activity>
+        <activity android:name=".restaurantselection.RestaurantSelectionActivity" >
+        </activity>
+        <activity android:name=".restaurant.home.MenuItemDetailActivity" >
+        </activity>
+        <activity android:name=".restaurant.home.RestaurantHomeActivity" >
+        </activity>
+        <activity android:name=".checkin.CheckInActivity" >
+        </activity>
+        <activity android:name=".bill.CurrentBillActivity" >
+        </activity>
+        <activity android:name=".bill.CurrentOrderActivity" >
+        </activity>
+        <activity
+            android:name=".DineOnUserActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable_action_bar" />
+        </activity>
+        <activity android:name=".general.UserPreferencesActivity" >
+        </activity>
+        <activity android:name=".general.ProfileActivity" >
+        </activity>
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity
+            android:name="com.facebook.LoginActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity android:name=".general.ProfileEditActivity" >
+        </activity>
     </application>
 
 </manifest>
