@@ -1,8 +1,10 @@
 package uw.cse.dineon.user.login;
 
+import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +54,21 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 				mListener.onLoginWithFacebook();
 			}
 		});
+		
+		Button createAccount = (Button) view.findViewById(R.id.button_create_account);
+		createAccount.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				createNewAccount();
+			}
+		});
+		
+		Button forgotPassword = (Button) view.findViewById(R.id.button_forgot_password);
+		forgotPassword.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				DevelopTools.getUnimplementedDialog(getActivity(), null).show();
+			}
+		});
+		
 		//TODO Save for later
 //		Button twitterLoginButton = (Button) view.findViewById(R.id.button_twitter_login);
 //		twitterLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +80,14 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 		return view;
 	}
 
-
+	/**
+	 * Attempts to create new account. Uses another activity to create this
+	 * account.
+	 */
+	private void createNewAccount() {
+		Intent i = new Intent(getActivity(), CreateNewAccountActivity.class);
+		startActivity(i);
+	}
 	
 	@Override
 	public void onAttach(Activity activity) {

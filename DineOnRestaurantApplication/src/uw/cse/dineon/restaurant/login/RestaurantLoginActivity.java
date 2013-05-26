@@ -84,30 +84,6 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		// Note that override this method does not mean the actually
-		// UI Menu is updated this is done manually
-		// See basic_menu under res/menu for ids
-		inflater.inflate(R.menu.login_menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		if (id == R.id.option_create_new_account) {
-			createNewAccount();
-			return true;
-		} else if (id == R.id.option_forgot_password) {
-			// TODO Implement - Beta Phase?
-			DevelopTools.getUnimplementedDialog(this, null).show();
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public void onLogin(String username, String password) {
 		createProgressDialog();
 

@@ -106,31 +106,6 @@ LoginFragment.OnLoginListener {
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		// Note that override this method does not mean the actualy 
-		//  UI Menu is updated this is done manually
-		//  See basic_menu under res/menu for ids
-		inflater.inflate(R.menu.login_menu, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.option_forgot_password: 
-			// TODO Implement
-			DevelopTools.getUnimplementedDialog(this, null).show();
-		case R.id.option_create_new_account:
-			onCreateNewAccount();
-			break;
-		default:
-			Log.w(TAG, "Unknown Options Item pressed");
-		}
-		return true;
-	}
-
 	////////////////////////////////////////////////////////////////////////
 	/////  Private Helper methods for starting new activities
 	////////////////////////////////////////////////////////////////////////

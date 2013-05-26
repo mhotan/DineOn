@@ -1,7 +1,9 @@
 package uw.cse.dineon.restaurant.login;
 
+import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -29,11 +31,35 @@ public class LoginFragment extends Fragment implements OnClickListener {
 		Button button = (Button) view.findViewById(R.id.button_login);
 		button.setOnClickListener(this);
 		
+		Button createAccount = (Button) view.findViewById(R.id.button_create_account);
+		createAccount.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				createNewAccount();
+			}
+		});
+		
+		Button forgotPassword = (Button) view.findViewById(R.id.button_forgot_password);
+		forgotPassword.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				DevelopTools.getUnimplementedDialog(getActivity(), null).show();
+			}
+		});
+		
+		
 		mEmailInput = (EditText) view.findViewById(R.id.input_restaurant_login_name);		
 		mPasswordInput = (EditText) view.findViewById(R.id.input_password);
 		return view;
 	}
 
+	/**
+	 * Attempts to create new account. Uses another activity to create this
+	 * account.
+	 */
+	private void createNewAccount() {
+		Intent i = new Intent(getActivity(), CreateNewRestaurantAccountActivity.class);
+		startActivity(i);
+	}
+	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
