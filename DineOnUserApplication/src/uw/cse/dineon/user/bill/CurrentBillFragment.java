@@ -84,7 +84,7 @@ OnClickListener {
 	 * @param subtotal of current order
 	 * @param tax for current order
 	 */
-	public void setBill(String subtotal, String tax) {
+	public void setBill(double subtotal, double tax) {
 		
 		if (this.mSession == null) {
 			DineOnUserApplication.getCurrentDiningSession();
@@ -92,11 +92,11 @@ OnClickListener {
 
 		mTitle.setText("Current Bill for " + mSession.getRestaurantInfo().getName());
 		
-		mSubTotal.setText(subtotal);
-		mTotalTax.setText(tax);
+		mSubTotal.setText(this.mFormatter.format(subtotal));
+		mTotalTax.setText(this.mFormatter.format(tax));
 		
-		this.mSubtotal = Double.parseDouble(subtotal.substring(1));
-		this.mTax = Double.parseDouble(tax.substring(1));
+		this.mSubtotal = subtotal;
+		this.mTax = tax;
 		double tipAmount = ((double)mCurTipPercent / 100.0) * (this.mTax + this.mSubtotal);
 		double totalPrice = this.mSubtotal + this.mTax + tipAmount;
 		mTip.setText(" " + mCurTipPercent + "%,  $" + String.format("%.2f", tipAmount));
@@ -125,11 +125,6 @@ OnClickListener {
 	@Override
 	public void onClick(View v) {
 		this.mListener.payCurrentBill();
-		
-		Toast.makeText(getActivity(), "Payment Sent!", 
-				Toast.LENGTH_SHORT).show();
-		
-		getActivity().onBackPressed();
 	}
 	
 	/**

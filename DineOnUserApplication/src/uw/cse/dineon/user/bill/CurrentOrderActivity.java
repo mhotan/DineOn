@@ -63,19 +63,8 @@ public class CurrentOrderActivity extends DineOnUserActivity {
 		
 		switch (item.getItemId()) {
 		case R.id.option_paybill:
-//			CurrentOrderFragment fragment = (CurrentOrderFragment)
-//			getSupportFragmentManager().findFragmentById(R.id.fragment_current_order);
 			Intent intent = new Intent(getApplicationContext(),
 					CurrentBillActivity.class);
-//			if (fragment != null) {
-//				String subtotal = fragment.getSubtotal();
-//				String tax = fragment.getTax();
-//				String total = fragment.getTotal();
-//				intent.putExtra(CurrentBillActivity.EXTRA_SUBTOTALPRICE, subtotal);
-//				intent.putExtra(CurrentBillActivity.EXTRA_TAX, tax);
-//				intent.putExtra(CurrentBillActivity.EXTRA_TOTALPRICE, total);
-//			}
-//			startActivityForResult(intent, DineOnConstants.REQUEST_PAY_BILL);
 			startActivity(intent);
 			break;
 		default:

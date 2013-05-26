@@ -3,6 +3,7 @@
 package uw.cse.dineon.user.restaurantselection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import uw.cse.dineon.library.DiningSession;
@@ -10,6 +11,7 @@ import uw.cse.dineon.library.LocatableStorable;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import android.app.ActionBar;
@@ -78,8 +80,9 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		mRestaurants = new ArrayList<RestaurantInfo>();
 		
 		// TODO for now get all restaurants
-		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
-		queryForRestaurants(query);
+		//ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		//queryForRestaurants(query);
+		onShowUserFavorites();
 	}
 	
 	/**
@@ -87,6 +90,7 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	 */
 	public void addListOfRestaurantInfos() {
 		addRestaurantInfos(this.mRestaurants);
+		this.mRestaurants.clear();
 	}
 	
 	/**
@@ -161,6 +165,11 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		}
 	}
 
+	@Override
+	protected void onSearch(String query) {
+		onSearchForRestaurantByName(query);
+	}
+	
 	/**
 	 * Search for a restaurant by name.
 	 * @param name name of restaurant
@@ -169,7 +178,7 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		createProgressDialog();
 		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		query.whereEqualTo(RestaurantInfo.NAME, name);
-		queryForRestaurants(query);
+		queryForRestaurants(query, "No restaurants mtach. Check spelling.");
 	}
 
 	@Override
@@ -181,7 +190,8 @@ RestaurantInfoFragment.RestaurantInfoListener {
 			query.whereWithinMiles(LocatableStorable.LOCATION, 
 					new ParseGeoPoint(lastLoc.getLatitude(), lastLoc.getLongitude()), 
 					DineOnConstants.MAX_RESTAURANT_DISTANCE);
-			queryForRestaurants(query);
+			queryForRestaurants(query, 
+					"There are no restaurants nearby. Your in the middle of nowhere.");
 		} else {
 			Toast.makeText(this, "You don't have location info stupid!", 
 					Toast.LENGTH_SHORT).show();
@@ -199,17 +209,24 @@ RestaurantInfoFragment.RestaurantInfoListener {
 
 	@Override
 	public void onShowUserFavorites() {
-		// TODO
-		//createProgressDialog();
-		//ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		createProgressDialog();
+		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		String[] objIds = new String[DineOnUserApplication.getDineOnUser().getFavs().size()];
+		List<RestaurantInfo> favs = DineOnUserApplication.getDineOnUser().getFavs();
+		for (int i = 0; i < favs.size(); i++) {
+			objIds[i] = favs.get(i).getObjId();
+		}
+		query.whereContainedIn("objectId", Arrays.asList(objIds));
+		queryForRestaurants(query, "No restaurants in your favorites. Add some.");
 	}
 	
 	/**
 	 * Query for restaurants using attributes set and populate selection list.
 	 * on return
 	 * @param query parse query object to query restaurants.
+	 * @param message message to display if no restaurant found.
 	 */
-	public void queryForRestaurants(ParseQuery query) {
+	public void queryForRestaurants(ParseQuery query, final String message) {
 		query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
 		query.setLimit(DineOnConstants.MAX_RESTAURANTS); 
 		query.findInBackground(new FindCallback() {
@@ -229,7 +246,7 @@ RestaurantInfoFragment.RestaurantInfoListener {
 					}
 					destroyProgressDialog();
 					if (objects.size() == 0) {
-						showNoRestaurantsDialog("Couldn't get restaurants");
+						showNoRestaurantsDialog(message);
 					} else {
 						addListOfRestaurantInfos();
 					}
@@ -272,8 +289,8 @@ RestaurantInfoFragment.RestaurantInfoListener {
 			return;
 		}
 		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setTitle("Loading your restaurants.");
-		mProgressDialog.setMessage("Loading...");       
+		mProgressDialog.setTitle("Getting restaurants.");
+		mProgressDialog.setMessage("Searching...");       
 		mProgressDialog.setIndeterminate(true);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		mProgressDialog.show();
@@ -293,16 +310,6 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	 * @param message message to show
 	 */
 	public void showNoRestaurantsDialog(String message) {
-		AlertDialog.Builder b = new Builder(this);
-		b.setTitle("Couldn't find any restaurants.");
-		b.setMessage(message);
-		b.setCancelable(true);
-		b.setPositiveButton("Try Again", new OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-			}
-		}).show();
+		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
 }

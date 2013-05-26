@@ -40,7 +40,7 @@ public class RestaurantListFragment extends ListFragment {
 			mRestaurants = mListener.getRestaurants();
 		}
 		
-		mAdapter = new RestaurantListAdapter(this.getActivity(), mRestaurants);
+		mAdapter = new RestaurantListAdapter(this.getActivity(), new ArrayList<RestaurantInfo>());
 		setListAdapter(mAdapter);
 	}
 
@@ -61,11 +61,10 @@ public class RestaurantListFragment extends ListFragment {
 	 * @param infos info to add.
 	 */
 	public void addRestaurantInfos(List<RestaurantInfo> infos) {
-		//this.mAdapter.clear();
+		this.mAdapter.clear();
 		for (RestaurantInfo r : infos) {
 			this.mAdapter.add(r);
 		}
-		this.mAdapter.notifyDataSetChanged();
 	}
 
 	/**
@@ -176,8 +175,16 @@ public class RestaurantListFragment extends ListFragment {
 		
 		@Override
 		public void add(RestaurantInfo r) {
-			//super.add(r);
+			super.add(r);
 			this.mValues.add(r);
+			this.notifyDataSetChanged();
+		}
+		
+		@Override
+		public void clear() {
+			super.clear();
+			this.mValues.clear();
+			this.notifyDataSetChanged();
 		}
 
 		@Override

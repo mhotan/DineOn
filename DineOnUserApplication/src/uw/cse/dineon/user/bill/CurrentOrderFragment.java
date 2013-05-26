@@ -452,6 +452,8 @@ extends Fragment implements OnClickListener {
 								if (e == null) {
 									// successful, send the push notification
 									mListener.onPlaceOrder(NEW_ORDER);
+									mAdapter.clear();
+									mAdapter.notifyDataSetChanged();
 								} else {
 									Log.d(TAG, "Couldn't save the new order: " + e.getMessage());
 								}
