@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 /**
- * TODO finish.
  * @author mhotan
  */
 public class RestaurantSelectionButtonsFragment extends Fragment 

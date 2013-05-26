@@ -77,7 +77,6 @@ public class DineOnUser extends Storable {
 		mUserInfo = new UserInfo(po.getParseObject(USER_INFO));
 		mFavRestaurants = ParseUtil.toListOfStorables(
 				RestaurantInfo.class, po.getList(FAVORITE_RESTAURANTS)); 
-		//TODO Unpack All the list of storables
 		mReservations = ParseUtil.toListOfStorables(
 				Reservation.class, po.getList(RESERVATIONS)); 
 		mFriendsLists = ParseUtil.toListOfStorables(
@@ -263,7 +262,12 @@ public class DineOnUser extends Storable {
 		}
 	}
 	
-	public boolean isFavorite(RestaurantInfo ri){
+	/**
+	 * 
+	 * @param ri RestaurantInfo
+	 * @return true if restaurant is a favorite of the user
+	 */
+	public boolean isFavorite(RestaurantInfo ri) {
 		return this.mFavRestaurants.contains(ri);
 	}
 }

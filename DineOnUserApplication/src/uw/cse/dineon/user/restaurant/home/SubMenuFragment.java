@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 /**
  * A list of sub menu items.
- * TODO 
  * @author mhotan
  */
 public class SubMenuFragment extends ListFragment {
@@ -79,7 +78,7 @@ public class SubMenuFragment extends ListFragment {
 	///
 
 	/**
-	 * TODO Adapter for MenuItems.
+	 * Adapter for MenuItems.
 	 * @author mhotan
 	 */
 	private class MenuItemListAdapter extends ArrayAdapter<MenuItem> {
@@ -90,7 +89,6 @@ public class SubMenuFragment extends ListFragment {
 		/**
 		 * This is a runtime mapping between "Increment and decrement button"
 		 * and there respective menu item.
-		 * TODO Change String to menuitem;
 		 * NOTE (MH): Not exactly sure if this is the best solution
 		 */
 		private final HashMap<NumberPicker, MenuItem> mPickerMapping;
@@ -159,7 +157,7 @@ public class SubMenuFragment extends ListFragment {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.listitem_menuitem, parent, false);
 			
-			// TODO Here is where we adjust the contents of the list row
+			// Here is where we adjust the contents of the list row
 			// with attributes determined by the menu item
 			// Now we are just setting the text to be the name of the menu item
 			
@@ -213,17 +211,14 @@ public class SubMenuFragment extends ListFragment {
 		public void onMenuItemDecremented(MenuItem menuItem);
 
 		/**
-		 * TODO implement.
 		 */
 		public void onRestaurantInfoRequested();
 	
 		/**
-		 * TODO implement.
 		 */
 		public void onViewCurrentBill();
 		
 		/**
-		 * TODO change to Restaurant datatype.
 		 * @return String
 		 */
 		public RestaurantInfo getCurrentRestaurant();

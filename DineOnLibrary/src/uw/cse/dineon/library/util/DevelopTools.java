@@ -61,7 +61,6 @@ public final class DevelopTools {
 //		try {
 //			rest = new Restaurant(me);
 //		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 //		return rest;

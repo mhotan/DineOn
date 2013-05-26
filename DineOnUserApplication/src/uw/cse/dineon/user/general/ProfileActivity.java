@@ -30,8 +30,6 @@ import android.widget.Toast;
  */
 public class ProfileActivity extends DineOnUserActivity implements 
 		ProfileEditFragment.InfoChangeListener {
-
-	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	
 	/**
 	 * Enums for keeping track of state.
@@ -54,7 +52,7 @@ public class ProfileActivity extends DineOnUserActivity implements
 			Fragment imageFrag = ProfileImageFragment.newInstance(getInfo());
 			FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
 			ft.add(CONTAINER_ID, imageFrag, "imageFrag");
-			ft.addToBackStack(null);
+		//	ft.addToBackStack(null);
 			ft.commit();	
 		}
 		state = State.DEFAULT;
@@ -106,8 +104,8 @@ public class ProfileActivity extends DineOnUserActivity implements
 	
 	@Override
 	public void onBackPressed() {
-		state = State.BACK;
 		super.onBackPressed();
+		state = State.BACK;
 	}
 	
 	/**

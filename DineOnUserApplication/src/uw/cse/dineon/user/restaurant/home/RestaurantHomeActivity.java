@@ -13,7 +13,6 @@ import android.os.Bundle;
 
 
 /**
- * TODO finish.
  * @author mhotan
  */
 public class RestaurantHomeActivity extends DineOnUserActivity
@@ -97,14 +96,12 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 
 	@Override
 	public void onRestaurantInfoRequested() {
-		// TODO Auto-generated method stub
 		// TODO Replace MenuItemDetailFragment with Restaurant Info Fragment
 		
 	}
 
 	@Override
 	public void onViewCurrentBill() {
-		// TODO Auto-generated method stub
 		// TODO Take to Current Bill screen
 		
 	}

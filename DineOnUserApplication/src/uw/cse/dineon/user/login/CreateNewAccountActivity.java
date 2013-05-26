@@ -73,7 +73,7 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 				public void done(ParseException e) {
 					if (e == null) {
 						// Hooray! Let them use the app now.
-						// TODO Create a new User object and save it to the
+						// Create a new User object and save it to the
 						// cloud and associate it with the actual user
 						// possibly by user name
 						final DineOnUser USER = new DineOnUser(ParseUser.getCurrentUser());

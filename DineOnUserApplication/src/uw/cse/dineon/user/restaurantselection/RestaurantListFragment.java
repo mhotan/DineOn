@@ -15,11 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 /**
- * TODO finish.
+ * 
  * @author mhotan
  */
 public class RestaurantListFragment extends ListFragment {
@@ -78,7 +77,6 @@ public class RestaurantListFragment extends ListFragment {
 
 
 		/**
-		 * TODO finish.
 		 * @param restaurant String
 		 */
 		public void onRestaurantSelected(RestaurantInfo restaurant);
@@ -99,7 +97,6 @@ public class RestaurantListFragment extends ListFragment {
 
 	/**
 	 * Class that will help display custom list view items.
-	 * TODO Change generic type from String to Restaurant
 	 * @author mhotan
 	 */
 	private class RestaurantListAdapter extends ArrayAdapter<RestaurantInfo> {
@@ -110,7 +107,6 @@ public class RestaurantListFragment extends ListFragment {
 		/**
 		 * This is a runtime mapping between "More Info buttons"
 		 * and there respective restaurants.
-		 * TODO Change String to restaurant;
 		 * NOTE (MH): Not exactly sure if this works
 		 */
 		private final HashMap<View, RestaurantInfo> mInfoMapping;
@@ -194,7 +190,7 @@ public class RestaurantListFragment extends ListFragment {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.listitem_restaurant, parent, false);
 
-			// TODO Here is where we adjust the contents of the list row
+			// Here is where we adjust the contents of the list row
 			// with attributes determined by the restaurant
 			// Now we are just setting the text to be the name of restaurant
 			
@@ -204,17 +200,9 @@ public class RestaurantListFragment extends ListFragment {
 			// Get the restaurant name by associating with the position
 			String name = mValues.get(position).getName();
 			restLabel.setText(name);	
-
-			// TODO Change the button to a more intuitive picture that describes "more info"
-			Button moreInfoButton = (Button) rowView.findViewById(R.id.button_restaurant_info);
-
-			// Add to the mapping so listeners can reference it later
-			mInfoMapping.put(moreInfoButton, mValues.get(position));
 			
 			// add mapping to text view so listeners can reference later
 			mRestaurantMapping.put(restLabel, mValues.get(position));
-
-			moreInfoButton.setOnClickListener(mButtonListener);
 
 			return rowView;
 		}

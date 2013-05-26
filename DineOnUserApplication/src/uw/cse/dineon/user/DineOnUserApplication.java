@@ -47,7 +47,7 @@ public class DineOnUserApplication extends Application {
 		
 		ParseInstallation.getCurrentInstallation().saveInBackground();
 		
-		this.currentOrderMapping = new HashMap<MenuItem, CurrentOrderItem>();
+		DineOnUserApplication.currentOrderMapping = new HashMap<MenuItem, CurrentOrderItem>();
 	}
 	
 	/**

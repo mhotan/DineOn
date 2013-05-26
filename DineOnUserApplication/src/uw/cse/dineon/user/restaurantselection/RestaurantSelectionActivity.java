@@ -15,11 +15,7 @@ import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -36,7 +32,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 /**
- * TODO finish.
  * @author mhotan
  */
 public class RestaurantSelectionActivity extends DineOnUserActivity implements 
@@ -79,7 +74,6 @@ RestaurantInfoFragment.RestaurantInfoListener {
 		
 		mRestaurants = new ArrayList<RestaurantInfo>();
 		
-		// TODO for now get all restaurants
 		//ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		//queryForRestaurants(query);
 		onShowUserFavorites();
@@ -150,7 +144,6 @@ RestaurantInfoFragment.RestaurantInfoListener {
 
 	@Override
 	public void onRestaurantFocusedOn(RestaurantInfo restaurant) {
-		// TODO Auto-generated method stub
 		
 		FragmentManager fm = getSupportFragmentManager();
 		RestaurantInfoFragment frag = 

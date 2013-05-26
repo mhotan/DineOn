@@ -22,7 +22,6 @@ import uw.cse.dineon.user.bill.CurrentOrderFragment.OrderUpdateListener;
 import uw.cse.dineon.user.checkin.IntentIntegrator;
 import uw.cse.dineon.user.checkin.IntentResult;
 import uw.cse.dineon.user.general.ProfileActivity;
-import uw.cse.dineon.user.general.UserPreferencesActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import uw.cse.dineon.user.restaurant.home.SubMenuFragment;
@@ -353,9 +352,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		case R.id.option_profile:
 			i = new Intent(getApplicationContext(), ProfileActivity.class);
 			break;
-		case R.id.option_settings:
-			i = new Intent(getApplicationContext(), UserPreferencesActivity.class);
-			break;
 		case R.id.option_check_in:
 			IntentIntegrator integrator = new IntentIntegrator(this);
 			integrator.initiateScan();
@@ -458,7 +454,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 
 	@Override
 	public void onConfirmOrder(DiningSession ds, String orderId) {
-		// TODO Auto-generated method stub
 		Toast.makeText(this, "onConfirmOrder", Toast.LENGTH_SHORT).show();
 		DineOnUserApplication.setCurrentDiningSession(ds);
 		DineOnUserApplication.clearCurrentOrder();
@@ -525,7 +520,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 
 	@Override
 	public void onPlaceOrder(Order order) {
-		// TODO Auto-generated method stub
 		mSat.requestOrder(DineOnUserApplication.getCurrentDiningSession(), 
 				order, 
 				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());

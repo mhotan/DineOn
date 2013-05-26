@@ -9,9 +9,13 @@ import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.bill.CurrentBillFragment.PayBillListener;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.view.MenuInflater;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 
 /**
  * Activity to maintain current user bill.
@@ -61,5 +65,45 @@ implements PayBillListener {
 	public void payCurrentBill() {
 		super.payBill();
 		finish();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(android.view.Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		// Note that override this method does not mean the actualy
+		//  UI Menu is updated this is done manually
+		//  See basic_menu under res/menu for ids
+		inflater.inflate(R.menu.basic_menu, menu);
+		//Hides the bill option
+		final android.view.MenuItem ITEM = menu.findItem(R.id.option_bill);
+		ITEM.setEnabled(false);
+		ITEM.setVisible(false);
+
+		final SearchView SEARCHVIEW = (SearchView) 
+				menu.findItem(R.id.option_search).getActionView();
+
+		// Enable the search widget in the action bar
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		if (searchManager != null) {
+			SEARCHVIEW.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+		}
+
+		SEARCHVIEW.setIconified(true);
+		SEARCHVIEW.setOnQueryTextListener(new OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				// Make the call to search for a particular restaurant
+				onSearch(query);
+				return true;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) { // Do nothing
+				return false;
+			}
+		});
+
+		return true;
 	}
 }

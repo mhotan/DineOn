@@ -27,7 +27,7 @@ public class CheckInFragment extends Fragment {
 	 */
 	private CheckInListener mListener;
 	
-	private Button mQRButton, mValidateCheckInButton;
+	private Button mQRButton;
 	private Spinner mRestaurantList;
 	private EditText mRestaurantCode;
 	
@@ -71,17 +71,17 @@ public class CheckInFragment extends Fragment {
 
 	/**
 	 * @author mhotan
-	 * TODO
+	 * 
 	 */
 	public interface CheckInListener {
 
 		/**
-		 * TODO implement.
+		 * 
 		 */
 		public void onCheckInSuccess();
 
 		/**
-		 * TODO implement.
+		 * 
 		 */
 		public void onCheckInFail();
 
@@ -97,7 +97,7 @@ public class CheckInFragment extends Fragment {
 		private String mRestaurant;
 		
 		/**
-		 * Defalut constructor.
+		 * Default constructor.
 		 */
 		public CheckInClickListener() {
 			mRestaurant = null;
@@ -107,7 +107,6 @@ public class CheckInFragment extends Fragment {
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.button_qr_code :
-				// TODO Implement QR Code
 				
 				mListener.onCheckInSuccess();
 				
@@ -125,7 +124,6 @@ public class CheckInFragment extends Fragment {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int pos,
 				long id) {
-			// TODO Auto-generated method stub
 			mRestaurant = parent.getItemAtPosition(pos).toString();
 		}
 

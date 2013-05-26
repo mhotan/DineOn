@@ -2,7 +2,6 @@ package uw.cse.dineon.user.bill;
 
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
 

@@ -57,8 +57,7 @@ public class MenuItemDetailFragment extends Fragment {
 	}
 
 	/**
-	 * TODO finish.
-	 * @param item String
+	 * @param item MenuItem to set
 	 */
 	public void setMenuItem(MenuItem item) {
 		this.mMenuItem = item;

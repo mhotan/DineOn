@@ -20,9 +20,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.parse.GetCallback;
@@ -112,7 +109,6 @@ LoginFragment.OnLoginListener {
 	
 	/**
 	 * Starts Restaurant selection activity with current.
-	 * TODO send a user instance through this bundle
 	 * @param user User to send of the
 	 */
 	public void startRestSelectionAct(DineOnUser user) {
@@ -324,7 +320,7 @@ LoginFragment.OnLoginListener {
 		 * Attempts to find the User associated with this Finder.
 		 */
 		public void findUser() {
-			// TODO use inner queries to find the right UserInfo
+			// use inner queries to find the right UserInfo
 			// TODO Validate if it works
 			ParseQuery inner = new ParseQuery(UserInfo.class.getSimpleName());
 			inner.whereEqualTo(UserInfo.PARSEUSER, mUserToFind);

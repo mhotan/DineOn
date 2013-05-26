@@ -64,10 +64,9 @@ public class RestaurantInfoFragment extends Fragment {
 			// TODO set the image
 			
 			View v =  view.findViewById(R.id.button_user_favorites);
-			if(v != null && v instanceof ImageButton){
+			if(v != null && v instanceof ImageButton) {
 				this.determineFavorite((ImageButton) v, this.mRestaurant); 
-			}
-			else{
+			} else {
 				Log.d(TAG, "Button not found.");
 			}
 		}
@@ -98,26 +97,31 @@ public class RestaurantInfoFragment extends Fragment {
 		}
 	}
 	
-	public void determineFavorite(ImageButton ib, RestaurantInfo ri){
+	/**
+	 * Determines whether the given restaurant is a favorite of the current user.
+	 * @param ib ImageButton
+	 * @param ri RestaurantInfo 
+	 */
+	public void determineFavorite(ImageButton ib, RestaurantInfo ri) {
 		DineOnUser dou = DineOnUserApplication.getDineOnUser();
-		if(dou == null){
+		if(dou == null) {
 			Log.d(TAG, "Your DineOnUser was null.");
 			return;
 		}
-		if(this.mRestaurant == null){
+		if(this.mRestaurant == null) {
 			Log.d(TAG, "The RestaurantInfo was null for some reason.");
 			return;
 		}
 		assignFavoriteImageResource(ib, dou, ri);
-		ib.setOnClickListener(new OnClickListener(){
+		ib.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				ImageButton ib = (ImageButton) v;
-				if(ib.getTag().equals("notFavorite")){
+				if(ib.getTag().equals("notFavorite")) {
 					favoriteRestaurant(mRestaurant);
 				}
-				else if(ib.getTag().equals("isFavorite")){
+				else if(ib.getTag().equals("isFavorite")) {
 					unFavoriteRestaurant(mRestaurant);
 				}	
 			}
@@ -125,44 +129,58 @@ public class RestaurantInfoFragment extends Fragment {
 
 	}
 	
+	/**
+	 * Assigns the given restaurant as a favorite of the given user.
+	 * @param ib ImageButton
+	 * @param dou DineOnUser to add a favorite to
+	 * @param ri RestaurantInfo to add to the user's favorites
+	 */
 	public void assignFavoriteImageResource(ImageButton ib,
 											DineOnUser dou,
-											RestaurantInfo ri){
-		if(! dou.isFavorite(ri)){
+											RestaurantInfo ri) {
+		if(!dou.isFavorite(ri)) {
 			ib.setImageResource(R.drawable.addtofavorites);
 			ib.setTag("notFavorite");
-		}else{
+		} else {
 			ib.setImageResource(R.drawable.is_favorite);
 			ib.setTag("isFavorite");
 		}
 	}
 	
-	public void favoriteRestaurant(RestaurantInfo ri){
+	/**
+	 * Add restaurant as a favorite to the current user.
+	 * @param ri RestaurantInfo
+	 */
+	public void favoriteRestaurant(RestaurantInfo ri) {
 		DineOnUserApplication.getDineOnUser().addFavorite(ri);
 		ImageButton ib = (ImageButton) this.getView().findViewById(R.id.button_user_favorites);
-		if(ib != null){
+		if(ib != null) {
 			this.assignFavoriteImageResource(ib, DineOnUserApplication.getDineOnUser(), ri);
 		}
-		DineOnUserApplication.getDineOnUser().saveInBackGround(new SaveCallback(){
+		DineOnUserApplication.getDineOnUser().saveInBackGround(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
-				if(e != null){
+				if(e != null) {
 					Log.d(TAG, "the callback for saving favorited failed.\n" + e.getMessage());
 				}
 			}
 		});
 	}
 	
-	public void unFavoriteRestaurant(RestaurantInfo ri){
+	/**
+	 * Delete restaurant from current user's favorite list.
+	 * @param ri RestaurantInfo
+	 */
+	public void unFavoriteRestaurant(RestaurantInfo ri) {
 		DineOnUserApplication.getDineOnUser().removeFavorite(ri);
 		ImageButton ib = (ImageButton) this.getView().findViewById(R.id.button_user_favorites);
-		if(ib != null){
+		if(ib != null) {
 			this.assignFavoriteImageResource(ib, DineOnUserApplication.getDineOnUser(), ri);
 		}
-		DineOnUserApplication.getDineOnUser().saveInBackGround(new SaveCallback(){
+		DineOnUserApplication.getDineOnUser().saveInBackGround(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
-				if(e != null){
+				if(e != null) {
 					Log.d(TAG, "the callback for saving unfavorited failed.\n" + e.getMessage());
 				}
 			}
@@ -185,7 +203,6 @@ public class RestaurantInfoFragment extends Fragment {
 		
 		/**
 		 * Returns the current Restaurant to be displayed.
-		 * TODO change to Restaurant datatype
 		 * @return null if no restaurant available, other wise the resaurant.
 		 */
 		RestaurantInfo getCurrentRestaurant();
