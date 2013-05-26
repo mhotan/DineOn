@@ -1,5 +1,8 @@
 package uw.cse.dineon.restaurant;
 
+import java.io.File;
+import java.io.IOException;
+
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
@@ -17,6 +20,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -69,7 +73,7 @@ implements SateliteListener {
 	 * Reference to this activity for inner class listeners.
 	 */
 	private DineOnRestaurantActivity thisResActivity;
-	
+
 	/**
 	 * Location Listener for location based services.
 	 */
@@ -80,6 +84,14 @@ implements SateliteListener {
 	 * Don't be dumbass a null it out.
 	 */
 	protected ImageCache mImageCache;
+
+	/**
+	 * This file is just a local storage for 
+	 * retrieving images from Take picture intent.
+	 * Not the best method and has some overhead but right now
+	 * it is the only way to get images from taking pictures.
+	 */
+	private File mLastFile;
 
 	/**
 	 * This is a very important call that serves as a notification 
@@ -102,22 +114,22 @@ implements SateliteListener {
 
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); 
 		setProgressBarIndeterminateVisibility(true); 
-		
+
 		// Initialize the satellite 
 		mSatellite = new RestaurantSatellite();
 		// Initialize the Cache
 		mImageCache = new ImageCache(this);
 		mImageCache.open();
-		
+
 		// retrieve necessary references.
 		thisResActivity = this;
 		mRestaurant = DineOnRestaurantApplication.getRestaurant();
-		
+
 		if (mRestaurant == null) {
 			Utility.getGeneralAlertDialog("Uh OH!", "Doesn't look like your logged in"
 					, this).show();
 		}
-		
+
 		this.mLocationListener = new RestaurantLocationListener();
 	}
 
@@ -138,6 +150,14 @@ implements SateliteListener {
 	}
 
 	/**
+	 * @return a new temporary image file for runtime storage.
+	 */
+	protected File getTempImageFile() {
+		// Attempt to create a gosh darn file to write images to
+		return new File(Environment.getExternalStorageDirectory(), "test.jpg");
+	}
+
+	/**
 	 * Returns the reference to the current Restaurant object associated with this user.
 	 * 
 	 * @return restaurant associated with this, or null if restaurant has not uploaded yet.
@@ -154,7 +174,7 @@ implements SateliteListener {
 			notifyGroupRestaurantChange(session);
 		}
 	}
-	
+
 	/**
 	 * Notifies all the groups of the Dining Session that 
 	 * a change has occured.
@@ -165,7 +185,7 @@ implements SateliteListener {
 			mSatellite.notifyChangeRestaurantInfo(mRestaurant.getInfo(), user);
 		}
 	}
-	
+
 	/**
 	 * Adds a dining session to the restaurant.
 	 * @param session Dining Session to add
@@ -174,7 +194,7 @@ implements SateliteListener {
 		mRestaurant.addDiningSession(session);
 		mRestaurant.saveInBackGround(null);
 	}
-	
+
 	/**
 	 * Adds a dining session to the restaurant.
 	 * @param session Dining Session to add
@@ -193,7 +213,7 @@ implements SateliteListener {
 		mRestaurant.addOrder(order);
 		mRestaurant.saveInBackGround(null);
 	}
-	
+
 	/**
 	 * Adds a dining session to the restaurant.
 	 * @param order Order that was completed
@@ -202,7 +222,7 @@ implements SateliteListener {
 		mRestaurant.completeOrder(order);
 		mRestaurant.saveInBackGround(null);
 	}
-	
+
 	/**
 	 * Adds a customer request to the restaurant.
 	 * @param request Customer Request to add
@@ -212,7 +232,7 @@ implements SateliteListener {
 		mRestaurant.addCustomerRequest(request);
 		mRestaurant.saveInBackGround(null);
 	}
-	
+
 	/**
 	 * Removes the request from the restaurant pending request record.
 	 * @param request Request to delete.
@@ -223,7 +243,7 @@ implements SateliteListener {
 		mRestaurant.removeCustomerRequest(request);
 		mRestaurant.saveInBackGround(null);
 	}
-	
+
 	/**
 	 * Adds a reservation to the state of this restaurant.
 	 * @param reservation reservation that is being added to the restaurant.
@@ -233,7 +253,7 @@ implements SateliteListener {
 		mRestaurant.addReservation(reservation);
 		mRestaurant.saveInBackGround(null);
 	}
-	
+
 	/**
 	 * Removes the reservation from this restaurant.
 	 * @param reservation resrvation to remove.
@@ -372,11 +392,11 @@ implements SateliteListener {
 			}
 		}
 	}
-	
+
 	@Override
 	public void onReservationRequest(Reservation reservation) {
 		Toast.makeText(this, "onReservationRequest", Toast.LENGTH_SHORT).show();
-		
+
 		if (mRestaurant == null) {
 			Log.e(TAG, "Null Restaurant when accepting customer request.");
 			return;
@@ -384,7 +404,7 @@ implements SateliteListener {
 
 		// TODO Validate Reservation
 		mSatellite.confirmReservation(reservation.getUserInfo(), reservation);
-	
+
 		// We are not updating the dining session
 		// because there is no dining session with this reservation.
 		addReservation(reservation);
@@ -394,11 +414,11 @@ implements SateliteListener {
 	public void onCheckedOut(DiningSession session) {
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "onCheckedOut", Toast.LENGTH_SHORT).show();
-		
+
 		// All we do is call the 
 		removeDiningSession(session);
 	}
-	
+
 
 
 	////////////////////////////////////////////////
@@ -425,7 +445,7 @@ implements SateliteListener {
 			if (mRestaurant != null) {
 				createProgressDialog(true, "Saving...", "Cleaning up and loggin out");
 				mRestaurant.saveInBackGround(new SaveCallback() {
-					
+
 					@Override
 					public void done(ParseException e) {
 						destroyProgressDialog();
@@ -447,7 +467,7 @@ implements SateliteListener {
 		if (!isLoggedIn()) {
 			setMenuToNonUser(menu);
 		}
-		
+
 		MenuItem progressbar = menu.findItem(R.id.item_progress);
 		if (progressbar != null) {
 			progressbar.setEnabled(false);
@@ -508,8 +528,8 @@ implements SateliteListener {
 	// /// UI Specific methods
 	// //////////////////////////////////////////////////////////////////////
 
-	
-	
+
+
 	/**
 	 * Instantiates a new progress dialog and shows it on the screen.
 	 * @param cancelable Allows the progress dialog to be cancelable.
@@ -537,7 +557,7 @@ implements SateliteListener {
 			mProgressDialog.dismiss();
 		}
 	}
-	
+
 	/**
 	 * Listener for getting restaurant location at creation time.
 	 * @author mtrathjen08
@@ -549,12 +569,12 @@ implements SateliteListener {
 		 * Location Manager for location services.
 		 */
 		private LocationManager mLocationManager;
-		
+
 		/**
 		 * Last received location from mananger. Initially null.
 		 */
 		private Location mLocation;
-		
+
 		/**
 		 * Constructor for the location listener.
 		 */
@@ -562,7 +582,7 @@ implements SateliteListener {
 			this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 			this.mLocation = null;
 		}
-		
+
 		/**
 		 * Return the last recorder location of the user. Null if no update.
 		 * @return last recorder location.
@@ -571,7 +591,7 @@ implements SateliteListener {
 			return this.mLocation;
 			// TODO add support for gps
 		}
-		
+
 		/**
 		 * Request a location reading from the Location Manager.
 		 */
@@ -579,7 +599,7 @@ implements SateliteListener {
 			this.mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
 			// TODO add support for gps
 		}
-		
+
 		@Override
 		public void onLocationChanged(Location loc) {
 			this.mLocation = loc;
@@ -588,19 +608,19 @@ implements SateliteListener {
 		@Override
 		public void onProviderDisabled(String arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onProviderEnabled(String arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
 

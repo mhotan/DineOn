@@ -33,7 +33,6 @@ implements CreateNewAccountListener {
 
 	private static final String TAG = CreateNewRestaurantAccountActivity.class.getSimpleName();
 
-
 	/**
 	 * Progress bar dialog for showing user progress.
 	 */
@@ -70,8 +69,6 @@ implements CreateNewAccountListener {
 	public void submitNewAccount(String username, String email, String pw,
 			String pwRepeat) {
 		// Handle the validation
-		createProgressDialog();
-
 		Resolution completeRes = CredentialValidator.validateAll(username, email, pw, pwRepeat);
 
 		if (completeRes.isValid() && !username.equals("")) { // Valid passwords
@@ -91,7 +88,6 @@ implements CreateNewAccountListener {
 	/**
 	 * Listener for getting restaurant location at creation time.
 	 * @author mtrathjen08
-	 *
 	 */
 	private class RestaurantLocationListener implements android.location.LocationListener {
 

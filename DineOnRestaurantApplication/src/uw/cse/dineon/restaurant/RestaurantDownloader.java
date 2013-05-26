@@ -161,8 +161,9 @@ public class RestaurantDownloader extends AsyncTask<CachePolicy, ParseException,
 				// If not in Debug mode then notify the User 
 				// that a restaurant 
 				onProgressUpdate(new ParseException(
-						"Invalid Account. You need to create a Restaurant Dumb Ass.",
-						new Throwable()));
+						"Invalid Account. We have you in our database" 
+								+ " but we need you need to create a Restaurant.",
+								new Throwable()));
 				return null;
 			} // Found a restaurant for that user
 			else {

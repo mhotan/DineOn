@@ -1,7 +1,6 @@
 package uw.cse.dineon.restaurant.profile;
 
 import java.io.File;
-import java.io.IOException;
 
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Restaurant;
@@ -58,7 +57,7 @@ MenuItemsFragment.MenuItemListener {
 	private MenuItemsFragment mItemsFragment;
 	private RestaurantInfoFragment mRestInfoFragment;
 	private File mTempFile;
-
+	
 	private Context This;
 
 	private boolean isWorkingBackground;
@@ -151,7 +150,7 @@ MenuItemsFragment.MenuItemListener {
 				mItemsFragment = new MenuItemsFragment();
 			}
 			frag = mItemsFragment;
-			
+
 			// Assign the animation where the fragment slides
 			// in from the
 			supFT.setCustomAnimations(R.anim.slide_in_right,
@@ -259,15 +258,12 @@ MenuItemsFragment.MenuItemListener {
 
 	@Override
 	public void onRequestTakePicture() {
-		try {
-			mTempFile = ImageIO.createImageFile(this);
-			ImageObtainer.launchTakePictureIntent(this,
-					DineOnConstants.REQUEST_TAKE_PHOTO, mTempFile);
-		} catch (IOException e) {
-			String message = "Unable to create a file to save your image";
-			Log.e(TAG, message + " Exception " + e.getMessage());
-			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+		if (mTempFile != null) {
+			mTempFile.delete();
 		}
+		mTempFile = getTempImageFile();
+		ImageObtainer.launchTakePictureIntent(this,
+				DineOnConstants.REQUEST_TAKE_PHOTO, mTempFile);
 	}
 
 	@Override
@@ -348,7 +344,7 @@ MenuItemsFragment.MenuItemListener {
 		// Took a photo.
 		case DineOnConstants.REQUEST_TAKE_PHOTO:
 			u = Uri.fromFile(mTempFile);
-			mTempFile = null;
+			break;
 		case DineOnConstants.REQUEST_CHOOSE_PHOTO:
 			u = data.getData();
 			break;
