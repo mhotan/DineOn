@@ -2,14 +2,17 @@ package uw.cse.dineon.restaurant.active;
 
 import java.util.List;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.MenuItem;
+import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.restaurant.R;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,7 +20,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.QuickContactBadge;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -30,7 +34,7 @@ import android.widget.TextView;
  * 
  * @author mhotan
  */
-public class DiningSessionDetailFragment extends ListFragment {
+public class DiningSessionDetailFragment extends Fragment {
 
 	private static final String TAG = DiningSessionDetailFragment.class.getSimpleName();
 
@@ -49,7 +53,12 @@ public class DiningSessionDetailFragment extends ListFragment {
 	/**
 	 * Adapter to control view of users.
 	 */
-	private UserListAdapter mAdapter;
+	private UserListAdapter mUserAdapter;
+	private OrderListAdapter mOrderAdapter;
+	
+	private ListView mOrderList;
+	private ListView mUserList;
+	private TextView mOrderHeader;
 
 	/**
 	 * Creates a dining session that is ready to rock.
@@ -79,18 +88,29 @@ public class DiningSessionDetailFragment extends ListFragment {
 			ab.setTitle("No Dining session selected");
 		} else {
 			ab.setTitle("Table: " + mDiningSession.getTableID());
-			mAdapter = new UserListAdapter(getActivity(), mDiningSession.getUsers());
-			setListAdapter(mAdapter);
-			mAdapter.notifyDataSetChanged();
+			mUserAdapter = new UserListAdapter(getActivity(), mDiningSession.getUsers());
+			mOrderAdapter = new OrderListAdapter(getActivity(), mDiningSession.getOrders());
+			
+			if(mDiningSession.getOrders().size() == 0) {
+				mOrderHeader.setVisibility(View.GONE);
+			} else {
+				mOrderHeader.setVisibility(View.VISIBLE);
+			}
+			
+			mUserList.setAdapter(mUserAdapter);
+			mOrderList.setAdapter(mOrderAdapter);
+			mUserAdapter.notifyDataSetChanged();
+			mOrderAdapter.notifyDataSetChanged();
 		}
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		Bundle args = getArguments();
-		
+
 		// If the orientation changed or fragment temporarily died and 
 		// came back
 		if (savedInstanceState != null && savedInstanceState.containsKey(DINING_SESSION)) {
@@ -99,8 +119,16 @@ public class DiningSessionDetailFragment extends ListFragment {
 			mDiningSession = args.getParcelable(DINING_SESSION);
 		}
 
-		// Udpate the state
+		View view = inflater.inflate(R.layout.fragment_diningsession_detail,
+				container, false);
+
+		mOrderList = (ListView) view.findViewById(R.id.list_view_orders);
+		mUserList = (ListView) view.findViewById(R.id.list_view_users);
+		mOrderHeader = (TextView) view.findViewById(R.id.label_user_orders);
+		
+		// Update the state
 		update();
+		return view;
 	}
 
 	@Override
@@ -125,8 +153,8 @@ public class DiningSessionDetailFragment extends ListFragment {
 	 * @param user User to add
 	 */
 	public void addUser(UserInfo user) {
-		if (mAdapter != null && user != null) {
-			mAdapter.add(user);
+		if (mUserAdapter != null && user != null) {
+			mUserAdapter.add(user);
 		}
 	}
 
@@ -135,8 +163,8 @@ public class DiningSessionDetailFragment extends ListFragment {
 	 * @param user User to remove
 	 */
 	public void removeUser(UserInfo user) {
-		if (mAdapter != null && user != null) {
-			mAdapter.remove(user);
+		if (mUserAdapter != null && user != null) {
+			mUserAdapter.remove(user);
 		}
 	}
 
@@ -218,7 +246,7 @@ public class DiningSessionDetailFragment extends ListFragment {
 		private class UserInfoListItemListener implements 
 		OnClickListener {
 
-			private final QuickContactBadge mProfileImage;
+			private final ImageView mProfileImage;
 			private final TextView mUserName;
 			private final ImageButton mSendButton;
 			private final EditText mMessage;
@@ -234,7 +262,7 @@ public class DiningSessionDetailFragment extends ListFragment {
 			 * @param user User to connect to
 			 */
 			public UserInfoListItemListener(View v, UserInfo user) {
-				mProfileImage = (QuickContactBadge) v.findViewById(R.id.image_user_profile_image);
+				mProfileImage = (ImageView) v.findViewById(R.id.image_user_profile_image);
 				mUserName = (TextView) v.findViewById(R.id.label_username);
 				mSendButton = (ImageButton) v.findViewById(R.id.button_send_shout_out);
 				mMessage = (EditText) v.findViewById(R.id.input_shout_out);
@@ -256,7 +284,7 @@ public class DiningSessionDetailFragment extends ListFragment {
 				// mProfileImage.setImage blah blah
 
 				// Set the title of this box to be the user name
-				mUserName.setText("  " + mUser.getName());
+				mUserName.setText(mUser.getName());
 
 				// Set the send button on click listener
 				mSendButton.setOnClickListener(this);
@@ -273,7 +301,97 @@ public class DiningSessionDetailFragment extends ListFragment {
 				}
 			}
 		}
+	}
 
+	//////////////////////////////////////////////////////
+	//// Adapter to handle the presentation of specific 
+	//// User presentations.
+	//////////////////////////////////////////////////////
+
+	/**
+	 * Adapter that controls the displays of order information
+	 * for this particular dining session.
+	 * @author glee23
+	 */
+	private class OrderListAdapter extends ArrayAdapter<Order> {
+
+		private final Context mContext;
+		private List<Order> mOrders;
+
+		/**
+		 * Creates a List adapter to show UserInfo.
+		 * @param context Context to assign to.
+		 * @param orders a List of orders to associate to adapter.
+		 */
+		public OrderListAdapter(Context context, List<Order> orders) {
+			super(context, R.layout.listitem_diningsession_order, orders);
+			mContext = context;
+			mOrders = orders;
+		}
+
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = (LayoutInflater) mContext
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View view = inflater.inflate(R.layout.listitem_diningsession_order, null, true);
+
+			new OrderListItemListener(view, mOrders.get(position));
+			return view;
+		}
+
+		/**
+		 * user list item listener to react to user callbacks.
+		 * @author glee23
+		 */
+		private class OrderListItemListener {
+
+			private final TextView mOrderTitle;
+			private final TextView mOrderContents;
+			private final TextView mOrderTime;
+			private final Order mOrder;
+
+			/**
+			 * Connects a view to an order.  This class reacts to interactions
+			 * between the view and the order.
+			 * 
+			 * View must be of type R.layout.listitem_diningsession_order
+			 * 
+			 * @param v View to connect to User
+			 * @param o Order to populate the view with
+			 */
+			public OrderListItemListener(View v, Order o) {
+				mOrderContents = (TextView) v.findViewById(R.id.label_order_contents);
+				mOrder = o;
+				mOrderTitle = (TextView) v.findViewById(R.id.label_order_title);
+				mOrderTime = (TextView) v.findViewById(R.id.label_order_time);
+				if (mOrder == null || mOrderContents == null) {
+					throw new IllegalArgumentException(
+							"Invalid view (" + v + "), Not a order view");
+				}
+				if (mOrder == null) {
+					throw new IllegalArgumentException(
+							TAG + ":[OrderListItemListener] Order is null");
+				}
+				mOrderTitle.setText("Table: " + mOrder.getTableID());
+				List<CurrentOrderItem> items = mOrder.getMenuItems();
+				//Displays menu items as a string
+				StringBuffer buf = new StringBuffer();
+				
+				mOrderTime.setText(mOrder.getOriginatingTime().toString());
+				for (CurrentOrderItem item : items) {
+					MenuItem mI = item.getMenuItem();
+					buf.append("Menu Item: " + mI.getTitle() + "\n");
+					buf.append("Quantity: " + item.getQuantity() + "\n\n");
+				}
+				if(items.size() != 0) {
+					buf.delete(buf.length() - 2, buf.length());
+				}
+				
+				mOrderContents.setText(buf.toString());
+
+			}
+
+		}
 	}
 
 }

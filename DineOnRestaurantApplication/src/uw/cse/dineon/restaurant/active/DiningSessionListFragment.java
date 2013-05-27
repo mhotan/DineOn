@@ -3,8 +3,6 @@ package uw.cse.dineon.restaurant.active;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
@@ -18,9 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
  * For displaying current restaurant customers.
@@ -97,7 +96,7 @@ public class DiningSessionListFragment extends ListFragment {
 		mAdapter = new DiningSessionListAdapter(getActivity(), sessions);
 		setListAdapter(mAdapter);
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -154,7 +153,7 @@ public class DiningSessionListFragment extends ListFragment {
 		 * @param ds Dining session of focus
 		 */
 		void onDiningSessionDetailRequested(DiningSession ds);
-		
+
 	}
 
 	/**
@@ -177,7 +176,7 @@ public class DiningSessionListFragment extends ListFragment {
 			mContext = context;
 			mDiningSessions = sessionList;
 		}
-		
+
 		/**
 		 * @return Current list of Dining Sessions.
 		 */
@@ -222,13 +221,13 @@ public class DiningSessionListFragment extends ListFragment {
 		 * Sets the arrow based on whether or not the list item
 		 * is expanded or not.
 		 * @param position The position of the list item to set
-		 * @param arrowButton The specified arrow button to set
+		 * @param arrow The specified arrow to set
 		 */
-		private void setArrow(int position, ImageButton arrowButton) {
+		private void setArrow(int position, ImageView arrow) {
 			if(position == expanded) {
-				arrowButton.setImageResource(R.drawable.navigation_next_item);
+				arrow.setImageResource(R.drawable.navigation_next_item);
 			} else {
-				arrowButton.setImageResource(R.drawable.navigation_expand);
+				arrow.setImageResource(R.drawable.navigation_expand);
 			}
 		}
 
@@ -251,7 +250,6 @@ public class DiningSessionListFragment extends ListFragment {
 			Log.v(TAG, "Removed customer " + customer);
 			notifyDataSetChanged();
 		}
-
 
 		@SuppressWarnings("BC_UNCONFIRMED_CAST")
 		@Override
@@ -285,9 +283,9 @@ public class DiningSessionListFragment extends ListFragment {
 				vwBot = vw.findViewById(R.id.listitem_user_bot);
 			}
 
-			//Set up expand button
-			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_user);
-			setArrow(position, arrowButton);
+			//Set up expand
+			ImageView arrow = (ImageView) vwTop.findViewById(R.id.button_expand_user);
+			setArrow(position, arrow);
 			vwTop.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					expand(position);
@@ -295,13 +293,55 @@ public class DiningSessionListFragment extends ListFragment {
 						mListener.onDiningSessionDetailRequested(mDiningSessions.get(position));
 						return;
 					}
-					
-					ImageButton arrowButton = 
-							(ImageButton) v.findViewById(R.id.button_expand_user);
-					setArrow(position, arrowButton);
+
+					ImageView arrow = 
+							(ImageView) v.findViewById(R.id.button_expand_user);
+					setArrow(position, arrow);
 					//Right arrow case -- goes to details fragment
 				}
 			});
+
+			List<Order> orders = mDiningSession.getOrders();
+
+			TextView orderHeader = (TextView) vwBot.findViewById(R.id.label_user_order_header);
+			TextView orderText = (TextView) vwBot.findViewById(R.id.label_user_orders);
+			TextView dateText = (TextView) vwTop.findViewById(R.id.label_checkin_time);
+			dateText.setText(mDiningSession.getOriginatingTime().toString());
+			
+			if(orders == null) {
+				orderHeader.setVisibility(View.GONE);
+				orderText.setVisibility(View.GONE);
+			} else {
+
+				if(orders.size() == 0) {
+					orderText.setVisibility(View.GONE);
+					orderHeader.setText("No Orders");
+				} else {
+					orderText.setVisibility(View.VISIBLE);
+					orderHeader.setText("Orders");
+				}
+			}
+
+			//Displays Order information as a string
+			StringBuffer buf = new StringBuffer();
+
+			for (Order o : orders) {
+
+				int tableID = o.getTableID();
+				if(tableID != -1) {
+					buf.append("Table ");
+					buf.append(tableID);
+				}
+
+				buf.append("\n");
+				buf.append(o.getOriginatingTime().toString());
+				buf.append("\n\n");
+			}
+			if(orders.size() != 0) {
+				buf.delete(buf.length() - 2, buf.length());
+			}
+
+			orderText.setText(buf.toString());
 
 			if(expanded != position) {
 				vwBot.setVisibility(View.GONE);
@@ -324,24 +364,6 @@ public class DiningSessionListFragment extends ListFragment {
 			}
 
 			custName.setText(name);
-
-			//Displays Order information as a string
-			StringBuffer buf = new StringBuffer();
-			
-			for (Order o : mDiningSession.getOrders()) {
-
-				int tableID = o.getTableID();
-				if(tableID != -1) {
-					buf.append("Table ");
-					buf.append(tableID);
-				}
-
-				buf.append("\n");
-				buf.append(o.getOriginatingTime().toString());
-				buf.append("\n\n");
-			}
-			TextView orderText = (TextView) vwBot.findViewById(R.id.label_user_order_content);
-			orderText.setText(buf.toString());
 
 			return vw;
 		}

@@ -2,53 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="horizontal" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+    <ImageView
+        android:id="@+id/image_user_profile_image"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="10dp"
+        android:contentDescription="@string/label_menu_item_thumbnail"
+        android:src="@drawable/placeholdermenuitem" />
 
-        <QuickContactBadge
-            android:id="@+id/image_user_profile_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/add_staffmember" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical" >
 
         <TextView
             android:id="@+id/label_username"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/image_user_profile_image"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/image_user_profile_image"
-            android:gravity="center_vertical"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+            android:minHeight="30dp"
+            android:text="@string/label_customer_blank"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
             android:id="@+id/input_shout_out"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:layout_weight="1"
+            android:layout_gravity="bottom"
             android:inputType="textMultiLine" />
         
-        <ImageButton
-            android:id="@+id/button_send_shout_out"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:src="@drawable/send_message" />
-
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/button_send_shout_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:src="@drawable/send_message" />
 
 </LinearLayout>

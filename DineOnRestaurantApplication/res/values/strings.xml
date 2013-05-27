@@ -50,7 +50,7 @@
     <string name="label_time_default">May 13 2013 2:30:00 PM</string>
     <string name="button_accordion">Accordion Button</string>
     <string name="label_order_default">Order Goes Here</string>
-    <string name="label_orders">Orders:</string>
+    <string name="label_orders">Orders</string>
     <string name="label_order_contents">Order Contents</string>
     <string name="label_message_customer">Message Customer</string>
     <string name="button_remove_menu_item">Remove Menu Item</string>
@@ -69,5 +69,6 @@
     <string name="dialog_option_take_picture">Take Pic</string>
     <string name="dialog_option_choose_picture">Choose Pic</string>
     <string name="cancel">Cancel</string>
+    <string name="message_customers">Message Customers</string>
     
 </resources>
