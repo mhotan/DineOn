@@ -38,6 +38,7 @@ public class DineOnRestaurantApplication extends Application {
 			throw new IllegalArgumentException("Restaurant can't be null on log in");
 		}
 		mRestaurant = restaurant;
+		
 	}
 	
 	/**

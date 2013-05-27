@@ -1,6 +1,6 @@
 package uw.cse.dineon.restaurant.profile;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -363,6 +364,19 @@ public class MenuItemsFragment extends ListFragment {
 		 */
 		RestaurantInfo getInfo();
 
+		/**
+		 * 
+		 * @param view
+		 * @param item
+		 */
+		void onTakePicture(final ImageView view, MenuItem item);
+			
+		/**
+		 * Fragment asks get a picture for this menu item from gallery.
+		 * @param view View to place image in when 
+		 * @param item
+		 */
+		void onChoosePicture(final ImageView view, MenuItem item);
 	}
 
 	/**
@@ -370,12 +384,16 @@ public class MenuItemsFragment extends ListFragment {
 	 * 
 	 * @author mhotan
 	 */
-	private static class RestaurantMenuItemAdapter extends ArrayAdapter<MenuItem> {
+	private class RestaurantMenuItemAdapter extends ArrayAdapter<MenuItem> {
 
 		/**
 		 * Context to use this adapter.
 		 */
 		private final Context mContext;
+		
+		private final List<MenuItem> mItems;
+		
+		private final NumberFormat mCurrencyFormatter;
 
 		/**
 		 * Creates a menu item adapter for displaying, modifying, and deleting
@@ -389,6 +407,9 @@ public class MenuItemsFragment extends ListFragment {
 		public RestaurantMenuItemAdapter(Context ctx, List<MenuItem> items) {
 			super(ctx, R.layout.listitem_menuitem_editable, items);
 			mContext = ctx;
+			// Update the time
+			mItems = items;
+			mCurrencyFormatter = NumberFormat.getCurrencyInstance();
 		}
 
 		@Override
@@ -407,8 +428,9 @@ public class MenuItemsFragment extends ListFragment {
 			}
 
 			// Obtain the view used for this menu item
-//			ImageView image = (ImageView) view
-//					.findViewById(R.id.image_thumbnail_menuitem);
+			ImageView image = (ImageView) view
+					.findViewById(R.id.image_thumbnail_menuitem);
+			image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 			TextView title = (TextView) view
 					.findViewById(R.id.label_menuitem_title);
 //			ImageButton delete = (ImageButton) view
@@ -421,9 +443,48 @@ public class MenuItemsFragment extends ListFragment {
 			MenuItem item = super.getItem(position);
 			title.setText(item.getTitle());
 			description.setText(item.getDescription());
-			DecimalFormat formatter = new DecimalFormat("$0.00");
-			price.setText(formatter.format(item.getPrice()));
+			price.setText(mCurrencyFormatter.format(item.getPrice()));
 			return view;
 		}
+		
+		/**
+		 * 
+		 * @param view View to place image
+		 * @param item Item to ask for image
+		 * @return Get a dailog that will handle getting images for a menu item
+		 */
+		private AlertDialog getRequestImageDialog(final ImageView view, final MenuItem item) {
+			AlertDialog.Builder builder = new  AlertDialog.Builder(mContext);
+			builder.setTitle(R.string.dialog_title_getimage);
+			builder.setMessage(R.string.dialog_message_getimage_for_menuitem);
+			builder.setPositiveButton(R.string.dialog_option_take_picture, 
+					new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					mListener.onTakePicture(view, item);
+					dialog.dismiss();
+				}
+			});
+			builder.setNegativeButton(R.string.dialog_option_choose_picture, 
+					new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					mListener.onChoosePicture(view, item);
+					dialog.dismiss();
+				}
+			});
+			builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			
+			return builder.create();
+		}
+		
 	}
 }

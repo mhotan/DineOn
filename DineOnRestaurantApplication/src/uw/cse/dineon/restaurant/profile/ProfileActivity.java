@@ -26,6 +26,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -345,21 +346,21 @@ MenuItemsFragment.MenuItemListener {
 			return;
 		}
 
-		Uri u = null;
+		Uri uriForInfoFragment = null;
 		switch (requestCode) {
 		// Took a photo.
 		case DineOnConstants.REQUEST_TAKE_PHOTO:
-			u = Uri.fromFile(mTempFile);
+			uriForInfoFragment = Uri.fromFile(mTempFile);
 			break;
 		case DineOnConstants.REQUEST_CHOOSE_PHOTO:
-			u = data.getData();
+			uriForInfoFragment = data.getData();
 			break;
 		default:
 			Log.w(TAG, "Unsupported operation occured onActivityResult");
 		}
 
-		if (u != null) {
-			addPhotoToRestaurant(u);
+		if (uriForInfoFragment != null) {
+			addPhotoToRestaurant(uriForInfoFragment);
 		} else {
 			Log.w(TAG, "Was not able to obtain a new image");
 		}
@@ -423,6 +424,18 @@ MenuItemsFragment.MenuItemListener {
 			invalidateOptionsMenu();
 		}
 
+	}
+
+	@Override
+	public void onTakePicture(ImageView view, MenuItem item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onChoosePicture(ImageView view, MenuItem item) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

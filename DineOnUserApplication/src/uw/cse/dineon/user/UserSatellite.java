@@ -128,7 +128,7 @@ public class UserSatellite extends BroadcastReceiver {
 		}
 
 		mCurrentActivity.unregisterReceiver(this);
-		PushService.unsubscribe(mCurrentActivity, mChannel);
+//		PushService.unsubscribe(mCurrentActivity, mChannel);
 		mCurrentActivity = null;
 	}
 

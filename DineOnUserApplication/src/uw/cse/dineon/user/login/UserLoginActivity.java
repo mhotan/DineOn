@@ -9,6 +9,7 @@ import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -115,7 +116,12 @@ LoginFragment.OnLoginListener {
 		// Destroy any running progress dialog
 		DineOnUserApplication.setDineOnUser(user);
 		destroyProgressDialog();
-		Intent i = new Intent(this, RestaurantSelectionActivity.class);
+		Intent i;
+		if (DineOnUserApplication.getDineOnUser().getDiningSession() != null) {
+			i = new Intent(this, RestaurantHomeActivity.class);
+		} else {
+			i = new Intent(this, RestaurantSelectionActivity.class);
+		}
 		startActivity(i);
 		this.finish();
 	}

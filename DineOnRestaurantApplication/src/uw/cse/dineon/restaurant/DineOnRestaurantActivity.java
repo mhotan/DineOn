@@ -1,7 +1,6 @@
 package uw.cse.dineon.restaurant;
 
 import java.io.File;
-import java.io.IOException;
 
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
