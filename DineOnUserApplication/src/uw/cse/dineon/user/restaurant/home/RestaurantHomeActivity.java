@@ -34,17 +34,6 @@ RestaurantHomeMainFragment.ReferenceDataListener {
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
 	//////////////////////////////////////////////////////////////////////
-
-	@Override
-	public boolean onCreateOptionsMenu(android.view.Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		
-		android.view.MenuItem item = menu.findItem(R.id.option_bill);
-		item.setEnabled(true);
-		item.setVisible(true);
-		
-		return true;
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

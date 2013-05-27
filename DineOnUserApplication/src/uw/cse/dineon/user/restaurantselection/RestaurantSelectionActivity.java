@@ -279,7 +279,7 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	}
 	
 	/**
-	 * Gets the FindCallback for when restaurants are found
+	 * Gets the FindCallback for when restaurants are found.
 	 * @param message to show if no restaurants found
 	 * @return the Callback object
 	 */

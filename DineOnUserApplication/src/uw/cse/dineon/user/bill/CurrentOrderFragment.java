@@ -262,6 +262,11 @@ extends Fragment implements OnClickListener {
 		 */
 		public void resetCurrentOrder();
 
+		/** 
+		 * Close the activity by calling finish().
+		 */
+		public void doneWithOrder();
+
 	}
 
 	/**
@@ -452,8 +457,10 @@ extends Fragment implements OnClickListener {
 								if (e == null) {
 									// successful, send the push notification
 									mListener.onPlaceOrder(NEW_ORDER);
-									mAdapter.clear();
-									mAdapter.notifyDataSetChanged();
+									Toast.makeText((Context) mListener, "Your order was placed.", 
+											Toast.LENGTH_SHORT).show();
+									mListener.doneWithOrder();
+									
 								} else {
 									Log.d(TAG, "Couldn't save the new order: " + e.getMessage());
 								}

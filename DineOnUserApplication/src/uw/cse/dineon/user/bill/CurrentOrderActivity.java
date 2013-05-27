@@ -4,13 +4,11 @@ import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
+
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -32,42 +30,23 @@ public class CurrentOrderActivity extends DineOnUserActivity {
 	}
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.with_paybilloption_menu, menu);
-		return true;
-	}
-	
-	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {		
 		// TODO If in landscape mode then user already sees the bill
 		// So hide the fragments
-		CurrentBillFragment fragment = (CurrentBillFragment)
-				getSupportFragmentManager().findFragmentById(R.id.fragment_current_bill);
-		MenuItem paybillItem = menu.findItem(R.id.option_paybill);
-		if (fragment != null && fragment.isInLayout() /*|| TODO There is no pending bill*/) {
+		MenuItem paybillItem = menu.findItem(R.id.option_bill);
+		if (paybillItem != null) {
 			paybillItem.setEnabled(false);
 			paybillItem.setVisible(false);
-		} else {
-			paybillItem.setEnabled(true);
-			paybillItem.setVisible(true);
 		}
-		
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-		
-		switch (item.getItemId()) {
-		case R.id.option_paybill:
-			Intent intent = new Intent(getApplicationContext(),
-					CurrentBillActivity.class);
-			startActivity(intent);
-			break;
-		default:
-			break;
+		MenuItem checkInItem = menu.findItem(R.id.option_check_in);
+		if (checkInItem != null) {
+			checkInItem.setEnabled(false);
+			checkInItem.setVisible(false);
+		}
+		MenuItem viewOrderItem = menu.findItem(R.id.option_view_order);
+		if (viewOrderItem != null) {
+			viewOrderItem.setEnabled(false);
+			viewOrderItem.setVisible(false);
 		}
 		
 		return true;
@@ -96,6 +75,11 @@ public class CurrentOrderActivity extends DineOnUserActivity {
 			}
 		} );
 				
+	}
+
+	@Override
+	public void doneWithOrder() {
+		finish();
 	}
 			
 }

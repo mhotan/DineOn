@@ -26,6 +26,13 @@
         android:title="@string/button_check_in">
     </item>
     <item
+        android:id="@+id/option_view_order"
+        android:layout_width="wrap_content"
+        android:actionLayout="@layout/action_button_view_order"
+        android:showAsAction="always"
+        android:title="@string/button_view_order">
+    </item>
+    <item
         android:id="@+id/option_bill"
         android:layout_width="wrap_content"
         android:actionLayout="@layout/action_button_bill"

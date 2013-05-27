@@ -13,7 +13,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
@@ -58,7 +60,7 @@ implements PayBillListener {
 		}
 		CurrentBillFragment fragment = (CurrentBillFragment)
 				getSupportFragmentManager().findFragmentById(R.id.fragment_current_bill);
-		fragment.setBill(sum, DineOnConstants.TAX);
+		fragment.setBill(sum, sum * DineOnConstants.TAX);
 	}
 
 	@Override
@@ -68,42 +70,25 @@ implements PayBillListener {
 	}
 	
 	@Override
-	public boolean onCreateOptionsMenu(android.view.Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		// Note that override this method does not mean the actualy
-		//  UI Menu is updated this is done manually
-		//  See basic_menu under res/menu for ids
-		inflater.inflate(R.menu.basic_menu, menu);
-		//Hides the bill option
-		final android.view.MenuItem ITEM = menu.findItem(R.id.option_bill);
-		ITEM.setEnabled(false);
-		ITEM.setVisible(false);
-
-		final SearchView SEARCHVIEW = (SearchView) 
-				menu.findItem(R.id.option_search).getActionView();
-
-		// Enable the search widget in the action bar
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		if (searchManager != null) {
-			SEARCHVIEW.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+	public boolean onPrepareOptionsMenu(Menu menu) {		
+		// TODO If in landscape mode then user already sees the bill
+		// So hide the fragments
+		MenuItem paybillItem = menu.findItem(R.id.option_bill);
+		if (paybillItem != null) {
+			paybillItem.setEnabled(false);
+			paybillItem.setVisible(false);
 		}
-
-		SEARCHVIEW.setIconified(true);
-		SEARCHVIEW.setOnQueryTextListener(new OnQueryTextListener() {
-
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-				// Make the call to search for a particular restaurant
-				onSearch(query);
-				return true;
-			}
-
-			@Override
-			public boolean onQueryTextChange(String newText) { // Do nothing
-				return false;
-			}
-		});
-
+		MenuItem checkInItem = menu.findItem(R.id.option_check_in);
+		if (checkInItem != null) {
+			checkInItem.setEnabled(false);
+			checkInItem.setVisible(false);
+		}
+		MenuItem viewOrderItem = menu.findItem(R.id.option_view_order);
+		if (viewOrderItem != null) {
+			viewOrderItem.setEnabled(false);
+			viewOrderItem.setVisible(false);
+		}
+		
 		return true;
 	}
 }

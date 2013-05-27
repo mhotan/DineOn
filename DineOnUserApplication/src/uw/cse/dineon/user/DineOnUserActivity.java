@@ -17,6 +17,7 @@ import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.UserSatellite.SatelliteListener;
+import uw.cse.dineon.user.bill.CurrentBillActivity;
 import uw.cse.dineon.user.bill.CurrentOrderActivity;
 import uw.cse.dineon.user.bill.CurrentOrderFragment.OrderUpdateListener;
 import uw.cse.dineon.user.checkin.IntentIntegrator;
@@ -210,9 +211,13 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		//  See basic_menu under res/menu for ids
 		inflater.inflate(R.menu.basic_menu, menu);
 		//Hides the 
-		final android.view.MenuItem ITEM = menu.findItem(R.id.option_bill);
-		ITEM.setEnabled(false);
-		ITEM.setVisible(false);
+		final android.view.MenuItem ITEM1 = menu.findItem(R.id.option_bill);
+		ITEM1.setEnabled(false);
+		ITEM1.setVisible(false);
+		
+		final android.view.MenuItem ITEM2 = menu.findItem(R.id.option_view_order);
+		ITEM2.setEnabled(false);
+		ITEM2.setVisible(false);
 
 		final android.view.Menu M = menu;
 
@@ -221,6 +226,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		List<android.view.MenuItem> customActionBarButtons = new ArrayList<android.view.MenuItem>();
 		customActionBarButtons.add(menu.findItem(R.id.option_bill));
 		customActionBarButtons.add(menu.findItem(R.id.option_check_in));
+		customActionBarButtons.add(menu.findItem(R.id.option_view_order));
 		setOnClick(M, customActionBarButtons);
 
 		final SearchView SEARCHVIEW = (SearchView) 
@@ -295,7 +301,13 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		// If checked in
 		if(DineOnUserApplication.getCurrentDiningSession() != null) {
 			disableMenuItem(menu, R.id.option_check_in);
-			enableMenuItem(menu, R.id.option_bill);
+			enableMenuItem(menu, R.id.option_view_order);
+			// If there is an order to bill
+			if (DineOnUserApplication.getCurrentDiningSession().getOrders().size() > 0) {
+				enableMenuItem(menu, R.id.option_bill);
+			} else {
+				disableMenuItem(menu, R.id.option_bill);
+			}
 			if (searchView != null) {
 				searchView.setEnabled(false);
 				searchView.setVisibility(View.INVISIBLE);
@@ -305,6 +317,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			enableMenuItem(menu, R.id.option_check_in);
 			enableMenuItem(menu, R.id.option_search);
 			disableMenuItem(menu, R.id.option_bill);
+			disableMenuItem(menu, R.id.option_view_order);
 			if (searchView != null) {
 				searchView.setEnabled(true);
 				searchView.setVisibility(View.VISIBLE);
@@ -351,15 +364,22 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		switch (item.getItemId()) {
 		case R.id.option_profile:
 			i = new Intent(getApplicationContext(), ProfileActivity.class);
+			startActivity(i);
 			break;
 		case R.id.option_check_in:
 			IntentIntegrator integrator = new IntentIntegrator(this);
 			integrator.initiateScan();
 			break;
-		case R.id.option_bill:
+		case R.id.option_view_order:
 			i = new Intent(getApplicationContext(), CurrentOrderActivity.class);
 			// Count all the elements that the user has currently selected
-			startActivityForResult(i, DineOnConstants.REQUEST_VIEW_CURRENT_ORDER);
+			//startActivityForResult(i, DineOnConstants.REQUEST_VIEW_CURRENT_ORDER);
+			startActivity(i);
+			break;
+		case R.id.option_bill:
+			i = new Intent(getApplicationContext(), CurrentBillActivity.class);
+			// Count all the elements that the user has currently selected
+			startActivity(i);
 			break;
 		case R.id.option_logout:
 			ParseUser.logOut();
@@ -369,9 +389,9 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			//Unknown
 			Log.e(TAG, "None of the specified action items were selected.");
 		}
-		if (i != null) {
-			startActivity(i);
-		}
+//		if (i != null) {
+//			startActivity(i);
+//		}
 		return true;
 	}
 
@@ -488,8 +508,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		mSat.requestCheckOut(DineOnUserApplication.getCurrentDiningSession(), 
 				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
 		
-		Toast.makeText(this, "Payment Sent!", 
-				Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Payment Sent!", Toast.LENGTH_SHORT).show();
 		
 		// TODO Need to add a confirmation from restaurant that the user
 		// has successfully paid
@@ -638,5 +657,10 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	 */
 	public Location getLastKnownLocation() {
 		return this.mLocationListener.getLastLocation();
+	}
+
+	@Override
+	public void doneWithOrder() {
+		// TODO Auto-generated method stub
 	}
 }
