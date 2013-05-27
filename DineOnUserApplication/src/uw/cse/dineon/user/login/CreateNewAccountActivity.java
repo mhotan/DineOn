@@ -35,6 +35,7 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 
 	private Context thisActivity;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,40 +68,7 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 			P_USER.setUsername(username);
 			P_USER.setPassword(password);
 			P_USER.setEmail(email);
-			P_USER.signUpInBackground(new SignUpCallback() {
-
-				@Override
-				public void done(ParseException e) {
-					if (e == null) {
-						// Hooray! Let them use the app now.
-						// Create a new User object and save it to the
-						// cloud and associate it with the actual user
-						// possibly by user name
-						final DineOnUser USER = new DineOnUser(ParseUser.getCurrentUser());
-						USER.saveInBackGround(new SaveCallback() {
-
-							@Override
-							public void done(ParseException e) {
-								if (e == null) {
-									// Success
-									DineOnUserApplication.setDineOnUser(USER);
-									Intent intent = 
-											new Intent(thisActivity,
-													RestaurantSelectionActivity.class);
-									startActivity(intent);
-								} else {
-									showFailAlertDialog(e.getMessage());
-								}
-							}
-						});
-					} 
-					else {
-						// Sign up didn't succeed. Look at the ParseException
-						// to figure out what went wrong
-						showFailAlertDialog(e.getMessage());
-					}
-				}
-			});
+			P_USER.signUpInBackground(getSignUpCallback());
 		}
 		else {
 			showFailAlertDialog(completeRes.getMessage());
@@ -137,6 +105,55 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 			}
 		});
 		builder.create().show();
+	}
+	
+	/**
+	 * signup callback method.
+	 * @return the callback object.
+	 */
+	public SignUpCallback getSignUpCallback() {
+		return new SignUpCallback() {
+			@Override
+			public void done(ParseException e) {
+				if (e == null) {
+					// Hooray! Let them use the app now.
+					// TODO Create a new User object and save it to the
+					// cloud and associate it with the actual user
+					// possibly by user name
+					final DineOnUser USER = new DineOnUser(ParseUser.getCurrentUser());
+					USER.saveInBackGround(getSaveCallback(USER));
+				} else {
+					// Sign up didn't succeed. Look at the ParseException
+					// to figure out what went wrong
+					showFailAlertDialog(e.getMessage());
+				}
+			}
+	
+		};
+	}
+	
+	/**
+	 * Gets the savecallback for the given user.
+	 * @param USER being saved
+	 * @return the callback object
+	 */
+	public SaveCallback getSaveCallback(final DineOnUser USER) {
+		return new SaveCallback() {
+
+			@Override
+			public void done(ParseException e) {
+				if (e == null) {
+					// Success
+					DineOnUserApplication.setDineOnUser(USER);
+					Intent intent = 
+							new Intent(thisActivity,
+									RestaurantSelectionActivity.class);
+					startActivity(intent);
+				} else {
+					showFailAlertDialog(e.getMessage());
+				}
+			}
+		};
 	}
 
 }

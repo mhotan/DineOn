@@ -1,8 +1,10 @@
 package uw.cse.dineon.user.restaurantselection.test;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -94,6 +96,22 @@ public class RestaurantSelectionActivityTest extends
 //		mActivity.finish();
 //
 //		mActivity = getActivity();
+	}
+	
+	public void testCallback() {
+//		FindCallback fCall = mActivity.getFindCallback("TestMessage");
+//		RestaurantInfo testRI = null;
+//		try {
+//			testRI = new RestaurantInfo(testUser);
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		List<ParseObject> testL = new ArrayList<ParseObject>();
+//		testL.add(testRI.packObject());
+//		fCall.done(testL, null);
+		
+		//fCall.done(testL, new ParseException(4, "Test error"));
 	}
 
 }

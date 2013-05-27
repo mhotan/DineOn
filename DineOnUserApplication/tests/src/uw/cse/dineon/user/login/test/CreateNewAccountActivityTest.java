@@ -5,6 +5,8 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.parse.SignUpCallback;
 
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.UserInfo;
@@ -48,6 +50,7 @@ public class CreateNewAccountActivityTest extends ActivityInstrumentationTestCas
 	
 	@Override
 	protected void tearDown() throws Exception {
+		mActivity.finish();
 		super.tearDown();
 	}
 
@@ -104,6 +107,19 @@ public class CreateNewAccountActivityTest extends ActivityInstrumentationTestCas
 //		curUser.deleteInBackground();
 		
 	}
+	
+//	public void testSignUpCallback() {
+		//SignUpCallback suCall = mActivity.getSignUpCallback();
+		//suCall.done(null);
+		//suCall.done(new ParseException(3, "test excep"));
+//	}
+	
+//	public void testSaveCallback() {
+//		SaveCallback sCall = mActivity.getSaveCallback(new DineOnUser(new ParseUser()));
+//		sCall.done(null);
+//		sCall.done(new ParseException(3, "test excep"));
+//		
+//	}
 
 	private CreateNewAccountFragment getFragment(){
 		Fragment f = mActivity.getSupportFragmentManager().findFragmentById(

@@ -222,35 +222,7 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	public void queryForRestaurants(ParseQuery query, final String message) {
 		query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
 		query.setLimit(DineOnConstants.MAX_RESTAURANTS); 
-		query.findInBackground(new FindCallback() {
-
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					
-					for (int i = 0; i < objects.size(); i++) {
-						try {
-							ParseObject p = objects.get(i);
-							RestaurantInfo r = new RestaurantInfo(p);
-							mRestaurants.add(r);
-						} catch (ParseException e1) {
-							Log.d(TAG, e1.getMessage());
-						}
-					}
-					destroyProgressDialog();
-					if (objects.size() == 0) {
-						showNoRestaurantsDialog(message);
-					} else {
-						addListOfRestaurantInfos();
-					}
-				} else { 
-					destroyProgressDialog();
-					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
-					Log.d(TAG, "No restaurants where found in the cloud.");
-				}
-			}
-			
-		});
+		query.findInBackground(getFindCallback(message));
 	}
 
 	@Override
@@ -304,5 +276,42 @@ RestaurantInfoFragment.RestaurantInfoListener {
 	 */
 	public void showNoRestaurantsDialog(String message) {
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+	}
+	
+	/**
+	 * Gets the FindCallback for when restaurants are found
+	 * @param message to show if no restaurants found
+	 * @return the Callback object
+	 */
+	public FindCallback getFindCallback(final String message) {
+		return new FindCallback() {
+
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					
+					for (int i = 0; i < objects.size(); i++) {
+						try {
+							ParseObject p = objects.get(i);
+							RestaurantInfo r = new RestaurantInfo(p);
+							mRestaurants.add(r);
+						} catch (ParseException e1) {
+							Log.d(TAG, e1.getMessage());
+						}
+					}
+					destroyProgressDialog();
+					if (objects.size() == 0) {
+						showNoRestaurantsDialog(message);
+					} else {
+						addListOfRestaurantInfos();
+					}
+				} else { 
+					destroyProgressDialog();
+					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
+					Log.d(TAG, "No restaurants where found in the cloud.");
+				}
+			}
+			
+		};
 	}
 }
