@@ -7,6 +7,7 @@ import uw.cse.dineon.library.Storable;
 import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Parcel;
 import android.util.Log;
 
 import com.parse.GetDataCallback;
@@ -34,7 +35,7 @@ public class DineOnImage extends Storable {
 	 * The ParseFile of this image.
 	 */
 	private ParseFile mImgFile;
-	
+
 	/**
 	 * Synchronized constructor for a DineOnImage.
 	 * Do not call on main thread.
@@ -95,7 +96,7 @@ public class DineOnImage extends Storable {
 		mCompleteObject.put(IMAGE, mImgFile);
 		mCompleteObject.save();
 	}
-	
+
 	/**
 	 * Updates the image content of this image.
 	 * If callback is null then the image is saved eventually at some time in the future
@@ -109,7 +110,7 @@ public class DineOnImage extends Storable {
 		final SaveCallback LOCALCALLBACK = onSave;
 		final ParseFile FILE = new ParseFile(bitmapToByteArray(b));
 		FILE.saveInBackground(new SaveCallback() {
-			
+
 			@Override
 			public void done(ParseException arg0) {
 				// We successfully saved our file
@@ -121,7 +122,7 @@ public class DineOnImage extends Storable {
 				} else {
 					mCompleteObject.saveInBackground();
 				}
-				
+
 			}
 		});
 	}
@@ -193,5 +194,34 @@ public class DineOnImage extends Storable {
 	public static Bitmap byteArrayToBitmap(byte[] imgArray) {
 		return BitmapFactory.decodeByteArray(imgArray, 0, imgArray.length);
 	}
+
+//	protected DineOnImage(Parcel source) {
+//		super(source);
+//		int size = source.readInt();
+//		if (size > 0) {
+//			byte[] image = new byte[size];
+//			source.readByteArray(image);
+//			mImgFile = new ParseFile(image);
+//		} else {
+//			
+//		}
+//	}
+//
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		super.writeToParcel(dest, flags);
+//		if (mImgFile.isDataAvailable()) {
+//			try {
+//				byte[] image = mImgFile.getData();
+//				dest.writeInt(image.length);
+//
+//				dest.writeByteArray(mImgFile.getData());
+//			} catch (ParseException e) {
+//				Log.e(TAG, "Unable to write byte array");
+//			}
+//		} else {
+//			dest.writeInt(0);
+//		}
+//	}
 
 }

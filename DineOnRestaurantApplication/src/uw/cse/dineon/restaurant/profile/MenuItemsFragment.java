@@ -7,11 +7,15 @@ import java.util.List;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageObtainable;
+import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -59,25 +63,6 @@ public class MenuItemsFragment extends ListFragment {
 	public AlertDialog newItemAlert; // for testing. Otherwise can't access
 	public AlertDialog newMenuAlert; // for testing. Otherwise can't access
 
-	/**
-	 * Creates a MenuItemsFragment that is ready to build and view.
-	 * 
-	 * @param info
-	 *            Restaurant that contains a group of menus that each contain
-	 *            menu items
-	 * @return A MenuItemsFragment that is ready to display all the items of the
-	 *         restaurant
-	 */
-	public static MenuItemsFragment newInstance(RestaurantInfo info) {
-		// Prepare a Bundle argument
-		// for starting an activity with
-		MenuItemsFragment frag = new MenuItemsFragment();
-		Bundle args = new Bundle();
-		// args.putParcelable(DineOnConstants.KEY_RESTAURANTINFO, info);
-		frag.setArguments(args);
-		return frag;
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,32 +71,28 @@ public class MenuItemsFragment extends ListFragment {
 		// IF there are arguments
 		// then check if there is a restaurant info instance
 		// info can be null
-		/*
-		 * RestaurantInfo info = getArguments() != null ? (RestaurantInfo)
-		 * getArguments() .getParcelable(DineOnConstants.KEY_RESTAURANTINFO) :
-		 * null;
-		 */
-		final RestaurantInfo INFO = mListener.getInfo();
+		RestaurantInfo info = mListener.getInfo();
 
 		// If arguments existed and it included a Restaurant Info
-		// Proceed
-		if (isValid(INFO)) {
+		if (isValid(info)) {
 
+			List<Menu> menus = info.getMenuList();
+			
 			// TODO Handle multiple menus
-			if (INFO.getMenuList().size() < 1) {
+			if (menus.size() < 1) {
 				Menu defaultMenu = new Menu("Default");
-				INFO.getMenuList().add(defaultMenu);
+				info.getMenuList().add(defaultMenu);
 				defaultMenu.saveInBackGround(null);
 				Log.d(TAG, "No menu exists, created a default menu!");
 			}
-			currentMenu = INFO.getMenuList().get(0);
+			currentMenu = menus.get(0);
 
 			// Make list of menu titles for future reference
 			menuTitles = new ArrayList<String>();
-			for (Menu m : INFO.getMenuList()) {
+			for (Menu m : menus) {
 				menuTitles.add(m.getName());
 			}
-
+			
 			List<MenuItem> menuitems = currentMenu.getItems();
 			mAdapter = new RestaurantMenuItemAdapter(getActivity(), menuitems);
 			setListAdapter(mAdapter);
@@ -138,6 +119,15 @@ public class MenuItemsFragment extends ListFragment {
 		// TODO Add your menu entries here
 		inflater.inflate(R.menu.menu_menu, menu);
 		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(android.view.Menu menu) {
+		if (currentMenu == null) {
+
+		}
+
+		super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -183,7 +173,7 @@ public class MenuItemsFragment extends ListFragment {
 							Toast.LENGTH_SHORT).show();
 					return;
 				}
-				
+
 				double price = Double.parseDouble(priceString);
 
 				MenuItem mi = new MenuItem(mAdapter.getCount() + 1, price,
@@ -199,11 +189,11 @@ public class MenuItemsFragment extends ListFragment {
 		});
 		alert.setNegativeButton("Cancel",
 				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {
-						// Do nothing
-					}
-				});
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				// Do nothing
+			}
+		});
 		this.newItemAlert = alert.show();
 	}
 
@@ -267,7 +257,7 @@ public class MenuItemsFragment extends ListFragment {
 						.findViewById(R.id.input_new_menu_title)).getText()
 						.toString();
 				((TextView) AV.findViewById(R.id.input_new_menu_title))
-						.setText("");
+				.setText("");
 				if (newTitle.trim().equals("")) {
 					Toast.makeText(getActivity(), "Please input title",
 							Toast.LENGTH_SHORT).show();
@@ -284,11 +274,11 @@ public class MenuItemsFragment extends ListFragment {
 
 		alert.setPositiveButton("Select",
 				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface d, int x) {
-						updateTitle();
-					}
-				});
+			@Override
+			public void onClick(DialogInterface d, int x) {
+				updateTitle();
+			}
+		});
 
 		this.newMenuAlert = alert.show();
 
@@ -331,7 +321,7 @@ public class MenuItemsFragment extends ListFragment {
 	 * 
 	 * @author mhotan
 	 */
-	public interface MenuItemListener {
+	public interface MenuItemListener extends ImageObtainable {
 
 		/**
 		 * Notifies that the user chooses to delete the current menu item.
@@ -360,23 +350,17 @@ public class MenuItemsFragment extends ListFragment {
 		void onMenuItemModified(MenuItem item);
 
 		/**
+		 * The user has just added an image to this menu item.
+		 * @param item Item to change
+		 * @param b Bitmap to use.
+		 */
+		void onImageAddedToMenuItem(MenuItem item, Bitmap b);
+
+		/**
 		 * @return RestaurantInfo
 		 */
 		RestaurantInfo getInfo();
 
-		/**
-		 * 
-		 * @param view
-		 * @param item
-		 */
-		void onTakePicture(final ImageView view, MenuItem item);
-			
-		/**
-		 * Fragment asks get a picture for this menu item from gallery.
-		 * @param view View to place image in when 
-		 * @param item
-		 */
-		void onChoosePicture(final ImageView view, MenuItem item);
 	}
 
 	/**
@@ -390,9 +374,7 @@ public class MenuItemsFragment extends ListFragment {
 		 * Context to use this adapter.
 		 */
 		private final Context mContext;
-		
-		private final List<MenuItem> mItems;
-		
+
 		private final NumberFormat mCurrencyFormatter;
 
 		/**
@@ -408,7 +390,6 @@ public class MenuItemsFragment extends ListFragment {
 			super(ctx, R.layout.listitem_menuitem_editable, items);
 			mContext = ctx;
 			// Update the time
-			mItems = items;
 			mCurrencyFormatter = NumberFormat.getCurrencyInstance();
 		}
 
@@ -428,63 +409,140 @@ public class MenuItemsFragment extends ListFragment {
 			}
 
 			// Obtain the view used for this menu item
-			ImageView image = (ImageView) view
+			ImageView imageView = (ImageView) view
 					.findViewById(R.id.image_thumbnail_menuitem);
-			image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+			imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 			TextView title = (TextView) view
 					.findViewById(R.id.label_menuitem_title);
-//			ImageButton delete = (ImageButton) view
-//					.findViewById(R.id.button_menuitem_delete);
+			//			ImageButton delete = (ImageButton) view
+			//					.findViewById(R.id.button_menuitem_delete);
 			TextView description = (TextView) view
 					.findViewById(R.id.label_menuitem_desc);
 			TextView price = (TextView) view
 					.findViewById(R.id.label_menuitem_price);
 
-			MenuItem item = super.getItem(position);
-			title.setText(item.getTitle());
-			description.setText(item.getDescription());
-			price.setText(mCurrencyFormatter.format(item.getPrice()));
+			// Get the item at the established position
+			final MenuItem ITEM = super.getItem(position);
+
+			// Set all the regular descriptive stuff
+			title.setText(ITEM.getTitle());
+			description.setText(ITEM.getDescription());
+			price.setText(mCurrencyFormatter.format(ITEM.getPrice()));
+
+			// 
+			DineOnImage image = ITEM.getImage();
+			if (image != null) {
+				mListener.onGetImage(image, new InitialGetImageCallback(imageView));
+			}
+
+			// Set an onlick listener to handle the changing of images.
+			imageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					ImageView imageView = (ImageView) v;
+					AlertDialog getImageDialog = getRequestImageDialog(
+							new MenuItemImageGetCallback(ITEM, imageView));
+					getImageDialog.show();
+				}
+			});
+
 			return view;
 		}
-		
+
 		/**
+		 * Get an alert dialog to present the user with the option to take pictures.
 		 * 
-		 * @param view View to place image
-		 * @param item Item to ask for image
+		 * @param callback Callback to accept pictures
 		 * @return Get a dailog that will handle getting images for a menu item
 		 */
-		private AlertDialog getRequestImageDialog(final ImageView view, final MenuItem item) {
+		private AlertDialog getRequestImageDialog(final ImageGetCallback callback) {
 			AlertDialog.Builder builder = new  AlertDialog.Builder(mContext);
 			builder.setTitle(R.string.dialog_title_getimage);
 			builder.setMessage(R.string.dialog_message_getimage_for_menuitem);
 			builder.setPositiveButton(R.string.dialog_option_take_picture, 
 					new DialogInterface.OnClickListener() {
-				
+
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					mListener.onTakePicture(view, item);
+					mListener.onRequestTakePicture(callback);
 					dialog.dismiss();
 				}
 			});
-			builder.setNegativeButton(R.string.dialog_option_choose_picture, 
+			builder.setNeutralButton(R.string.dialog_option_choose_picture, 
 					new DialogInterface.OnClickListener() {
-				
+
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					mListener.onChoosePicture(view, item);
+					mListener.onRequestGetPictureFromGallery(callback);
 					dialog.dismiss();
 				}
 			});
-			builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-				
+			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
 				}
 			});
-			
+
 			return builder.create();
 		}
-		
+
+		/**
+		 * An image get callback to to populate menu item view. 
+		 * @author mhotan
+		 */
+		private class MenuItemImageGetCallback implements ImageGetCallback {
+
+			private final MenuItem mItem;
+			private final ImageView mView;
+
+			/**
+			 * A callback to handle the retrieving of images.
+			 * @param item Item to get image for.
+			 * @param view View to hole image.
+			 */
+			public MenuItemImageGetCallback(MenuItem item, ImageView view){
+				mItem = item;
+				mView = view;
+			}
+
+			@Override
+			public void onImageReceived(Exception e, Bitmap b) {
+				if (e == null) {
+					mView.setImageBitmap(b);
+					mListener.onImageAddedToMenuItem(mItem, b);
+				} else {
+					String message = getActivity().getResources().
+							getString(R.string.message_unable_get_image);
+					Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+				}
+			}
+		}
+
+		/**
+		 * Get the pre set image for this menuitem.
+		 * @author mhotan
+		 */
+		private class InitialGetImageCallback implements ImageGetCallback {
+
+			private ImageView mView;
+
+			/**
+			 * prepares callback for placing an image in the view.
+			 * @param view
+			 */
+			public InitialGetImageCallback(ImageView view) {
+				mView = view;
+			}
+
+			@Override
+			public void onImageReceived(Exception e, Bitmap b) {
+				if (e == null && mView != null) {
+					mView.setImageBitmap(b);
+				}
+			}
+		}
 	}
 }

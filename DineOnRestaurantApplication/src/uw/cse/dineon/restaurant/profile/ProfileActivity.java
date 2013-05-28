@@ -1,15 +1,9 @@
 package uw.cse.dineon.restaurant.profile;
 
-import java.io.File;
-
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.image.DineOnImage;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
-import uw.cse.dineon.library.image.ImageIO;
-import uw.cse.dineon.library.image.ImageObtainer;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import android.app.ActionBar;
@@ -17,16 +11,12 @@ import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Menu;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -57,7 +47,6 @@ MenuItemsFragment.MenuItemListener {
 
 	private MenuItemsFragment mItemsFragment;
 	private RestaurantInfoFragment mRestInfoFragment;
-	private File mTempFile;
 	
 	private Context This;
 
@@ -264,21 +253,6 @@ MenuItemsFragment.MenuItemListener {
 	}
 
 	@Override
-	public void onRequestTakePicture() {
-		if (mTempFile != null) {
-			mTempFile.delete();
-		}
-		mTempFile = getTempImageFile();
-		ImageObtainer.launchTakePictureIntent(this,
-				DineOnConstants.REQUEST_TAKE_PHOTO, mTempFile);
-	}
-
-	@Override
-	public void onRequestGetPictureFromGallery() {
-		ImageObtainer.launchChoosePictureIntent(this, DineOnConstants.REQUEST_CHOOSE_PHOTO);
-	}
-
-	@Override
 	public void onSelectImageAsDefault(int i) {
 		// TODO set image at index I as  the default
 	}
@@ -296,74 +270,15 @@ MenuItemsFragment.MenuItemListener {
 	}
 
 	@Override
-	public void getThisImage(DineOnImage image, final ViewGroup layout, final int id) {
-
-		// Make a potentiall asyncronous call to download the image
-		// from local storage or network.
-		mImageCache.getImageFromCache(image, new ImageGetCallback() {
-
-			@Override
-			public void onImageReceived(Exception e, Bitmap b) {
-				if (e != null) { // Error
-					Log.e(TAG, "Unable to get image because e: " + e.getMessage());
-					return;
-				}
-				// we go the picture.
-				if (mRestInfoFragment == null) {
-					Log.e(TAG, "Can't replace the correct view fragment is null");
-					return;
-				}
-
-				mRestInfoFragment.replaceWithImage(layout, b, id);
-			}
-		});
-	}
-
-	/**
-	 * Adds the photo to the restaurant. This method takes care of 
-	 * all the image sizing and alignment.
-	 * 
-	 * This method will notify all the views in this activity that 
-	 * need to know about a new photo.
-	 * 
-	 * This method will also handle the save of the new image
-	 * While also adding it to the cache.
-	 * 
-	 * @param uri Uri for the image to download.
-	 */
-	private void addPhotoToRestaurant(Uri uri) {
-		Bitmap b = ImageIO.loadBitmapFromURI(getContentResolver(), uri);	
-		AsynchronousImageSaver saver = new AsynchronousImageSaver(b, getRestaurant());
+	public void onAddImageToRestaurant(Bitmap b) {
+		RestaurantImageCreator saver = new RestaurantImageCreator(b);
 		saver.execute();
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		if (resultCode != RESULT_OK) {
-			Log.d(TAG, "User cancelled job for request code " + requestCode);
-			return;
-		}
-
-		Uri uriForInfoFragment = null;
-		switch (requestCode) {
-		// Took a photo.
-		case DineOnConstants.REQUEST_TAKE_PHOTO:
-			uriForInfoFragment = Uri.fromFile(mTempFile);
-			break;
-		case DineOnConstants.REQUEST_CHOOSE_PHOTO:
-			uriForInfoFragment = data.getData();
-			break;
-		default:
-			Log.w(TAG, "Unsupported operation occured onActivityResult");
-		}
-
-		if (uriForInfoFragment != null) {
-			addPhotoToRestaurant(uriForInfoFragment);
-		} else {
-			Log.w(TAG, "Was not able to obtain a new image");
-		}
+	public void onImageAddedToMenuItem(MenuItem item, Bitmap b) {
+		MenuItemImageCreator creator = new MenuItemImageCreator(item, b);
+		creator.execute();
 	}
 
 	/**
@@ -372,22 +287,20 @@ MenuItemsFragment.MenuItemListener {
 	 * 
 	 * @author mhotan
 	 */
-	private class AsynchronousImageSaver extends AsyncTask<Void, Void, DineOnImage> {
+	private class RestaurantImageCreator extends AsyncTask<Void, Void, DineOnImage> {
 
+		// Bitmap we wish to save as a DineOnimage
 		private final Bitmap mBitmap;
-		private final Restaurant mRestaurant;
 
 		/**
 		 * Creates an asynchronous process to save images for this restaurant.
 		 * @param b bitmap to save in background thread.
-		 * @param rest Restaurant to save image to.
 		 */
-		public AsynchronousImageSaver(Bitmap b, Restaurant rest) {
+		public RestaurantImageCreator(Bitmap b) {
 			if (b == null) {
 				throw new NullPointerException("AsynchronousImageSaver image cannot be null");
 			}
 			mBitmap = b;
-			mRestaurant = rest;
 		}
 
 		@Override
@@ -415,27 +328,69 @@ MenuItemsFragment.MenuItemListener {
 				if (mRestInfoFragment != null) {
 					mRestInfoFragment.addImage(mBitmap);
 				}
-				mImageCache.addToCache(result);
-				//				mBitmap.recycle();
+				// Success add image to the cache
+				addImageToCache(result, mBitmap);
 			} else {
 				Toast.makeText(This, "Unable to save image", Toast.LENGTH_SHORT).show();
 			}
+
+			// Stop the progress spinner
 			isWorkingBackground = false;
 			invalidateOptionsMenu();
 		}
-
 	}
 
-	@Override
-	public void onTakePicture(ImageView view, MenuItem item) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * Creates a DineOnImage for MenuItem.
+	 * @author mhotan
+	 */
+	private class MenuItemImageCreator extends AsyncTask<Void, Void, DineOnImage> {
 
-	@Override
-	public void onChoosePicture(ImageView view, MenuItem item) {
-		// TODO Auto-generated method stub
-		
-	}
+		private final Bitmap mBitmap;
+		private final MenuItem mItem;
 
+		/**
+		 * Prepares the saving process.
+		 * @param item Item to save
+		 * @param b Bitmap to use.
+		 */
+		public MenuItemImageCreator(MenuItem item, Bitmap b) {
+			mBitmap = b;
+			mItem = item;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			isWorkingBackground = true;
+			invalidateOptionsMenu();
+		}
+
+		@Override
+		protected DineOnImage doInBackground(Void... arg0) {
+			try {
+				DineOnImage image = new DineOnImage(mBitmap);
+				image.saveOnCurrentThread();
+				mItem.setImage(image);
+				mItem.saveOnCurrentThread();
+				return image;
+			} catch (ParseException e) {
+				Log.e(TAG, "Unable to save image for menu item exception: " + e.getMessage());
+				return null; // Fail case
+			}
+		}
+
+		@Override 
+		protected void onPostExecute(DineOnImage result) {
+			if (result != null) {
+				addImageToCache(result, mBitmap);
+			} else {
+				String message = getResources().
+						getString(R.string.message_unable_get_image);
+				Toast.makeText(This, message, Toast.LENGTH_SHORT).show();
+			}
+			// Stop the progress spinner
+			isWorkingBackground = false;
+			invalidateOptionsMenu();
+		}
+	}
 }

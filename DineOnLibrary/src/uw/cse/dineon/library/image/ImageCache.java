@@ -41,6 +41,11 @@ public class ImageCache {
 		ImageSQLiteHelper.COLUMN_IMG
 	};
 
+	private static final String[] CONTAINS_ELEMENT = {
+		ImageSQLiteHelper.COLUMN_PARSEID,
+		ImageSQLiteHelper.COLUMN_LAST_UDPATED,
+	};
+
 	/**
 	 * Creates a data source that can connect to the Database or Parse.
 	 * @param context Context to create SQLiteHelper
@@ -48,7 +53,6 @@ public class ImageCache {
 	public ImageCache(Context context) {
 		mSQLHelper = new ImageSQLiteHelper(context);
 		// Create a date format that stays constant for data base writing and reading.
-//	mDateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, Locale.US);
 	}
 
 	/**
@@ -73,6 +77,10 @@ public class ImageCache {
 	 * @param image Image to add to Cache
 	 */
 	public void addToCache(DineOnImage image) {
+		// if we have it in the cache then ignore adding it.
+		if (hasRecentInCache(image)) {
+			return;
+		}
 		final DineOnImage TOSAVE = image;
 		TOSAVE.getImageBitmap(new ImageGetCallback() {
 
@@ -87,6 +95,44 @@ public class ImageCache {
 				addImageToDB(TOSAVE, b);
 			}
 		});
+	}
+
+	/**
+	 * This method checks if there is a recents version of the image in
+	 * the app.  if it does then true is returned.
+	 * @param image Image to check for
+	 * @return true if there is a recent version of image added, false otherwise
+	 */
+	public boolean hasRecentInCache(DineOnImage image) {
+		Cursor cursor = mDb.query(
+				ImageSQLiteHelper.TABLE_IMAGES, 
+				CONTAINS_ELEMENT,
+				ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
+				new String[] {image.getObjId()}
+				, null, null, null);
+		if (!cursor.moveToFirst()) {
+			return false;
+		}
+		long lastUpdated = cursor.getLong(1);
+		cursor.close();
+		return !isOutdated(lastUpdated, image.getLastUpdatedTime().getTime());
+	}
+
+	/**
+	 * Returns if there is a version of the image in the cache.
+	 * @param image Image to look for
+	 * @return if there is any version of the image in the database.
+	 */
+	private boolean hasVersionInCache(DineOnImage image) {
+		Cursor cursor = mDb.query(
+				ImageSQLiteHelper.TABLE_IMAGES, 
+				CONTAINS_ELEMENT,
+				ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
+				new String[] {image.getObjId()}
+				, null, null, null);
+		boolean hasVal = cursor.moveToFirst();
+		cursor.close();
+		return hasVal;
 	}
 
 	/**
@@ -109,7 +155,7 @@ public class ImageCache {
 		final boolean HAVEINCACHE = cursor.moveToFirst();
 
 		final long TIMENOW = Calendar.getInstance().getTime().getTime();
-		
+
 		// If we have something in the cache
 		// Check if we are up to date.
 		if (HAVEINCACHE) {
@@ -131,15 +177,21 @@ public class ImageCache {
 			if (getFromCache) {
 				byte[] byteImg = cursor.getBlob(2);
 				Bitmap toReturn = DineOnImage.byteArrayToBitmap(byteImg);
-
+				String parseId = cursor.getString(0);
+				cursor.close();
+				
 				// Notify the user we have completed 
 				callback.onImageReceived(null, toReturn);
-				
+
 				// Update the time
-				updateLastUsedTime(cursor.getString(0), TIMENOW);
+				updateLastUsedTime(parseId, TIMENOW);
 				return;
 			}
 		} 
+		
+		// Couldnt find image so close cursor.
+		cursor.close();
+		
 		// Can reach here with two cases
 		// Case 1. Our image's last updated value in the cache is before the one on the server
 		// Case 2. We have never seen this image before.
@@ -169,7 +221,7 @@ public class ImageCache {
 			}
 		});
 	}
-	
+
 	/**
 	 * For a image with Parse id parseID in the cloud update the time last updated.
 	 * @param parseId String id of the image
@@ -181,7 +233,7 @@ public class ImageCache {
 		cv.put(ImageSQLiteHelper.COLUMN_LAST_USED, time);
 		updateByParseId(parseId, cv);
 	}
-	
+
 	/**
 	 * Updates the times of a specific image in the data base with the specific times.
 	 * If item does not exist then no effect will incur.
@@ -195,7 +247,7 @@ public class ImageCache {
 		cv.put(ImageSQLiteHelper.COLUMN_LAST_UDPATED, lastUpdated);
 		updateByParseId(parseId, cv);
 	}
-	
+
 	/**
 	 *  Update the image at a particular parseId in the table. 
 	 * 
@@ -207,7 +259,7 @@ public class ImageCache {
 		cv.put(ImageSQLiteHelper.COLUMN_IMG, DineOnImage.bitmapToByteArray(b));
 		updateByParseId(parseId, cv);
 	}
-	
+
 	/**
 	 * Updates a specific value in the data base by parse Id.
 	 * @param parseId Parse ID of the image to update
@@ -241,19 +293,29 @@ public class ImageCache {
 	 * @param b Bitmap version of the image.
 	 */
 	private void addImageToDB(DineOnImage image, Bitmap b) {
-		// We have all the data
-		long lastAnything = image.getLastUpdatedTime().getTime();
 
-		ContentValues values = new ContentValues();
-		values.put(ImageSQLiteHelper.COLUMN_PARSEID, image.getObjId());
+		long lastAnything = image.getLastUpdatedTime().getTime();
+		ContentValues values = new ContentValues();	
+
+		// Place the most recent data to the row
 		values.put(ImageSQLiteHelper.COLUMN_LAST_UDPATED, lastAnything);
 		values.put(ImageSQLiteHelper.COLUMN_LAST_USED, lastAnything);
 		values.put(ImageSQLiteHelper.COLUMN_IMG, DineOnImage.bitmapToByteArray(b));
-		long insertId = mDb.insert(ImageSQLiteHelper.TABLE_IMAGES, null, values);
-		if (insertId == -1) {
-			Log.e(TAG, 
-					"Unable to \"insert\" SQLite database because of some unknown reason");
+
+		// We have all the data
+		if (hasVersionInCache(image)) {
+			updateByParseId(image.getObjId(), values);
+		} else {
+			values.put(ImageSQLiteHelper.COLUMN_PARSEID, image.getObjId());
+			long id = mDb.insert(ImageSQLiteHelper.TABLE_IMAGES, null, values);
+			if (id == -1) {
+				Log.e(TAG, 
+						"Unable to \"insert\" SQLite " 
+								+ "database because of some unknown reason");
+			}
 		}
+
+		
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package uw.cse.dineon.library;
 
+import uw.cse.dineon.library.image.DineOnImage;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -18,12 +19,13 @@ public class MenuItem extends Storable {
 	private static final String PRICE = "price";
 	private static final String DESCRIPTION = "description";
 	private static final String TITLE = "menuItemTitle";
-	
+	private static final String IMAGE = "dineOnImage";
+
 	private int mProductID;		// ID of this product
 	private double mPrice;
 	private String mTitle; // price of this product
 	private String mDescription;	// description of this product
-	// TODO Image id;
+	private DineOnImage mImage;
 
 	/**
 	 * Creates a new MenuItem with the given parameters.
@@ -39,6 +41,7 @@ public class MenuItem extends Storable {
 		this.mPrice = price;
 		this.mDescription = description;
 		this.mTitle = title;
+		this.mImage = null;
 	}
 
 	/**
@@ -55,8 +58,28 @@ public class MenuItem extends Storable {
 		mPrice = po.getDouble(PRICE);
 		mDescription = po.getString(DESCRIPTION);
 		mTitle = po.getString(TITLE);
+		ParseObject imageParseObject = po.getParseObject(IMAGE);
+		if (imageParseObject != null) {
+			mImage = new DineOnImage(imageParseObject);
+		}
+	}
+	
+	/**
+	 * Sets the image of this menuitem.
+	 * @param image
+	 */
+	public void setImage(DineOnImage image) {
+		mImage = image;
 	}
 
+	/**
+	 * Retrieve the image associated with this menu item.
+	 * @return instance if image exists, null other wise
+	 */
+	public DineOnImage getImage(){
+		return mImage;
+	}
+	
 	/**
 	 * @return the productID
 	 */
@@ -72,14 +95,14 @@ public class MenuItem extends Storable {
 			this.mProductID = productID;			
 		}
 	}
-	
+
 	/**
 	 * @return The Name of the Menu Item
 	 */
 	public String getTitle() {
 		return mTitle;
 	}
-	
+
 	/**
 	 * @param title a string to set as the menu title
 	 */
@@ -133,9 +156,12 @@ public class MenuItem extends Storable {
 		pobj.put(PRICE, mPrice);
 		pobj.put(DESCRIPTION, mDescription);
 		pobj.put(TITLE, mTitle);
+		if (mImage != null) {
+			pobj.put(IMAGE, mImage.packObject());
+		}
 		return pobj;
 	}
-	
+
 	/**
 	 * Creates a menu item from Parcel.
 	 * @param source Source to create menu item from

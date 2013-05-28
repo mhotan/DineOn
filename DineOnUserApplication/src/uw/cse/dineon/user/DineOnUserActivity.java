@@ -1,5 +1,6 @@
 package uw.cse.dineon.user;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +10,13 @@ import org.json.JSONObject;
 
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.DineOnStandardActivity;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.image.ImageCache;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.UserSatellite.SatelliteListener;
@@ -29,10 +32,11 @@ import uw.cse.dineon.user.restaurant.home.SubMenuFragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
@@ -53,7 +57,7 @@ import com.parse.SaveCallback;
  * In Particular their user specific preferences
  * @author mhotan
  */
-public class DineOnUserActivity extends FragmentActivity implements 
+public class DineOnUserActivity extends DineOnStandardActivity implements 
 SatelliteListener,
 SubMenuFragment.MenuItemListListener, /* manipulation of order from sub menu */
 OrderUpdateListener /* manipulation of list from the current order activity */ { 
@@ -68,9 +72,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	/**
 	 * A self reference.
 	 */
-	private DineOnUserActivity thisActivity;
-
-	private HashMap<MenuItem, CurrentOrderItem> mMenuItemMappings;
+	private DineOnUserActivity This;
 
 	/**
 	 * Location Listener for location based services.
@@ -81,7 +83,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		thisActivity = this;
+		This = this;
 
 		mSat = new UserSatellite();
 
@@ -90,7 +92,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 					"Unable to find your information", UserLoginActivity.class).show();
 		}
 
-		this.mMenuItemMappings = new HashMap<MenuItem, CurrentOrderItem>();		
+		//		this.mMenuItemMappings = new HashMap<MenuItem, CurrentOrderItem>();		
 		this.mLocationListener = new UserLocationListener();
 		try {
 			this.mLocationListener.requestLocationUpdates();
@@ -105,7 +107,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	protected void onNewIntent(Intent intent) {
 		handleSearchIntent(intent);
 	}
-
 
 	/**
 	 * Given an intent where the user request to search something, 
@@ -160,7 +161,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mSat.register(DineOnUserApplication.getDineOnUser(), thisActivity);
+		mSat.register(DineOnUserApplication.getDineOnUser(), This);
 		intializeUI();
 
 	}
@@ -178,6 +179,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		super.onActivityResult(requestCode, resultCode, intent);
 		if (intent == null) { 
 			return;
 		}
@@ -214,7 +216,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		final android.view.MenuItem ITEM1 = menu.findItem(R.id.option_bill);
 		ITEM1.setEnabled(false);
 		ITEM1.setVisible(false);
-		
+
 		final android.view.MenuItem ITEM2 = menu.findItem(R.id.option_view_order);
 		ITEM2.setEnabled(false);
 		ITEM2.setVisible(false);
@@ -389,9 +391,9 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			//Unknown
 			Log.e(TAG, "None of the specified action items were selected.");
 		}
-//		if (i != null) {
-//			startActivity(i);
-//		}
+		//		if (i != null) {
+		//			startActivity(i);
+		//		}
 		return true;
 	}
 
@@ -461,7 +463,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	 * @param dsession new dining session
 	 */
 	public void diningSessionChangeActivity(DiningSession dsession) {
-		Intent i = new Intent(thisActivity, RestaurantHomeActivity.class);
+		Intent i = new Intent(This, RestaurantHomeActivity.class);
 		DineOnUserApplication.setCurrentDiningSession(dsession);
 		startActivity(i);
 	}
@@ -507,9 +509,9 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	public void payBill() {
 		mSat.requestCheckOut(DineOnUserApplication.getCurrentDiningSession(), 
 				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
-		
+
 		Toast.makeText(this, "Payment Sent!", Toast.LENGTH_SHORT).show();
-		
+
 		// TODO Need to add a confirmation from restaurant that the user
 		// has successfully paid
 		DineOnUserApplication.setCurrentDiningSession(null);

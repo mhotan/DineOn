@@ -2,12 +2,15 @@ package uw.cse.dineon.restaurant;
 
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.library.util.ParseUtil;
 import android.app.Application;
+import android.content.Context;
 
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
+import com.parse.PushService;
 
 /**
  * Application class for the entire restaurant application.
@@ -23,8 +26,14 @@ public class DineOnRestaurantApplication extends Application {
 	
 	/**
 	 * Logs out of this current restaurant.
+	 * Context is required to correctly stop listening for request.
+	 * 
+	 * @param ctx to stop listening to channel.
 	 */
-	public static void logOut() {
+	public static void logOut(Context ctx) {
+		if (ctx != null) {
+			PushService.unsubscribe(ctx, ParseUtil.getChannel(mRestaurant.getInfo()));
+		}
 		mRestaurant = null;
 		ParseUser.logOut();
 	}

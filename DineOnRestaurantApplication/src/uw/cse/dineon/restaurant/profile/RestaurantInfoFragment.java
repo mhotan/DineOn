@@ -4,6 +4,8 @@ import java.util.List;
 
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Main view that allows the user to access and see their restaurant.
@@ -67,7 +70,7 @@ public class RestaurantInfoFragment extends Fragment {
 
 			mInputHandler = new UserInputHandler(view, info);
 			// Populate the gallery with all the current images
-			populateGallery(getActivity(), info, mInputHandler, mListener);
+			populateGallery(info);
 
 			return view;
 		} else {
@@ -98,21 +101,13 @@ public class RestaurantInfoFragment extends Fragment {
 	 * @param image Image to add.
 	 */
 	public void addImage(Bitmap image) {
-		//		Bitmap toAdd = Bitmap.createScaledBitmap(
-		//				image, 
-		//				IMAGEVIEW_WIDTH - IMAGEVIEW_WIDTH_PADDING, 
-		//				IMAGEVIEW_HEIGHT - IMAGEVIEW_HEIGHT_PADDING, 
-		//				true);
-		//		
-		// If image is the first actual image of the restaurant
-		// Remove the place holder
-
 		// Get the layout to contain the image.
 		Context ctx = getActivity().getApplicationContext();
+		// Get the layout for holding the image
 		LinearLayout layout = getStanderdLinearLayout(ctx);
 		ImageView imageViewToAdd = produceView(ctx, image);
 		layout.addView(imageViewToAdd);
-		mInputHandler.addRestaurantImage(layout, true);
+		mInputHandler.addToGallery(layout);
 	}
 
 	/**
@@ -123,13 +118,10 @@ public class RestaurantInfoFragment extends Fragment {
 	 * 
 	 * @param container Container to place image
 	 * @param image Image of the new images
-	 * @param index previously assigned index
 	 */
-	public void replaceWithImage(ViewGroup container, Bitmap image, int index) {
+	private void replaceWithImage(ViewGroup container, Bitmap image) {
 		container.removeAllViews();
-		container.addView(produceView(this.getActivity(), image));
-		// TODO Add to handler
-		mInputHandler.setActiveAt(index, true);
+		container.addView(produceView(getActivity(), image));
 		container.invalidate(); // Redraw eventually 
 	}
 
@@ -176,23 +168,83 @@ public class RestaurantInfoFragment extends Fragment {
 	/**
 	 * Populates the gallery initially with all the images of the restaruant.
 	 * Neither gallery nor restaurant can be null.
-	 * @param ctx Context build UI layouts
 	 * @param info Restaurant info to populate the view with.
-	 * @param handler Handler for user input
-	 * @param listener for getting images
 	 */
-	private static void populateGallery(Context ctx, RestaurantInfo info, 
-			UserInputHandler handler, InfoChangeListener listener) {
+	private void populateGallery(RestaurantInfo info) {
 
 		List<DineOnImage> images = info.getImageList();
-		for (int i = 0; i < images.size(); ++i) {
+		for (DineOnImage image: images) {
 			// Get the default layout
-			LinearLayout layout = getStanderdLinearLayout(ctx);
-			layout.removeAllViews();
+			LinearLayout container = getStanderdLinearLayout(getActivity());
+			container.removeAllViews();
+
 			// Get a place holder image before we download
-			layout.addView(getLoadingImageProgressDialog(ctx));
-			int id = handler.addRestaurantImage(layout, false);
-			listener.getThisImage(images.get(i), layout, id);
+			container.addView(getLoadingImageProgressDialog(getActivity()));
+			mInputHandler.addToGallery(container);
+
+			// Create our custom callback for downloading images.
+			ImageDownloader placeHolderCallback = new ImageDownloader(container, image);
+
+			// have the listener get the image and we respond
+			// appropiately.
+			mListener.onGetImage(image, placeHolderCallback);
+		}
+	}
+
+	/**
+	 * Class that we use to encapsulate the attempt of getting images and
+	 * updating a specified view.
+	 * @author mhotan
+	 */
+	private class ImageDownloader implements ImageGetCallback {
+
+		private final ViewGroup mView;
+		private final DineOnImage mToDownload;
+		private final ImageDownloader thisDownloader;
+
+		/**
+		 * Prepare a download for a certain image to download.
+		 * @param toFill View to fill
+		 * @param toDownload Image to download.
+		 */
+		public ImageDownloader(ViewGroup toFill, DineOnImage toDownload) {
+			mView = toFill;
+			// Clear any memory of any onclick listeners
+			mView.setOnClickListener(null);
+			mToDownload = toDownload;
+			thisDownloader = this;
+		}
+
+		@Override
+		public void onImageReceived(Exception e, Bitmap b) {
+			if (e == null) { 
+				// successful retrieval of image
+				// Replace the place holder with image of new restaurant image
+				replaceWithImage(mView, b);
+			} else {
+				// This notifies that the image failed to download
+				// An example would be no internet
+				mView.removeAllViews();
+				// Get an image that shows the image requested failed to DL
+				ImageView failToDownloadView = new ImageView(getActivity());
+				failToDownloadView.setImageResource(R.drawable.av_download);
+				mView.addView(failToDownloadView);
+
+				// Set it so the image clicked will reattempt to get the image.
+				mView.setOnClickListener(new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// Show the fun spinny stuff showing the user we are trying the 
+						// best we can.
+						mView.removeAllViews();
+						mView.addView(getLoadingImageProgressDialog(getActivity()));
+						mView.invalidate();
+						mListener.onGetImage(mToDownload, thisDownloader);
+					}
+				});
+				mView.invalidate();
+			}
 		}
 
 	}
@@ -213,7 +265,7 @@ public class RestaurantInfoFragment extends Fragment {
 	 * 
 	 * @author mhotan
 	 */
-	public interface InfoChangeListener {
+	public interface InfoChangeListener extends ImageObtainable {
 
 		/**
 		 * Notifies the Activity that the restaurant info requested to be
@@ -230,38 +282,17 @@ public class RestaurantInfoFragment extends Fragment {
 		RestaurantInfo getInfo();
 
 		/**
-		 * This handles grabbing the image.
-		 * Once the listener obtains the image it should drop all the views within
-		 * the layout and add produce the image view via 
-		 * 
-		 * Pseudo Code
-		 * Retrieve image Bitmap b
-		 * call replaceWithImage(layout, b, id)
-		 * 
-		 * @param image Image to be retrieved from the server
-		 * @param layout Layout to drop view and add DineOnImage
-		 * @param id of image to be downloaded.
+		 * Adds this image to the restaurant.
+		 * @param b Bitmap to add to Restaurant as an Image
 		 */
-		void getThisImage(DineOnImage image, final ViewGroup layout, final int id);
-
-		/**
-		 * Callback that signifies the User would like to take a picture
-		 * and add it to the current state of the Restaurant Info.
-		 */
-		void onRequestTakePicture();
-
-		/**
-		 * The user is requesting to take an image from the gallery
-		 * and add it to the restaurants images.
-		 */
-		void onRequestGetPictureFromGallery();
+		void onAddImageToRestaurant(Bitmap b);
 
 		/**
 		 * The user wants to set the image at index i as the default image.
 		 * @param i index of the image to set as default.
 		 */
 		void onSelectImageAsDefault(int i);
-		
+
 		/**
 		 * Removes image at index.
 		 * @param index Index of the image to remove
@@ -288,41 +319,25 @@ public class RestaurantInfoFragment extends Fragment {
 		private View mCurrentDefault;
 		private View mCurrentSelected;
 
+		private final AddToRestaurantCallback mAddToRestaurant;
+
 		/**
 		 * Adds an actual image of the restaurant to. 
 		 * @param restaurantImage Adds a view containing a reference image to the index
-		 * @param addListener flag that is set if we want this view to listen for events
 		 * @return id of the image in the view;
 		 */
-		public int addRestaurantImage(View restaurantImage, boolean addListener) {
+		public int addToGallery(View restaurantImage) {
+			// Add the view to the current gallery
 			mGallery.addView(restaurantImage);
-			
-			if (mCurrentDefault == null) {
-				setDefaultImage(restaurantImage);
-			}
-			if (addListener) {
-				restaurantImage.setOnClickListener(this);
-			}
-			
-			return mGallery.indexOfChild(restaurantImage);
-		}
 
-		/**
-		 * Set the active state of the position in the gallery.
-		 * 
-		 * @param index index to change 
-		 * @param active set to true if we want to add listener, false remove listener
-		 */
-		public void setActiveAt(int index, boolean active) {
-			View v = mGallery.getChildAt(index);
-			if (v == null) {
-				return;
+			// Set it so we can select the current image
+			restaurantImage.setOnClickListener(this);
+
+			// set the selected image to this image
+			if (mCurrentSelected == null) {
+				setSelected(restaurantImage);
 			}
-			if (active) {
-				v.setOnClickListener(this);
-			} else {
-				v.setOnClickListener(null);
-			}
+			return mGallery.indexOfChild(restaurantImage);
 		}
 
 		/**
@@ -351,6 +366,9 @@ public class RestaurantInfoFragment extends Fragment {
 				throw new IllegalArgumentException(
 						"Invalid view, doesn't contain all the relevant sub items.");
 			} 
+
+			mAddToRestaurant = new AddToRestaurantCallback();
+
 			mDefaultCheck.setOnCheckedChangeListener(this);
 			mTakePicButton.setOnClickListener(this);
 			mChoosePicButton.setOnClickListener(this);
@@ -361,9 +379,11 @@ public class RestaurantInfoFragment extends Fragment {
 		@Override
 		public void onClick(View v) {
 			if (v == mTakePicButton) {
-				mListener.onRequestTakePicture();
+				// Request the activity to take a picture
+				mListener.onRequestTakePicture(mAddToRestaurant);
 			} else if (v == mChoosePicButton) {
-				mListener.onRequestGetPictureFromGallery();
+				// Request to choose a picture from gallery
+				mListener.onRequestGetPictureFromGallery(mAddToRestaurant);
 			} else if (v == mDeleteButton) {
 				// TODO Handle image deletion
 				AlertDialog.Builder builder = new Builder(mOwner);
@@ -371,7 +391,7 @@ public class RestaurantInfoFragment extends Fragment {
 				builder.setMessage("Are you sure you want to delete it?");
 				builder.setCancelable(true);
 				builder.setPositiveButton("Yes", new OnClickListener() {
-					
+
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						int index = mGallery.indexOfChild(mCurrentSelected);
@@ -380,13 +400,13 @@ public class RestaurantInfoFragment extends Fragment {
 					}
 				});
 				builder.setNegativeButton("Cancel", new OnClickListener() {
-					
+
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
 					}
 				});
-				
+
 			} else if (v == mSaveButton) {
 				mInfo.setAddr(mAddressInput.getText().toString());
 				mInfo.setPhone(mPhoneInput.getText().toString());
@@ -396,11 +416,7 @@ public class RestaurantInfoFragment extends Fragment {
 					mInfo.setMainImage(-1);
 				}
 				mListener.onRestaurantInfoUpdate(mInfo);
-			} else { // user selected a restaurant image
-				if (v == mCurrentDefault) { // If the default image is selected
-					// Then do nothing
-					return;
-				}
+			} else { 
 				setSelected(v);
 			}
 		}
@@ -434,21 +450,51 @@ public class RestaurantInfoFragment extends Fragment {
 
 		/**
 		 * Sets the restaurant Image as the currently selected image.
+		 * If the current image is the default image then not action is needed.
 		 * @param restaurantImage To set as selected.
 		 */
 		private void setSelected(View restaurantImage) {
-			// release the last selected
+			mDefaultCheck.setChecked(false);
+			
+			// In the case where there is nothing at all in this gallery
+			if (mCurrentDefault == null && mCurrentSelected == null) {
+				setDefaultImage(restaurantImage);
+				return;
+			}
+			
+			// If the image is the current defaulted image then no change is needed
+			if (restaurantImage == mCurrentDefault) {
+				mDefaultCheck.setChecked(true);
+				return;
+			}
+
+			// reset the background of the old selected image.
 			if (mCurrentSelected != null) {
 				mCurrentSelected.setBackgroundColor(Color.TRANSPARENT);
 			}
-			// Do nothing if its also the default image
-			if (mCurrentDefault != restaurantImage) {
-				mCurrentSelected = restaurantImage;
-				mCurrentSelected.setBackgroundColor(Color.GRAY);
-				mDefaultCheck.setChecked(false);
-			} else { // It is the default image
-				mDefaultCheck.setChecked(true);
+			
+			mCurrentSelected = restaurantImage;
+			mCurrentSelected.setBackgroundColor(Color.GRAY);
+		}
+
+		/**
+		 * This callback is used when the user wishes to add an image to the restaurant
+		 * via take a photo or choose a photo.
+		 * @author mhotan
+		 */
+		private class AddToRestaurantCallback implements ImageGetCallback {
+
+			@Override
+			public void onImageReceived(Exception e, Bitmap b) {
+				if (e == null) {
+					mListener.onAddImageToRestaurant(b);
+				} else {
+					String message = String.format(getResources().
+							getString(R.string.message_unable_get_image));
+					Toast.makeText(mOwner, message, Toast.LENGTH_SHORT).show();
+				}
 			}
+
 		}
 	}
 }

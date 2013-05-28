@@ -1,14 +1,12 @@
 package uw.cse.dineon.restaurant;
 
-import java.io.File;
-
 import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.DineOnStandardActivity;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.image.ImageCache;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.RestaurantSatellite.SateliteListener;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
@@ -19,8 +17,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,7 +34,7 @@ import com.parse.SaveCallback;
  * information related to the restaurant
  * @author mhotan
  */
-public class DineOnRestaurantActivity extends FragmentActivity 
+public class DineOnRestaurantActivity extends DineOnStandardActivity 
 implements SateliteListener {
 
 	/**
@@ -78,19 +74,6 @@ implements SateliteListener {
 	 */
 	private RestaurantLocationListener mLocationListener;
 
-	/**
-	 * Protected reference for ease of use.
-	 * Don't be dumbass a null it out.
-	 */
-	protected ImageCache mImageCache;
-
-	/**
-	 * This file is just a local storage for 
-	 * retrieving images from Take picture intent.
-	 * Not the best method and has some overhead but right now
-	 * it is the only way to get images from taking pictures.
-	 */
-	private File mLastFile;
 
 	/**
 	 * This is a very important call that serves as a notification 
@@ -116,9 +99,6 @@ implements SateliteListener {
 
 		// Initialize the satellite 
 		mSatellite = new RestaurantSatellite();
-		// Initialize the Cache
-		mImageCache = new ImageCache(this);
-		mImageCache.open();
 
 		// retrieve necessary references.
 		thisResActivity = this;
@@ -136,7 +116,6 @@ implements SateliteListener {
 	protected void onResume() {
 		super.onResume();
 		mSatellite.register(mRestaurant, thisResActivity);
-		mImageCache.open();
 		updateUI(); // This is the call that should trigger a lot of UI changes.
 	}
 
@@ -144,16 +123,7 @@ implements SateliteListener {
 	protected void onPause() {
 		destroyProgressDialog();
 		mSatellite.unRegister();
-		mImageCache.close();
 		super.onPause();
-	}
-
-	/**
-	 * @return a new temporary image file for runtime storage.
-	 */
-	protected File getTempImageFile() {
-		// Attempt to create a gosh darn file to write images to
-		return new File(Environment.getExternalStorageDirectory(), "test.jpg");
 	}
 
 	/**
@@ -164,6 +134,7 @@ implements SateliteListener {
 	protected Restaurant getRestaurant() {
 		return mRestaurant;
 	}
+	
 
 	/**
 	 * Notifies all the users that a Change in this restaurant has changed.
@@ -448,7 +419,7 @@ implements SateliteListener {
 					@Override
 					public void done(ParseException e) {
 						destroyProgressDialog();
-						DineOnRestaurantApplication.logOut();
+						DineOnRestaurantApplication.logOut(thisAct);
 						startLoginActivity();
 					}
 				});
@@ -608,21 +579,18 @@ implements SateliteListener {
 		}
 
 		@Override
-		public void onProviderDisabled(String arg0) {
-			// TODO Auto-generated method stub
-
+		public void onProviderDisabled(String arg0) { 
+			// Do nothing
 		}
 
 		@Override
 		public void onProviderEnabled(String arg0) {
-			// TODO Auto-generated method stub
-
+			// Do nothing
 		}
 
 		@Override
 		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			// TODO Auto-generated method stub
-
+			// Do nothing
 		}
 	}
 
