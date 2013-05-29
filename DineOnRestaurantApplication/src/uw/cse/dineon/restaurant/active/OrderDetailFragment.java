@@ -2,20 +2,16 @@ package uw.cse.dineon.restaurant.active;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import uw.cse.dineon.library.CurrentOrderItem;
-import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -62,9 +58,19 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		View view = inflater.inflate(R.layout.fragment_order_detail,
 				container, false);
 		mOrder = null;
+		Bundle args = getArguments();
+		
+		// If the orientation changed or fragment temporarily died and 
+		// came back
+		if (savedInstanceState != null && savedInstanceState.containsKey(ORDER)) {
+			mOrder = savedInstanceState.getParcelable(ORDER);
+		} else if (args != null && args.containsKey(ORDER)) {
+			mOrder = args.getParcelable(ORDER);
+		}
 
 		mTitle = (TextView) view.findViewById(R.id.label_order_title_detail);
 		mTableInput = (TextView) view.findViewById(R.id.label_order_table);
@@ -74,7 +80,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		mSendMessageButton = (ImageButton) view.findViewById(R.id.button_send_message_fororder);
 		mSendMessageButton.setOnClickListener(this);
 		mItemList = (ListView) view.findViewById(R.id.list_order);
-
+		updateState();
 		return view;
 	}
 
@@ -123,7 +129,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			mSendMessageButton.setVisibility(View.VISIBLE);
 			mSendMessageButton.setEnabled(true);
 			mTitle.setText("Order placed by: " + mOrder.getOriginalUser().getName());
-			mTableInput.setText("" + mOrder.getTableID());
+			mTableInput.setText("Table " + mOrder.getTableID());
 			mTakenTime.setText(mOrder.getOriginatingTime().toString());
 			mAdapter = new MenuItemAdapter(this.getActivity(), mOrder.getMenuItems());
 			mItemList.setAdapter(mAdapter);
@@ -191,10 +197,10 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	 * View the relevant information of all the menu items.
 	 * @author mhotan
 	 */
-	private static class MenuItemAdapter extends ArrayAdapter<CurrentOrderItem> {
+	private class MenuItemAdapter extends ArrayAdapter<CurrentOrderItem> {
 
 		private final Context mContext;
-
+		
 		/**
 		 * List of Menu Items with their associated quantity.
 		 */
@@ -211,7 +217,6 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 
 			// Check for stupidity
 			//Map<CurrentOrderItem, Integer> occurences = Utility.toQuantityMap(items);
-
 			mItems = new ArrayList<CurrentOrderItem>(items);
 		}
 
@@ -234,13 +239,13 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			int qty = toShow.getQuantity();
 
 			//Commented out for findbugs
-//			ImageView menuItemImage = (ImageView) 
-//					view.findViewById(R.id.image_thumbnail_menuitem);
+			//			ImageView menuItemImage = (ImageView) 
+			//					view.findViewById(R.id.image_thumbnail_menuitem);
 			TextView menuItemTitle = (TextView) view.findViewById(R.id.label_menuitem_title);
 			TextView menuItemDesc = (TextView) view.findViewById(R.id.label_menuitem_desc);
 			TextView menuItemPrice = (TextView) view.findViewById(R.id.label_menuitem_price);
 			ImageButton deleteButton = (ImageButton) view.findViewById(R.id.button_menuitem_delete);
-
+			
 			// Remove the delete button from restaurant context
 			deleteButton.setEnabled(false);
 			deleteButton.setVisibility(View.GONE);
@@ -254,6 +259,12 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			return view;
 		}
 
+		@Override
+		public int getCount() {
+			return mItems.size();
+		}
+		
 	}
 
+	
 }

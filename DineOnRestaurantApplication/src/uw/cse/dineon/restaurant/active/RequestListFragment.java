@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -246,13 +247,13 @@ public class RequestListFragment extends ListFragment {
 		 * Sets the arrow based on whether or not the list item
 		 * is expanded or not.
 		 * @param position The position of the list item to set
-		 * @param arrowButton The specified arrow button to set
+		 * @param arrow The specified arrow to set
 		 */
-		private void setArrow(int position, ImageButton arrowButton) {
+		private void setArrow(int position, ImageView arrow) {
 			if(position == expanded) {
-				arrowButton.setImageResource(R.drawable.navigation_next_item);
+				arrow.setImageResource(R.drawable.navigation_next_item);
 			} else {
-				arrowButton.setImageResource(R.drawable.navigation_expand);
+				arrow.setImageResource(R.drawable.navigation_expand);
 			}
 		}
 
@@ -304,8 +305,8 @@ public class RequestListFragment extends ListFragment {
 			TextView time = (TextView) VIEW.findViewById(R.id.label_request_time);
 			time.setText(REQUEST.getOriginatingTime().toString());
 
-			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_request);
-			setArrow(position, arrowButton);
+			ImageView arrow = (ImageView) vwTop.findViewById(R.id.button_expand_request);
+			setArrow(position, arrow);
 
 			ImageButton assignStaffButton = (ImageButton) vwBot.findViewById(R.id.button_assign);
 
@@ -321,8 +322,7 @@ public class RequestListFragment extends ListFragment {
 				}
 			};
 			
-			title.setOnClickListener(listener);
-			time.setOnClickListener(listener);
+			vwTop.setOnClickListener(listener);
 
 			if(expanded != position) {
 				vwBot.setVisibility(View.GONE);

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -250,13 +251,13 @@ public class OrderListFragment extends ListFragment {
 		 * Sets the arrow based on whether or not the list item
 		 * is expanded or not.
 		 * @param position The position of the list item to set
-		 * @param arrowButton The specified arrow button to set
+		 * @param arrow The specified arrow to set
 		 */
-		private void setArrow(int position, ImageButton arrowButton) {
+		private void setArrow(int position, ImageView arrow) {
 			if(position == expanded) {
-				arrowButton.setImageResource(R.drawable.navigation_next_item);
+				arrow.setImageResource(R.drawable.navigation_next_item);
 			} else {
-				arrowButton.setImageResource(R.drawable.navigation_expand);
+				arrow.setImageResource(R.drawable.navigation_expand);
 			}
 		}
 
@@ -323,17 +324,17 @@ public class OrderListFragment extends ListFragment {
 			time.setText(order.getOriginatingTime().toString());
 			
 			//Set up expand button
-			ImageButton arrowButton = (ImageButton) vwTop.findViewById(R.id.button_expand_order);
-			setArrow(position, arrowButton);
+			ImageView arrow = (ImageView) vwTop.findViewById(R.id.button_expand_order);
+			setArrow(position, arrow);
 
 			// Add the onclick listener that listens 
 			vwTop.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					expand(position);
 
-					ImageButton arrowButton = 
-							(ImageButton) VIEW.findViewById(R.id.button_expand_order);
-					setArrow(position, arrowButton);
+					ImageView arrow = 
+							(ImageView) VIEW.findViewById(R.id.button_expand_order);
+					setArrow(position, arrow);
 					//Right arrow case -- goes to details fragment
 					if(expanded != position) {
 						mListener.onRequestOrderDetail(mOrders.get(position));
@@ -349,7 +350,7 @@ public class OrderListFragment extends ListFragment {
 
 			// Add to mapping to reference later
 			mViewToOrder.put(buttonCompleteOrder, order);
-			mViewToOrder.put(arrowButton, order);
+			mViewToOrder.put(arrow, order);
 			mViewToOrder.put(progressBar, order);
 
 			// Add listener for reaction purposes

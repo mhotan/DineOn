@@ -173,8 +173,8 @@ implements OnCheckedChangeListener, OnClickListener {
 			mSendMessage.setEnabled(true);
 			mSendTask.setEnabled(true);
 			mMessageBlock.setHint("Quick Response");
-			mTitle.setText("From " + mRequest.getUserInfo().getName());
-			mDetails.setText(mRequest.getDescription());
+			mTitle.setText("Request From " + mRequest.getUserInfo().getName());
+			mDetails.setText("Message: " + mRequest.getDescription());
 			mTableNumber.setText("??? TODO");
 			mTimeTaken.setText(mRequest.getOriginatingTime().toString());
 		}
