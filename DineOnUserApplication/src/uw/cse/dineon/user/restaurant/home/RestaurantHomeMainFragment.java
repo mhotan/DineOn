@@ -5,8 +5,6 @@ import java.util.List;
 
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.R;
-import uw.cse.dineon.user.restaurantselection.RestaurantInfoActivity;
-import uw.cse.dineon.user.restaurantselection.RestaurantInfoFragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,13 +26,13 @@ import android.view.ViewGroup;
  * @author mhotan
  */
 public class RestaurantHomeMainFragment extends Fragment {
-	
+
 	private static final String INFORMATION = "Information";
 
-	private final String TAG = this.getClass().getSimpleName();
+	private static final String TAG = RestaurantHomeMainFragment.class.getSimpleName();
 
 	private ReferenceDataListener mListener;
-	
+
 	private RestaurantInfo mRestaurantInfo;
 
 	@Override
@@ -45,19 +43,18 @@ public class RestaurantHomeMainFragment extends Fragment {
 
 		ViewPager pager = (ViewPager)view.findViewById(R.id.pager_menu_info);
 
+		// Here we know the activity has been created therefore there
+		// must be a restaurant to focus on
+		mRestaurantInfo = mListener.getCurrentRestaurant();
+
 		// Use activity's Fragment Manager
 		RestaurantMenuCategoryAdapter adapter = 
 				new RestaurantMenuCategoryAdapter(getFragmentManager(), this.mRestaurantInfo);
-
 		pager.setAdapter(adapter);
-		
-		if (this.mListener != null) {
-			this.mRestaurantInfo = this.mListener.getCurrentRestaurant();
-		}
 
 		// Set initial page to the menu page
 		pager.setCurrentItem(0);
-				
+
 		return view;
 	}
 
@@ -66,7 +63,6 @@ public class RestaurantHomeMainFragment extends Fragment {
 		super.onAttach(activity);
 		if (activity instanceof ReferenceDataListener) {
 			mListener = (ReferenceDataListener) activity;
-			this.mRestaurantInfo = this.mListener.getCurrentRestaurant();
 		} else {
 			throw new ClassCastException(activity.toString()
 					+ " must implemenet RestaurantHomeMainFragment.ReferenceDataListener");
@@ -74,12 +70,12 @@ public class RestaurantHomeMainFragment extends Fragment {
 	}
 
 	/**
-	 * Adapter class that manages the view.
+	 * The adapter is in charge for managing the transitions between
+	 * fragments of a particular view.
 	 * @author mhotan
-	 *
 	 */
 	public class RestaurantMenuCategoryAdapter extends FragmentPagerAdapter {
-		
+
 		private List<Fragment> mFragments;
 		private RestaurantInfo mRestaurantInfo;
 
@@ -97,23 +93,16 @@ public class RestaurantHomeMainFragment extends Fragment {
 		@Override
 		public Fragment getItem(int position) {
 			Fragment f = null;
-			Bundle data = new Bundle();
 			// make sure position is within bounds
 			position = Math.min(Math.max(position, 0), this.mRestaurantInfo.getMenuList().size());
 			switch (position) {
 			case 0: // Show restaurant info
 				f = new RestaurantInfoFragment();
-				data.putParcelable(RestaurantInfoActivity.EXTRA_RESTAURANT, 
-						mListener.getCurrentRestaurant());
-				f.setArguments(data);
 				break;
 			default:
-				f = new SubMenuFragment();
-				data.putParcelable(SubMenuFragment.EXTRA_MENU, 
-						this.mRestaurantInfo.getMenuList().get(position - 1));
-				f.setArguments(data);
+				f = SubMenuFragment.getInstance(position - 1);
 			}
-			
+
 			this.mFragments.add(position, f);
 			return f;
 		}
@@ -135,7 +124,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 			return this.mRestaurantInfo.getMenuList().size() + 1;
 		}
 	}
-	
+
 
 	/**
 	 * TODO implement.
@@ -150,7 +139,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 		public RestaurantInfo getCurrentRestaurant();
 
 	}
-	
-	
+
+
 
 }

@@ -4,10 +4,10 @@ import java.io.File;
 
 import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.image.ImageCache;
+import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageIO;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.library.image.ImageObtainer;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -57,6 +57,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 	 * Holds a reference to the current GetImage Callback.
 	 */
 	private ImageGetCallback mGetImageCallback;
+	
 
 	/////////////////////////////////////////////////////////////////////
 	/////  Override Activity specific methods for correct behavior
@@ -187,13 +188,23 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 	 * @param callback Callback to get back
 	 */
 	protected void getImage(final DineOnImage image, final ImageGetCallback callback) {
-
+		if (callback == null) {
+			return; // Cant call back to no one
+		}
+		
+		if (image == null) {
+			callback.onImageReceived(new RuntimeException("Null DineOnImage"), null);
+			return;
+		}
+		
 		// Check in memory cache
 		Bitmap ret = getBitmapFromMemCache(image);
 		if (ret != null) {
 			callback.onImageReceived(null, ret);
 			return;
 		}
+		
+		Log.w(tag, "Cache miss for image " + image.getObjId());
 
 		// Check in SQL database or network
 		mPersImageCache.getImageFromCache(image, new ImageGetCallback() {

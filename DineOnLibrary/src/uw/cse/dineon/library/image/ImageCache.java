@@ -35,6 +35,8 @@ public class ImageCache {
 	private CacheCleaner mCleaner;
 	private SQLiteDatabase mDb;
 
+	private final Object mLock = new Object();
+
 	private static final String[] RELEVANT_COLUMNS = { 
 		ImageSQLiteHelper.COLUMN_PARSEID,
 		ImageSQLiteHelper.COLUMN_LAST_UDPATED,
@@ -104,12 +106,15 @@ public class ImageCache {
 	 * @return true if there is a recent version of image added, false otherwise
 	 */
 	public boolean hasRecentInCache(DineOnImage image) {
-		Cursor cursor = mDb.query(
-				ImageSQLiteHelper.TABLE_IMAGES, 
-				CONTAINS_ELEMENT,
-				ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
-				new String[] {image.getObjId()}
-				, null, null, null);
+		Cursor cursor = null;
+		synchronized (mLock) {
+			cursor = mDb.query(
+					ImageSQLiteHelper.TABLE_IMAGES, 
+					CONTAINS_ELEMENT,
+					ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
+					new String[] {image.getObjId()}
+					, null, null, null);
+		}
 		if (!cursor.moveToFirst()) {
 			return false;
 		}
@@ -124,12 +129,15 @@ public class ImageCache {
 	 * @return if there is any version of the image in the database.
 	 */
 	private boolean hasVersionInCache(DineOnImage image) {
-		Cursor cursor = mDb.query(
-				ImageSQLiteHelper.TABLE_IMAGES, 
-				CONTAINS_ELEMENT,
-				ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
-				new String[] {image.getObjId()}
-				, null, null, null);
+		Cursor cursor = null;
+		synchronized (mLock) {
+			cursor = mDb.query(
+					ImageSQLiteHelper.TABLE_IMAGES, 
+					CONTAINS_ELEMENT,
+					ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
+					new String[] {image.getObjId()}
+					, null, null, null);
+		}
 		boolean hasVal = cursor.moveToFirst();
 		cursor.close();
 		return hasVal;
@@ -145,12 +153,15 @@ public class ImageCache {
 	 * @param callback Callback to use on receipt.
 	 */
 	public void getImageFromCache(final DineOnImage image, final ImageGetCallback callback) {
-		Cursor cursor = mDb.query(
-				ImageSQLiteHelper.TABLE_IMAGES, 
-				RELEVANT_COLUMNS,
-				ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
-				new String[] {image.getObjId()}
-				, null, null, null);
+		Cursor cursor = null;
+		synchronized (mLock) {
+			cursor = mDb.query(
+					ImageSQLiteHelper.TABLE_IMAGES, 
+					RELEVANT_COLUMNS,
+					ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
+					new String[] {image.getObjId()}
+					, null, null, null);
+		}
 
 		final boolean HAVEINCACHE = cursor.moveToFirst();
 
@@ -179,7 +190,7 @@ public class ImageCache {
 				Bitmap toReturn = DineOnImage.byteArrayToBitmap(byteImg);
 				String parseId = cursor.getString(0);
 				cursor.close();
-				
+
 				// Notify the user we have completed 
 				callback.onImageReceived(null, toReturn);
 
@@ -188,10 +199,10 @@ public class ImageCache {
 				return;
 			}
 		} 
-		
+
 		// Couldnt find image so close cursor.
 		cursor.close();
-		
+
 		// Can reach here with two cases
 		// Case 1. Our image's last updated value in the cache is before the one on the server
 		// Case 2. We have never seen this image before.
@@ -267,8 +278,11 @@ public class ImageCache {
 	 */
 	private void updateByParseId(String parseId, ContentValues cv) {
 		String where = ImageSQLiteHelper.COLUMN_PARSEID + " = ?";
-		int result = mDb.update(ImageSQLiteHelper.TABLE_IMAGES, 
-				cv, where, new String[] {parseId});
+		int result = -1;
+		synchronized (mLock) {
+			result = mDb.update(ImageSQLiteHelper.TABLE_IMAGES, 
+					cv, where, new String[] {parseId});
+		}
 		if (result <= 0) {
 			Log.w(TAG, "Unable to update using updateByParseId");
 		}
@@ -293,29 +307,7 @@ public class ImageCache {
 	 * @param b Bitmap version of the image.
 	 */
 	private void addImageToDB(DineOnImage image, Bitmap b) {
-
-		long lastAnything = image.getLastUpdatedTime().getTime();
-		ContentValues values = new ContentValues();	
-
-		// Place the most recent data to the row
-		values.put(ImageSQLiteHelper.COLUMN_LAST_UDPATED, lastAnything);
-		values.put(ImageSQLiteHelper.COLUMN_LAST_USED, lastAnything);
-		values.put(ImageSQLiteHelper.COLUMN_IMG, DineOnImage.bitmapToByteArray(b));
-
-		// We have all the data
-		if (hasVersionInCache(image)) {
-			updateByParseId(image.getObjId(), values);
-		} else {
-			values.put(ImageSQLiteHelper.COLUMN_PARSEID, image.getObjId());
-			long id = mDb.insert(ImageSQLiteHelper.TABLE_IMAGES, null, values);
-			if (id == -1) {
-				Log.e(TAG, 
-						"Unable to \"insert\" SQLite " 
-								+ "database because of some unknown reason");
-			}
-		}
-
-		
+		new AsyncImageAdder(image, b).execute();
 	}
 
 	/**
@@ -323,10 +315,12 @@ public class ImageCache {
 	 * @param image Image to delete.
 	 */
 	public void deleteImage(DineOnImage image) {
-		mDb.delete(
-				ImageSQLiteHelper.TABLE_IMAGES, 
-				ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
-				new String[] {image.getObjId()});
+		synchronized (mLock) {
+			mDb.delete(
+					ImageSQLiteHelper.TABLE_IMAGES, 
+					ImageSQLiteHelper.COLUMN_PARSEID + " = ?",
+					new String[] {image.getObjId()});
+		}
 	}
 
 	/**
@@ -372,29 +366,30 @@ public class ImageCache {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			Cursor cursor = mDb.query(ImageSQLiteHelper.TABLE_IMAGES,
-					DELETE_COLUMNS, null, null, null, null, null);
+			synchronized (mLock) {
+				Cursor cursor = mDb.query(ImageSQLiteHelper.TABLE_IMAGES,
+						DELETE_COLUMNS, null, null, null, null, null);
 
-			// Current time
-			long now = Calendar.getInstance().getTime().getTime();
+				// Current time
+				long now = Calendar.getInstance().getTime().getTime();
 
-			// Iterate through all files in the database
-			while (!cursor.isAfterLast()) {
+				// Iterate through all files in the database
+				while (!cursor.isAfterLast()) {
 
-				// Get the last used date and compare with the current date
-				long lastUsed = cursor.getLong(1);
+					// Get the last used date and compare with the current date
+					long lastUsed = cursor.getLong(1);
 
-				// See if the time since last use is longer then expiration.
-				if (now - lastUsed > EXPIRATION_TIME) {
-					mDb.delete(ImageSQLiteHelper.TABLE_IMAGES,
-							ImageSQLiteHelper.COLUMN_ID + " = " + cursor.getLong(0),
-							null);
+					// See if the time since last use is longer then expiration.
+					if (now - lastUsed > EXPIRATION_TIME) {
+						mDb.delete(ImageSQLiteHelper.TABLE_IMAGES,
+								ImageSQLiteHelper.COLUMN_ID + " = " + cursor.getLong(0),
+								null);
+					}
+
+					// Make sure we continue the iteration.
+					cursor.moveToNext();
 				}
-
-				// Make sure we continue the iteration.
-				cursor.moveToNext();
 			}
-
 			return null;
 		}
 
@@ -402,6 +397,58 @@ public class ImageCache {
 		protected void onPostExecute(Void result) {
 			mCleaner = null;
 		}
+	}
 
+	/**
+	 * Class that adds image in the background.
+	 * @author mhotan 
+	 */
+	private class AsyncImageAdder extends AsyncTask<Void, Void, Void> {
+
+		private final DineOnImage mImage;
+		private final Bitmap mBitmap;
+
+		/**
+		 * Sets teh image adder to this dine on image 
+		 * and bitmap.
+		 * @param image image to add in background
+		 * @param bitmap Bitmap to add that belongs to image.
+		 */
+		public AsyncImageAdder(DineOnImage image, Bitmap bitmap) {
+			mImage = image;
+			mBitmap = bitmap;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			long lastAnything = mImage.getLastUpdatedTime().getTime();
+			ContentValues values = new ContentValues();	
+
+			// Place the most recent data to the row
+			values.put(ImageSQLiteHelper.COLUMN_LAST_UDPATED, lastAnything);
+			values.put(ImageSQLiteHelper.COLUMN_LAST_USED, lastAnything);
+			values.put(ImageSQLiteHelper.COLUMN_IMG, DineOnImage.bitmapToByteArray(mBitmap));
+
+			// We have all the data
+			if (hasVersionInCache(mImage)) {
+				updateByParseId(mImage.getObjId(), values);
+			} else {
+				values.put(ImageSQLiteHelper.COLUMN_PARSEID, mImage.getObjId());
+				long id = -1;
+
+				// Fine grain locking over database insertion
+				synchronized (mLock) {
+					id = mDb.insert(ImageSQLiteHelper.TABLE_IMAGES, null, values);
+				}
+
+				if (id == -1) {
+					Log.e(TAG, 
+							"Unable to \"insert\" SQLite " 
+									+ "database because of some unknown reason");
+				}
+			}
+			return null;
+		}
 	}
 }
+

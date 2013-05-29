@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menuitem_top"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/image_menuitem"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/menu_image_placeholder" />
+
+    <TextView
+        android:id="@+id/label_menuitem_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="5dip"
+        android:layout_toLeftOf="@+id/numberpicker_menuitem_qty"
+        android:layout_toRightOf="@+id/image_menuitem"
+        android:gravity="center_vertical"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+     <TextView
+         android:id="@+id/label_more_info_hint"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignBottom="@+id/image_menuitem"
+         android:layout_toLeftOf="@+id/numberpicker_menuitem_qty"
+         android:layout_toRightOf="@+id/image_menuitem"
+         android:text="@string/hint_click_more_options"
+         android:textAppearance="?android:attr/textAppearanceSmall"
+         android:textStyle="italic" />
+    
+    <LinearLayout
+        android:id="@+id/numberpicker_menuitem_qty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/image_menuitem"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
+
+        <ImageButton
+            android:id="@+id/button_increment_order"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="@drawable/navigation_collapse" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000000" />
+        
+        <TextView
+            android:id="@+id/input_order_qty"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_margin="2dip"
+            android:text="0" >
+
+        </TextView>
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000000" />
+        
+        <ImageButton
+            android:id="@+id/button_decrement_order"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="@drawable/navigation_expand" />
+        
+    </LinearLayout>
+
+   
+
+</RelativeLayout>

@@ -1,10 +1,12 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
-import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  * 
@@ -16,30 +18,51 @@ MenuItemDetailFragment.MenuItemDetailListener {
 
 	public static final String TAG = MenuItemDetailActivity.class.getSimpleName();
 	
-	public static final String EXTRA_MENUITEM = "menuitem";
+	public static final String EXTRA_MENUITEM_NAME = "menuitem";
 	
 	private MenuItem mItem;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Need to check if Activity has been switched to landscape mode
-		// If yes, finished and go back to the start Activity
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			finish();
+		Bundle extras = getIntent().getExtras();
+		String itemName = null;
+		if (extras != null && extras.containsKey(EXTRA_MENUITEM_NAME)) {
+			itemName = extras.getString(EXTRA_MENUITEM_NAME);
+		} else if (savedInstanceState != null 
+				&& savedInstanceState.containsKey(EXTRA_MENUITEM_NAME)) {
+			itemName = extras.getString(EXTRA_MENUITEM_NAME);
+		}
+		
+		// Ugly way to find the item
+		DiningSession session = mUser.getDiningSession();
+		if (session != null) {
+			for (Menu menu: session.getRestaurantInfo().getMenuList()) {
+				for (MenuItem item : menu.getItems()) {
+					if (item.getTitle().equals(itemName)) {
+						mItem = item;
+					}
+				}
+			}
+		}
+		
+		if (mItem == null) {
+			Log.e(TAG, "Unable to load menu item to show details");
 			return;
 		}
+		
 		setContentView(R.layout.activity_menuitem_detail);
-		Bundle extras = getIntent().getExtras();
-		if (extras != null && extras.containsKey(EXTRA_MENUITEM)) {
-			this.mItem = extras.getParcelable(EXTRA_MENUITEM);
-		}
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putString(EXTRA_MENUITEM_NAME, mItem.getTitle());
 	}
 
 	@Override
 	public MenuItem getMenuItem() {
-		// TODO Auto-generated method stub
-		return this.mItem;
+		return mItem;
 	}
 }

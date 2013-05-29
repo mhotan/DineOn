@@ -1,11 +1,13 @@
 package uw.cse.dineon.user;
 
 import java.util.HashMap;
+import java.util.List;
 
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.app.Application;
@@ -20,8 +22,11 @@ import com.parse.ParseUser;
  * Application for DineOn user side.
  */
 public class DineOnUserApplication extends Application {
+	
 	public static DineOnUser currentUser = null;
 	public static HashMap<MenuItem, CurrentOrderItem> currentOrderMapping;
+	private static RestaurantInfo restaurantOfInterest;
+	private static List<RestaurantInfo> restaurantInfos;
 	
 	@Override
 	public void onCreate() {
@@ -135,5 +140,46 @@ public class DineOnUserApplication extends Application {
 		if (currentOrderMapping.containsKey(item)) {
 			currentOrderMapping.remove(item);
 		}
+	}
+	
+	/**
+	 * This method sets the User restaurant of interest.  Some activities will check whether 
+	 * the restaurant of interest is active.  To have no restaurant of interest set the info to 
+	 * null.
+	 * 
+	 * @param info Restaurant to focus on
+	 */
+	public static void setRestaurantOfInterest(RestaurantInfo info) {
+		restaurantOfInterest = info;
+	}
+	
+	/**
+	 * @return Returns restaurant of interest or null if there is not one.
+	 */
+	public static RestaurantInfo getRestaurantOfInterest() {
+		return restaurantOfInterest;
+	}
+	
+	/**
+	 * Sets the current list of restaurant to focus on as this list.
+	 * @param restaurants restaurants to set as currently selected list
+	 */
+	public static void saveRestaurantList(List<RestaurantInfo> restaurants) {
+		restaurantInfos = restaurants;
+	}
+	
+	/**
+	 * Get saved restaurant list.
+	 * @return The restaurant list previously saved
+	 */
+	public static List<RestaurantInfo> getRestaurantList() {
+		return restaurantInfos;
+	}
+	
+	/**
+	 * Clear current restaurant lists.
+	 */
+	public static void clearResaurantList() {
+		restaurantInfos = null;
 	}
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menuitem_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="100dip"
+    android:orientation="horizontal" >
+
+    <EditText
+        android:id="@+id/input_special_instructions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="@string/hint_special_menuitem_instruction"
+        android:inputType="textMultiLine" >
+
+    </EditText>
+
+    <ImageButton
+        android:id="@+id/button_about_menuitem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/action_about" />
+
+</LinearLayout>

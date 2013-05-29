@@ -71,5 +71,8 @@
     <string name="cancel">Cancel</string>
     <string name="restaurant_name_here">Restaurant Name Goes Here</string>
     <string name="button_view_order">View Order</string>
+    <string name="hours_unknown">Hours ar unknown</string>
+    <string name="hint_click_more_options">Click for more options</string>
+    <string name="hint_special_menuitem_instruction">Place special instructions here</string>
 
 </resources>

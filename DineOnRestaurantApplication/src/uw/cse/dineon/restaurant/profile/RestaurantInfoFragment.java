@@ -183,7 +183,7 @@ public class RestaurantInfoFragment extends Fragment {
 			mInputHandler.addToGallery(container);
 
 			// Create our custom callback for downloading images.
-			ImageDownloader placeHolderCallback = new ImageDownloader(container, image);
+			ImageRetriever placeHolderCallback = new ImageRetriever(container, image);
 
 			// have the listener get the image and we respond
 			// appropiately.
@@ -196,18 +196,18 @@ public class RestaurantInfoFragment extends Fragment {
 	 * updating a specified view.
 	 * @author mhotan
 	 */
-	private class ImageDownloader implements ImageGetCallback {
+	private class ImageRetriever implements ImageGetCallback {
 
 		private final ViewGroup mView;
 		private final DineOnImage mToDownload;
-		private final ImageDownloader thisDownloader;
+		private final ImageRetriever thisDownloader;
 
 		/**
 		 * Prepare a download for a certain image to download.
 		 * @param toFill View to fill
 		 * @param toDownload Image to download.
 		 */
-		public ImageDownloader(ViewGroup toFill, DineOnImage toDownload) {
+		public ImageRetriever(ViewGroup toFill, DineOnImage toDownload) {
 			mView = toFill;
 			// Clear any memory of any onclick listeners
 			mView.setOnClickListener(null);
