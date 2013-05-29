@@ -87,7 +87,7 @@ public class DiningSessionDetailFragment extends Fragment {
 			// TODO 
 			ab.setTitle("No Dining session selected");
 		} else {
-			ab.setTitle("Table: " + mDiningSession.getTableID());
+			ab.setTitle("Table " + mDiningSession.getTableID());
 			mUserAdapter = new UserListAdapter(getActivity(), mDiningSession.getUsers());
 			mOrderAdapter = new OrderListAdapter(getActivity(), mDiningSession.getOrders());
 			
@@ -372,7 +372,7 @@ public class DiningSessionDetailFragment extends Fragment {
 					throw new IllegalArgumentException(
 							TAG + ":[OrderListItemListener] Order is null");
 				}
-				mOrderTitle.setText("Table: " + mOrder.getTableID());
+				mOrderTitle.setText("Table " + mOrder.getTableID());
 				List<CurrentOrderItem> items = mOrder.getMenuItems();
 				//Displays menu items as a string
 				StringBuffer buf = new StringBuffer();
