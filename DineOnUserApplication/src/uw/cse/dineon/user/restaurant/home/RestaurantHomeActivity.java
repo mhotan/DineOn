@@ -1,9 +1,14 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
-import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
@@ -13,6 +18,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -139,5 +145,29 @@ MenuItemDetailListener {
 		// We want on back to always go to restaurant selection.
 		Intent i = new Intent(this, RestaurantSelectionActivity.class);
 		startActivity(i);
+	}
+	
+	/**
+	 * @param request String request description
+	 */
+	public void onRequestMade(String request) {
+		UserInfo ui = new UserInfo(ParseUser.getCurrentUser());
+		
+		
+		final CustomerRequest C_REQ = new CustomerRequest(request, ui);
+		
+		final RestaurantHomeActivity COACT = this;
+		C_REQ.saveInBackGround(new SaveCallback() {
+			
+			@Override
+			public void done(ParseException e) {
+				if(e == null) {
+					COACT.placeRequest(C_REQ);
+				} else {
+					Log.e(TAG, "Request did not save: " + e.getMessage());
+				}
+			}
+		} );
+				
 	}
 }

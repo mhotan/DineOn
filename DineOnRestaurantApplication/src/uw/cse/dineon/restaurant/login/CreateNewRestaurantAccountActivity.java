@@ -20,10 +20,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
-import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
-import com.parse.SignUpCallback;
 
 /**
  * This class is in charge on instantiating a Restaurant object.

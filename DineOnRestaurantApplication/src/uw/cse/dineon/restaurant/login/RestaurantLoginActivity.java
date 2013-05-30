@@ -3,7 +3,6 @@ package uw.cse.dineon.restaurant.login;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
-import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.R;
@@ -14,10 +13,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery.CachePolicy;

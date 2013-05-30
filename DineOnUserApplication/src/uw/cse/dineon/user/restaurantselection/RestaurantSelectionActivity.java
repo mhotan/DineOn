@@ -35,8 +35,7 @@ import com.parse.ParseQuery;
  */
 public class RestaurantSelectionActivity extends DineOnUserActivity implements 
 RestaurantSelectionButtonsFragment.OnClickListener, // Listening for button actions
-RestaurantListFragment.RestaurantListListener //  Listening for List items
-{
+RestaurantListFragment.RestaurantListListener { //  Listening for List items
 
 	private final String TAG = this.getClass().getSimpleName();
 

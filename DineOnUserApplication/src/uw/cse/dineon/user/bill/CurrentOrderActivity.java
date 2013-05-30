@@ -1,17 +1,10 @@
 package uw.cse.dineon.user.bill;
 
-import uw.cse.dineon.library.CustomerRequest;
-import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 /**
  * 
@@ -50,31 +43,6 @@ public class CurrentOrderActivity extends DineOnUserActivity {
 		}
 		
 		return true;
-	}
-
-
-	/**
-	 * @param request String request description
-	 */
-	public void onRequestMade(String request) {
-		UserInfo ui = new UserInfo(ParseUser.getCurrentUser());
-		
-		
-		final CustomerRequest C_REQ = new CustomerRequest(request, ui);
-		
-		final CurrentOrderActivity COACT = this;
-		C_REQ.saveInBackGround(new SaveCallback() {
-			
-			@Override
-			public void done(ParseException e) {
-				if(e == null) {
-					COACT.placeRequest(C_REQ);
-				} else {
-					Log.e(TAG, "Request did not save: " + e.getMessage());
-				}
-			}
-		} );
-				
 	}
 
 	@Override

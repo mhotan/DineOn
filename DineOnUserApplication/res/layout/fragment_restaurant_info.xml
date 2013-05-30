@@ -129,6 +129,13 @@
                 android:contentDescription="@string/label_add_to_favorites"
                 android:src="@drawable/addtofavorites" />
         </LinearLayout>
+        <Button
+        android:id="@+id/button_request"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="@string/make_request" />
     </LinearLayout>
 
 </ScrollView>

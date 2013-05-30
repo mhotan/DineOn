@@ -57,7 +57,7 @@
     <string name="activity_start_login">startLoginActivity</string>
     <string name="hint_username">Username</string>
     <string name="facebook_app_id">505185672873933</string>
-    <string name="make_request">Request</string>
+    <string name="make_request">Make Request</string>
     <string name="request_description">Description&#8320;</string>
     <string name="dineonlogo">DineOn Logo</string>
     <string name="husky_soft_logo">HuskySoft Logo</string>

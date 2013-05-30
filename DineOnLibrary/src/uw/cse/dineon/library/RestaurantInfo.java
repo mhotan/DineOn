@@ -38,6 +38,7 @@ public class RestaurantInfo extends LocatableStorable {
 	// Lets set the name of the restaurant once and only once.
 	private final String mName;
 	private String mAddress;
+	private String mHours;
 	private String mPhone;
 	private int mMainImageIndex; // Index of Main image
 	private final List<DineOnImage> mImageList; // Mapping of Parse Object IDs
@@ -56,10 +57,10 @@ public class RestaurantInfo extends LocatableStorable {
 		mName = mUser.getUsername();
 		mAddress = UNDETERMINED;
 		mPhone = UNDETERMINED;
+		mHours = UNDETERMINED;
 		mMainImageIndex = 0;
 		mImageList = new ArrayList<DineOnImage>();
 		mMenus = new ArrayList<Menu>();
-		//TODO mRestaurantHours = ;
 	}
 
 	/**
@@ -74,10 +75,10 @@ public class RestaurantInfo extends LocatableStorable {
 		mName = mUser.getUsername();
 		mAddress = po.getString(ADDR);
 		mPhone = po.getString(PHONE);
+		mHours = po.getString(HOURS);
 		mMainImageIndex = po.getInt(IMAGE_MAIN);
 		mImageList = ParseUtil.toListOfStorables(DineOnImage.class, po.getList(IMAGE_LIST));
 		mMenus = ParseUtil.toListOfStorables(Menu.class, po.getList(MENUS));
-		//TODO mRestaurantHours = ;
 	}
 
 
@@ -92,23 +93,9 @@ public class RestaurantInfo extends LocatableStorable {
 		po.put(IMAGE_MAIN, mMainImageIndex);
 		po.put(IMAGE_LIST, ParseUtil.toListOfParseObjects(mImageList));
 		po.put(MENUS, ParseUtil.toListOfParseObjects(mMenus));	
-		// TODO po.put(HOURS, mRestaurantHours);
+		po.put(HOURS, mHours);
 		return po;
 	}
-	// TODO implement the hours field
-//	/**
-//	 * @return String Restaurant hours
-//	 */
-//	public String getHours() {
-//		return mRestaurantHours;
-//	}
-//	
-//	/**
-//	 * Set the hours.
-//	 */
-//	public void getHours(String hours) {
-//		mRestaurantHours = hours;
-//	}
 
 	/**
 	 * @return String Restaurant name
@@ -131,6 +118,20 @@ public class RestaurantInfo extends LocatableStorable {
 		this.mAddress = a;
 	}
 
+	/**
+	 * @return hours of operation for restaurant
+	 */
+	public String getHours() {
+		return mHours;
+	}
+
+	/**
+	 * @param hours of operation to set
+	 */
+	public void setHours(String hours) {
+		this.mHours = hours;
+	}
+	
 	/**
 	 * @return phone number of Restaurant
 	 */

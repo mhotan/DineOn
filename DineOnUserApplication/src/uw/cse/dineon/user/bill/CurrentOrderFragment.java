@@ -14,19 +14,15 @@ import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,8 +35,7 @@ import com.parse.SaveCallback;
  * 
  * @author mhotan
  */
-public class CurrentOrderFragment 
-extends Fragment implements OnClickListener {
+public class CurrentOrderFragment extends Fragment {
 
 	private static final String TAG = CurrentBillFragment.class.getSimpleName();
 
@@ -65,7 +60,6 @@ extends Fragment implements OnClickListener {
 	private OrderUpdateListener mListener;
 
 	private TextView mSubtotal, mTax, mTotal;
-	private Button mReqButton;
 	private Button mPlaceOrderButton;
 
 	@Override
@@ -101,9 +95,6 @@ extends Fragment implements OnClickListener {
 		mTax = (TextView) getView().findViewById(R.id.value_tax);
 		mTotal = (TextView) getView().findViewById(R.id.value_total);
 		mPlaceOrderButton = (Button) getView().findViewById(R.id.button_place_order);
-		//mPlaceOrderButton.setOnClickListener(this);
-		mReqButton = (Button) getView().findViewById(R.id.button_request);
-		mReqButton.setOnClickListener(this);
 		
 		// Create the adapter to handles 
 		if (this.mListener != null) {
@@ -124,7 +115,7 @@ extends Fragment implements OnClickListener {
 	}
 
 	/**
-	 * @param newItem TODO Replace with OrderItem
+	 * @param newItem to add
 	 */
 	public void addNewItem(MenuItem newItem) {
 		mAdapter.add(newItem);
@@ -139,54 +130,7 @@ extends Fragment implements OnClickListener {
 		mAdapter.notifyDataSetChanged(); // Notify the data set changed
 	}
 
-	@Override
-	public void onClick(View v) {
-		if(v.getId() == R.id.button_request) {
-			getRequestDescription();
-		//else
-		//	mListener.onPlaceOrder("ORDER REQUESTED PLACE OBJECT HERE!");
-		}
-	}
-	
-	/**
-	 * @param str String request to send to Restaurant.
-	 */
-	private void sendRequest(String str) {
-		if(getActivity() instanceof CurrentOrderActivity) {
-			CurrentOrderActivity act = (CurrentOrderActivity)getActivity();
-			Log.v(TAG, "About to send Req");
-			act.onRequestMade(str);
-		}
-	}
-	
-	/**
-	 * Helper that brings up alert box for sending customer requests.
-	 */
-	private void getRequestDescription() {
-		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-		alert.setTitle("Add New Menu Item");
-		alert.setMessage("Input Menu Item Details");
-		final View AV = getLayoutInflater(getArguments()).inflate(
-				R.layout.alert_build_request, null);
-		alert.setView(AV);
-		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 
-			@Override
-			public void onClick(DialogInterface d, int arg1) {
-				String desc = ((EditText) AV
-						.findViewById(R.id.input_request_description)).getText()
-						.toString();
-				sendRequest(desc);
-			}
-		});
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-				//Do nothing
-			}
-		});
-		alert.show();
-	}
 	
 	/**
 	 * Return the subtotal for current order.
@@ -271,8 +215,7 @@ extends Fragment implements OnClickListener {
 
 	/**
 	 * Simple adapter that handles custom list item layout and 
-	 * their interaction handlers
-	 * TODO Change Type String to Order.
+	 * their interaction handlers.
 	 * TODO Change layout of item 
 	 * @author mhotan
 	 */
@@ -285,7 +228,6 @@ extends Fragment implements OnClickListener {
 
 		/**
 		 * List of menu items.
-		 * TODO Change String to MenuItem
 		 */
 		private final List<MenuItem> mItems;
 		
@@ -294,7 +236,6 @@ extends Fragment implements OnClickListener {
 		/**
 		 * This is a runtime mapping between "More Info buttons"
 		 * and there respective restaurants.
-		 * TODO Change String to restaurant;
 		 * NOTE (MH): Not exactly sure if this works
 		 */
 		private final HashMap<View, MenuItem> mViewToItem;
@@ -337,7 +278,7 @@ extends Fragment implements OnClickListener {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.listitem_orderitem, parent, false);
 
-			// TODO Here is where we adjust the contents of the list row
+			// Here is where we adjust the contents of the list row
 			// with attributes determined by the order item
 
 			// Get the Order Item by associating with the position
@@ -453,7 +394,6 @@ extends Fragment implements OnClickListener {
 
 							@Override
 							public void done(ParseException e) {
-								// TODO Auto-generated method stub
 								if (e == null) {
 									// successful, send the push notification
 									mListener.onPlaceOrder(NEW_ORDER);

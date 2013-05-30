@@ -121,14 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="@string/button_place_order" />
-
-    <Button
-        android:id="@+id/button_request"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/tablelayout"
-        android:text="@string/make_request" />
+        android:text="@string/button_place_order" />
 
 </RelativeLayout>

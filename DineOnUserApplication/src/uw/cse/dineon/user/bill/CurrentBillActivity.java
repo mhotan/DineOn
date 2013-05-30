@@ -9,15 +9,10 @@ import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.bill.CurrentBillFragment.PayBillListener;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
 
 /**
  * Activity to maintain current user bill.

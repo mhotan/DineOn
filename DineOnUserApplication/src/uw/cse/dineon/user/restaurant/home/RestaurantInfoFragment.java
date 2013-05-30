@@ -10,7 +10,9 @@ import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,7 +39,7 @@ import com.parse.SaveCallback;
  * Fragment that presents the information about a particular restaurant.
  * @author mhotan
  */
-public class RestaurantInfoFragment extends Fragment {
+public class RestaurantInfoFragment extends Fragment implements OnClickListener {
 
 	private static final int IMAGEVIEW_WIDTH = 250;
 	private static final int IMAGEVIEW_HEIGHT = 250;
@@ -50,6 +54,7 @@ public class RestaurantInfoFragment extends Fragment {
 	private TextView mRestNameLabel, mAddressLabel, mHoursLabel;
 	private RatingBar mRatingBar;
 	private LinearLayout mGallery;
+	private Button mReqButton;
 
 	@Override
 	public void onCreate(Bundle onSavedInstance) {
@@ -72,6 +77,17 @@ public class RestaurantInfoFragment extends Fragment {
 		mRatingBar = (RatingBar) view.findViewById(R.id.ratingbar_restaurant);
 		mGallery = (LinearLayout) view.findViewById(R.id.gallery_restaurant_images);
 
+		mReqButton = (Button) view.findViewById(R.id.button_request);
+		mReqButton.setOnClickListener(this);
+		mReqButton.setVisibility(0);
+		
+		// if not in a dining session w/ this restaurant do not display
+		if(DineOnUserApplication.getCurrentDiningSession() == null 
+				|| !DineOnUserApplication.getCurrentDiningSession().
+				getRestaurantInfo().getName().equals(mRestaurant.getName())) {
+			mReqButton.setVisibility(8);
+		}
+		
 		// Update the display
 		setRestaurantForDisplay(mRestaurant);
 
@@ -92,7 +108,7 @@ public class RestaurantInfoFragment extends Fragment {
 
 		mRestNameLabel.setText(mRestaurant.getName());
 		mAddressLabel.setText(mRestaurant.getAddr());
-		mHoursLabel.setText("Hell yeah... 24/7!");
+		mHoursLabel.setText(mRestaurant.getHours());
 		
 		// TODO Fix this so it is not random.
 		mRatingBar.setNumStars(5);
@@ -302,5 +318,52 @@ public class RestaurantInfoFragment extends Fragment {
 		void onMakeReservation(String reservation);
 
 	}
+	
+	@Override
+	public void onClick(View v) {
+		if(v.getId() == R.id.button_request) {
+			getRequestDescription();
+		}
+	}
+	
+	/**
+	 * Helper that brings up alert box for sending customer requests.
+	 */
+	private void getRequestDescription() {
+		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+		alert.setTitle("Send a Request");
+		alert.setMessage("Send a request to the restaurant.");
+		final View AV = getLayoutInflater(getArguments()).inflate(
+				R.layout.alert_build_request, null);
+		alert.setView(AV);
+		alert.setPositiveButton("Send", new DialogInterface.OnClickListener() {
 
+			@Override
+			public void onClick(DialogInterface d, int arg1) {
+				String desc = ((EditText) AV
+						.findViewById(R.id.input_request_description)).getText()
+						.toString();
+				sendRequest(desc);
+			}
+		});
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				// Do nothing
+			}
+		});
+		alert.show();
+	}
+
+	/**
+	 * @param str String request to send to Restaurant.
+	 */
+	private void sendRequest(String str) {
+		if(getActivity() instanceof RestaurantHomeActivity) {
+			RestaurantHomeActivity act = (RestaurantHomeActivity) getActivity();
+			act.onRequestMade(str);
+		}
+	}
+	
+	
 }

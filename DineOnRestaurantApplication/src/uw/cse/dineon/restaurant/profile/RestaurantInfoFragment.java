@@ -313,7 +313,7 @@ public class RestaurantInfoFragment extends Fragment {
 		private final ImageButton mTakePicButton, mChoosePicButton, mDeleteButton;
 		private final Button mSaveButton;
 		private final RestaurantInfo mInfo;
-		private final TextView mPhoneInput, mAddressInput;
+		private final TextView mPhoneInput, mAddressInput, mHourInput;
 		private final LinearLayout mGallery;
 
 		private View mCurrentDefault;
@@ -357,8 +357,9 @@ public class RestaurantInfoFragment extends Fragment {
 			mSaveButton = (Button) view.findViewById(R.id.button_save_restaurant_info);
 			mPhoneInput = (TextView) view.findViewById(R.id.edittext_restaurant_phone);
 			mAddressInput = (TextView) view.findViewById(R.id.edittext_restaurant_address);
+			mHourInput = (TextView) view.findViewById(R.id.edittext_restaurant_hours);
 			mGallery = (LinearLayout) view.findViewById(R.id.gallery_restaurant_images);
-
+			
 			if (mDefaultCheck == null 
 					|| mTakePicButton == null 
 					|| mChoosePicButton == null 
@@ -410,6 +411,7 @@ public class RestaurantInfoFragment extends Fragment {
 			} else if (v == mSaveButton) {
 				mInfo.setAddr(mAddressInput.getText().toString());
 				mInfo.setPhone(mPhoneInput.getText().toString());
+				mInfo.setHours(mHourInput.getText().toString());
 				if (mCurrentDefault != null) {
 					mInfo.setMainImage(mGallery.indexOfChild(mCurrentDefault));
 				} else {

@@ -71,5 +71,6 @@
     <string name="cancel">Cancel</string>
     <string name="message_unable_get_image">Sorry we were not able to get the image</string>
     <string name="message_customers">Message Customers</string>
+    <string name="label_hours">Hours</string>
     
 </resources>
