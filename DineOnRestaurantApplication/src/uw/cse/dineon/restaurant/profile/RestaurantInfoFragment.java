@@ -369,6 +369,9 @@ public class RestaurantInfoFragment extends Fragment {
 			} 
 
 			mAddToRestaurant = new AddToRestaurantCallback();
+			
+			mAddressInput.setText(info.getAddr());
+			mPhoneInput.setText(info.getPhone());
 
 			mDefaultCheck.setOnCheckedChangeListener(this);
 			mTakePicButton.setOnClickListener(this);

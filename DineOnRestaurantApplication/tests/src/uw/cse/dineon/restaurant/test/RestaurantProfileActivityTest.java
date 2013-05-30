@@ -4,6 +4,7 @@ import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.profile.MenuItemsFragment;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
 import uw.cse.dineon.restaurant.profile.RestaurantInfoFragment;
@@ -68,12 +69,7 @@ public class RestaurantProfileActivityTest extends
 		mUser = new ParseUser();
 		mUser.setUsername(fakeUserName);
 		mUser.setPassword(fakePassword);
-		
-		try {
-			mUser = ParseUser.logIn(fakeUserName, fakeUserName);
-		} catch (ParseException e) {
-			mUser.signUp();
-		}
+
 		
 		
 		// construct fake restaurant for intent
@@ -86,16 +82,18 @@ public class RestaurantProfileActivityTest extends
 		testMenu.addNewItem(mMenuItem);
 		r.getInfo().addMenu(testMenu);
 
+		DineOnRestaurantApplication.logIn(r);
+		
 		Intent intent = new Intent(getInstrumentation().getTargetContext(), ProfileActivity.class);
 		intent.putExtra(DineOnConstants.KEY_RESTAURANT, r);
 		setActivityIntent(intent);
 
+		
 		mActivity = getActivity();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		mUser.delete();
 		testMenu.deleteFromCloud();
 		r.deleteFromCloud();
 		mMenuItem.deleteFromCloud();

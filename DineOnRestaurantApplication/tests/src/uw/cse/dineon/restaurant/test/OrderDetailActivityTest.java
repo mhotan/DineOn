@@ -6,6 +6,7 @@ import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
+import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.active.OrderDetailActivity;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
@@ -41,19 +42,12 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Parse.initialize(getInstrumentation().getTargetContext(), 
-				"RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", 
-				"wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
+
 
 		mUser = new ParseUser();
 		mUser.setEmail(fakeEmail);
 		mUser.setUsername(fakeUserName);
 		mUser.setPassword(fakePassword);
-		try {
-			mUser = ParseUser.logIn(fakeUserName, fakePassword);
-		} catch (ParseException e) {
-			mUser.signUp();
-		}
 		
 		mRestaurant = TestUtility.createFakeRestaurant(mUser);
 		mRI = new RestaurantInfo(mUser);
@@ -64,16 +58,14 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 				OrderDetailActivity.class);
 		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		setActivityIntent(intent);
+		
+		DineOnRestaurantApplication.logIn(mRestaurant);
 
 		mActivity = getActivity();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		mUser.delete();
-		mRestaurant.deleteFromCloud();
-		mUI.deleteFromCloud();
-		
 		mActivity.finish();
 		super.tearDown();
 	}

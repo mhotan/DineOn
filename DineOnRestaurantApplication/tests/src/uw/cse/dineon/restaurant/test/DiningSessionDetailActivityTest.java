@@ -6,6 +6,7 @@ import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
+import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.active.DiningSessionDetailActivity;
 import uw.cse.dineon.restaurant.active.OrderDetailActivity;
 import android.content.Intent;
@@ -44,30 +45,22 @@ ActivityInstrumentationTestCase2<DiningSessionDetailActivity> {
 		mUser.setEmail(fakeEmail);
 		mUser.setUsername(fakeUserName);
 		mUser.setPassword(fakePassword);
-		try {
-			mUser = ParseUser.logIn(fakeUserName, fakePassword);
-		} catch (ParseException e) {
-			mUser.signUp();
-		}
+
 		mRI = new RestaurantInfo(mUser);
 		mUI = new UserInfo(mUser);
 		mDiningSession = TestUtility.createFakeDiningSession(mUI, mRI);
 		mRestaurant = TestUtility.createFakeRestaurant(mUser);
 		mRestaurant.addDiningSession(mDiningSession);
-		Intent intent = new Intent(getInstrumentation().getTargetContext(),
-				DiningSessionDetailActivity.class);
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
-		setActivityIntent(intent);
+
+
+		DineOnRestaurantApplication.logIn(mRestaurant);
 
 		mActivity = getActivity();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		mUser.delete();
-		mRestaurant.deleteFromCloud();
-		mUI.deleteFromCloud();
-		
+
 		mActivity.finish();
 		super.tearDown();
 	}

@@ -59,17 +59,20 @@ public class DiningSessionTest extends AndroidTestCase {
 		mUser.setEmail("dst@a.com");
 		mUser.setUsername("dst");
 		mUser.setPassword("dst");
-		mUser.signUp();
+		mUser.setObjectId("245");
 
 		testUInfo1 = new UserInfo(mUser);
+		testUInfo1.setObjId("tui1");
 		testRInfo = new RestaurantInfo(mUser);
 		testSession = new DiningSession(32, new Date(3254645), testUInfo1, testRInfo);
 
 		testUInfo = new UserInfo(mUser);
+		testUInfo.setObjId("tui");
 		testItems = new ArrayList<CurrentOrderItem>();
 		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
 		testItems.add(new CurrentOrderItem(testItem));
 		testOrder = new Order(32, testUInfo, testItems);
+		testOrder.setObjId("to");
 		orders = new ArrayList<Order>();
 		orders.add(testOrder);
 
@@ -81,7 +84,6 @@ public class DiningSessionTest extends AndroidTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		mUser.delete();
 	}
 
 	/**

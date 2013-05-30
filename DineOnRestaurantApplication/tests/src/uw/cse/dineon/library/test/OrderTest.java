@@ -27,19 +27,21 @@ public class OrderTest extends AndroidTestCase {
 		testUser = new ParseUser();
 		testUser.setUsername("tester1");
 		testUser.setPassword("pass");
-		testUser.signUp();
-		testUser.save();
 		
 		testUInfo = new UserInfo(testUser);
+		testUInfo.setObjId("tui");
 		testItems = new ArrayList<CurrentOrderItem>();
 		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
-		testItems.add(new CurrentOrderItem(testItem));
+		testItem.setObjId("ti");
+		CurrentOrderItem mCOI = new CurrentOrderItem(testItem);
+		mCOI.setObjId("coi");
+		testItems.add(mCOI);
 		testOrder = new Order(32, testUInfo, testItems);
+		testOrder.setObjId("to");
 	}
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		testUser.delete();
 	}
 
 	/**

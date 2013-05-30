@@ -11,6 +11,7 @@ import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.active.DiningSessionDetailActivity;
 import uw.cse.dineon.restaurant.active.OrderDetailActivity;
 import uw.cse.dineon.restaurant.active.RequestDetailActivity;
@@ -20,7 +21,7 @@ import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.Parse;
@@ -67,12 +68,6 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		mUser = new ParseUser();
 		mUser.setUsername(fakeUserName);
 		mUser.setPassword(fakePassword);
-		
-		try {
-			mUser = ParseUser.logIn(fakeUserName, fakePassword);
-		} catch (ParseException e) {
-			mUser.signUp();
-		}
 
 		mUI = new DineOnUser(mUser);
 		mRestaurant = new Restaurant(mUser);
@@ -90,6 +85,8 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 				RestauarantMainActivity.class);
 		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		setActivityIntent(intent);
+		
+		DineOnRestaurantApplication.logIn(mRestaurant);
 
 		setActivityInitialTouchMode(false);
 
@@ -98,7 +95,6 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 
 	@Override
 	protected void tearDown() throws Exception {
-		mUser.delete();
 		mRequest.deleteFromCloud();
 		mOrder.deleteFromCloud();
 		testSession.deleteFromCloud();
@@ -250,18 +246,6 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		}
 	}
 
-	/**
-	 * Tests for requests page
-	 * Whitebox testing
-	 */
-	public void testOrderLayoutItemsPopulate() {
-		TextView orderTitle = (TextView) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_order_title);
-		TextView orderTime = (TextView) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.label_order_time);
-		ImageButton arrowButton = (ImageButton) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_expand_order);
-		assertNotNull(orderTitle);
-		assertNotNull(orderTime);
-		assertNotNull(arrowButton);
-	}
 
 	/**
 	 * Tests for requests page
@@ -270,7 +254,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	public void testRequestLayoutItemsPopulate() {
 		TextView requestTitle = (TextView) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.label_request_title);
 		TextView requestTime = (TextView) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.label_request_time);
-		ImageButton arrowButton = (ImageButton) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_expand_request);
+		ImageView arrowButton = (ImageView) mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_expand_request);
 		assertNotNull(requestTitle);
 		assertNotNull(requestTime);
 		assertNotNull(arrowButton);

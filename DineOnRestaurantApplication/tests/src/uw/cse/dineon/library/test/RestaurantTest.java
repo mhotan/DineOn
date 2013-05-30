@@ -48,9 +48,8 @@ public class RestaurantTest extends AndroidTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		mUser.delete();
-		testRestaurant.deleteFromCloud();
 	}
+	
 	@Override
 	protected void setUp() throws Exception {
 		Log.i("progress", "start setup");
@@ -62,15 +61,18 @@ public class RestaurantTest extends AndroidTestCase {
 		mUser = new ParseUser();
 		mUser.setUsername("restaurantTest");
 		mUser.setPassword("rtest");
-		mUser.signUp();
 		
 		testSession = new DiningSession(32, new Date(3254645), testUInfo, testRestaurantInfo);
+		testSession.setObjId("ts");
 		
 		testUInfo = new UserInfo(mUser);
+		testUInfo.setObjId("tui");
 		testItems = new ArrayList<CurrentOrderItem>();
 		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
+		testItem.setObjId("toi");
 		testItems.add(new CurrentOrderItem(testItem));
 		testOrder = new Order(32, testUInfo, testItems);
+		testOrder.setObjId("to");
 		orders = new ArrayList<Order>();
 		orders.add(testOrder);
 		
@@ -82,7 +84,9 @@ public class RestaurantTest extends AndroidTestCase {
 		testRestaurant = new Restaurant(mUser);
 		
 		testRequest = new CustomerRequest("Order", testUInfo);
+		testRequest.setObjId("trq");
 		testReservation = new Reservation(testUInfo, testRestaurantInfo, new Date(32));
+		testReservation.setObjId("tr");
 		
 		testRequests = new ArrayList<CustomerRequest>();
 		testRequests.add(testRequest);

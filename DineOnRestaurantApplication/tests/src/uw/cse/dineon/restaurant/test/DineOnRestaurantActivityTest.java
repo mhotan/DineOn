@@ -12,7 +12,9 @@ import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.Restaurant;
+import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
@@ -57,25 +59,19 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		mUser = new ParseUser();
 		mUser.setUsername(fakeUserName);
 		mUser.setPassword(fakePassword);
-		
-		try {
-			mUser = ParseUser.logIn(fakeUserName, fakePassword);
-		} catch (ParseException e) {
-			mUser.signUp();
-		}
+
 		
 
 		mDineOnUser = new DineOnUser(mUser);
+		mDineOnUser.setObjId("dou");
+		UserInfo mUserInfo = mDineOnUser.getUserInfo();
+		mUserInfo.setObjId("dui");
 		mRestaurant = new Restaurant(mUser);
 
-		testSession = new DiningSession(1, mDineOnUser.getUserInfo(), mRestaurant.getInfo());
-		testSession.saveOnCurrentThread();
+		testSession = new DiningSession(1, mUserInfo, mRestaurant.getInfo());
 		mRestaurant.addDiningSession(testSession);
 
-		Intent intent = new Intent(getInstrumentation().getTargetContext(),
-				RestauarantMainActivity.class);
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
-		setActivityIntent(intent);
+		DineOnRestaurantApplication.logIn(mRestaurant);
 
 		setActivityInitialTouchMode(false);
 
@@ -85,21 +81,9 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 
 	@Override
 	protected void tearDown() throws Exception {
-		mUser.delete();
-		mDineOnUser.deleteFromCloud();
-		mRestaurant.deleteFromCloud();
-		testSession.deleteFromCloud();
+
 		mActivity.finish();
 		super.tearDown();
-	}
-
-	/**
-	 * Test if the Activity is actually able to check in and this actually does something
-	 * 
-	 * Whitebox test
-	 */
-	public void testUserCheckedIn() {
-		mActivity.onUserCheckedIn(mDineOnUser.getUserInfo(), 1);
 	}
 
 	/**
@@ -119,7 +103,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	 * Whitebox test
 	 * @throws ParseException
 	 */
-	public void onTestCustomerRequest() {
+	public void testCustomerRequest() {
 		CustomerRequest request = null;
 
 		try {
@@ -139,7 +123,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	 * 
 	 * Whitebox test
 	 */
-	public void onTestOrderRequested() { 
+	public void testOrderRequested() { 
 		Order order = null;
 		try {
 			List<CurrentOrderItem> list = new ArrayList<CurrentOrderItem>();
@@ -158,7 +142,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	 * Test restaurant can confirm reservation
 	 * White box testing
 	 */
-	public void onReservationRequested() {
+	public void testOnReservationRequested() {
 		Reservation res = null;
 		try {
 			res = new Reservation(
@@ -171,6 +155,21 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 				res.deleteFromCloud();
 			}
 		}
+	}
+	
+	/**
+	 * Tests that the app displays the correct menu when user is not logged in
+	 * 
+	 * White box test
+	 */
+	public void testUserNotLoggedIn() {
+		DineOnRestaurantApplication.logOut(mActivity);
+		mActivity.finish();
+		mActivity = getActivity();
+		
+		//TODO: DoubleCheck that this should be null, it may be looking in the wrong spot and this
+		//should exist, but not be visible
+		assertNull(mActivity.findViewById(uw.cse.dineon.restaurant.R.id.item_restaurant_profile));
 	}
 	
 	/**

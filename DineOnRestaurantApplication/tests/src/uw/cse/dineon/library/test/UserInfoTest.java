@@ -18,9 +18,6 @@ public class UserInfoTest extends AndroidTestCase {
 	ParseUser testUser;
 	UserInfo testUInfo;
 	
-	public UserInfoTest() {
-		super();
-	}
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -29,8 +26,6 @@ public class UserInfoTest extends AndroidTestCase {
 		testUser = new ParseUser();
 		testUser.setUsername("utester");
 		testUser.setPassword("pass");
-		testUser.signUp();
-		testUser.save();
 		
 		testUInfo = new UserInfo(testUser);
 	}
@@ -77,7 +72,6 @@ public class UserInfoTest extends AndroidTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		testUser.delete();
 	}
 
 }

@@ -18,8 +18,10 @@ public class MenuTest extends AndroidTestCase {
 		super.setUp();
 		testItems = new ArrayList<MenuItem>();
 		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
+		testItem.setObjId("ti");
 		testItems.add(testItem);
 		testMenu = new Menu("beverages");
+		testMenu.setObjId("tm");
 	}
 	
 	@Override
