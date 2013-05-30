@@ -38,6 +38,7 @@ public class UserLoginActivityTest extends
 	private EditText et_uname, et_passwd;
 	private Instrumentation mInstrumentation;
 	private Restaurant rest;
+	
 	public UserLoginActivityTest() {
 		super(UserLoginActivity.class);
 	}
@@ -47,136 +48,89 @@ public class UserLoginActivityTest extends
 		super.setUp();
 		ParseUser user = new ParseUser();
 		user.setUsername("testUser");
-	user.setPassword("12345");
-	
-	ParseUser restUser = new ParseUser();
-	restUser.setUsername("testRestUser");
-	restUser.setPassword("12345");
-	
-	dineOnUser = new DineOnUser(user);
-	
-	rest = new Restaurant(restUser);
-	DiningSession ds = 
-			new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
-	
-	List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
-	Order one = new Order(1, dineOnUser.getUserInfo(), mi);
-	ds.addPendingOrder(one);
-	dineOnUser.setDiningSession(ds);
-	Menu m = TestUtility.createFakeMenu();
-	m.addNewItem(mi.get(0).getMenuItem());
-	rest.getInfo().addMenu(m);
-	this.setActivityInitialTouchMode(false);
-	mInstrumentation = this.getInstrumentation();
-    Intent addEvent = new Intent();
-    setActivityIntent(addEvent);
-    
-    DineOnUserApplication.setDineOnUser(dineOnUser);
-    DineOnUserApplication.setCurrentDiningSession(ds);
-    
-	mActivity = getActivity();
-}
+		user.setPassword("12345");
+		
+		ParseUser restUser = new ParseUser();
+		restUser.setUsername("testRestUser");
+		restUser.setPassword("12345");
+		
+		dineOnUser = new DineOnUser(user);
+		
+		rest = new Restaurant(restUser);
+		DiningSession ds = 
+				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
+		
+		List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
+		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
+		ds.addPendingOrder(one);
+		dineOnUser.setDiningSession(ds);
+		Menu m = TestUtility.createFakeMenu();
+		m.addNewItem(mi.get(0).getMenuItem());
+		rest.getInfo().addMenu(m);
+		this.setActivityInitialTouchMode(false);
+		mInstrumentation = this.getInstrumentation();
+	    Intent addEvent = new Intent();
+	    setActivityIntent(addEvent);
+	    
+	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setCurrentDiningSession(ds);
+	    
+		mActivity = getActivity();
+	}
 
-@Override
-protected void tearDown() throws Exception {
-	super.tearDown();
-}
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+	}
 
-public void testOnLogin() {
-	et_uname = (EditText) mActivity.findViewById(uw.cse.dineon.user.R.id.input_login_email);
-	et_passwd = (EditText) mActivity.findViewById(R.id.input_login_password);
-	
-	int time = 10000;
-	ActivityMonitor monRsa = this.mInstrumentation.addMonitor(
-			RestaurantSelectionActivity.class.getName(), null, false);
-	
-	final DineOnUser DO = this.dineOnUser;
-	mActivity.runOnUiThread(new Runnable() {
+	public void testOnLoginWithDiningSession() {
+		et_uname = (EditText) mActivity.findViewById(uw.cse.dineon.user.R.id.input_login_email);
+		et_passwd = (EditText) mActivity.findViewById(R.id.input_login_password);
+		int time = 5000;
+		final DineOnUser DO = this.dineOnUser;
+		mActivity.runOnUiThread(new Runnable() {
+
 	      public void run() {
 	          et_uname.setText("");
 	          et_passwd.setText("");
-	              Button loginButton = (Button) mActivity.findViewById(R.id.button_login);
-	              loginButton.performClick();
-	              mActivity.startRestSelectionAct(DO);
-	
+              Button loginButton = (Button) mActivity.findViewById(R.id.button_login);
+              loginButton.performClick();
 	          }
 		});
-		mInstrumentation.waitForIdleSync();
-			
-		RestaurantSelectionActivity resSelect = (RestaurantSelectionActivity) monRsa
-				.waitForActivityWithTimeout(time);
-		assertNotNull(resSelect);
-		final RestaurantSelectionActivity RSA = resSelect; 
-		resSelect.runOnUiThread(new Runnable() {
-	          public void run() {
-	        	  RSA.destroyProgressDialog();
-	        	  List<RestaurantInfo> rlst = new LinkedList<RestaurantInfo>();
-	        	  rlst.add(DO.getDiningSession().getRestaurantInfo());
-	        	  RSA.addRestaurantInfos(rlst);
-	          }
-	      });
-		mInstrumentation.waitForIdleSync();
-		
+
 		ActivityMonitor monRia = this.mInstrumentation.addMonitor(
-				RestaurantHomeActivity.class.getName(), null, false);
-		resSelect.runOnUiThread(new Runnable() {
-	          public void run() {
-	      		RSA.diningSessionChangeActivity(DO.getDiningSession());	        
-	          }
-	      });
-		mInstrumentation.waitForIdleSync();
-	  	RestaurantHomeActivity rha = (RestaurantHomeActivity) monRia
-	  			.waitForActivityWithTimeout(time);
-	  	
+			RestaurantHomeActivity.class.getName(), null, false);
+    	mActivity.startRestSelectionAct(DO);
+	  	RestaurantHomeActivity rha = (RestaurantHomeActivity) 
+	  			mInstrumentation.waitForMonitorWithTimeout(monRia, time);
 	  	assertNotNull(rha);
-	  	
-	  	android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
-				rha.findViewById(uw.cse.dineon.user.R.id.pager_menu_info);
-	  	assertNotNull(pager);
-	  	
-	  	PagerAdapter adapter = pager.getAdapter(); 	
-	  	assertNotNull(adapter);
-	  	
-	  	final android.support.v4.view.ViewPager PAGER = pager;
-	  	rha.runOnUiThread(new Runnable() {
-	          public void run() {
-	        	  PAGER.setCurrentItem(1);
-	          }
-	      });
-	  	
-		mInstrumentation.waitForIdleSync();
-		
-		ActivityMonitor monCurrOrder = this.mInstrumentation.addMonitor(
-				CurrentOrderActivity.class.getName(), null, false);
-		
-		assertNotNull(monCurrOrder);
-		
-		mInstrumentation.invokeMenuActionSync(rha, R.id.option_bill, 0);
-	
-		CurrentOrderActivity coa = (CurrentOrderActivity) mInstrumentation.waitForMonitorWithTimeout(monCurrOrder, 1000);
-	  	assertNotNull(coa);
-	  	
-	  	ActivityMonitor monCurrBill = this.mInstrumentation.addMonitor(
-			CurrentBillActivity.class.getName(), null, false);
-		
-	  	mInstrumentation.invokeMenuActionSync(coa, R.id.option_paybill, 0);
- 		
-	  	CurrentBillActivity cob = (CurrentBillActivity) mInstrumentation.waitForMonitorWithTimeout(monCurrBill, 1000);
-  	  
-	  	assertNotNull(cob);
-	  	
-		ActivityMonitor logMon = this.mInstrumentation.addMonitor(
-				UserLoginActivity.class.getName(), null, false);
-		
-		mInstrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-		mInstrumentation.invokeMenuActionSync(cob,R.id.option_logout, 0);
-		
-		UserLoginActivity ula = (UserLoginActivity)
-				this.mInstrumentation.waitForMonitorWithTimeout(logMon, 1000);
-		
-		assertNotNull(ula);
-	  	
-		ula.finish();
+	  	rha.finish();
+
 	}
 	
+	public void testOnLoginWithOutDiningSession() {
+		this.dineOnUser.setDiningSession(null);
+		et_uname = (EditText) mActivity.findViewById(uw.cse.dineon.user.R.id.input_login_email);
+		et_passwd = (EditText) mActivity.findViewById(R.id.input_login_password);
+		int time = 5000;
+		final DineOnUser DO = this.dineOnUser;
+		mActivity.runOnUiThread(new Runnable() {
+
+	      public void run() {
+	          et_uname.setText("");
+	          et_passwd.setText("");
+              Button loginButton = (Button) mActivity.findViewById(R.id.button_login);
+              loginButton.performClick();
+	          }
+		});
+
+		ActivityMonitor monRsa = this.mInstrumentation.addMonitor(
+			RestaurantSelectionActivity.class.getName(), null, false);
+    	mActivity.startRestSelectionAct(DO);
+	  	RestaurantSelectionActivity rsa = (RestaurantSelectionActivity) 
+	  			mInstrumentation.waitForMonitorWithTimeout(monRsa, time);
+	  	assertNotNull(rsa);
+	  	rsa.finish();
+
+	}
 }
