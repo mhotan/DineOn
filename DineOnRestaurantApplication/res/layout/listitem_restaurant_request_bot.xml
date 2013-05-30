@@ -2,39 +2,55 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/listitem_request_bot"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
-
-    <TextView
-        android:id="@+id/label_assign_to_waiter"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:gravity="center_vertical"
-        android:text="@string/label_assign_to"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Spinner
-        android:id="@+id/spinner_staff_to_assign"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
     <ImageButton
-        android:id="@+id/button_assign"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:id="@+id/button_proceed"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/button_assign"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/waiter" />
+        android:background="@null"
+        android:gravity="center"
+        android:src="@drawable/moreinfo" />
+    
+    <LinearLayout
+        android:id="@+id/listitem_request_bot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-    <ImageButton
-        android:id="@+id/button_remove"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:contentDescription="@string/button_remove_request"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/remove" />
+        <TextView
+            android:id="@+id/label_assign_to_waiter"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:text="@string/label_assign_to"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+            android:id="@+id/spinner_staff_to_assign"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/button_assign"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/button_assign"
+            android:src="@drawable/waiter" />
+
+        <ImageButton
+            android:id="@+id/button_remove"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/button_remove_request"
+            android:src="@drawable/remove" />
+    </LinearLayout>
 
 </LinearLayout>

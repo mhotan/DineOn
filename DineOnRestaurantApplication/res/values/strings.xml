@@ -9,8 +9,8 @@
     <string name="hint_password">Password</string>
     <string name="content_desc_password">Input box for password</string>
     <string name="label_login">Log in</string>
-    <string name="option_create_new_account">Create New Account</string>
-    <string name="option_forgot_password">Forgot Password?</string>
+    <string name="option_create_new_account"><u>Create New Account</u></string>
+    <string name="option_forgot_password"><u>Forgot Password?</u></string>
     <string name="label_login_title">Log in to Work in Dine On</string>
     <string name="button_assign_waiter">Assign</string>
     <string name="content_description_dismiss">Dismiss the current request</string>
@@ -72,5 +72,11 @@
     <string name="message_unable_get_image">Sorry we were not able to get the image</string>
     <string name="message_customers">Message Customers</string>
     <string name="label_hours">Hours</string>
+    <string name="no_customer">No Customer!</string>
+    <string name="table">"Table "</string>
+    <string name="dash">" - "</string>
+    <string name="no_orders">No Orders</string>
+    <string name="cant_retrieve_name">Could not retrieve name.</string>
+    <string name="newline">"\n"</string>
     
 </resources>

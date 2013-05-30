@@ -12,9 +12,8 @@
             android:id="@+id/label_menu_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/chili"
-            android:layout_marginTop="10dp"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:text="@string/label_name_placeholder"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -23,8 +22,8 @@
             android:layout_width="fill_parent"
             android:layout_height="150dp"
             android:layout_marginTop="10dp"
-            android:scaleType="centerInside"
             android:contentDescription="@string/image_menu_item"
+            android:scaleType="centerInside"
             android:src="@drawable/restaurant_photo_placeholder" />
 
         <TextView
@@ -33,28 +32,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="@string/label_menu_item_description_placeholder"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:id="@+id/label_allergen_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="@string/label_allergen_header"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="#000000" />
-
-        <TextView
-            android:id="@+id/label_menu_item_allergens"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/label_allergen_placeholder"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 

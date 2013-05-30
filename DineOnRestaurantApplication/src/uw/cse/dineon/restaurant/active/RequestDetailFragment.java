@@ -35,7 +35,7 @@ implements OnCheckedChangeListener, OnClickListener {
 	
 	private static final String REQUEST = TAG + "_request";
 	
-	private TextView mTitle, mDetails, mTableNumber, mTimeTaken;
+	private TextView mTitle, mDetails, mTimeTaken;
 	private ArrayAdapter<String> mStaffAdapter;
 	private Map<RadioButton, String> mUrgencyMap;
 	private ImageButton mSendMessage, mSendTask;
@@ -70,7 +70,6 @@ implements OnCheckedChangeListener, OnClickListener {
 
 		mTitle = (TextView) view.findViewById(R.id.label_request_title_detail);
 		mDetails = (TextView) view.findViewById(R.id.label_request_details);
-		mTableNumber = (TextView) view.findViewById(R.id.label_request_table);
 		mTimeTaken = (TextView) view.findViewById(R.id.label_request_time);
 
 		// TODO Add staff members implementation
@@ -175,7 +174,6 @@ implements OnCheckedChangeListener, OnClickListener {
 			mMessageBlock.setHint("Quick Response");
 			mTitle.setText("Request From " + mRequest.getUserInfo().getName());
 			mDetails.setText("Message: " + mRequest.getDescription());
-			mTableNumber.setText("??? TODO");
 			mTimeTaken.setText(mRequest.getOriginatingTime().toString());
 		}
 	}

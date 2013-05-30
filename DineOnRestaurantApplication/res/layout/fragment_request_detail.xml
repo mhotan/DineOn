@@ -8,12 +8,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <ImageView
-            android:id="@+id/ad"
-            style="@style/DineOnAd"
-            android:contentDescription="@string/dineonad"
-            android:src="@drawable/ad" />
-
         <TextView
             android:id="@+id/label_request_title_detail"
             style="@style/DineOnHeadingBackground"
@@ -25,12 +19,6 @@
             android:paddingTop="4dp"
             android:text="@string/label_request_blank"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/label_request_table"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Table Number: " />
 
         <TextView
             android:id="@+id/label_request_time"

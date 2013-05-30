@@ -2,19 +2,18 @@ package uw.cse.dineon.restaurant.active;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.animation.ExpandAnimation;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -38,64 +37,19 @@ public class RequestListFragment extends ListFragment {
 
 	private RequestListAdapter mAdapter;
 
-	/**
-	 * Creates a new customer list fragment.
-	 * @param requests list of requests
-	 * @return new fragment
-	 */
-	public static RequestListFragment newInstance(List<CustomerRequest> requests) {
-		RequestListFragment frag = new RequestListFragment();
-		Bundle args = new Bundle();
-
-		CustomerRequest[] requestsArray;
-		if (requests == null) {
-			requestsArray = new CustomerRequest[0];
-		} else {
-			requestsArray = new CustomerRequest[requests.size()];
-			for (int i = 0; i < requests.size(); ++i) {
-				requestsArray[i] = requests.get(i);
-			}
-		}
-
-		args.putParcelableArray(REQUESTS, requestsArray);
-		frag.setArguments(args);
-		return frag;
-	}
-
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 
-		CustomerRequest[] requestArray = null;
-		if (savedInstanceState != null // From saved instance
-				&& savedInstanceState.containsKey(REQUESTS)) {
-			requestArray = (CustomerRequest[])savedInstanceState.getParcelableArray(REQUESTS);
-		} else if (getArguments() != null && getArguments().containsKey(REQUESTS)) {
-			// Ugh have to convert to array for type reasons.
-			// List are not contravariant in java... :-(
-			requestArray = (CustomerRequest[])getArguments().getParcelableArray(REQUESTS);	
-		}
-
-		// Error check
-		if (requestArray == null) {
-			Log.e(TAG, "Unable to extract list of orders");
-			return;
-		}
-
-		// Obtain the current Requests
-		List<CustomerRequest> requests = new ArrayList<CustomerRequest>(requestArray.length);
-		for (CustomerRequest request : requestArray) {
-			requests.add(request);
-		}
-
-		mAdapter = new RequestListAdapter(this.getActivity(), requests);
-		setListAdapter(mAdapter);	
+		//We can assert that the listener has a non null list of dining sessions
+		mAdapter = new RequestListAdapter(getActivity(), mListener.getCurrentRequests());
+		setListAdapter(mAdapter);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		ArrayList<CustomerRequest> requests = mAdapter.getCurrentRequests();
+		List<CustomerRequest> requests = mListener.getCurrentRequests();
 		CustomerRequest[] requestArray = new CustomerRequest[requests.size()];
 		for (int i = 0; i < requestArray.length; ++i) {
 			requestArray[i] = requests.get(i);
@@ -165,7 +119,7 @@ public class RequestListFragment extends ListFragment {
 
 	/**
 	 * Mandatory Listener for this Fragment class.
-	 * @author mhotan
+	 * @author glee23
 	 */
 	public interface RequestItemListener {
 
@@ -174,7 +128,7 @@ public class RequestListFragment extends ListFragment {
 		 * about the specific request.
 		 * @param request request to get detail 
 		 */
-		public void onRequestRequestDetail(CustomerRequest request);
+		public void onRequestSelected(CustomerRequest request);
 
 		/**
 		 * Assign the staffmember to handle the request.
@@ -184,18 +138,18 @@ public class RequestListFragment extends ListFragment {
 		public void onAssignStaffToRequest(CustomerRequest request, String staff);
 
 		/**
-		 * Removes a request. request is removed completely from this 
+		 * Removes a request. Request is removed completely from this 
 		 * list.  This is a notification method 
 		 * @param request String
 		 */
 		public void onRemoveRequest(CustomerRequest request);
 
-//		/**
-//		 * Used to get the most recent up to date list of items to show.
-//		 * Cannot return null
-//		 * @return List of requests to show
-//		 */
-//		public List<CustomerRequest> getCurrentRequests();
+		/**
+		 * Used to get the most recent up to date list of items to show.
+		 * Cannot return null
+		 * @return List of requests to show
+		 */
+		public List<CustomerRequest> getCurrentRequests();
 
 	}
 
@@ -206,28 +160,22 @@ public class RequestListFragment extends ListFragment {
 
 	/**
 	 * Adpater to handle request management and layout.
-	 * @author mhotan
+	 * @author glee23
 	 */
 	private class RequestListAdapter extends ArrayAdapter<CustomerRequest> {
 
 		private final Context mContext;
-		private final List<CustomerRequest> mRequests;
-		private final Map<View, CustomerRequest> mViewToCustomerRequest;
-		private final ArrayList<String> mStaff;
-
-		int expanded = -1;
+		private List<String> mStaff;
 
 		/**
 		 * Creates an adapter that manages the addition and layout of
-		 * Orders.
+		 * Requests.
 		 * @param ctx Context
-		 * @param orders List of orders
+		 * @param requests List of CustomerRequests
 		 */
-		public RequestListAdapter(Context ctx, List<CustomerRequest> orders) {
-			super(ctx, R.layout.listitem_restaurant_request_bot, orders);
+		public RequestListAdapter(Context ctx, List<CustomerRequest> requests) {
+			super(ctx, R.layout.listitem_restaurant_request_top, requests);
 			this.mContext = ctx;
-			this.mRequests = orders;
-			this.mViewToCustomerRequest = new HashMap<View, CustomerRequest>();
 			// For debug purposes we will add fake staff members
 			mStaff = new ArrayList<String>();
 			mStaff.add("Bert");
@@ -236,168 +184,173 @@ public class RequestListFragment extends ListFragment {
 			mStaff.add("Elmo");
 		}
 
-		/**
-		 * @return Returns current list of requests.
-		 */
-		public ArrayList<CustomerRequest> getCurrentRequests() {
-			return new ArrayList<CustomerRequest>(mRequests);
+		@Override
+		public void add(CustomerRequest r) {
+			super.add(r);
+			this.notifyDataSetChanged();
 		}
 
-		/**
-		 * Sets the arrow based on whether or not the list item
-		 * is expanded or not.
-		 * @param position The position of the list item to set
-		 * @param arrow The specified arrow to set
-		 */
-		private void setArrow(int position, ImageView arrow) {
-			if(position == expanded) {
-				arrow.setImageResource(R.drawable.navigation_next_item);
-			} else {
-				arrow.setImageResource(R.drawable.navigation_expand);
-			}
-		}
-
-		/**
-		 * Toggles expansion of the given list item.
-		 * Currently only one item can be expanded at a time
-		 * @param position The position of the list item to toggle
-		 */
-		public void expand(int position) {
-
-			if(expanded == position) { //Already expanded, collapse it
-				expanded = -1;
-			} else {
-				expanded = position;
-			}
+		@Override
+		public void addAll(Collection<? extends CustomerRequest> collection) {
+			super.addAll(collection);
 			notifyDataSetChanged();
 		}
 
-//		@edu.umd.cs.findbugs.annotations.SuppressWarnings(value =
-//		        "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "Spring init method")
+		@Override
+		public void clear() {
+			super.clear();
+			this.notifyDataSetChanged();
+		}
+
 		@SuppressWarnings("BC_UNCONFIRMED_CAST")
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			View vwTop;
 			View vwBot;
 
-			final LinearLayout VIEW;
-			final CustomerRequest REQUEST = mRequests.get(position);
+			LinearLayout layoutView = null;
 
 			if(convertView == null) {
-				VIEW = new LinearLayout(mContext);
-				VIEW.setOrientation(LinearLayout.VERTICAL);
+				layoutView = new LinearLayout(mContext);
+				layoutView.setOrientation(LinearLayout.VERTICAL);
 				LayoutInflater inflater = (LayoutInflater) mContext
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				vwTop = inflater.inflate(R.layout.listitem_restaurant_request_top, null, true);
 				vwBot = inflater.inflate(R.layout.listitem_restaurant_request_bot, null, true);
-				VIEW.addView(vwTop);
-				VIEW.addView(vwBot);
+				layoutView.addView(vwTop);
+				layoutView.addView(vwBot);
+				convertView = layoutView;
 			} else {
 				//Everything already created, just find them
-				VIEW = (LinearLayout) convertView;
-				vwTop = VIEW.findViewById(R.id.listitem_request_top);
-				vwBot = VIEW.findViewById(R.id.listitem_request_bot);
+				vwTop = convertView.findViewById(R.id.listitem_request_top);
+				vwBot = convertView.findViewById(R.id.listitem_request_bot);
 			}
 
-			TextView title = (TextView) VIEW.findViewById(R.id.label_request_title);
-			title.setText(REQUEST.getDescription() + " - " + REQUEST.getUserInfo().getName());
+			CustomerRequest requestToShow = getItem(position);
 
-			TextView time = (TextView) VIEW.findViewById(R.id.label_request_time);
-			time.setText(REQUEST.getOriginatingTime().toString());
-
-			ImageView arrow = (ImageView) vwTop.findViewById(R.id.button_expand_request);
-			setArrow(position, arrow);
-
-			ImageButton assignStaffButton = (ImageButton) vwBot.findViewById(R.id.button_assign);
-
-			View.OnClickListener listener = new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					expand(position);
-					//Right arrow case -- goes to details fragment
-					if(expanded != position) {
-						mListener.onRequestRequestDetail(mRequests.get(position));
-					}	
-				}
-			};
-			
-			vwTop.setOnClickListener(listener);
-
-			if(expanded != position) {
-				vwBot.setVisibility(View.GONE);
-			} else {
-				vwBot.setVisibility(View.VISIBLE);
+			// For every restaurant to present create a handler for the request;
+			// We are creating this view for the very first time
+			if (layoutView != null) {
+				// Create a handler just for the request.
+				new CustomerRequestHandler(requestToShow, vwTop, vwBot);
 			}
-
-
-			ImageButton remove = (ImageButton) VIEW.findViewById(R.id.button_remove);
-
-			Spinner spinner = (Spinner) VIEW.findViewById(
-					R.id.spinner_staff_to_assign);
-
-			// TODO Load assigned staff into spinner
-			
-			spinner.setAdapter(new ArrayAdapter<String>(getActivity(), 
-					android.R.layout.simple_list_item_1, mStaff));
-
-			// Add to mapping to reference later
-			mViewToCustomerRequest.put(remove, REQUEST);
-//			mViewToCustomerRequest.put(arrowButton, REQUEST);
-			mViewToCustomerRequest.put(spinner, REQUEST);
-			remove.setOnClickListener(new AllAroundListener(spinner));
-			assignStaffButton.setOnClickListener(new AllAroundListener(spinner));
-
-			return VIEW;
+			return convertView;
 		}
 
 		/**
-		 * Listener to handle the use of buttons on request items.
-		 * @author mhotan
+		 * Listener for certain item of a customer request view.
+		 * @author glee23
 		 */
-		private class AllAroundListener implements 
-		View.OnClickListener {
+		private class CustomerRequestHandler implements OnClickListener {
 
+			private final CustomerRequest mRequest;
+			private final ImageView mExpandDown;
+			private final ImageButton mPickRequest;
 			private final Spinner mSpinner;
+			private final View mTop, mBottom;
 
 			/**
+			 * Build this handler from the request and its corresponding views.
 			 * 
-			 * @param spinner Spinner
+			 * @param request CustomerRequest to associate to.
+			 * @param top Top view for the request.
+			 * @param bottom bottom view for the request.
 			 */
-			public AllAroundListener(Spinner spinner) {
+			public CustomerRequestHandler(CustomerRequest request, View top, View bottom) {
+				mRequest = request;
 
-				mSpinner = spinner;
+				mTop = top;
+				mBottom = bottom;
 
-				// Default selection is first on the list
-				mSpinner.setSelection(0);
-			} 
+				// Get a reference to all the top pieces 
+				final ImageView REQUESTIMAGE = (ImageView) 
+						mTop.findViewById(R.id.image_order_thumbnail);
+				TextView title = (TextView) mTop.findViewById(R.id.label_request_title);
+
+				mExpandDown = (ImageView) 
+						mTop.findViewById(R.id.button_expand_request);
+				TextView time = (TextView) mTop.findViewById(R.id.label_request_time);
+				mPickRequest = (ImageButton) mBottom.findViewById(R.id.button_proceed);	
+
+				// Get a reference to all the bottom pieces
+				ImageButton assignStaffButton = (ImageButton) 
+						mBottom.findViewById(R.id.button_assign);
+
+				ImageButton remove = (ImageButton) mBottom.findViewById(R.id.button_remove);
+
+				mSpinner = (Spinner) mBottom.findViewById(
+						R.id.spinner_staff_to_assign);
+
+				//Populate
+
+				title.setText(mRequest.getDescription() 
+						+ getString(R.string.dash) + mRequest.getUserInfo().getName());
+
+
+				time.setText(mRequest.getOriginatingTime().toString());
+
+				// Add listeners for reaction purposes
+				remove.setOnClickListener(this);
+				mSpinner.setAdapter(new ArrayAdapter<String>(getActivity(), 
+						android.R.layout.simple_list_item_1, mStaff));
+				assignStaffButton.setOnClickListener(this);
+
+				mTop.setOnClickListener(this);
+				mPickRequest.setOnClickListener(this);
+
+				// Set the image of this request
+				//				DineOnImage image = order.getMainImage();
+				//				if (image != null) {
+				//					mListener.onGetImage(image, new ImageGetCallback() {
+				//
+				//						@Override
+				//						public void onImageReceived(Exception e, Bitmap b) {
+				//							if (e == null) {
+				//								// We got the image so set the bitmap
+				//								ORDERIMAGE.setImageBitmap(b);
+				//							}
+				//						}
+				//					});
+				//				}
+
+				// Set the bottom view to initial to be invisible
+				mBottom.setVisibility(View.GONE);
+			}
 
 			@Override
 			public void onClick(View v) {
 
-				CustomerRequest request = mViewToCustomerRequest.get(v);
+				if (v == mTop || v == mPickRequest) { 
+					int bottomVisibility = mBottom.getVisibility();
+					// Expand the bottom view if it is not shown
+					// Hide the expand down button.
+					if (bottomVisibility == View.GONE) {
+						mExpandDown.setVisibility(View.GONE);
+					} else if (bottomVisibility == View.VISIBLE) {
+						mExpandDown.setVisibility(View.VISIBLE);
+					}
 
-				switch (v.getId()) {
-				case R.id.button_remove:
-					mAdapter.remove(request);
-					mListener.onRemoveRequest(request);
+					// Expand the animation
+					ExpandAnimation expandAni = new ExpandAnimation(mBottom, 500);
+					mBottom.startAnimation(expandAni);
+
+				} else if (v.getId() == R.id.button_assign) {
+					mListener.onAssignStaffToRequest(mRequest, (String) mSpinner.getSelectedItem());
 					mAdapter.notifyDataSetChanged();
-					break;
-				case R.id.button_assign:
-					String staffMem = mSpinner.getSelectedItem().toString();
-					mListener.onAssignStaffToRequest(request, staffMem);
+				} else if (v.getId() == R.id.button_remove) {
+					mAdapter.remove(mRequest);
+					mListener.onRemoveRequest(mRequest);
 					mAdapter.notifyDataSetChanged();
-					break;
-				default:
-					Log.wtf(TAG, "AllAroundListener weird id requested: " + v.getId());
-					break;
 				}
 
+				if (v == mPickRequest) {
+					mListener.onRequestSelected(mRequest);
+				}
 			}
 
+
+
 		}
-
 	}
-
 
 }

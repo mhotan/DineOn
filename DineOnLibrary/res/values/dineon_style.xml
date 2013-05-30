@@ -11,8 +11,8 @@
     </style>
     
     <style name="DineOnBackground" parent="android:Theme.Holo.Light">
-        <item name="android:background">#fedbb5</item>
-        <item name="android:textColor">#b10202</item>
+        <item name="android:background">#b10202</item>
+        <item name="android:textColor">#fedbb5</item>
         
     </style>
     
@@ -20,6 +20,13 @@
         <item name="android:background">#595959</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">50dp</item>
+        
+    </style>
+    
+    <style name="DineOnLine" parent="android:Theme.Holo.Light">
+        <item name="android:background">#fedbb5</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">4dp</item>
         
     </style>
 

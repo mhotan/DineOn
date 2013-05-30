@@ -1,5 +1,7 @@
 package uw.cse.dineon.restaurant.active;
 
+import java.util.List;
+
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
@@ -117,7 +119,7 @@ RequestDetailListener {
 
 		super.completeOrder(order);
 	}
-
+	
 	@Override 
 	protected void addCustomerRequest(CustomerRequest request) {
 		super.addCustomerRequest(request);
@@ -141,6 +143,8 @@ RequestDetailListener {
 		super.removeCustomerRequest(request);
 	}
 
+	
+	
 
 	//////////////////////////////////////////////////////////////////////
 	////	Listener for OrderDetailFragment.OrderDetailListener
@@ -148,7 +152,7 @@ RequestDetailListener {
 	//////////////////////////////////////////////////////////////////////
 
 	@Override
-	public void onRequestRequestDetail(CustomerRequest request) {
+	public void onRequestSelected(CustomerRequest request) {
 		if (request == null) { // Safety Check
 			return;
 		}
@@ -165,7 +169,7 @@ RequestDetailListener {
 	}
 
 	@Override
-	public void onRequestOrderDetail(Order order) {
+	public void onOrderSelected(Order order) {
 		if (order == null) { // Safety Check
 			return;
 		}
@@ -184,7 +188,7 @@ RequestDetailListener {
 	}
 
 	@Override
-	public void onDiningSessionDetailRequested(DiningSession ds) {
+	public void onDiningSessionSelected(DiningSession ds) {
 		if (ds == null) { // Safety Check
 			return;
 		}
@@ -200,6 +204,11 @@ RequestDetailListener {
 
 		intent.putExtra(DiningSessionDetailActivity.EXTRA_DININGSESSION, ds);
 		startActivity(intent);
+	}
+	
+	@Override 
+	public List<DiningSession> getCurrentSessions() {
+		return super.getCurrentSessions();
 	}
 
 	/**
@@ -236,6 +245,16 @@ RequestDetailListener {
 		// the customer request
 		removeCustomerRequest(request);
 	}	
+	
+	@Override 
+	public List<CustomerRequest> getCurrentRequests() {
+		return super.getCurrentRequests();
+	}
+	
+	@Override 
+	public List<Order> getPendingOrders() {
+		return super.getPendingOrders();
+	}
 
 	@Override
 	public void onProgressChanged(Order order, int progress) {
@@ -301,13 +320,13 @@ RequestDetailListener {
 			Fragment f;
 			switch (position) {
 			case 0:
-				f = OrderListFragment.newInstance(restaurant.getPendingOrders());
+				f = new OrderListFragment();
 				break;
 			case 1:
-				f = RequestListFragment.newInstance(restaurant.getCustomerRequests());
+				f = new RequestListFragment();
 				break;
 			case 2: // Should be 2
-				f = DiningSessionListFragment.newInstance(restaurant.getSessions());
+				f = new DiningSessionListFragment();
 				break;
 				// TODO Add more options
 			default:
