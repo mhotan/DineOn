@@ -79,7 +79,7 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 		if (mRestaurants == null) {
 			// This activity was started for the first time.
 			mRestaurants = new ArrayList<RestaurantInfo>();
-			onShowUserFavorites();
+			onShowNearbyRestaurants();
 		}
 	}
 
@@ -200,8 +200,7 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 	@Override
 	public void onShowFriendsFavoriteRestaurants() {
 		// TODO
-		//createProgressDialog();
-		//ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		onShowUserFavorites();
 	}
 
 	@Override

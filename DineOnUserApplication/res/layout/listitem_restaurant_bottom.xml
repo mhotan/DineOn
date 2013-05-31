@@ -3,7 +3,8 @@
     android:id="@+id/restaurant_bottom"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:padding="5dp" >
 
     <LinearLayout
         android:layout_width="0dip"
@@ -15,26 +16,30 @@
             android:id="@+id/label_restaurant_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Address"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="@string/label_address_header"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginTop="3dp" />
         
         <TextView
             android:id="@+id/label_restaurant_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Phone"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="@string/label_phone_header"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginTop="3dp" />
         
         <TextView
             android:id="@+id/label_restaurant_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hours"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="@string/label_hours_header"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginTop="3dp" />
     </LinearLayout>
 
     <ImageButton
         android:id="@+id/button_proceed"
+        android:contentDescription="@string/proceed_to_info_description"
         android:layout_width="0dip"
         android:layout_height="match_parent"
         android:layout_weight="1"

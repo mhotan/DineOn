@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
         android:gravity="center"
+        android:padding="5dp"
         android:orientation="horizontal" >
 
         <ImageButton
@@ -22,91 +23,93 @@
             android:src="@drawable/user_default_placeholder" />
     </LinearLayout>
 
-        <TextView
+    <TextView
         android:id="@+id/label_profile_name_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:layout_marginBottom="10dp"
+        android:textStyle="bold"
+        android:paddingLeft="5dp"
         android:textSize="12pt"
         android:text="@string/label_name_placeholder"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_marginLeft="5dp" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
     
+    <TextView
+        android:id="@+id/label_email"
+        style="@style/DineOnHeadingBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/user_email"
+        android:paddingLeft="5dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />       
     <EditText
         android:id="@+id/user_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:layout_marginBottom="10dp"
         android:inputType="textEmailAddress" >
 
         <requestFocus />
     </EditText>
 
     <TextView
-        android:id="@+id/label_email"
-        android:layout_width="wrap_content"
+        android:id="@+id/label_user_phone"
+        style="@style/DineOnHeadingBackground"        
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/user_email"
+        android:text="@string/user_phone"
+        android:paddingLeft="5dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-        android:layout_marginLeft="5dp" />
-
+        android:textStyle="bold" />
     <EditText
         android:id="@+id/user_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:ems="10"
         android:inputType="phone" />
+    
+    
     <TextView
-        android:id="@+id/label_user_phone"
-        android:layout_width="wrap_content"
+        android:id="@+id/label_old_pass"
+        style="@style/DineOnHeadingBackground"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/user_phone"
+        android:text="@string/user_old_password"
+        android:paddingLeft="5dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-        android:layout_marginLeft="5dp" />
-    
-    
+        android:textStyle="bold" />
     <EditText
         android:id="@+id/user_old_pass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:ems="10"
         android:inputType="textPassword" />
-    <TextView
-        android:id="@+id/label_old_pass"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/user_old_password"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-        android:layout_marginLeft="5dp" />
     
+    <TextView
+        android:id="@+id/label_new_pass"
+        style="@style/DineOnHeadingBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/user_new_password"
+        android:paddingLeft="5dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
     <EditText
         android:id="@+id/user_new_pass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPassword" />
-    <TextView
-        android:id="@+id/label_new_pass"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/user_new_password"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_marginBottom="10dp"
-        android:textStyle="bold"
-        android:layout_marginLeft="5dp" />
+        android:inputType="textPassword" />
     
     <Button
         android:id="@+id/button_save_changes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/save_changes"
-        android:layout_marginLeft="5dp" />
+        android:text="@string/save_changes" />
     
 </LinearLayout>

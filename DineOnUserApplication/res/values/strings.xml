@@ -75,5 +75,20 @@
     <string name="hint_click_more_options">Click for more options</string>
     <string name="hint_special_menuitem_instruction">Place special instructions here</string>
     <string name="restaurants">Restaurants</string>
+    <string name="rest_list_pic">Menu item picture</string>
+    <string name="medium_text">Medium Text</string>
+    <string name="list_down_arrow_button">Indicator to expand the restaurant info</string>
+    <string name="label_phone_header">Phone</string>
+    <string name="proceed_to_info_description">Proceed to restaurant info</string>
+    <string name="menu_item_pic">Picture of the menu item</string>
+    <string name="decrement_order">Decrement order button</string>
+    <string name="increment_order">Increment order button</string>
+    <string name="zero">0</string>
+    <string name="decimal_zero">0.00</string>
+    <string name="subtotal">Subtotal:</string>
+    <string name="tax">Tax:</string>
+    <string name="total">Total:</string>
+    <string name="price_summary">Price Summary</string>
+    <string name="magic_money">Pay with Magic Money!</string>
 
 </resources>

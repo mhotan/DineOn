@@ -77,6 +77,13 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		mRatingBar = (RatingBar) view.findViewById(R.id.ratingbar_restaurant);
 		mGallery = (LinearLayout) view.findViewById(R.id.gallery_restaurant_images);
 
+		View v = view.findViewById(R.id.button_user_favorites);
+		if(v != null && v instanceof ImageButton) {
+			this.determineFavorite((ImageButton) v, this.mRestaurant);
+		} else {
+			Log.d(TAG, "Favorites button not found.");
+		}
+				
 		mReqButton = (Button) view.findViewById(R.id.button_request);
 		mReqButton.setOnClickListener(this);
 		mReqButton.setVisibility(0);
@@ -182,8 +189,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 				ImageButton ib = (ImageButton) v;
 				if(ib.getTag().equals("notFavorite")) {
 					favoriteRestaurant(mRestaurant);
-				}
-				else if(ib.getTag().equals("isFavorite")) {
+				} else if(ib.getTag().equals("isFavorite")) {
 					unFavoriteRestaurant(mRestaurant);
 				}	
 			}
@@ -198,8 +204,8 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	 * @param ri RestaurantInfo to add to the user's favorites
 	 */
 	public void assignFavoriteImageResource(ImageButton ib,
-			DineOnUser dou,
-			RestaurantInfo ri) {
+				DineOnUser dou,
+				RestaurantInfo ri) {
 		if(!dou.isFavorite(ri)) {
 			ib.setImageResource(R.drawable.addtofavorites);
 			ib.setTag("notFavorite");

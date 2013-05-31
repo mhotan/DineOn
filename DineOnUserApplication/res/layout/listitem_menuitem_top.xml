@@ -2,10 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/menuitem_top"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:padding="5dp" >
 
     <ImageView
         android:id="@+id/image_menuitem"
+        android:contentDescription="@string/menu_item_pic"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentLeft="true"
@@ -17,14 +19,13 @@
         android:id="@+id/label_menuitem_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textView2"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dip"
+        android:layout_marginLeft="5dp"
         android:layout_toLeftOf="@+id/numberpicker_menuitem_qty"
         android:layout_toRightOf="@+id/image_menuitem"
         android:gravity="center_vertical"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="@string/medium_text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
      <TextView
          android:id="@+id/label_more_info_hint"
@@ -33,6 +34,7 @@
          android:layout_alignBottom="@+id/image_menuitem"
          android:layout_toLeftOf="@+id/numberpicker_menuitem_qty"
          android:layout_toRightOf="@+id/image_menuitem"
+         android:layout_marginLeft="5dp"
          android:text="@string/hint_click_more_options"
          android:textAppearance="?android:attr/textAppearanceSmall"
          android:textStyle="italic" />
@@ -48,6 +50,7 @@
 
         <ImageButton
             android:id="@+id/button_increment_order"
+            android:contentDescription="@string/increment_order"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -65,7 +68,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:layout_margin="2dip"
-            android:text="0" >
+            android:text="@string/zero" >
 
         </TextView>
         
@@ -76,6 +79,7 @@
         
         <ImageButton
             android:id="@+id/button_decrement_order"
+            android:contentDescription="@string/decrement_order"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
