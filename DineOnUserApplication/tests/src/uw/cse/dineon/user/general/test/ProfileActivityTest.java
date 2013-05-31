@@ -1,7 +1,6 @@
 package uw.cse.dineon.user.general.test;
 
 import com.parse.ParseUser;
-
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
@@ -16,7 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class ProfileActivityTest extends ActivityInstrumentationTestCase2<ProfileActivity> {
+public class ProfileActivityTest extends 
+			ActivityInstrumentationTestCase2<ProfileActivity> {
 
 	private DineOnUser dineOnUser;
 	private ProfileActivity mActivity;
@@ -50,8 +50,14 @@ public class ProfileActivityTest extends ActivityInstrumentationTestCase2<Profil
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
-
-	public void testGetInfo() throws InterruptedException {
+	
+	/**
+	 * Ensures that the users data is correctly reflected in their profile.
+	 * Also tests to make sure the transition to the edit menu works and log out
+	 * with the menu in the profile activity.
+	 * 
+	 */
+	public void testGetInfo() {
 		assertNotNull(this.mActivity);
 		View v = this.mActivity.findViewById(R.id.label_profile_name);
 		assertNotNull(v);
@@ -90,6 +96,12 @@ public class ProfileActivityTest extends ActivityInstrumentationTestCase2<Profil
 		this.mActivity.finish();
 	}
 
+	/**
+	 * Ensures that the users data is correctly reflected in their edit profile.
+	 * Also tests to make sure the transition to the profile menu works on back
+	 * pressed and that the data is still consistent.
+	 * 
+	 */
 	public void testOnUserInfoUpdate() {
 		assertNotNull(this.mActivity);
 		

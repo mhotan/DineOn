@@ -1,5 +1,8 @@
 package uw.cse.dineon.user.login.test;
 
+import java.util.Date;
+import java.util.List;
+
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -8,12 +11,21 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.library.DiningSession;
+import uw.cse.dineon.library.Menu;
+import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.util.TestUtility;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.login.CreateNewAccountActivity;
 import uw.cse.dineon.user.login.CreateNewAccountFragment;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
+import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
@@ -25,13 +37,14 @@ import android.widget.EditText;
  * Ensures that they can be accessed and function properly.
  * @author espeo196
  */
-public class CreateNewAccountActivityTest extends ActivityInstrumentationTestCase2<CreateNewAccountActivity> {
+public class CreateNewAccountActivityTest extends 
+		ActivityInstrumentationTestCase2<CreateNewAccountActivity> {
 
 	private static final int WAIT_TIME = 10000;
 	
-	private static final String fakeUserName = "createUserFakeUser";
-	private static final String fakePassword = "createUserFakePass";
-	private static final String fakeEmail = "fake@fake.com";
+	private DineOnUser dineOnUser;
+	private Restaurant rest;
+	private Instrumentation mInstrumentation;
 	private CreateNewAccountActivity mActivity;
 
 	public CreateNewAccountActivityTest() {
@@ -41,91 +54,106 @@ public class CreateNewAccountActivityTest extends ActivityInstrumentationTestCas
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Parse.initialize(null, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
+		ParseUser user = new ParseUser();
+		user.setUsername("testUser");
+		user.setPassword("12345");
 		
-		setActivityInitialTouchMode(false);
-
+		ParseUser restUser = new ParseUser();
+		restUser.setUsername("testRestUser");
+		restUser.setPassword("12345");
+		
+		dineOnUser = new DineOnUser(user);
+		
+		rest = new Restaurant(restUser);
+		DiningSession ds = 
+				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
+		
+		List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
+		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
+		ds.addPendingOrder(one);
+		dineOnUser.setDiningSession(ds);
+		Menu m = TestUtility.createFakeMenu();
+		m.addNewItem(mi.get(0).getMenuItem());
+		rest.getInfo().addMenu(m);
+		
+		this.setActivityInitialTouchMode(false);
+		mInstrumentation = this.getInstrumentation();
+	    Intent addEvent = new Intent();
+	    setActivityIntent(addEvent);
+	    
+	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setCurrentDiningSession(ds);
+	    
 		mActivity = getActivity();
 	}
 	
 	@Override
 	protected void tearDown() throws Exception {
-		mActivity.finish();
 		super.tearDown();
 	}
 
-//	public void testFragmentExistence() {
-////		Fragment f = getFragment();
-////		assertNotNull(f);
-//	}
+	/**
+	 * Test to make sure that creating an invalid account will not
+	 * advance the user to the restaurant selection activity. Once
+	 * that is ensured, it makes certain that the transition to 
+	 * restaurant selection activity is successful  if the creation
+	 * of the account were to succeed.
+	 */
+	public void testCreateNewAccount() {
+		this.dineOnUser.setDiningSession(null);
+		this.dineOnUser.getUserInfo().setEmail("fakeEmai@fake.com");
+			
+		ActivityMonitor monRsa = getInstrumentation().addMonitor(
+				RestaurantSelectionActivity.class.getName(), null, false);
 	
-	public void testCreateNewAccount() throws ParseException {
-		
-//		mActivity.onCreateNewAccount(fakeUserName, fakeEmail, fakePassword, fakePassword);
-		
-//		ActivityMonitor monitor = getInstrumentation().addMonitor(
-//				RestaurantSelectionActivity.class.getName(), null, false);
-//		
-//		CreateNewAccountFragment frag = getFragment();
-//		View current = frag.getView();
-//		final EditText username = (EditText) 
-//				current.findViewById(
-//						uw.cse.dineon.user.R.id.input_createnewaccount_username);
-//		final EditText password = (EditText) 
-//				current.findViewById(
-//						uw.cse.dineon.user.R.id.input_createnewaccount_password);
-//		final EditText passwordrepeat = (EditText) 
-//				current.findViewById(
-//						uw.cse.dineon.user.R.id.input_createnewaccount_repeat_password);
-//		final EditText email = (EditText) 
-//				current.findViewById(
-//						uw.cse.dineon.user.R.id.input_createnewaccount_email);
-//		final Button submit = (Button) current.findViewById(
-//				uw.cse.dineon.user.R.id.button_create_account);
-//		
-//		mActivity.runOnUiThread(new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				username.setText(fakeUserName);
-//				password.setText(fakePassword);
-//				passwordrepeat.setText(fakePassword);
-//				email.setText(fakeEmail);
-//				submit.performClick();
-//			}
-//		});
-//		
-//		RestaurantSelectionActivity mainAct = (RestaurantSelectionActivity) 
-//				monitor.waitForActivityWithTimeout(WAIT_TIME);
-//
-//		ParseUser curUser = ParseUser.getCurrentUser();
-//		curUser.fetch();
-//		assertNotNull(curUser);
-//		assertEquals(curUser.getUsername(), fakeUserName);
-//		assertEquals(curUser.getEmail(), fakeEmail);
-//		
-//		curUser.deleteInBackground();
-		
-	}
-	
-//	public void testSignUpCallback() {
-		//SignUpCallback suCall = mActivity.getSignUpCallback();
-		//suCall.done(null);
-		//suCall.done(new ParseException(3, "test excep"));
-//	}
-	
-//	public void testSaveCallback() {
-//		SaveCallback sCall = mActivity.getSaveCallback(new DineOnUser(new ParseUser()));
-//		sCall.done(null);
-//		sCall.done(new ParseException(3, "test excep"));
-//		
-//	}
 
-	private CreateNewAccountFragment getFragment(){
-		Fragment f = mActivity.getSupportFragmentManager().findFragmentById(
-				uw.cse.dineon.user.R.id.createNewAccount);
-		CreateNewAccountFragment frag = (CreateNewAccountFragment) f;
-		return frag;
+		final EditText U_ET = (EditText) 
+				this.mActivity.findViewById(
+						uw.cse.dineon.user.R.id.input_createnewaccount_username);
+		assertNotNull(U_ET);
+		final EditText P_ET = (EditText) 
+				this.mActivity.findViewById(
+						uw.cse.dineon.user.R.id.input_createnewaccount_password);
+		assertNotNull(P_ET);
+		final EditText PR_ET = (EditText)
+				this.mActivity.findViewById(
+						uw.cse.dineon.user.R.id.input_createnewaccount_repeat_password);
+		assertNotNull(PR_ET);
+		final EditText E_ET = (EditText) 
+				this.mActivity.findViewById(
+						uw.cse.dineon.user.R.id.input_createnewaccount_email);
+		assertNotNull(E_ET);
+		final Button S_B = (Button) this.mActivity.findViewById(
+				uw.cse.dineon.user.R.id.button_create_account);
+		assertNotNull(S_B);
+		
+		mActivity.runOnUiThread(new Runnable() {
+		
+			@Override
+			public void run() {
+				U_ET.setText(dineOnUser.getName());
+				P_ET.setText("12345");
+				P_ET.setText("123456");
+				E_ET.setText(dineOnUser.getUserInfo().getEmail());
+				S_B.performClick();
+			}
+		});
+		this.mInstrumentation.waitForIdleSync();
+		
+		assertTrue(this.mActivity instanceof CreateNewAccountActivity);
+		this.mActivity.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				mActivity.destroyFailDialog();
+			}
+		});
+		
+		this.mActivity.onSuccess(this.dineOnUser);
+		RestaurantSelectionActivity rsa = (RestaurantSelectionActivity) 
+				monRsa.waitForActivityWithTimeout(WAIT_TIME);
+
+		assertNotNull(rsa);
 	}
 
 }

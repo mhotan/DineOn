@@ -34,6 +34,8 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 	private boolean mLoginWithFacebook = false;
 
 	private Context thisActivity;
+	
+	private AlertDialog failDialog;
 
 
 	@Override
@@ -104,7 +106,8 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 				dialog.cancel();
 			}
 		});
-		builder.create().show();
+		failDialog = builder.create();
+		failDialog.show();
 	}
 	
 	/**
@@ -144,16 +147,28 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 			public void done(ParseException e) {
 				if (e == null) {
 					// Success
-					DineOnUserApplication.setDineOnUser(USER);
-					Intent intent = 
-							new Intent(thisActivity,
-									RestaurantSelectionActivity.class);
-					startActivity(intent);
+					onSuccess(USER);
 				} else {
 					showFailAlertDialog(e.getMessage());
 				}
 			}
 		};
+	}
+	
+	public void destroyFailDialog(){
+		if(this.failDialog != null){
+			this.failDialog.cancel();
+		}
+		
+	}
+	
+	public void onSuccess(DineOnUser dou){
+		
+		DineOnUserApplication.setDineOnUser(dou);
+		Intent intent = 
+				new Intent(thisActivity,
+						RestaurantSelectionActivity.class);
+		startActivity(intent);
 	}
 
 }

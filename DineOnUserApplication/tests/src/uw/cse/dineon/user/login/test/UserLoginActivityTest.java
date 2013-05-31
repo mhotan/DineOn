@@ -83,6 +83,12 @@ public class UserLoginActivityTest extends
 		super.tearDown();
 	}
 
+	/**
+	 * Tests to make sure that login in with invalid credentials will not
+	 * advance the user to the restaurant home activity. Also tests the
+	 * transition to restaurant selection home if the login were to have
+	 * succeeded.
+	 */
 	public void testOnLoginWithDiningSession() {
 		et_uname = (EditText) mActivity.findViewById(uw.cse.dineon.user.R.id.input_login_email);
 		et_passwd = (EditText) mActivity.findViewById(R.id.input_login_password);
@@ -97,7 +103,8 @@ public class UserLoginActivityTest extends
               loginButton.performClick();
 	          }
 		});
-
+		
+		assertTrue(this.mActivity instanceof UserLoginActivity);
 		ActivityMonitor monRia = this.mInstrumentation.addMonitor(
 			RestaurantHomeActivity.class.getName(), null, false);
     	mActivity.startRestSelectionAct(DO);
@@ -108,6 +115,12 @@ public class UserLoginActivityTest extends
 
 	}
 	
+	/**
+	 * Tests to make sure that login in with invalid credentials will not
+	 * advance the user to the restaurant selection activity. Also tests the
+	 * transition to restaurant selection activity if the login were to have
+	 * succeeded.
+	 */
 	public void testOnLoginWithOutDiningSession() {
 		this.dineOnUser.setDiningSession(null);
 		et_uname = (EditText) mActivity.findViewById(uw.cse.dineon.user.R.id.input_login_email);
