@@ -21,9 +21,9 @@ public final class DineOnConstants {
 	 * This is to allow developers to do different things 
 	 * under different conditions
 	 */
-	public static final boolean DEBUG = true;
+	public static boolean DEBUG = true;
 
-	// Parse Related Cosntants to access Parse API
+	// Parse Related Constants to access Parse API
 	public static final String APPLICATION_ID = "10dCEpc2D8Rp7pC2uFaLCN7CtRcNSeZkz8d7eAaX";
 	public static final String CLIENT_KEY = "4NAn0437HLZpDMa5v0gS6JeYT28Q0vmxW19qWdSw";
 

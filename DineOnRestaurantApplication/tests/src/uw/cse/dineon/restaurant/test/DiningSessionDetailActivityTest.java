@@ -49,7 +49,7 @@ ActivityInstrumentationTestCase2<DiningSessionDetailActivity> {
 		mRI = new RestaurantInfo(mUser);
 		mUI = new UserInfo(mUser);
 		mDiningSession = TestUtility.createFakeDiningSession(mUI, mRI);
-		mRestaurant = TestUtility.createFakeRestaurant(mUser);
+		//mRestaurant = TestUtility.createFakeRestaurant(mUser);
 		mRestaurant.addDiningSession(mDiningSession);
 
 

@@ -10,15 +10,19 @@ import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.util.FakeRestaurantInformation;
 import android.app.Activity;
 import android.content.Context;
 import android.test.AndroidTestCase;
-import android.util.Log;
 
 import com.parse.ParseUser;
 
 /**
- * A set of tests for the DiningSession library class
+ * DiningSessionTest tests the DiningSession library class
+ * and makes sure that users and orders can be added correctly.
+ * 
+ * White box tests
+ * 
  * @author zach
  *
  */
@@ -29,16 +33,11 @@ public class DiningSessionTest extends AndroidTestCase {
 
 	DiningSession testSession;
 	ParseUser mUser;
-	ParseUser testUser1;
 	UserInfo testUInfo;
-	UserInfo testUInfo1;
 	List<CurrentOrderItem> testItems;
 	MenuItem testItem;
-	Order testOrder;
 	List<Order> orders;
-	List<UserInfo> testUInfos;
 	RestaurantInfo testRInfo;
-
 
 	/**
 	 * Default constructor. 
@@ -47,39 +46,28 @@ public class DiningSessionTest extends AndroidTestCase {
 		super();
 	}
 
-	//Setup for the tests
 	@Override
-	protected void setUp() throws Exception {
-		Log.i("progress", "start setup");
-
-		Log.i("progress", "init parse");
-
+	protected void setUp() throws Exception { 
 		mUser = new ParseUser();
 		mUser.setEmail("dst@a.com");
-		mUser.setPassword("dst");
 		mUser.setObjectId("245");
 
-		testUInfo1 = new UserInfo(mUser);
-		testUInfo1.setObjId("tui1");
-		testRInfo = new RestaurantInfo(mUser);
-		testSession = new DiningSession(32, new Date(3254645), testUInfo1, testRInfo);
+		FakeRestaurantInformation f = new FakeRestaurantInformation(mUser);
 
 		testUInfo = new UserInfo(mUser);
 		testUInfo.setObjId("tui");
+
+		testRInfo = new RestaurantInfo(mUser);
+		testSession = new DiningSession(32, new Date(3254645), testUInfo, testRInfo);
+
 		testItems = new ArrayList<CurrentOrderItem>();
-		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
-		testItems.add(new CurrentOrderItem(testItem));
-		testOrder = new Order(32, testUInfo, testItems);
-		testOrder.setObjId("to");
-		orders = new ArrayList<Order>();
-		orders.add(testOrder);
+		List<MenuItem> menuItems = f.getFakeMenuItems();
+		for (MenuItem m : menuItems) {
+			testItems.add(new CurrentOrderItem(m));
+		}
+		orders = f.getFakeOrders();
 
-		testUInfos = new ArrayList<UserInfo>();
-
-		testUInfos.add(testUInfo1);
-		testUInfos.add(testUInfo);
 	}
-	
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
@@ -87,18 +75,42 @@ public class DiningSessionTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the session has the correct list of orders
-	 * 
-	 * White box
 	 */
-	public void testGetOrders() {
-		testSession.addPendingOrder(testOrder);
-		assertEquals(orders, testSession.getOrders());
+	public void testGetOrdersInitial() {
+		assertEquals(new ArrayList<Order>(), testSession.getOrders());
+	}
+
+	/**
+	 * Asserts that the session has the correct list of users stored
+	 */
+	public void testGetUsersInitial() {
+		List<UserInfo> tempList = new ArrayList<UserInfo>();
+		tempList.add(testUInfo);
+		assertEquals(tempList, testSession.getUsers());
+	}
+
+	/**
+	 * Asserts that the correct user is added
+	 */
+	public void testAddUser() {
+		testSession.addUser(testUInfo);
+		List<UserInfo> tempList = new ArrayList<UserInfo>();
+		tempList.add(testUInfo);
+		tempList.add(testUInfo);
+		assertEquals(tempList, testSession.getUsers());
+	}
+
+	/**
+	 * Asserts that the correct user is removed
+	 */
+	public void testRemoveUser() {
+		List<UserInfo> tempList = new ArrayList<UserInfo>();
+		testSession.removeUser(testUInfo);
+		assertEquals(tempList, testSession.getUsers());
 	}
 
 	/**
 	 * Asserts that the session has the correct table id stored
-	 * 
-	 * White box
 	 */
 	public void testGetTableID() {
 		assertEquals(32, testSession.getTableID());
@@ -106,34 +118,12 @@ public class DiningSessionTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the session has the correct changed table id stored
-	 * 
-	 * White box
 	 */
 	public void testResetTableID() {
 		testSession.resetTableID(42);
 		assertEquals(42, testSession.getTableID());
 	}
 
-	/**
-	 * Asserts that the session has the correct list of users stored
-	 * 
-	 * White box
-	 */
-	public void testGetUsers() {
-		List<UserInfo> expectedUser = new ArrayList<UserInfo>();
-		expectedUser.add(testUInfo1);
-		assertEquals(expectedUser, testSession.getUsers());
-	}
 
-	/**
-	 * Asserts that the correct user is added
-	 * 
-	 * White box
-	 */
-	public void testAddUser() {
-		testSession.addUser(testUInfo);
-
-		assertEquals(testUInfos, testSession.getUsers());
-	}
 
 }

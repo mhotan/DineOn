@@ -49,7 +49,7 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 		mUser.setUsername(fakeUserName);
 		mUser.setPassword(fakePassword);
 		
-		mRestaurant = TestUtility.createFakeRestaurant(mUser);
+		//mRestaurant = TestUtility.createFakeRestaurant(mUser);
 		mRI = new RestaurantInfo(mUser);
 		mUI = new UserInfo(mUser);
 		mRestaurant.addOrder(TestUtility.createFakeOrder(1, mUI));

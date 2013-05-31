@@ -66,7 +66,7 @@ public class MenuItem extends Storable {
 	
 	/**
 	 * Sets the image of this menuitem.
-	 * @param image
+	 * @param image DineOnImage
 	 */
 	public void setImage(DineOnImage image) {
 		mImage = image;
@@ -76,7 +76,7 @@ public class MenuItem extends Storable {
 	 * Retrieve the image associated with this menu item.
 	 * @return instance if image exists, null other wise
 	 */
-	public DineOnImage getImage(){
+	public DineOnImage getImage() {
 		return mImage;
 	}
 	

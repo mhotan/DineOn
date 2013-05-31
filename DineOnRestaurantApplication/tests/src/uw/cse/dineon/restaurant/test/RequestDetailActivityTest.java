@@ -41,7 +41,7 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 		mUser = new ParseUser();
 		mUser.setEmail(fakeEmail);
 	
-		mRestaurant = TestUtility.createFakeRestaurant(mUser);
+		//mRestaurant = TestUtility.createFakeRestaurant(mUser);
 		mUI = new UserInfo(mUser);
 		mRequest = TestUtility.createFakeRequest(mUI);
 		mDiningSession = TestUtility.createFakeDiningSession(mUI, mRI);

@@ -210,7 +210,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/hint_hours_of_operation"
-                android:inputType="phone" >
+                android:inputType="text" >
             </EditText>
             
         </LinearLayout>

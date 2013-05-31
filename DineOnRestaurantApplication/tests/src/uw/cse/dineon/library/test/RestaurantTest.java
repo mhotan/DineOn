@@ -21,7 +21,9 @@ import android.util.Log;
 import com.parse.ParseUser;
 
 /**
- * Tests library class Restaurant
+ * Tests library class Restaurant.
+ * 
+ * White box tests
  * @author Zach
  *
  */
@@ -56,10 +58,7 @@ public class RestaurantTest extends AndroidTestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
-		Log.i("progress", "start setup");
 		mContext = this.getContext();
-		Log.i("progress", "got context");
-		Log.i("progress", "init parse");
 		
 		mUser = new ParseUser();
 		mUser.setPassword("rtest");
@@ -96,13 +95,10 @@ public class RestaurantTest extends AndroidTestCase {
 		testReservations.add(testReservation);
 		testSessions = new ArrayList<DiningSession>();
 		testSessions.add(testSession);
-		Log.i("progress", "end setup");
 	}
 
 	/**
 	 * Asserts that the restaurant correctly stores the expected data.
-	 * 
-	 * White box
 	 */
 	public void testRestaurantParseUser() {
 		assertEquals(testRestaurantInfo.getName(), testRestaurant.getName());
@@ -112,13 +108,10 @@ public class RestaurantTest extends AndroidTestCase {
 		assertEquals(new ArrayList<Order>(), testRestaurant.getPastOrders());
 		assertEquals(new ArrayList<DiningSession>(), testRestaurant.getSessions());
 		assertEquals(new ArrayList<Order>(), testRestaurant.getPendingOrders());
-		
 	}
 
 	/**
 	 * Asserts that the restaurant correctly adds a request.
-	 * 
-	 * White box
 	 */
 	public void testAddCustomerRequest() {
 		testRestaurant.addCustomerRequest(testRequest);
@@ -127,8 +120,6 @@ public class RestaurantTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the restaurant correctly adds a reservation.
-	 * 
-	 * White box
 	 */
 	public void testAddReservation() {
 		testRestaurant.addReservation(testReservation);
@@ -137,8 +128,6 @@ public class RestaurantTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the restaurant correctly completes an order.
-	 * 
-	 * White box
 	 */
 	public void testCompleteOrder() {
 		testRestaurant.addOrder(testOrder);
@@ -149,8 +138,6 @@ public class RestaurantTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the restaurant correctly adds an order.
-	 * 
-	 * White box
 	 */
 	public void testAddOrder() {
 		testRestaurant.addOrder(testOrder);
@@ -159,8 +146,6 @@ public class RestaurantTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the restaurant correctly adds a dining session.
-	 * 
-	 * White box
 	 */
 	public void testAddDiningSession() {
 		testRestaurant.addDiningSession(testSession);
@@ -169,8 +154,6 @@ public class RestaurantTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the restaurant correctly removes a dining session.
-	 * 
-	 * White box
 	 */
 	public void testRemoveDiningSession() {
 		testRestaurant.addDiningSession(testSession);
@@ -180,8 +163,6 @@ public class RestaurantTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the restaurant correctly removes a request.
-	 * 
-	 * White box
 	 */
 	public void testRemoveCustomerRequest() {
 		testRestaurant.addCustomerRequest(testRequest);
@@ -191,8 +172,6 @@ public class RestaurantTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the restaurant correctly removes a reservation.
-	 * 
-	 * White box
 	 */
 	public void testRemoveReservation() {
 		testRestaurant.addReservation(testReservation);
@@ -202,8 +181,6 @@ public class RestaurantTest extends AndroidTestCase {
 
 	/**
 	 * Asserts that the restaurant correctly clears past orders.
-	 * 
-	 * White box
 	 */
 	public void testClearPastOrders() {
 		testRestaurant.addOrder(testOrder);
