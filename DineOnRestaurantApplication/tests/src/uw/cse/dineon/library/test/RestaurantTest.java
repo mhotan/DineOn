@@ -18,9 +18,13 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.parse.Parse;
 import com.parse.ParseUser;
 
+/**
+ * Tests library class Restaurant
+ * @author Zach
+ *
+ */
 public class RestaurantTest extends AndroidTestCase {
 	
 	Activity activity;
@@ -55,11 +59,9 @@ public class RestaurantTest extends AndroidTestCase {
 		Log.i("progress", "start setup");
 		mContext = this.getContext();
 		Log.i("progress", "got context");
-		Parse.initialize(mContext, "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		Log.i("progress", "init parse");
 		
 		mUser = new ParseUser();
-		mUser.setUsername("restaurantTest");
 		mUser.setPassword("rtest");
 		
 		testSession = new DiningSession(32, new Date(3254645), testUInfo, testRestaurantInfo);

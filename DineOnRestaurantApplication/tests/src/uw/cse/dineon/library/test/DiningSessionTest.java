@@ -15,11 +15,10 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.parse.Parse;
 import com.parse.ParseUser;
 
 /**
- * 
+ * A set of tests for the DiningSession library class
  * @author zach
  *
  */
@@ -48,16 +47,15 @@ public class DiningSessionTest extends AndroidTestCase {
 		super();
 	}
 
+	//Setup for the tests
 	@Override
 	protected void setUp() throws Exception {
 		Log.i("progress", "start setup");
 
-		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		Log.i("progress", "init parse");
 
 		mUser = new ParseUser();
 		mUser.setEmail("dst@a.com");
-		mUser.setUsername("dst");
 		mUser.setPassword("dst");
 		mUser.setObjectId("245");
 
@@ -81,6 +79,7 @@ public class DiningSessionTest extends AndroidTestCase {
 		testUInfos.add(testUInfo1);
 		testUInfos.add(testUInfo);
 	}
+	
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
@@ -123,7 +122,7 @@ public class DiningSessionTest extends AndroidTestCase {
 	public void testGetUsers() {
 		List<UserInfo> expectedUser = new ArrayList<UserInfo>();
 		expectedUser.add(testUInfo1);
-		//TODO fails now assertEquals(testUInfo1, testSession.getUsers());
+		assertEquals(expectedUser, testSession.getUsers());
 	}
 
 	/**

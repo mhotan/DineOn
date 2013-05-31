@@ -9,7 +9,7 @@ import com.parse.ParseUser;
 
 
 /**
- * 
+ * Tests library class UserInfo
  * @author espeo196
  */
 public class UserInfoTest extends AndroidTestCase {
@@ -18,6 +18,8 @@ public class UserInfoTest extends AndroidTestCase {
 	ParseUser testUser;
 	UserInfo testUInfo;
 	
+	//Still contains a parse initialize to allow the ParseUser to set username, needed to test functionality of
+	//UserInfo's constructor
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

@@ -8,15 +8,12 @@ import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
-import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
-import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.parse.Parse;
@@ -94,7 +91,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	 */
 	public void testOnUserChangedNotExist() {
 		mActivity.onUserChanged(mDineOnUser.getUserInfo());
-		// TODO
+		// TODO No current way to access userinfo data to confirm this
 	}
 
 	/**
@@ -116,6 +113,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 				request.deleteFromCloud();
 			}
 		}
+		assertTrue(mRestaurant.getSessions().get(0).getRequests().contains(request));
 	}
 
 	/**
@@ -136,6 +134,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 				order.deleteFromCloud();
 			}
 		}
+		assertTrue(mRestaurant.getSessions().get(0).getOrders().contains(order));
 	}
 	
 	/**
@@ -155,6 +154,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 				res.deleteFromCloud();
 			}
 		}
+		assertTrue(mRestaurant.getReservationList().contains(res));
 	}
 	
 	/**

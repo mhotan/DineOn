@@ -9,9 +9,13 @@ import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
 import android.test.AndroidTestCase;
 
-import com.parse.Parse;
 import com.parse.ParseUser;
 
+/**
+ * Tests the library class Order
+ * @author Zach
+ *
+ */
 public class OrderTest extends AndroidTestCase {
 
 	UserInfo testUInfo;
@@ -19,13 +23,12 @@ public class OrderTest extends AndroidTestCase {
 	MenuItem testItem;
 	Order testOrder;
 	ParseUser testUser;
+	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		
 		testUser = new ParseUser();
-		testUser.setUsername("tester1");
 		testUser.setPassword("pass");
 		
 		testUInfo = new UserInfo(testUser);

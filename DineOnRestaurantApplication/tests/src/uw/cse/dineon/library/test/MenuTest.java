@@ -7,6 +7,11 @@ import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import android.test.AndroidTestCase;
 
+/**
+ * Tests for the library class Menu
+ * @author Zach
+ *
+ */
 public class MenuTest extends AndroidTestCase {
 
 	List<MenuItem> testItems;
@@ -30,7 +35,7 @@ public class MenuTest extends AndroidTestCase {
 	}
 
 	/**
-	 * Asserts that the menu saves the correct title
+	 * Asserts that the menu saves the correct title and items
 	 * 
 	 * White box
 	 */
