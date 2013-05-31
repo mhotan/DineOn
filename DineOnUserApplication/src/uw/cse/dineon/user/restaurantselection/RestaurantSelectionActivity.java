@@ -130,13 +130,13 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case MENU_ITEM_FILTER:
-			// TODO
-			break;
-		default:
-			break;
-		}
+//		switch (item.getItemId()) {
+//		case MENU_ITEM_FILTER:
+//			// TODO
+//			break;
+//		default:
+//			break;
+//		}
 		return super.onOptionsItemSelected(item);
 	}
 

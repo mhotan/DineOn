@@ -6,6 +6,7 @@ import java.util.List;
 
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
@@ -30,17 +31,6 @@ public final class TestUtility {
 	 * Hidden constructor.
 	 */
 	private TestUtility() { }
-	
-	/**
-	 * Returns a fake restaurant.
-	 * @param user ParseUser to create restaurant for
-	 * @return a fake restaurant
-	 * @throws ParseException is user doesn't exist
-	 */
-	public static Restaurant createFakeRestaurant(ParseUser user) throws ParseException {
-		Restaurant r = new Restaurant(user);
-		return r;
-	}
 
 	/**
 	 * Returns a fake order.
@@ -50,12 +40,9 @@ public final class TestUtility {
 	 * @return a fake order
 	 */
 	public static Order createFakeOrder(int orderNum, UserInfo info) {
-		List<MenuItem> items = createFakeMenuItems(2);
-		List<CurrentOrderItem> orderItems = new ArrayList<CurrentOrderItem>();
-		for (MenuItem i : items) {
-			orderItems.add(new CurrentOrderItem(i));
-		}
-		return new Order(orderNum, info, orderItems);
+		Order newOrder = new Order(orderNum, info, createFakeOrderItems(5));
+		newOrder.setObjId("order");
+		return newOrder;
 	}
 
 	/**
@@ -65,8 +52,10 @@ public final class TestUtility {
 	 * @return a fake customer request
 	 */
 	public static CustomerRequest createFakeRequest(UserInfo info) {
-		return new CustomerRequest("[fake] I want my food now!", 
+		CustomerRequest req = new CustomerRequest("[fake] I want my food now!", 
 				info, new GregorianCalendar().getTime());
+		req.setObjId("request");
+		return req;
 	}
 	
 	/**
@@ -78,7 +67,9 @@ public final class TestUtility {
 	public static List<CurrentOrderItem> createFakeOrderItems(int qty) {
 		List<CurrentOrderItem> items = new ArrayList<CurrentOrderItem>();
 		for (MenuItem m : createFakeMenuItems(qty)) {
-			items.add(new CurrentOrderItem(m));
+			CurrentOrderItem newItem = new CurrentOrderItem(m);
+			newItem.setObjId("orderitem");
+			items.add(newItem);
 		}
 		return items;
 	}
@@ -96,6 +87,7 @@ public final class TestUtility {
 			MenuItem m = new MenuItem(
 					qty + 1 + i, 3.99, "FakeMenuItem " + (i + 1), 
 					"FakeMenuItemDescription " + (i + 1));	
+			m.setObjId("menuitem");
 			items.add(m);
 		}
 		return items;
@@ -111,9 +103,11 @@ public final class TestUtility {
 	 */
 	public static DiningSession createFakeDiningSession(UserInfo user, 
 					RestaurantInfo restInfo) throws ParseException {
-		return new DiningSession(1, 
+		DiningSession ds = new DiningSession(1, 
 				new GregorianCalendar().getTime(), 
 				user, restInfo);
+		ds.setObjId("session");
+		return ds;
 	}
 	
 	/**
@@ -124,7 +118,34 @@ public final class TestUtility {
 		for (MenuItem item: createFakeMenuItems(3)) {
 			entreeMenu.addNewItem(item);
 		}
+		entreeMenu.setObjId("menu");
 		return entreeMenu;
+	}
+	
+	/**
+	 * Create a fake user for testing.
+	 * @return a DineOnUser
+	 */
+	public static DineOnUser createFakeUser() {
+		// create a user
+		ParseUser user = new ParseUser();
+		user.setUsername("testUser");
+		user.setPassword("12345");
+		user.setObjectId("_marksuser");
+		return new DineOnUser(user);
+	}
+	
+	/**
+	 * Create a fake restaurant for testing.
+	 * @return a Restaurant
+	 * @throws ParseException if user is invalid
+	 */
+	public static Restaurant createFakeRestaurant() throws ParseException {
+		ParseUser restUser = new ParseUser();
+		restUser.setUsername("testRestUser");
+		restUser.setPassword("12345");
+		restUser.setObjectId("_marksrest");
+		return new Restaurant(restUser);
 	}
 	
 }

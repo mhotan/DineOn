@@ -2,14 +2,8 @@ package uw.cse.dineon.user.restaurantselection.test;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-
-import com.parse.FindCallback;
-import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
@@ -20,10 +14,19 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
+import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.Instrumentation;
+import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
+import android.widget.Button;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 public class RestaurantSelectionActivityTest extends
 		ActivityInstrumentationTestCase2<RestaurantSelectionActivity> {
@@ -33,6 +36,8 @@ public class RestaurantSelectionActivityTest extends
 	private RestaurantSelectionActivity mActivity;
 	private RestaurantInfo testRInfo;
 	private Instrumentation mInstrumentation;
+	private DiningSession mDs;
+	private long time = 1000;
 
 	public RestaurantSelectionActivityTest() {
 		super(RestaurantSelectionActivity.class);
@@ -41,77 +46,173 @@ public class RestaurantSelectionActivityTest extends
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		ParseUser user = new ParseUser();
-		user.setUsername("testUser");
-		user.setPassword("12345");
+		// create a user
+		dineOnUser = TestUtility.createFakeUser();
 		
-		ParseUser restUser = new ParseUser();
-		restUser.setUsername("testRestUser");
-		restUser.setPassword("12345");
+		// create a restaurant
+		Restaurant rest = TestUtility.createFakeRestaurant();
 		
-		dineOnUser = new DineOnUser(user);
-		
-		Restaurant rest = new Restaurant(restUser);
-		DiningSession ds = 
-				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
-		
-		List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
-		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
+		// create a dining session simulation
+		DiningSession ds = TestUtility.createFakeDiningSession(
+				dineOnUser.getUserInfo(), rest.getInfo());
+
+		Order one = TestUtility.createFakeOrder(5, dineOnUser.getUserInfo());
 		ds.addPendingOrder(one);
 		dineOnUser.setDiningSession(ds);
+		
 		Menu m = TestUtility.createFakeMenu();
-		m.addNewItem(mi.get(0).getMenuItem());
 		rest.getInfo().addMenu(m);
+		
+		// Initialize activity testing parameters
 		this.setActivityInitialTouchMode(false);
 		mInstrumentation = this.getInstrumentation();
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);
+	    
+	    // initilize static data
 	    DineOnUserApplication.setDineOnUser(dineOnUser);
 	    DineOnUserApplication.setCurrentDiningSession(ds);
+	    DineOnUserApplication.setRestaurantOfInterest(rest.getInfo());
+	    
 		mActivity = getActivity();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-//		super.tearDown();
+		super.tearDown();
 	}
 
+	/**
+	 * Test that we can add restaurant infos to the selection list
+	 * @throws ParseException
+	 */
 	public void testAddRestaurantInfo() throws ParseException {
-//		List<RestaurantInfo> tempList = new ArrayList<RestaurantInfo>();
-//		tempList.add(testRInfo);
-//		mActivity.addRestaurantInfos(tempList);
-	}
-
-	public void testOnRestaurantFocusedOn() {
-//		mActivity.onRestaurantFocusedOn(testRInfo);
-	}
-
-	
-	public void testGetRestaurants() {
-//		assertNotNull(mActivity.getRestaurants());
-	}
-	
-	public void testDeleteResume() {
-//		getInstrumentation().waitForIdleSync();
-//		mActivity.finish();
-//
-//		mActivity = getActivity();
-	}
-	
-	public void testCallback() {
-//		FindCallback fCall = mActivity.getFindCallback("TestMessage");
-//		RestaurantInfo testRI = null;
-//		try {
-//			testRI = new RestaurantInfo(testUser);
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		List<ParseObject> testL = new ArrayList<ParseObject>();
-//		testL.add(testRI.packObject());
-//		fCall.done(testL, null);
+		testRInfo = new RestaurantInfo(new ParseUser());
+		List<RestaurantInfo> tempList = new ArrayList<RestaurantInfo>();
+		tempList.add(testRInfo);
+		final List<RestaurantInfo> list = tempList;
+		final RestaurantSelectionActivity RSA = this.mActivity; 
+		RSA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  RSA.addRestaurantInfos(list);
+	          }
+	      });
+		mInstrumentation.waitForIdleSync();
 		
-		//fCall.done(testL, new ParseException(4, "Test error"));
+		// Notify the list of change
+		RSA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  RSA.notifyFragment();
+	          }
+	      });
+		mInstrumentation.waitForIdleSync();
+		RSA.finish();
+	}
+	
+	/**
+	 * Test that the Restaurant Home activity is started when 
+	 * a restaurant is selected.
+	 */
+	public void testOnRestaurantSelected() {
+		ParseUser restUser = new ParseUser();
+		restUser.setUsername("testRestUser");
+		restUser.setPassword("12345");
+		RestaurantInfo rest = null;
+		try {
+			rest = new RestaurantInfo(restUser);
+		} catch (ParseException e) {
+			fail("Parse Exception Thrown");
+		}
+		
+		ActivityMonitor monRsa = this.mInstrumentation.addMonitor(
+				RestaurantHomeActivity.class.getName(), null, false);
+		
+		this.mActivity.onRestaurantSelected(rest);
+		
+		mInstrumentation.waitForIdleSync();
+		
+		RestaurantHomeActivity resSelect = (RestaurantHomeActivity) monRsa
+				.waitForActivityWithTimeout(time );
+		assertNotNull(resSelect);
+		resSelect.finish();
+	}
+	
+	/**
+	 * Test that we get a list of restaurants in the activity
+	 */
+	public void testGetRestaurants() {
+		assertNotNull(mActivity.getRestaurants());
+		this.mActivity.finish();
+	}
+	
+	/**
+	 * Test that the dialog gets create and later deleted
+	 */
+	public void testProgressDialog() {
+		final RestaurantSelectionActivity RSA = this.mActivity; 
+		RSA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  RSA.createProgressDialog();
+	        	  
+	          }
+	      });
+		mInstrumentation.waitForIdleSync();
+		RSA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  RSA.destroyProgressDialog();
+	          }
+	      });
+		mInstrumentation.waitForIdleSync();
+		RSA.finish();
+	}
+	
+	/**
+	 * Test that a toast is made when no restaurants are found
+	 */
+	public void testToast() {
+		final RestaurantSelectionActivity RSA = this.mActivity; 
+		RSA.runOnUiThread(new Runnable() {
+		      public void run() {
+		  		RSA.showNoRestaurantsDialog("No restaurants");
+		      }
+		  });
+		mInstrumentation.waitForIdleSync();
+		RSA.finish();
+	}
+	
+	/**
+	 * Test that the parse query callback update fields.
+	 */
+	public void testFindCallback() {
+		ParseUser user = new ParseUser();
+		user.setUsername("bill");
+		user.setPassword("lovefred");
+		FindCallback fCall = mActivity.getFindCallback("TestMessage");
+		RestaurantInfo testRI = null;
+		try {
+			testRI = new RestaurantInfo(user);
+		} catch (ParseException e) {
+			fail("Couldn't build a restaurantInfo");
+		}
+		
+		List<ParseObject> testL = new ArrayList<ParseObject>();
+		testL.add(testRI.packObject());
+		final List<ParseObject> list = testL;
+		final FindCallback callback = fCall;
+		final RestaurantSelectionActivity RSA = this.mActivity;
+		RSA.runOnUiThread(new Runnable() {
+		      public void run() {
+		    	  callback.done(list, null);
+		      }
+		  });
+		mInstrumentation.waitForIdleSync();
+		RSA.runOnUiThread(new Runnable() {
+		      public void run() {
+		    	  callback.done(list, new ParseException(4, "Test error"));
+		      }
+		  });
+		mInstrumentation.waitForIdleSync();
+		RSA.finish();
 	}
 
 }

@@ -1,10 +1,7 @@
 package uw.cse.dineon.user.restaurant.home.test;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.parse.ParseUser;
 
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
@@ -14,14 +11,18 @@ import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
+import uw.cse.dineon.user.restaurant.home.MenuItemDetailActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
+import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.Instrumentation;
+import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
-import android.os.Parcelable;
+import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
+
+import com.parse.ParseUser;
 
 public class RestaurantHomeActivityTest extends
 		ActivityInstrumentationTestCase2<RestaurantHomeActivity> {
@@ -34,7 +35,8 @@ public class RestaurantHomeActivityTest extends
 	private RestaurantInfo testRInfo;
 	private Restaurant rest;
 	private Instrumentation mInstrumentation;
-
+	private long time = 1000;
+	
 	public RestaurantHomeActivityTest() {
 		super(RestaurantHomeActivity.class);
 	}
@@ -42,56 +44,123 @@ public class RestaurantHomeActivityTest extends
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		ParseUser user = new ParseUser();
-		user.setUsername("testUser");
-		user.setPassword("12345");
 		
-		ParseUser restUser = new ParseUser();
-		restUser.setUsername("testRestUser");
-		restUser.setPassword("12345");
+		// create a user
+		dineOnUser = TestUtility.createFakeUser();
 		
-		dineOnUser = new DineOnUser(user);
+		// create a restaurant
+		rest = TestUtility.createFakeRestaurant();
 		
-		rest = new Restaurant(restUser);
-		DiningSession ds = 
-				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
-		
-		List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
-		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
+		// create a dining session simulation
+		DiningSession ds = TestUtility.createFakeDiningSession(
+				dineOnUser.getUserInfo(), rest.getInfo());
+
+		Order one = TestUtility.createFakeOrder(5, dineOnUser.getUserInfo());
 		ds.addPendingOrder(one);
 		dineOnUser.setDiningSession(ds);
+		
 		Menu m = TestUtility.createFakeMenu();
-		m.addNewItem(mi.get(0).getMenuItem());
 		rest.getInfo().addMenu(m);
+		
+		// Initialize activity testing parameters
 		this.setActivityInitialTouchMode(false);
 		mInstrumentation = this.getInstrumentation();
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);
 	    
+	    // initilize static data
 	    DineOnUserApplication.setDineOnUser(dineOnUser);
 	    DineOnUserApplication.setCurrentDiningSession(ds);
+	    DineOnUserApplication.setRestaurantOfInterest(rest.getInfo());
 	    
 		mActivity = getActivity();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		mActivity.finish();
 		super.tearDown();
 	}
 
+	/**
+	 * Test that the UI is going to MenuItemDetailActivity when a
+	 * menuitem is focused on
+	 */
 	public void testOnMenuItemFocusedOn() {
-//		MenuItem m = new MenuItem(1, 1, "Fries", "Yum");
-//		mActivity.onMenuItemFocusedOn(m);
+		final MenuItem m = new MenuItem(1, 1, "Fries", "Yum");
+		
+		ActivityMonitor monRsa = this.mInstrumentation.addMonitor(
+				MenuItemDetailActivity.class.getName(), null, false);
+		
+		final RestaurantHomeActivity RSA = this.mActivity; 
+		RSA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  RSA.onMenuItemFocusedOn(m);
+	          }
+	      });
+		mInstrumentation.waitForIdleSync();
+		
+		MenuItemDetailActivity itemSelect = (MenuItemDetailActivity) monRsa
+				.waitForActivityWithTimeout(time);
+		assertNotNull(itemSelect);
+		itemSelect.finish();
 	}
 	
-	public void testOnMenuItemIncremented() {
-		
+	/** 
+	 * Test that I can get the current restaurant of focus
+	 */
+	public void testGetCurrentRestaurant() {
+		assertNotNull(this.mActivity.getCurrentRestaurant());
+		this.mActivity.finish();
 	}
 	
-	public void testOnMenuItemDecremented() {
+	/**
+	 * Test onBackPressed to make sure we're directed to the 
+	 * RestaurantSelectionActivity
+	 */
+	public void testOnBackPressed() {
+		ActivityMonitor monRsa = this.mInstrumentation.addMonitor(
+				RestaurantSelectionActivity.class.getName(), null, false);
 		
+		final RestaurantHomeActivity RSA = this.mActivity; 
+		RSA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  RSA.onBackPressed();
+	          }
+	      });
+		mInstrumentation.waitForIdleSync();
+		
+		RestaurantSelectionActivity resSelect = (RestaurantSelectionActivity) monRsa
+				.waitForActivityWithTimeout(time);
+		assertNotNull(resSelect);
+		resSelect.finish();
+	}
+	
+	/**
+	 * Test the swiping of tabs in the restaurant home screen.
+	 */
+	public void testInfoMenuTabs() {
+		android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+				this.mActivity.findViewById(uw.cse.dineon.user.R.id.pager_menu_info);
+		assertNotNull(pager);
+		
+		PagerAdapter adapter = pager.getAdapter();   
+		assertNotNull(adapter);
+
+		final android.support.v4.view.ViewPager PAGER = pager;
+		this.mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				PAGER.setCurrentItem(1);
+			}
+		});	      
+		mInstrumentation.waitForIdleSync(); 
+		this.mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				PAGER.setCurrentItem(0);
+			}
+		});	      
+		mInstrumentation.waitForIdleSync();
+		this.mActivity.finish();
 	}
 
-
+	
 }
