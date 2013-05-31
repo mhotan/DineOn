@@ -96,4 +96,10 @@
     <string name="expiration_month">Expiration Month</string>
     <string name="expiration_year">Expiration Year</string>
     <string name="zip_code">Zip Code</string>
+    <string-array name="default_employees">
+        <item >Bert</item>
+        <item >Ernie</item>
+        <item >Big Bird</item>
+        <item >Cookie Monster</item>
+    </string-array>
 </resources>

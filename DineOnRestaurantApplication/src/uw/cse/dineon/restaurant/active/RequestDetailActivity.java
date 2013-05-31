@@ -2,7 +2,6 @@ package uw.cse.dineon.restaurant.active;
 
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import android.os.Bundle;
@@ -25,23 +24,11 @@ RequestDetailFragment.RequestDetailListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_request_details);
 		
-		// Grab reference to the extras
-		Bundle extras = getIntent().getExtras();
-
-		// Lets first check if the activity is being recreated after being
-		// destroyed but there was an already existing restuarant
-		if (savedInstanceState != null && savedInstanceState.containsKey(EXTRA_REQUEST)) { 
-			// Activity recreated
-			mRequest = savedInstanceState.getParcelable(EXTRA_REQUEST);
-		} 
-		else if (extras != null && extras.containsKey(
-				DineOnConstants.KEY_RESTAURANT)) {
-			// Activity started and created for the first time
-			// Valid extras were passed into this
-			mRequest = extras.getParcelable(EXTRA_REQUEST);
-		}
+		// Assume that another activity (RestaurantMainActivity) has already set the value
+		mRequest = mRestaurant.getTempCustomerRequest();
 
 		if (mRequest == null) { 
+			Log.e(TAG, "Null Customer request found");
 			return;
 		}
 
@@ -51,12 +38,6 @@ RequestDetailFragment.RequestDetailListener {
 			frag.setRequest(mRequest);
 		}
 	}
-	
-	@Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_REQUEST, mRequest);
-    }
 
 	@Override
 	public void onSendTaskToStaff(CustomerRequest request, String staff, String urgency) {
@@ -70,6 +51,11 @@ RequestDetailFragment.RequestDetailListener {
 				+ message  + "\" to user " + user.getName();
 		Log.d(TAG, log);
 		Toast.makeText(this, log, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public CustomerRequest getRequest() {
+		return mRequest;
 	}
 
 }

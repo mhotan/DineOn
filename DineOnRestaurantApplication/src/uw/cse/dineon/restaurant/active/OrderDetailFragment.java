@@ -1,6 +1,5 @@
 package uw.cse.dineon.restaurant.active;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.CurrentOrderItem;
@@ -30,8 +29,6 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 
 	private static final String TAG = OrderDetailFragment.class.getSimpleName();
 
-	private static final String ORDER = TAG + "_order";
-
 	private TextView mTitle, mTableInput, mTakenTime;
 	private MenuItemAdapter mAdapter;
 	private EditText mMessageInput;
@@ -39,65 +36,40 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	private ListView mItemList;
 
 	private OrderDetailListener mListener;
-	private Order mOrder;
-
+	
 	/**
-	 * Creates a dining session that is ready to rock.
-	 * No need to call setOrder
-	 * @param order Order to use
-	 * @return Fragment to use.
+	 * Obtain the reference to the current order.
 	 */
-	public static OrderDetailFragment newInstance(Order order) {
-		Bundle args = new Bundle();
-		args.putParcelable(ORDER, order);
-		OrderDetailFragment frag = new OrderDetailFragment();
-		frag.setArguments(args);
-		return frag;
+	private Order mOrder;
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mOrder = mListener.getOrder();
 	}
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		
+		// Use view determined by this layout field.
 		View view = inflater.inflate(R.layout.fragment_order_detail,
 				container, false);
-		mOrder = null;
-		Bundle args = getArguments();
-		
-		// If the orientation changed or fragment temporarily died and 
-		// came back
-		if (savedInstanceState != null && savedInstanceState.containsKey(ORDER)) {
-			mOrder = savedInstanceState.getParcelable(ORDER);
-		} else if (args != null && args.containsKey(ORDER)) {
-			mOrder = args.getParcelable(ORDER);
-		}
 
+		// Extract the references to title fields
 		mTitle = (TextView) view.findViewById(R.id.label_order_title_detail);
 		mTableInput = (TextView) view.findViewById(R.id.label_order_table);
 		mTakenTime = (TextView) view.findViewById(R.id.label_order_time);
 
+		// Extract the input areas
 		mMessageInput = (EditText) view.findViewById(R.id.edittext_message_block);
 		mSendMessageButton = (ImageButton) view.findViewById(R.id.button_send_message_fororder);
 		mSendMessageButton.setOnClickListener(this);
 		mItemList = (ListView) view.findViewById(R.id.list_order);
+		
+		// Get the order and produce the display
 		updateState();
 		return view;
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-
-		if (mOrder != null) {
-			return;
-		}
-
-		Bundle args = getArguments();
-		if (savedInstanceState != null) {
-			setOrder((Order)savedInstanceState.getParcelable(ORDER));
-		} else if (args != null && args.containsKey(ORDER)) {
-			setOrder((Order) args.getParcelable(ORDER));
-		}
 	}
 
 	@Override
@@ -109,12 +81,6 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			throw new ClassCastException(activity.toString()
 					+ " must implemenet OrderDetailFragment.OrderDetailListener");
 		}
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putParcelable(ORDER, mOrder);
 	}
 
 	/**
@@ -178,6 +144,13 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		 * @param message Message to send for this order
 		 */
 		public void sendShoutOut(UserInfo user, String message);
+		
+		/**
+		 * Asks the containing activity for a reference to the order.
+		 * The order 
+		 * @return the current order to present.
+		 */
+		public Order getOrder();
 	}
 
 	//////////////////////////////////////////////////////
@@ -202,31 +175,13 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		private final Context mContext;
 		
 		/**
-		 * List of Menu Items with their associated quantity.
-		 */
-		private final List<CurrentOrderItem> mItems;
-
-		/**
 		 * Creates an adapter for displaying menu items.
 		 * @param context Owning context of this adapter
 		 * @param items Items to add to the List view
 		 */
 		public MenuItemAdapter(Context context, List<CurrentOrderItem> items) {
-			super(context, R.layout.listitem_menuitem_editable);
-			mContext = context;
-
-			// Check for stupidity
-			//Map<CurrentOrderItem, Integer> occurences = Utility.toQuantityMap(items);
-			mItems = new ArrayList<CurrentOrderItem>(items);
-		}
-
-		/**
-		 * Use for restoring state. No copies are made.
-		 * Just a new lsit is returned
-		 * @return a list of the current menu items
-		 */
-		ArrayList<CurrentOrderItem> getCurrentItems() {
-			return new ArrayList<CurrentOrderItem>(mItems);
+			super(context, R.layout.listitem_menuitem_editable, items);
+			mContext = context;			
 		}
 
 		@Override
@@ -235,7 +190,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view = inflater.inflate(R.layout.listitem_menuitem_editable, null, true);
 
-			CurrentOrderItem toShow = mItems.get(position);
+			CurrentOrderItem toShow = super.getItem(position);
 			int qty = toShow.getQuantity();
 
 			//Commented out for findbugs
@@ -261,10 +216,11 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 
 		@Override
 		public int getCount() {
-			return mItems.size();
+			return super.getCount();
 		}
 		
 	}
 
+	
 	
 }

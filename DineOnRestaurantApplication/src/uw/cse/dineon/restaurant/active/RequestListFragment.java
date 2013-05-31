@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,30 +32,30 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 public class RequestListFragment extends ListFragment {
 
 	private static final String TAG = RequestListFragment.class.getSimpleName();
-	private static final String REQUESTS = TAG + "_requests";
 
+	/**
+	 * Listener that creates a reference back to the activity.
+	 */
 	private RequestItemListener mListener;
 
+	/**
+	 * Adapter that controls the presentation and change in request quantity.
+	 */
 	private RequestListAdapter mAdapter;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		//We can assert that the listener has a non null list of dining sessions
-		mAdapter = new RequestListAdapter(getActivity(), mListener.getCurrentRequests());
-		setListAdapter(mAdapter);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
 		List<CustomerRequest> requests = mListener.getCurrentRequests();
-		CustomerRequest[] requestArray = new CustomerRequest[requests.size()];
-		for (int i = 0; i < requestArray.length; ++i) {
-			requestArray[i] = requests.get(i);
+		if (requests == null) {
+			Log.e(TAG, "List of Customer requests retrieved is null");
+			requests = new ArrayList<CustomerRequest>();
 		}
-		outState.putParcelableArray(REQUESTS, requestArray);
+		
+		//We can assert that the listener has a non null list of dining sessions
+		mAdapter = new RequestListAdapter(getActivity(), requests);
+		setListAdapter(mAdapter);
 	}
 
 	@Override
@@ -176,12 +177,14 @@ public class RequestListFragment extends ListFragment {
 		public RequestListAdapter(Context ctx, List<CustomerRequest> requests) {
 			super(ctx, R.layout.listitem_restaurant_request_top, requests);
 			this.mContext = ctx;
+			
 			// For debug purposes we will add fake staff members
+			String[] employees = getActivity().getResources().
+					getStringArray(R.array.default_employees);
 			mStaff = new ArrayList<String>();
-			mStaff.add("Bert");
-			mStaff.add("Ernie");
-			mStaff.add("Big Bird");
-			mStaff.add("Elmo");
+			for (String e: employees) {
+				mStaff.add(e);
+			}
 		}
 
 		@Override

@@ -1,8 +1,6 @@
 package uw.cse.dineon.library;
 
 import uw.cse.dineon.library.image.DineOnImage;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -161,52 +159,52 @@ public class MenuItem extends Storable {
 		}
 		return pobj;
 	}
-
-	/**
-	 * Creates a menu item from Parcel.
-	 * @param source Source to create menu item from
-	 */
-	protected MenuItem(Parcel source) {
-		super(source);
-		mProductID = source.readInt();
-		mPrice = source.readDouble();
-		mTitle = source.readString();
-		mDescription = source.readString();
-	}
-
-	/**
-	 * Writes this MenuItem to Parcel dest in the order:
-	 * int, double, String to be retrieved at a later time.
-	 * 
-	 * @param dest Parcel to write MenuItem data to.
-	 * @param flags int
-	 */
-	// NOTE: if you change the write order you must change the read order
-	// below.
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeInt(mProductID);
-		dest.writeDouble(mPrice);
-		dest.writeString(mTitle);
-		dest.writeString(mDescription);
-	}
-
-	/**
-	 * Parcelable creator object of a MenuItem.
-	 * Can create a MenuItem from a Parcel.
-	 */
-	public static final Parcelable.Creator<MenuItem> CREATOR = 
-			new Parcelable.Creator<MenuItem>() {
-
-		@Override
-		public MenuItem createFromParcel(Parcel source) {
-			return new MenuItem(source);
-		}
-
-		@Override
-		public MenuItem[] newArray(int size) {
-			return new MenuItem[size];
-		}
-	};
+//
+//	/**
+//	 * Creates a menu item from Parcel.
+//	 * @param source Source to create menu item from
+//	 */
+//	protected MenuItem(Parcel source) {
+//		super(source);
+//		mProductID = source.readInt();
+//		mPrice = source.readDouble();
+//		mTitle = source.readString();
+//		mDescription = source.readString();
+//	}
+//
+//	/**
+//	 * Writes this MenuItem to Parcel dest in the order:
+//	 * int, double, String to be retrieved at a later time.
+//	 * 
+//	 * @param dest Parcel to write MenuItem data to.
+//	 * @param flags int
+//	 */
+//	// NOTE: if you change the write order you must change the read order
+//	// below.
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		super.writeToParcel(dest, flags);
+//		dest.writeInt(mProductID);
+//		dest.writeDouble(mPrice);
+//		dest.writeString(mTitle);
+//		dest.writeString(mDescription);
+//	}
+//
+//	/**
+//	 * Parcelable creator object of a MenuItem.
+//	 * Can create a MenuItem from a Parcel.
+//	 */
+//	public static final Parcelable.Creator<MenuItem> CREATOR = 
+//			new Parcelable.Creator<MenuItem>() {
+//
+//		@Override
+//		public MenuItem createFromParcel(Parcel source) {
+//			return new MenuItem(source);
+//		}
+//
+//		@Override
+//		public MenuItem[] newArray(int size) {
+//			return new MenuItem[size];
+//		}
+//	};
 }

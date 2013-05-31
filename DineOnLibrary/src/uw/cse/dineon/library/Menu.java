@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -137,53 +135,53 @@ public class Menu extends Storable {
 	}
 
 
-	/**
-	 * Creates a new Menu from a given Parcel.
-	 * 
-	 * @param source Parcel of information in:
-	 * 		List<MenuItem> 
-	 * 		order.
-	 */
-	protected Menu(Parcel source) {
-		super(source);
-		this.mName = source.readString();
-		mItems = new ArrayList<MenuItem>();
-		source.readTypedList(mItems, MenuItem.CREATOR); // default class load used
-	}	
-
-
-	/**
-	 * Writes this Menu to Parcel dest in the order:
-	 * String, List<MenuItem>
-	 * to be retrieved at a later time.
-	 * 
-	 * @param dest Parcel to write Menu data to.
-	 * @param flags int
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeString(mName);
-		dest.writeTypedList(mItems);
-	}
-	
-	/**
-	 * Parcelable creator object of a Menu.
-	 * Can create a Menu from a Parcel.
-	 */
-	public static final Parcelable.Creator<Menu> CREATOR = 
-			new Parcelable.Creator<Menu>() {
-
-		@Override
-		public Menu createFromParcel(Parcel source) {
-			return new Menu(source);
-		}
-
-		@Override
-		public Menu[] newArray(int size) {
-			return new Menu[size];
-		}
-	};
+//	/**
+//	 * Creates a new Menu from a given Parcel.
+//	 * 
+//	 * @param source Parcel of information in:
+//	 * 		List<MenuItem> 
+//	 * 		order.
+//	 */
+//	protected Menu(Parcel source) {
+//		super(source);
+//		this.mName = source.readString();
+//		mItems = new ArrayList<MenuItem>();
+//		source.readTypedList(mItems, MenuItem.CREATOR); // default class load used
+//	}	
+//
+//
+//	/**
+//	 * Writes this Menu to Parcel dest in the order:
+//	 * String, List<MenuItem>
+//	 * to be retrieved at a later time.
+//	 * 
+//	 * @param dest Parcel to write Menu data to.
+//	 * @param flags int
+//	 */
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		super.writeToParcel(dest, flags);
+//		dest.writeString(mName);
+//		dest.writeTypedList(mItems);
+//	}
+//	
+//	/**
+//	 * Parcelable creator object of a Menu.
+//	 * Can create a Menu from a Parcel.
+//	 */
+//	public static final Parcelable.Creator<Menu> CREATOR = 
+//			new Parcelable.Creator<Menu>() {
+//
+//		@Override
+//		public Menu createFromParcel(Parcel source) {
+//			return new Menu(source);
+//		}
+//
+//		@Override
+//		public Menu[] newArray(int size) {
+//			return new Menu[size];
+//		}
+//	};
 	
 	@Override
 	public void deleteFromCloud() {

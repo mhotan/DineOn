@@ -2,7 +2,6 @@ package uw.cse.dineon.library;
 
 import uw.cse.dineon.library.util.RepresentationException;
 import android.location.Location;
-import android.os.Parcel;
 
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -119,22 +118,22 @@ public abstract class LocatableStorable extends Storable {
 			throw new RepresentationException("Null Geo Point!");
 		}
 	}
+//	
+//	/**
+//	 * Creates a locatable storable from parcel source.
+//	 * @param source Source to create from.
+//	 */
+//	protected LocatableStorable(Parcel source) {
+//		super(source);
+//		mLocation = new ParseGeoPoint();
+//		mLocation.setLatitude(source.readDouble());
+//		mLocation.setLongitude(source.readDouble());
+//	}  
 	
-	/**
-	 * Creates a locatable storable from parcel source.
-	 * @param source Source to create from.
-	 */
-	protected LocatableStorable(Parcel source) {
-		super(source);
-		mLocation = new ParseGeoPoint();
-		mLocation.setLatitude(source.readDouble());
-		mLocation.setLongitude(source.readDouble());
-	}  
-	
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeDouble(mLocation.getLatitude());
-		dest.writeDouble(mLocation.getLongitude());
-	}
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		super.writeToParcel(dest, flags);
+//		dest.writeDouble(mLocation.getLatitude());
+//		dest.writeDouble(mLocation.getLongitude());
+//	}
 }

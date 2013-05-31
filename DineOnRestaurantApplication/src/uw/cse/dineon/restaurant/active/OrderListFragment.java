@@ -1,15 +1,18 @@
 package uw.cse.dineon.restaurant.active;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.animation.ExpandAnimation;
+import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,14 +46,18 @@ public class OrderListFragment extends ListFragment {
 	 */
 	private OrderListAdapter mAdapter;
 
-	private static final String ORDERS = "orders"; 
-
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
+		List<Order> orders = mListener.getPendingOrders();
+		if (orders == null) {
+			Log.e(TAG, "List of order retrieved is null");
+			orders = new ArrayList<Order>();
+		}
+		
 		//We can assert that the listener has a non null list of dining sessions
-		mAdapter = new OrderListAdapter(getActivity(), mListener.getPendingOrders());
+		mAdapter = new OrderListAdapter(getActivity(), orders);
 		setListAdapter(mAdapter);
 	}
 
@@ -118,7 +125,7 @@ public class OrderListFragment extends ListFragment {
 	 * Mandatory interface for this fragment.
 	 * @author glee23
 	 */
-	public interface OrderItemListener {
+	public interface OrderItemListener extends ImageObtainable {
 
 		/**
 		 * Notifies the progress of this order has changed.

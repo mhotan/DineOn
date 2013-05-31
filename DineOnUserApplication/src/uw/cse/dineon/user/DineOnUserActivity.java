@@ -31,8 +31,6 @@ import uw.cse.dineon.user.restaurant.home.SubMenuFragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuInflater;
@@ -562,86 +560,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	public void resetCurrentOrder() {
 		DineOnUserApplication.clearCurrentOrder();
 	}
-
-//	/**
-//	 * Listener for getting restaurant location at creation time.
-//	 * @author mtrathjen08
-//	 *
-//	 */
-//	private class UserLocationListener implements android.location.LocationListener {
-//
-//		/**
-//		 * Location Manager for location services.
-//		 */
-//		private LocationManager mLocationManager;
-//
-//		/**
-//		 * Last received location from mananger. Initially null.
-//		 */
-//		private Location mLocation;
-//
-//		/**
-//		 * Constructor for the location listener.
-//		 */
-//		public UserLocationListener() {
-//			this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//			this.mLocation = null;
-//		}
-//
-//		/**
-//		 * Return the last recorder location of the user. Null if no update.
-//		 * @return last recorder location.
-//		 */
-//		private Location getLastLocation() {
-//			return this.mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//			// TODO add support for gps
-//		}
-//
-//		/**
-//		 * Request a location reading from the Location Manager.
-//		 */
-//		private void requestLocationUpdates() {
-//			this.mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, 
-//					this, 
-//					null);
-//			this.mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 
-//					DineOnConstants.MIN_LOCATION_UPDATE_INTERVAL_MILLIS, 
-//					DineOnConstants.MIN_LOCATION_UPDATE_DISTANCE_METERS, 
-//					this);
-//			// TODO add support for gps
-//		}
-//
-//		@Override
-//		public void onLocationChanged(Location loc) {
-//			this.mLocation = loc;
-//		}
-//
-//		@Override
-//		public void onProviderDisabled(String arg0) {
-//			// TODO Auto-generated method stub
-//
-//		}
-//
-//		@Override
-//		public void onProviderEnabled(String arg0) {
-//			// TODO Auto-generated method stub
-//
-//		}
-//
-//		@Override
-//		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-//			// TODO Auto-generated method stub
-//
-//		}
-//	}
-//
-//	/**
-//	 * Return the last location updated by the location manager.
-//	 * @return last known location.
-//	 */
-//	public Location getLastKnownLocation() {
-//		return this.mLocationListener.getLastLocation();
-//	}
 
 	@Override
 	public void doneWithOrder() {

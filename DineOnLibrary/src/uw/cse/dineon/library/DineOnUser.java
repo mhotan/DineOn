@@ -6,8 +6,6 @@ import java.util.List;
 import org.json.JSONObject;
 
 import uw.cse.dineon.library.util.ParseUtil;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -193,63 +191,63 @@ public class DineOnUser extends Storable {
 		return mUserInfo.getName();
 	}
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeTypedList(mFavRestaurants);
-		dest.writeTypedList(mReservations);
-		dest.writeTypedList(mFriendsLists);
-		dest.writeParcelable(mUserInfo, flags);
-
-		// have to do some logic for checking if there is a dining session.
-		if (mDiningSession != null) {
-			dest.writeByte((byte) 1);
-			dest.writeParcelable(mDiningSession, flags);
-		} else {
-			dest.writeByte((byte)0);
-		}
-	}
-	
-	/**
-	 * Creates a Dine On User from a Parcel Source.
-	 * @param source source to create user
-	 */
-	protected DineOnUser(Parcel source) {
-		super(source);
-		mFavRestaurants = new ArrayList<RestaurantInfo>();
-		mReservations = new ArrayList<Reservation>();
-		mFriendsLists = new ArrayList<UserInfo>();
-		
-		// Read in each list independently
-		source.readTypedList(mFavRestaurants, RestaurantInfo.CREATOR);
-		source.readTypedList(mReservations, Reservation.CREATOR);
-		source.readTypedList(mFriendsLists, UserInfo.CREATOR);
-
-		// Read my user info
-		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
-		
-		if (source.readByte() == 1) { // If there is a current dining session
-			mDiningSession = source.readParcelable(DiningSession.class.getClassLoader());
-		}
-	}
-
-	/**
-	 * Parcelable creator object of a User.
-	 * Can create a User from a Parcel.
-	 */
-	public static final Parcelable.Creator<DineOnUser> CREATOR = 
-			new Parcelable.Creator<DineOnUser>() {
-
-		@Override
-		public DineOnUser createFromParcel(Parcel source) {
-			return new DineOnUser(source);
-		}
-
-		@Override
-		public DineOnUser[] newArray(int size) {
-			return new DineOnUser[size];
-		}
-	};
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		super.writeToParcel(dest, flags);
+//		dest.writeTypedList(mFavRestaurants);
+//		dest.writeTypedList(mReservations);
+//		dest.writeTypedList(mFriendsLists);
+//		dest.writeParcelable(mUserInfo, flags);
+//
+//		// have to do some logic for checking if there is a dining session.
+//		if (mDiningSession != null) {
+//			dest.writeByte((byte) 1);
+//			dest.writeParcelable(mDiningSession, flags);
+//		} else {
+//			dest.writeByte((byte)0);
+//		}
+//	}
+//	
+//	/**
+//	 * Creates a Dine On User from a Parcel Source.
+//	 * @param source source to create user
+//	 */
+//	protected DineOnUser(Parcel source) {
+//		super(source);
+//		mFavRestaurants = new ArrayList<RestaurantInfo>();
+//		mReservations = new ArrayList<Reservation>();
+//		mFriendsLists = new ArrayList<UserInfo>();
+//		
+//		// Read in each list independently
+//		source.readTypedList(mFavRestaurants, RestaurantInfo.CREATOR);
+//		source.readTypedList(mReservations, Reservation.CREATOR);
+//		source.readTypedList(mFriendsLists, UserInfo.CREATOR);
+//
+//		// Read my user info
+//		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
+//		
+//		if (source.readByte() == 1) { // If there is a current dining session
+//			mDiningSession = source.readParcelable(DiningSession.class.getClassLoader());
+//		}
+//	}
+//
+//	/**
+//	 * Parcelable creator object of a User.
+//	 * Can create a User from a Parcel.
+//	 */
+//	public static final Parcelable.Creator<DineOnUser> CREATOR = 
+//			new Parcelable.Creator<DineOnUser>() {
+//
+//		@Override
+//		public DineOnUser createFromParcel(Parcel source) {
+//			return new DineOnUser(source);
+//		}
+//
+//		@Override
+//		public DineOnUser[] newArray(int size) {
+//			return new DineOnUser[size];
+//		}
+//	};
 
 	@Override
 	public void deleteFromCloud() {

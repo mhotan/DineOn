@@ -17,8 +17,6 @@ OrderDetailFragment.OrderDetailListener {
 
 	private static final String TAG = OrderDetailActivity.class.getSimpleName();
 
-	public static final String EXTRA_ORDER = TAG + "_order";
-
 	private Order mOrder;
 
 	@Override
@@ -26,22 +24,11 @@ OrderDetailFragment.OrderDetailListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_order_details);
 		
-		// Grab reference to the extras
-		Bundle extras = getIntent().getExtras();
+		// Assume that another activity (RestaurantMainActivity) has already set the value
+		mOrder = mRestaurant.getTempOrder();
 
-		// Lets first check if the activity is being recreated after being
-		// destroyed but there was an already existing restuarant
-		if (savedInstanceState != null && savedInstanceState.containsKey(EXTRA_ORDER)) { 
-			// Activity recreated
-			mOrder = savedInstanceState.getParcelable(EXTRA_ORDER);
-		} 
-		else if (extras != null && extras.containsKey(EXTRA_ORDER)) {
-			// Activity started and created for the first time
-			// Valid extras were passed into this
-			mOrder = extras.getParcelable(EXTRA_ORDER);
-		}
-
-		if (mOrder == null) { 
+		if (mOrder == null) {
+			Log.e(TAG, "Null order found");
 			return;
 		}
 
@@ -51,12 +38,6 @@ OrderDetailFragment.OrderDetailListener {
 			frag.setOrder(mOrder);
 		}
 	}
-	
-	@Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_ORDER, mOrder);
-    }
 
 	@Override
 	public void sendShoutOut(UserInfo user, String message) {
@@ -64,6 +45,11 @@ OrderDetailFragment.OrderDetailListener {
 				+ message  + "\" to user " + user.getName();
 		Log.d(TAG, log);
 		Toast.makeText(this, log, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public Order getOrder() {
+		return mOrder;
 	}
 
 }

@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,8 +39,6 @@ public class DiningSessionDetailFragment extends Fragment {
 
 	private static final String TAG = DiningSessionDetailFragment.class.getSimpleName();
 
-	private static final String DINING_SESSION = TAG + "_diningsession";
-
 	/**
 	 * Local reference to the dining session in focus.
 	 */
@@ -56,23 +55,47 @@ public class DiningSessionDetailFragment extends Fragment {
 	private UserListAdapter mUserAdapter;
 	private OrderListAdapter mOrderAdapter;
 	
+	/**
+	 * Independent list views for this view.
+	 */
 	private ListView mOrderList;
 	private ListView mUserList;
 	private TextView mOrderHeader;
 
-	/**
-	 * Creates a dining session that is ready to rock.
-	 * No need to call set Dining Session.
-	 * @param ds Dining session to use
-	 * @return Fragment to use.
-	 */
-	public static DiningSessionDetailFragment newInstance(DiningSession ds) {
-		Bundle args = new Bundle();
-		args.putParcelable(DINING_SESSION, ds);
-		DiningSessionDetailFragment frag = new DiningSessionDetailFragment();
-		frag.setArguments(args);
-		return frag;
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mDiningSession = mListener.getDiningSession();
 	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		View view = inflater.inflate(R.layout.fragment_diningsession_detail,
+				container, false);
+
+		mOrderList = (ListView) view.findViewById(R.id.list_view_orders);
+		mUserList = (ListView) view.findViewById(R.id.list_view_users);
+		mOrderHeader = (TextView) view.findViewById(R.id.label_user_orders);
+		
+		// Update the state
+		update();
+		return view;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if (activity instanceof DiningSessionDetailListener) {
+			mListener = (DiningSessionDetailListener) activity;
+		} else {
+			throw new ClassCastException(activity.toString()
+					+ " must implement DiningSessionDetailFragment.DiningSessionDetailListener");
+		}
+	}
+	
 
 	/**
 	 * This is a call the signifies the fragment to update its
@@ -84,8 +107,7 @@ public class DiningSessionDetailFragment extends Fragment {
 	private void update() {
 		ActionBar ab = getActivity().getActionBar();
 		if (mDiningSession == null) {
-			// TODO 
-			ab.setTitle("No Dining session selected");
+			Log.e(TAG, "Current Dining session is null");
 		} else {
 			ab.setTitle("Table " + mDiningSession.getTableID());
 			mUserAdapter = new UserListAdapter(getActivity(), mDiningSession.getUsers());
@@ -101,50 +123,6 @@ public class DiningSessionDetailFragment extends Fragment {
 			mOrderList.setAdapter(mOrderAdapter);
 			mUserAdapter.notifyDataSetChanged();
 			mOrderAdapter.notifyDataSetChanged();
-		}
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		Bundle args = getArguments();
-
-		// If the orientation changed or fragment temporarily died and 
-		// came back
-		if (savedInstanceState != null && savedInstanceState.containsKey(DINING_SESSION)) {
-			mDiningSession = savedInstanceState.getParcelable(DINING_SESSION);
-		} else if (args != null && args.containsKey(DINING_SESSION)) {
-			mDiningSession = args.getParcelable(DINING_SESSION);
-		}
-
-		View view = inflater.inflate(R.layout.fragment_diningsession_detail,
-				container, false);
-
-		mOrderList = (ListView) view.findViewById(R.id.list_view_orders);
-		mUserList = (ListView) view.findViewById(R.id.list_view_users);
-		mOrderHeader = (TextView) view.findViewById(R.id.label_user_orders);
-		
-		// Update the state
-		update();
-		return view;
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putParcelable(DINING_SESSION, mDiningSession);
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		if (activity instanceof DiningSessionDetailListener) {
-			mListener = (DiningSessionDetailListener) activity;
-		} else {
-			throw new ClassCastException(activity.toString()
-					+ " must implement DiningSessionDetailFragment.DiningSessionDetailListener");
 		}
 	}
 
@@ -201,6 +179,12 @@ public class DiningSessionDetailFragment extends Fragment {
 		 */
 		void sendShoutOut(UserInfo user, String message);
 
+		/**
+		 * Returns the current dining session to focus on.
+		 * @return The current dining session.
+		 */
+		DiningSession getDiningSession();
+		
 	}
 
 	//////////////////////////////////////////////////////

@@ -1,10 +1,8 @@
 package uw.cse.dineon.restaurant.profile;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.image.DineOnImage;
@@ -40,12 +38,11 @@ import android.widget.Toast;
 /**
  * Main view that allows the user to access and see their restaurant.
  * 
- * 
  * @author mhotan
  */
 public class RestaurantInfoFragment extends Fragment {
 
-	private static final String TAG = RestaurantInfoFragment.class.getSimpleName();
+//	private static final String TAG = RestaurantInfoFragment.class.getSimpleName();
 	
 	private static final int IMAGEVIEW_WIDTH = 250;
 	private static final int IMAGEVIEW_HEIGHT = 250;
@@ -557,11 +554,11 @@ public class RestaurantInfoFragment extends Fragment {
 		 * @return the Address currently represented on the screen.
 		 */
 		private Address fieldsToAddress() {
-			String line1 = mAddressLine1.getText().toString();
-			String line2 = mAddressLine2.getText().toString();
-			String city = mAddressCity.getText().toString();
-			String state = mAddressState.getText().toString();
-			String postal = mAddressZipCode.getText().toString();
+			String line1 = mAddressLine1.getText().toString().trim();
+			String line2 = mAddressLine2.getText().toString().trim();
+			String city = mAddressCity.getText().toString().trim();
+			String state = mAddressState.getText().toString().trim();
+			String postal = mAddressZipCode.getText().toString().trim();
 			
 			Address address = new Address(Locale.getDefault());
 			String empty = "";

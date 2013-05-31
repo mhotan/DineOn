@@ -1,11 +1,7 @@
 package uw.cse.dineon.library;
 
 import uw.cse.dineon.library.util.RepresentationException;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
 
-import com.parse.GetCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -23,12 +19,12 @@ import com.parse.SaveCallback;
  * @author Jordan, Mike
  *
  */
-public abstract class Storable implements Parcelable {
+public abstract class Storable {
 
 	/**
 	 * Tag for logging information.
 	 */
-	private final String tag = this.getClass().getSimpleName();
+	protected final String tag = this.getClass().getSimpleName();
 
 	/**
 	 * A reference to the parse object that completely
@@ -180,49 +176,49 @@ public abstract class Storable implements Parcelable {
 		return mCompleteObject.getObjectId().hashCode();
 	}
 
-	/**
-	 * Constructs a Storable instance from a Parcel.
-	 * Has to refetch the instance of the object from parse.
-	 * It does this in the background.
-	 * @param in 
-	 */
-	protected Storable(Parcel in) {
-		String id = in.readString();
-		mCompleteObject = new ParseObject(this.getClass().getSimpleName());
-		mCompleteObject.setObjectId(id);
-		// Download this object asynchronously
-		mCompleteObject.fetchInBackground(new GetCallback() {
-
-			@Override
-			public void done(ParseObject object, ParseException e) {
-				if (e != null) {
-					Log.e(tag, "Unable to load object " + object + " because of " + e.getMessage());
-				} else {
-					// Successfully downloaded updates in the background
-					// Updated the state of this object with the latest ParseObject
-					// TODO Figure out a way to update the state of the current instance.
-					//				updateState(object);				
-				}
-			}
-		});
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		String objectId = this.getObjId();
-		if (objectId == null) {
-			Log.e(tag, "Trying to write unsaved Parse Object to Parcel");
-		}
-		dest.writeString(objectId);
-	}
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
+//	/**
+//	 * Constructs a Storable instance from a Parcel.
+//	 * Has to refetch the instance of the object from parse.
+//	 * It does this in the background.
+//	 * @param in 
+//	 */
+//	protected Storable(Parcel in) {
+//		String id = in.readString();
+//		mCompleteObject = new ParseObject(this.getClass().getSimpleName());
+//		mCompleteObject.setObjectId(id);
+//		// Download this object asynchronously
+//		mCompleteObject.fetchInBackground(new GetCallback() {
+//
+//			@Override
+//			public void done(ParseObject object, ParseException e) {
+//				if (e != null) {
+//					Log.e(tag, "Unable to load object " + object + " because of " + e.getMessage());
+//				} else {
+//					// Successfully downloaded updates in the background
+//					// Updated the state of this object with the latest ParseObject
+//					// TODO Figure out a way to update the state of the current instance.
+//					//				updateState(object);				
+//				}
+//			}
+//		});
+//	}
+//
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		String objectId = this.getObjId();
+//		if (objectId == null) {
+//			Log.e(tag, "Trying to write unsaved Parse Object to Parcel");
+//		}
+//		dest.writeString(objectId);
+//	}
+//
+//	@Override
+//	public int describeContents() {
+//		return 0;
+//	}
 	
 	/**
-	 * 
+	 * Sets the object Id of this object.
 	 * @param objId string to set the Parse ID to.
 	 */
 	public void setObjId(String objId) {

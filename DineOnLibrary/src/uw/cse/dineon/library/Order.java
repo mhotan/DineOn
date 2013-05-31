@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.util.ParseUtil;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -96,51 +94,51 @@ public class Order extends TimeableStorable {
 		return po;
 	}
 
-	/**
-	 * Writes this Order to Parcel dest in the order:
-	 * int, int, int, int, List<MenuItem>
-	 * to be retrieved at a later time.
-	 * 
-	 * @param dest Parcel to write Order data to.
-	 * @param flags int
-	 */
-	// NOTE: if you change the write order you must change the read order
-	// below.
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeInt(mTableID);
-		dest.writeParcelable(mUserInfo, flags);
-		dest.writeTypedList(mMenuItems);
-	}
-	
-	/**
-	 * Creates an Order from a Parcel.
-	 * @param source Source to create an order from
-	 */
-	public Order(Parcel source) {
-		super(source);
-		mTableID = source.readInt();
-		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
-		mMenuItems = new ArrayList<CurrentOrderItem>();
-		source.readTypedList(mMenuItems, CurrentOrderItem.CREATOR);
-	}
-
-	/**
-	 * Parcelable creator object of a Order.
-	 * Can create a Order from a Parcel.
-	 */
-	public static final Parcelable.Creator<Order> CREATOR = 
-			new Parcelable.Creator<Order>() {
-
-		@Override
-		public Order createFromParcel(Parcel source) {
-			return new Order(source);
-		}
-
-		@Override
-		public Order[] newArray(int size) {
-			return new Order[size];
-		}
-	};
+//	/**
+//	 * Writes this Order to Parcel dest in the order:
+//	 * int, int, int, int, List<MenuItem>
+//	 * to be retrieved at a later time.
+//	 * 
+//	 * @param dest Parcel to write Order data to.
+//	 * @param flags int
+//	 */
+//	// NOTE: if you change the write order you must change the read order
+//	// below.
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		super.writeToParcel(dest, flags);
+//		dest.writeInt(mTableID);
+//		dest.writeParcelable(mUserInfo, flags);
+//		dest.writeTypedList(mMenuItems);
+//	}
+//	
+//	/**
+//	 * Creates an Order from a Parcel.
+//	 * @param source Source to create an order from
+//	 */
+//	public Order(Parcel source) {
+//		super(source);
+//		mTableID = source.readInt();
+//		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
+//		mMenuItems = new ArrayList<CurrentOrderItem>();
+//		source.readTypedList(mMenuItems, CurrentOrderItem.CREATOR);
+//	}
+//
+//	/**
+//	 * Parcelable creator object of a Order.
+//	 * Can create a Order from a Parcel.
+//	 */
+//	public static final Parcelable.Creator<Order> CREATOR = 
+//			new Parcelable.Creator<Order>() {
+//
+//		@Override
+//		public Order createFromParcel(Parcel source) {
+//			return new Order(source);
+//		}
+//
+//		@Override
+//		public Order[] newArray(int size) {
+//			return new Order[size];
+//		}
+//	};
 }

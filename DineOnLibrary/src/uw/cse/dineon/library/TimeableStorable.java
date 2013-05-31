@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import uw.cse.dineon.library.util.DineOnConstants;
-import android.os.Parcel;
 import android.util.Log;
 
 import com.parse.ParseObject;
@@ -101,32 +100,32 @@ public abstract class TimeableStorable extends Storable {
 		return po;
 	}	
 
-	/**
-	 * Given a parcel create a TimeableStorable instance.
-	 * @param source Source to read from.
-	 */
-	protected TimeableStorable(Parcel source) {
-		super(source);
-		Date temp = null;
-		try {
-			temp = DineOnConstants.getCurrentDateFormat().parse(source.readString());
-		} catch (ParseException e) {
-			Log.e(TAG, "Ill formatted date found while constructing " 
-					+ this.getClass().getSimpleName() + " from parcel"); 
-		}
-		mDate = temp;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		// Write all the fields of this class
-		dest.writeString(DineOnConstants.getCurrentDateFormat().format(mDate));
-	}
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
+//	/**
+//	 * Given a parcel create a TimeableStorable instance.
+//	 * @param source Source to read from.
+//	 */
+//	protected TimeableStorable(Parcel source) {
+//		super(source);
+//		Date temp = null;
+//		try {
+//			temp = DineOnConstants.getCurrentDateFormat().parse(source.readString());
+//		} catch (ParseException e) {
+//			Log.e(TAG, "Ill formatted date found while constructing " 
+//					+ this.getClass().getSimpleName() + " from parcel"); 
+//		}
+//		mDate = temp;
+//	}
+//
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		super.writeToParcel(dest, flags);
+//		// Write all the fields of this class
+//		dest.writeString(DineOnConstants.getCurrentDateFormat().format(mDate));
+//	}
+//
+//	@Override
+//	public int describeContents() {
+//		return 0;
+//	}
 
 }

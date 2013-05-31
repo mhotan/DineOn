@@ -6,8 +6,6 @@ import java.util.List;
 
 import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.util.ParseUtil;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -66,6 +64,21 @@ public class Restaurant extends Storable {
 	 * Customer request that is not associated with the restaurant.
 	 */
 	private final List<CustomerRequest> mCustomerRequests;
+	
+	/**
+	 * Temporary order used for persistent data references.
+	 */
+	private Order tempOrder;
+	
+	/**
+	 * Temporary request to store persistent reference.
+	 */
+	private CustomerRequest tempRequest;
+	
+	/**
+	 * Temporary dining session for a persistent reference.
+	 */
+	private DiningSession tempDiningSession;
 
 	/**
 	 * Create a bare bones Restaurant with just a name.
@@ -107,9 +120,7 @@ public class Restaurant extends Storable {
 		mCustomerRequests = ParseUtil.toListOfStorables(
 				CustomerRequest.class, po.getList(CUSTOMER_REQUESTS));
 	}
-
-
-
+	
 	@Override
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
@@ -392,62 +403,118 @@ public class Restaurant extends Storable {
 		mSessions.remove(session);
 		session.deleteFromCloud();
 	}
+	
 
 	/**
-	 * Creates a restaurant from a parcel.
-	 * @param source Source to build from
+	 * Sets the temporary order reference for this restaurant.
+	 * This temporary variable only survives as long as the user
+	 * is logged in and as long 
+	 * @param order Temporary order to set.
 	 */
-	public Restaurant(Parcel source) {
-		super(source);
-		mRestInfo = source.readParcelable(RestaurantInfo.class.getClassLoader());
-
-		mPastOrders = new ArrayList<Order>();
-		mPendingOrders = new ArrayList<Order>();
-		mPastUsers = new ArrayList<UserInfo>();
-		mReservations = new ArrayList<Reservation>();
-		mSessions = new ArrayList<DiningSession>();
-		mCustomerRequests = new ArrayList<CustomerRequest>();
-
-		source.readTypedList(mPastOrders, Order.CREATOR);
-		source.readTypedList(mPendingOrders, Order.CREATOR);
-		source.readTypedList(mPastUsers, UserInfo.CREATOR);
-		source.readTypedList(mReservations, Reservation.CREATOR);
-		source.readTypedList(mSessions, DiningSession.CREATOR);
-		source.readTypedList(mCustomerRequests, CustomerRequest.CREATOR);
+	public void setTempOrder(Order order) {
+		tempOrder = order;
+	}
+	
+	
+	/**
+	 * Temporary order set by setTempOrder.
+	 * @return temporary order reference, null if no reference is set
+	 */
+	public Order getTempOrder() {
+		return tempOrder;
+	}
+	
+	/**
+	 * Sets the temporary Customer request reference for this restaurant.
+	 * This temporary variable only survives as long as the user
+	 * is logged in and as long 
+	 * @param request Temporary request, or null if you want to remove any temporary request.
+	 */
+	public void setTempRequest(CustomerRequest request) {
+		tempRequest = request;
+	}
+	
+	/**
+	 * Gets the temporary request set by setTempRequest.
+	 * @return Temporary request, or null if none is available
+	 */
+	public CustomerRequest getTempCustomerRequest() {
+		return tempRequest;
+	}
+	
+	/**
+	 * Sets the temporary dining Session reference for this restaurant.
+	 * This temporary variable only survives as long as the user
+	 * is logged in and as long 
+	 * @param session Temporary Dining Session, or null if you want to remove any temporary request.
+	 */
+	public void setTempDiningSession(DiningSession session) {
+		tempDiningSession = session;
+	}
+	
+	/**
+	 * Gets the temporary dining session set by setTempDiningSession.
+	 * @return Temporary dining session, or null if none is available
+	 */
+	public DiningSession getTempDiningSession() {
+		return tempDiningSession;
 	}
 
-	/**
-	 * Write the object to a parcel object.
-	 * @param dest the Parcel to write to
-	 * @param flags to set
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeParcelable(mRestInfo, flags);
-		dest.writeTypedList(mPastOrders);
-		dest.writeTypedList(mPendingOrders);
-		dest.writeTypedList(mPastUsers);
-		dest.writeTypedList(mReservations);
-		dest.writeTypedList(mSessions);
-		dest.writeTypedList(mCustomerRequests);		
-	}
-
-	/**
-	 * Parcelable creator object of a Restaurant.
-	 * Can create a Restaurant from a Parcel.
-	 */
-	public static final Parcelable.Creator<Restaurant> CREATOR = 
-			new Parcelable.Creator<Restaurant>() {
-
-		@Override
-		public Restaurant createFromParcel(Parcel source) {
-			return new Restaurant(source);
-		}
-
-		@Override
-		public Restaurant[] newArray(int size) {
-			return new Restaurant[size];
-		}
-	};
+//	/**
+//	 * Creates a restaurant from a parcel.
+//	 * @param source Source to build from
+//	 */
+//	public Restaurant(Parcel source) {
+//		super(source);
+//		mRestInfo = source.readParcelable(RestaurantInfo.class.getClassLoader());
+//
+//		mPastOrders = new ArrayList<Order>();
+//		mPendingOrders = new ArrayList<Order>();
+//		mPastUsers = new ArrayList<UserInfo>();
+//		mReservations = new ArrayList<Reservation>();
+//		mSessions = new ArrayList<DiningSession>();
+//		mCustomerRequests = new ArrayList<CustomerRequest>();
+//
+//		source.readTypedList(mPastOrders, Order.CREATOR);
+//		source.readTypedList(mPendingOrders, Order.CREATOR);
+//		source.readTypedList(mPastUsers, UserInfo.CREATOR);
+//		source.readTypedList(mReservations, Reservation.CREATOR);
+//		source.readTypedList(mSessions, DiningSession.CREATOR);
+//		source.readTypedList(mCustomerRequests, CustomerRequest.CREATOR);
+//	}
+//
+//	/**
+//	 * Write the object to a parcel object.
+//	 * @param dest the Parcel to write to
+//	 * @param flags to set
+//	 */
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		super.writeToParcel(dest, flags);
+//		dest.writeParcelable(mRestInfo, flags);
+//		dest.writeTypedList(mPastOrders);
+//		dest.writeTypedList(mPendingOrders);
+//		dest.writeTypedList(mPastUsers);
+//		dest.writeTypedList(mReservations);
+//		dest.writeTypedList(mSessions);
+//		dest.writeTypedList(mCustomerRequests);		
+//	}
+//
+//	/**
+//	 * Parcelable creator object of a Restaurant.
+//	 * Can create a Restaurant from a Parcel.
+//	 */
+//	public static final Parcelable.Creator<Restaurant> CREATOR = 
+//			new Parcelable.Creator<Restaurant>() {
+//
+//		@Override
+//		public Restaurant createFromParcel(Parcel source) {
+//			return new Restaurant(source);
+//		}
+//
+//		@Override
+//		public Restaurant[] newArray(int size) {
+//			return new Restaurant[size];
+//		}
+//	};
 }

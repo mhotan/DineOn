@@ -5,9 +5,6 @@ package uw.cse.dineon.library;
 
 import java.util.Date;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
@@ -102,44 +99,44 @@ public class CustomerRequest extends TimeableStorable {
 		return po;
 	}
 
-	/**
-	 * Creates a CustomerRequest object from the given Parcel.
-	 * 
-	 * @param source Parcel of information in:
-	 * 		String (description), User, String (objID).
-	 */
-	protected CustomerRequest(Parcel source) {
-		super(source);
-		mDescription = source.readString();
-		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
-	}
-
-	/* (non-Javadoc)
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
-		dest.writeString(mDescription);
-		dest.writeParcelable(mUserInfo, flags);
-	}
-
-	/**
-	 * Parcelable creator object of a CustomerRequest.
-	 * Can create a CustomerRequest from a Parcel.
-	 */
-	public static final Parcelable.Creator<CustomerRequest> CREATOR = 
-			new Parcelable.Creator<CustomerRequest>() {
-
-		@Override
-		public CustomerRequest createFromParcel(Parcel source) {
-			return new CustomerRequest(source);
-		}
-
-		@Override
-		public CustomerRequest[] newArray(int size) {
-			return new CustomerRequest[size];
-		}
-	};
+//	/**
+//	 * Creates a CustomerRequest object from the given Parcel.
+//	 * 
+//	 * @param source Parcel of information in:
+//	 * 		String (description), User, String (objID).
+//	 */
+//	protected CustomerRequest(Parcel source) {
+//		super(source);
+//		mDescription = source.readString();
+//		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
+//	 */
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags) {
+//		super.writeToParcel(dest, flags);
+//		dest.writeString(mDescription);
+//		dest.writeParcelable(mUserInfo, flags);
+//	}
+//
+//	/**
+//	 * Parcelable creator object of a CustomerRequest.
+//	 * Can create a CustomerRequest from a Parcel.
+//	 */
+//	public static final Parcelable.Creator<CustomerRequest> CREATOR = 
+//			new Parcelable.Creator<CustomerRequest>() {
+//
+//		@Override
+//		public CustomerRequest createFromParcel(Parcel source) {
+//			return new CustomerRequest(source);
+//		}
+//
+//		@Override
+//		public CustomerRequest[] newArray(int size) {
+//			return new CustomerRequest[size];
+//		}
+//	};
 
 }
