@@ -1,9 +1,5 @@
 package uw.cse.dineon.restaurant.test;
 
-import java.util.Random;
-
-import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.CreateNewAccountFragment;
 import uw.cse.dineon.restaurant.login.CreateNewRestaurantAccountActivity;
@@ -16,9 +12,6 @@ import android.widget.EditText;
 
 import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 public class CreateRestaurantAccountTest extends
 ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
@@ -26,6 +19,11 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	private static final int WAIT_TIME = 10000;
 	private static final int WAIT_LOGIN_TIME = 500;
 	
+	private String validCreditCard = "4222222222222";
+	private String validSecurityCode = "411";
+	private String month = "12";
+	private String year = "2099";
+	private String zip = "98105";
 	private static String fakeUserName = "createRestAcctUN";
 	private static final String fakePassword = "createRestAcctFakePassword";
 	private static final String fakeEmail = "createRestAcct@yourmomhouse.com";
@@ -36,6 +34,11 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	private EditText passwordrepeat;
 	private EditText email;
 	private Button submit;
+	private EditText creditCard;
+	private EditText securityCode;
+	private EditText expMonth;
+	private EditText expYear;
+	private EditText zipCode;
 	
 	public CreateRestaurantAccountTest() throws ParseException {
 		super(CreateNewRestaurantAccountActivity.class);
@@ -71,6 +74,26 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 		email = (EditText) 
 				current.findViewById(
 						uw.cse.dineon.restaurant.R.id.input_createnewaccount_email);
+		
+		creditCard = (EditText) 
+				current.findViewById(
+						uw.cse.dineon.restaurant.R.id.input_credit_card_number);
+		
+		securityCode = (EditText) 
+				current.findViewById(
+						uw.cse.dineon.restaurant.R.id.input_security_code);
+		
+		expMonth = (EditText) 
+				current.findViewById(
+						uw.cse.dineon.restaurant.R.id.input_expiration_month);
+		
+		expYear = (EditText) 
+				current.findViewById(
+						uw.cse.dineon.restaurant.R.id.input_expiration_year);
+		
+		zipCode = (EditText) 
+				current.findViewById(
+						uw.cse.dineon.restaurant.R.id.input_zip_code);
 		
 		submit = (Button) current.findViewById(
 				uw.cse.dineon.restaurant.R.id.button_create_account);
@@ -165,6 +188,11 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				password.setText(fakePassword);
 				passwordrepeat.setText(fakePassword);
 				email.setText(fakeEmail);
+				creditCard.setText(validCreditCard);
+				securityCode.setText(validSecurityCode);
+				expMonth.setText(month);
+				expYear.setText(year);
+				zipCode.setText(zip);
 				submit.requestFocus();
 				submit.performClick();
 			} // end of run() method definition
@@ -188,6 +216,11 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				username.setText(fakeUserName);
 				password.setText(fakePassword);
 				passwordrepeat.setText(fakePassword);
+				creditCard.setText(validCreditCard);
+				securityCode.setText(validSecurityCode);
+				expMonth.setText(month);
+				expYear.setText(year);
+				zipCode.setText(zip);
 				submit.requestFocus();
 				submit.performClick();
 			} // end of run() method definition
@@ -211,6 +244,11 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				username.setText(fakeUserName);
 				email.setText(fakeEmail);
 				password.setText(null);
+				creditCard.setText(validCreditCard);
+				securityCode.setText(validSecurityCode);
+				expMonth.setText(month);
+				expYear.setText(year);
+				zipCode.setText(zip);
 				submit.requestFocus();
 				submit.performClick();
 			} // end of run() method definition
@@ -235,6 +273,11 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				email.setText(fakeEmail);
 				password.setText(fakePassword);
 				passwordrepeat.setText("lolz");
+				creditCard.setText(validCreditCard);
+				securityCode.setText(validSecurityCode);
+				expMonth.setText(month);
+				expYear.setText(year);
+				zipCode.setText(zip);
 				submit.requestFocus();
 				submit.performClick();
 			} // end of run() method definition
