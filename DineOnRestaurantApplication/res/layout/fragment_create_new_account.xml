@@ -51,6 +51,62 @@
             android:hint="@string/hint_password_repeat"
             android:inputType="textPassword" />
 
+        <TextView
+            android:id="@+id/label_credit_card_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="@string/credit_card_header"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#fedbb5" />
+
+        <EditText
+            android:id="@+id/input_credit_card_number"
+            style="@style/DineOnLoginForm"
+            android:layout_marginTop="16dp"
+            android:hint="@string/credit_card_number"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/input_security_code"
+            style="@style/DineOnLoginForm"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/security_code"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/input_expiration_month"
+            style="@style/DineOnLoginForm"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="18dp"
+            android:hint="@string/expiration_month"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/input_expiration_year"
+            style="@style/DineOnLoginForm"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="18dp"
+            android:hint="@string/expiration_year"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/input_zip_code"
+            style="@style/DineOnLoginForm"
+            android:layout_marginTop="18dp"
+            android:hint="@string/zip_code"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/label_payment"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="@string/disclaimer"
+            android:textColor="#fedbb5"
+            android:textSize="12sp" />
+
         <Button
             android:id="@+id/button_create_account"
             style="@style/DineOnLoginButton"

@@ -5,6 +5,7 @@ import java.util.Locale;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
+import uw.cse.dineon.library.util.CreditCardValidator;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.R;
@@ -66,22 +67,36 @@ implements CreateNewAccountListener {
 
 	@Override
 	public void submitNewAccount(String username, String email, String pw,
-			String pwRepeat) {
+			String pwRepeat, String creditCard, String securityCode, 
+			String expMo, String expYr, String zip) {
 		
 		username = username.trim();
 		username = username.toLowerCase(Locale.getDefault());
 		email = email.trim();
 		pw = pw.trim();
 		pwRepeat = pwRepeat.trim();
+		creditCard = creditCard.trim();
+		securityCode = securityCode.trim();
+		expMo = expMo.trim();
+		expYr = expYr.trim();
+		zip = zip.trim();
 		
 		// Handle the validation
-		Resolution completeRes = CredentialValidator.validateAll(username, email, pw, pwRepeat);
-
-		if (completeRes.isValid() && !username.equals("")) { // Valid passwords
+		Resolution completeRes = CredentialValidator.validateAll(username, email, pw, pwRepeat);	
+		boolean isValidCreditCard = CreditCardValidator.isValidCreditCard(
+				creditCard, securityCode, expMo, expYr, zip);
+		if (completeRes.isValid() && !username.equals("") && isValidCreditCard) { // Valid passwords
 			AsyncRestaurantCreator creator =  new AsyncRestaurantCreator(username, pw, email);
 			creator.execute();
 		} else {
-			Utility.getFailedToCreateAccountDialog(completeRes.getMessage(), This).show();
+			
+			if(!completeRes.isValid()) {
+				Utility.getFailedToCreateAccountDialog(completeRes.getMessage(), This).show();
+			} else {
+				Utility.getFailedToCreateAccountDialog(
+						getString(R.string.invalid_card), This).show();
+			}
+			
 		}
 	}
 

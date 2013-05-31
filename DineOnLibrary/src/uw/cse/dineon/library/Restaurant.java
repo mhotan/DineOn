@@ -266,7 +266,17 @@ public class Restaurant extends Storable {
 		if (session == null) {
 			return;
 		}
-
+		//Remove pending orders
+		List<Order> orders = session.getOrders();
+		for (Order o : orders) {
+			mPendingOrders.remove(o);
+		}
+		//Remove customer requests
+		List<CustomerRequest> requests = session.getRequests();
+		for (CustomerRequest r : requests) {
+			mCustomerRequests.remove(r);
+		}
+		
 		// If we found the session.
 		if (mSessions.remove(session)) {
 			mPastUsers.addAll(session.getUsers());

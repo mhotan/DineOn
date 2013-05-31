@@ -22,7 +22,8 @@ public class CreateNewAccountFragment extends Fragment implements OnClickListene
 	/**
 	 * Input for all the values.
 	 */
-	private EditText mUsername, mEmail, mPassword, mPasswordRepeat; 
+	private EditText mUsername, mEmail, mPassword, mPasswordRepeat;
+	private EditText mCreditCard, mSecurityCode, mExpMo, mExpYr, mZip; 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,6 +36,11 @@ public class CreateNewAccountFragment extends Fragment implements OnClickListene
 		mPassword = (EditText) view.findViewById(R.id.input_createnewaccount_password);
 		mPasswordRepeat = (EditText) view.findViewById(
 				R.id.input_createnewaccount_repeat_password);
+		mCreditCard = (EditText) view.findViewById(R.id.input_credit_card_number);
+		mSecurityCode = (EditText) view.findViewById(R.id.input_security_code);
+		mExpMo = (EditText) view.findViewById(R.id.input_expiration_month);
+		mExpYr = (EditText) view.findViewById(R.id.input_expiration_year);
+		mZip = (EditText) view.findViewById(R.id.input_zip_code);
 
 		Button submit = (Button) view.findViewById(R.id.button_create_account);
 		submit.setOnClickListener(this);
@@ -66,11 +72,17 @@ public class CreateNewAccountFragment extends Fragment implements OnClickListene
 		String email = mEmail.getText().toString().trim();
 		String pw = mPassword.getText().toString().trim();
 		String pwRepeat = mPasswordRepeat.getText().toString().trim();
+		String creditCard = mCreditCard.getText().toString().trim();
+		String securityCode = mSecurityCode.getText().toString().trim();
+		String expMo = mExpMo.getText().toString().trim();
+		String expYr = mExpYr.getText().toString().trim();
+		String zip = mZip.getText().toString().trim();
 		mUsername.setText(username);
 		mEmail.setText(email);
 		mPassword.setText(pw);
 		mPasswordRepeat.setText(pwRepeat);
-		mListener.submitNewAccount(username, email, pw, pwRepeat);
+		mListener.submitNewAccount(username, email, pw, pwRepeat, 
+				creditCard, securityCode, expMo, expYr, zip);
 	}
 
 	/**
@@ -85,9 +97,16 @@ public class CreateNewAccountFragment extends Fragment implements OnClickListene
 		 * @param email email to use
 		 * @param pw password 
 		 * @param pwRepeat repeated password
+		 * @param creditCard credit card 
+		 * @param securityCode security code 
+		 * @param expMo expiration month 
+		 * @param expYr expiration year 
+		 * @param zip zip code 
 		 */
-		void submitNewAccount(
-				String username, String email, String pw, String pwRepeat);
+		void submitNewAccount(String username, String email, String pw,
+				String pwRepeat, String creditCard, String securityCode, 
+				String expMo, String expYr, String zip
+			);
 
 	}
 

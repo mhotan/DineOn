@@ -126,6 +126,13 @@ public class DiningSession extends TimeableStorable {
 	public List<UserInfo> getUsers() {
 		return new ArrayList<UserInfo>(mUsers);
 	}
+	
+	/**
+	 * @return the requests of the dining session.
+	 */
+	public List<CustomerRequest> getRequests() {
+		return new ArrayList<CustomerRequest>(mPendingRequests);
+	}
 
 	/**
 	 * Returns the start time of this dining session.
@@ -198,11 +205,6 @@ public class DiningSession extends TimeableStorable {
 
 		// Delete all the request at this time
 		for (CustomerRequest r: mPendingRequests) {
-			r.deleteFromCloud();
-		}
-
-		// Delete all the pending orders
-		for (Order r: mOrders) {
 			r.deleteFromCloud();
 		}
 
