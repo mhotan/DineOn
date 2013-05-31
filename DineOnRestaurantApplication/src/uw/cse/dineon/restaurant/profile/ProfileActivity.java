@@ -12,6 +12,7 @@ import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -140,7 +141,6 @@ MenuItemsFragment.MenuItemListener {
 			supFT.setCustomAnimations(android.R.anim.slide_in_left,
 					android.R.anim.slide_out_right);
 		} else { // move the tab relatively rights
-			// TODO Correctly obtain the Restaurant
 
 			if (mItemsFragment == null) {
 				mItemsFragment = new MenuItemsFragment();
@@ -253,13 +253,8 @@ MenuItemsFragment.MenuItemListener {
 	}
 
 	@Override
-	public void onSelectImageAsDefault(int i) {
-		// TODO set image at index I as  the default
-	}
-
-	@Override
 	public void onImageRemoved(int index) {
-		getRestaurant().getInfo().removeImageAt(index);
+		getRestaurant().getInfo().removeAtIndex(index);
 		getRestaurant().saveInBackGround(new SaveCallback() {
 
 			@Override
@@ -391,6 +386,19 @@ MenuItemsFragment.MenuItemListener {
 			// Stop the progress spinner
 			isWorkingBackground = false;
 			invalidateOptionsMenu();
+		}
+	}
+
+	@Override
+	public Location getLocation() {
+		return getLastKnownLocation();
+	}
+	
+	@Override
+	public void onLocationChanged(Location location) {
+		super.onLocationChanged(location);
+		if (mRestInfoFragment != null) {
+			mRestInfoFragment.setLocationToUse(location);
 		}
 	}
 }

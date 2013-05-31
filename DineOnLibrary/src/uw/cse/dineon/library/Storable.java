@@ -80,15 +80,6 @@ public abstract class Storable implements Parcelable {
 		return mCompleteObject;
 	}
 
-	//	/**
-	//	 * Takes ParseObject and sets the appropriate fields of the
-	//	 * instance of storable.
-	//	 * @param pobj ParseObject that you want to convert to a Storable
-	//	 */
-	//	public void unpackObject(ParseObject pobj){
-	//		
-	//	}
-
 	/**
 	 *
 	 * @return String objId
@@ -229,19 +220,6 @@ public abstract class Storable implements Parcelable {
 	public int describeContents() {
 		return 0;
 	}
-
-	//	@Override
-	//	public void writeToParcel(Parcel dest, int flags) {
-	//		dest.writeString(this.getObjId());
-	//	}
-	//	
-	//	/**
-	//	 * Fills this instance with the values found in this parcel
-	//	 * @param source
-	//	 */
-	//	protected void readFromParcel(Parcel source) {
-	//		this.setObjId(source.readString());
-	//	} 
 	
 	/**
 	 * 

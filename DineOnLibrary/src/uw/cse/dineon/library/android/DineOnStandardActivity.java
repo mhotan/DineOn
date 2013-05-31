@@ -1,6 +1,7 @@
-package uw.cse.dineon.library;
+package uw.cse.dineon.library.android;
 
 import java.io.File;
+import java.net.URI;
 
 import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.image.ImageCache;
@@ -9,28 +10,35 @@ import uw.cse.dineon.library.image.ImageIO;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.library.image.ImageObtainer;
 import uw.cse.dineon.library.util.DineOnConstants;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * This activity represents a base activity for all Dine On Related activities.
  * 
  * All shared code for activities between Applications should go in here
  * 
- * @author mhotan
+ * @author mhotan, mtrathjen08
  */
-public class DineOnStandardActivity extends FragmentActivity implements ImageObtainable {
+public class DineOnStandardActivity extends FragmentActivity implements ImageObtainable, Locatable {
 
 	/**
 	 * Standard tag for this specific activity.
 	 */
 	protected final String tag = this.getClass().getSimpleName();
+
+	private static final String EXTRA_LOCATION = "_extra_location";
+	private static final String EXTRA_FILE_URI = "_extra_file_uri";
 
 	/**
 	 * A reference to this activity.
@@ -57,7 +65,17 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 	 * Holds a reference to the current GetImage Callback.
 	 */
 	private ImageGetCallback mGetImageCallback;
-	
+
+	/**
+	 * Location Manager for location services.
+	 */
+	private LocationManager mLocationManager;
+
+	/**
+	 * Last received location from this activity. Initially null.
+	 */
+	private Location mLocation;
+
 
 	/////////////////////////////////////////////////////////////////////
 	/////  Override Activity specific methods for correct behavior
@@ -82,9 +100,43 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 				return bitmap.getByteCount() / 1024;
 			}
 		};
-		
+
 		mPersImageCache = new ImageCache(this);
 		mPersImageCache.open();
+
+		this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		this.mLocation = null;
+		try {
+			requestLocationUpdates();
+		} catch (IllegalArgumentException ex) {
+			// The provider doesn't exist because its emulator
+			Toast.makeText(this, "Location updates unsupported on this device.  " 
+					+ "Are you on an emulator?", 
+					Toast.LENGTH_SHORT).show();
+		}
+
+		// Attempt to restore old values only if they exist
+		if (savedInstanceState != null) {
+			mLocation = savedInstanceState.getParcelable(EXTRA_LOCATION);
+			if (savedInstanceState.containsKey(EXTRA_FILE_URI)) {
+				URI uri = (URI) savedInstanceState.getSerializable(EXTRA_FILE_URI);
+				mTempFile = new File(uri);
+			}
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		if (mLocation != null) {
+			outState.putParcelable(EXTRA_LOCATION, mLocation);
+		}
+
+		if (mTempFile != null) {
+			outState.putSerializable(EXTRA_FILE_URI, mTempFile.toURI());
+		}
+
 	}
 
 	@Override
@@ -102,7 +154,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
+		// For right now filter out any intents without a RESULT OK
 		if (resultCode != RESULT_OK) {
 			Log.d(tag, "User cancelled job for request code " + requestCode);
 			return;
@@ -114,17 +166,17 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 		case DineOnConstants.REQUEST_TAKE_PHOTO:
 			uriForInfoFragment = Uri.fromFile(mTempFile);
 			break;
+			// Picked a Photo
 		case DineOnConstants.REQUEST_CHOOSE_PHOTO:
 			uriForInfoFragment = data.getData();
 			break;
 		default:
-			Log.w(tag, "Unsupported operation occured onActivityResult");
 		}
 
+		// Only handle the image if there is a valid uri and
+		// image callback to handle the callback
 		if (uriForInfoFragment != null && mGetImageCallback != null) {
 			getPhotoAndExecute(uriForInfoFragment, mGetImageCallback);
-		} else {
-			Log.w(tag, "Was not able to obtain a new image");
 		}
 	}
 
@@ -163,7 +215,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 	/////////////////////////////////////////////////////////////////////
 	/////  Getters that sub activities can use
 	/////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * @return a new temporary image file for runtime storage.
 	 */
@@ -181,7 +233,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 		String id = image.getObjId();
 		return mImageMemCache.get(id);
 	}
-	
+
 	/**
 	 * Attempts to get the image as fast as possible.
 	 * @param image image to get.
@@ -191,19 +243,19 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 		if (callback == null) {
 			return; // Cant call back to no one
 		}
-		
+
 		if (image == null) {
 			callback.onImageReceived(new RuntimeException("Null DineOnImage"), null);
 			return;
 		}
-		
+
 		// Check in memory cache
 		Bitmap ret = getBitmapFromMemCache(image);
 		if (ret != null) {
 			callback.onImageReceived(null, ret);
 			return;
 		}
-		
+
 		Log.w(tag, "Cache miss for image " + image.getObjId());
 
 		// Check in SQL database or network
@@ -220,7 +272,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 			}
 		});
 	}
-	
+
 	/////////////////////////////////////////////////////////////////////
 	/////  Getters that sub activities can use
 	/////////////////////////////////////////////////////////////////////
@@ -245,5 +297,42 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 		String id = image.getObjId();
 		mImageMemCache.put(id, bitmap);
 		mPersImageCache.addToCache(image);
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		mLocation = location;
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// Do nothing as of right now
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// Do nothing as of right now
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// Do nothing as of right now
+	}
+
+	@Override
+	public Location getLastKnownLocation() {
+		return mLocation;
+	}
+
+	@Override
+	public void requestLocationUpdates() {
+		this.mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, 
+				this, 
+				null);
+		this.mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 
+				DineOnConstants.MIN_LOCATION_UPDATE_INTERVAL_MILLIS, 
+				DineOnConstants.MIN_LOCATION_UPDATE_DISTANCE_METERS, 
+				this);
+		// TODO add support for gps
 	}
 }

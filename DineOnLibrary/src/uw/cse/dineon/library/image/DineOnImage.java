@@ -7,7 +7,6 @@ import uw.cse.dineon.library.Storable;
 import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Parcel;
 import android.util.Log;
 
 import com.parse.GetDataCallback;
@@ -194,34 +193,5 @@ public class DineOnImage extends Storable {
 	public static Bitmap byteArrayToBitmap(byte[] imgArray) {
 		return BitmapFactory.decodeByteArray(imgArray, 0, imgArray.length);
 	}
-
-//	protected DineOnImage(Parcel source) {
-//		super(source);
-//		int size = source.readInt();
-//		if (size > 0) {
-//			byte[] image = new byte[size];
-//			source.readByteArray(image);
-//			mImgFile = new ParseFile(image);
-//		} else {
-//			
-//		}
-//	}
-//
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		super.writeToParcel(dest, flags);
-//		if (mImgFile.isDataAvailable()) {
-//			try {
-//				byte[] image = mImgFile.getData();
-//				dest.writeInt(image.length);
-//
-//				dest.writeByteArray(mImgFile.getData());
-//			} catch (ParseException e) {
-//				Log.e(TAG, "Unable to write byte array");
-//			}
-//		} else {
-//			dest.writeInt(0);
-//		}
-//	}
 
 }

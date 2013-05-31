@@ -2,9 +2,11 @@ package uw.cse.dineon.library;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.util.ParseUtil;
+import android.location.Address;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -23,6 +25,9 @@ public class RestaurantInfo extends LocatableStorable {
 
 	private static final String TAG = RestaurantInfo.class.getSimpleName();
 
+	private static final String ADDRESS_SPLITTER = "-:___:-";
+	private static final String ADDRESS_NOVALUE = "|-:NOVALUE:-|";
+	
 	public static final String PARSEUSER = "parseUser";
 	public static final String NAME = "restaurantName";
 	public static final String ADDR = "restaurantAddr";
@@ -32,12 +37,12 @@ public class RestaurantInfo extends LocatableStorable {
 	public static final String MENUS = "restaurantMenu";
 	public static final String HOURS = "restaurantHours";
 
-	private static final String UNDETERMINED = "Undetermined";
+	private static final String UNDETERMINED = "Unknown";
 
 	private final ParseUser mUser;
 	// Lets set the name of the restaurant once and only once.
 	private final String mName;
-	private String mAddress;
+	private Address mAddress;
 	private String mHours;
 	private String mPhone;
 	private int mMainImageIndex; // Index of Main image
@@ -55,7 +60,7 @@ public class RestaurantInfo extends LocatableStorable {
 		name.fetchIfNeeded();
 		mUser = name;
 		mName = mUser.getUsername();
-		mAddress = UNDETERMINED;
+		mAddress = new Address(Locale.getDefault());
 		mPhone = UNDETERMINED;
 		mHours = UNDETERMINED;
 		mMainImageIndex = 0;
@@ -73,23 +78,22 @@ public class RestaurantInfo extends LocatableStorable {
 		super(po);
 		mUser = po.getParseUser(PARSEUSER).fetchIfNeeded();
 		mName = mUser.getUsername();
-		mAddress = po.getString(ADDR);
+		mAddress = parseAddress(po.getString(ADDR));
 		mPhone = po.getString(PHONE);
-		mHours = po.getString(HOURS);
 		mMainImageIndex = po.getInt(IMAGE_MAIN);
 		mImageList = ParseUtil.toListOfStorables(DineOnImage.class, po.getList(IMAGE_LIST));
 		mMenus = ParseUtil.toListOfStorables(Menu.class, po.getList(MENUS));
+		mHours = po.getString(HOURS);
 	}
-
-
-
+	
 	@Override
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
 		po.put(PARSEUSER, mUser);
 		po.put(NAME, mName);
-		po.put(ADDR, mAddress);
+		po.put(ADDR, addressToString(mAddress));
 		po.put(PHONE, mPhone);
+		po.put(HOURS, mHours);
 		po.put(IMAGE_MAIN, mMainImageIndex);
 		po.put(IMAGE_LIST, ParseUtil.toListOfParseObjects(mImageList));
 		po.put(MENUS, ParseUtil.toListOfParseObjects(mMenus));	
@@ -103,19 +107,26 @@ public class RestaurantInfo extends LocatableStorable {
 	public String getName() {
 		return mName;
 	}
-
+	
 	/**
 	 * @return addr String Restaurant address
 	 */
-	public String getAddr() {
+	public Address getAddr() {
 		return mAddress;
 	}
 
 	/**
-	 * @param a String
+	 * Sets the current address of this restaurant. 
+	 * 
+	 * @param address Address to set the address value to.
 	 */
-	public void setAddr(String a) {
-		this.mAddress = a;
+	public void setAddr(Address address) {
+		this.mAddress = address;
+		
+		// Set the location based off this address
+		if (address.hasLatitude() && address.hasLongitude()) {
+			updateLocation(address.getLongitude(), address.getLatitude());
+		}
 	}
 
 	/**
@@ -163,20 +174,24 @@ public class RestaurantInfo extends LocatableStorable {
 	}
 
 	/**
-	 * @param pos int
-	 */
-	public void setMainImage(int pos) {
-		// This can be -1;
-		pos = Math.min(Math.max(0, pos), mImageList.size() - 1);
-		this.mMainImageIndex = pos;
-	}
-
-	/**
 	 * Returns a list of all the general images of this restaurant.
 	 * @return List of images.
 	 */
 	public List<DineOnImage> getImageList() {
 		return new ArrayList<DineOnImage>(mImageList);
+	}
+	
+	/**
+	 * Remove the image at the index.
+	 * @param index Index to remove.
+	 */
+	public void removeAtIndex(int index) {
+		if (mImageList.isEmpty()) {
+			return;
+		}
+		index = Math.max(0, Math.min(index, mImageList.size() - 1));
+		DineOnImage image = mImageList.remove(index);
+		image.deleteFromCloud();
 	}
 	
 	/**
@@ -192,15 +207,16 @@ public class RestaurantInfo extends LocatableStorable {
 
 	/**
 	 * For a zero based index it removes the image at index.
-	 * @param index Index to remove
+	 * @param image Image to del
 	 * @return True upon success, false on failure
 	 */
-	public boolean removeImageAt(int index) {
-		if (index < 0 || index >= mImageList.size()) {
+	public boolean removeImage(DineOnImage image) {
+		if (image == null) {
 			return false;
 		}
-		mImageList.remove(index);
-		return true;
+		boolean removed = mImageList.remove(image);
+		image.deleteFromCloud();
+		return removed;
 	}
 	
 	/**
@@ -309,7 +325,7 @@ public class RestaurantInfo extends LocatableStorable {
 			}
 		});
 		mName = source.readString();
-		mAddress = source.readString();
+		mAddress = parseAddress(source.readString());
 		mPhone = source.readString();
 		mMainImageIndex = source.readInt();
 		mImageList = new ArrayList<DineOnImage>();
@@ -323,7 +339,7 @@ public class RestaurantInfo extends LocatableStorable {
 		super.writeToParcel(dest, flags);
 		dest.writeString(mUser.getObjectId());
 		dest.writeString(mName);
-		dest.writeString(mAddress);
+		dest.writeString(addressToString(mAddress));
 		dest.writeString(mPhone);
 		dest.writeInt(mMainImageIndex);
 		dest.writeList(mImageList);
@@ -347,4 +363,82 @@ public class RestaurantInfo extends LocatableStorable {
 			return new RestaurantInfo[size];
 		}
 	};
+	
+	///////////////////////////////////////////////////////////
+	////  Private helper methods for storing addresses.
+	///////////////////////////////////////////////////////////
+	
+	/**
+	 * Parses address from pre made string.
+	 * String has to be made from addressToString method.
+	 * @param addressString Address string to parse
+	 * @return parsed Address
+	 */
+	private static Address parseAddress(String addressString) {
+		Address newAdd = new Address(Locale.getDefault());
+		if (addressString == null) {
+			return newAdd;
+		}
+		
+		String[] tokens = addressString.split(ADDRESS_SPLITTER);	
+		if (tokens.length != 5) {
+			// illegal add string
+			return newAdd;
+		} 
+		
+		newAdd.setAddressLine(0, parseNullOrValue(tokens[0]));
+		newAdd.setAddressLine(1, parseNullOrValue(tokens[1]));
+		newAdd.setLocality(parseNullOrValue(tokens[2]));
+		newAdd.setAdminArea(parseNullOrValue(tokens[3]));
+		newAdd.setPostalCode(parseNullOrValue(tokens[4]));
+		return newAdd;
+	}
+	
+	/**
+	 * 
+	 * @param address Address to create into String.
+	 * @return internal string representation of address
+	 */
+	private static String addressToString(Address address) {
+		String[] addressVals = new String[5];
+		addressVals[0] = getOrNoValue(address.getAddressLine(0));
+		addressVals[1] = getOrNoValue(address.getAddressLine(1));
+		addressVals[2] = getOrNoValue(address.getLocality());
+		addressVals[3] = getOrNoValue(address.getAdminArea());
+		addressVals[4] =  getOrNoValue(address.getPostalCode());
+		
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < addressVals.length; i++) {
+			buffer.append(addressVals[i]);
+			if (i != addressVals.length - 1) {
+				buffer.append(ADDRESS_SPLITTER);
+			}
+		}
+		
+		return buffer.toString();
+	}
+	
+	/**
+	 * Returns non null parcelable value.
+	 * @param val val to check
+	 * @return ADDRESS_NOVALUE if val is null.
+	 */
+	private static String getOrNoValue(String val) {
+		if (val == null || val.equals("")) {
+			return ADDRESS_NOVALUE;
+		}
+		return val.trim();
+	} 
+	
+	/**
+	 * For a parse entity String return represented value.
+	 * @param toParse String to parse
+	 * @return null if value of toParse is ADDRESS_NOVALUE
+	 */
+	private static String parseNullOrValue(String toParse) {
+		if (toParse ==  null || toParse.equals(ADDRESS_NOVALUE)) {
+			return null;
+		}
+		return toParse;
+	}
 }

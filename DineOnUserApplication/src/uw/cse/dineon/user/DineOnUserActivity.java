@@ -9,13 +9,13 @@ import org.json.JSONObject;
 
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
-import uw.cse.dineon.library.DineOnStandardActivity;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.android.DineOnStandardActivity;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.UserSatellite.SatelliteListener;
@@ -71,10 +71,10 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	 */
 	private DineOnUserActivity This;
 
-	/**
-	 * Location Listener for location based services.
-	 */
-	private UserLocationListener mLocationListener;
+//	/**
+//	 * Location Listener for location based services.
+//	 */
+//	private UserLocationListener mLocationListener;
 
 	/**
 	 * Set this value to the current dining user.
@@ -95,15 +95,15 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 					"Unable to find your information", UserLoginActivity.class).show();
 		}
 
-		//		this.mMenuItemMappings = new HashMap<MenuItem, CurrentOrderItem>();		
-		this.mLocationListener = new UserLocationListener();
-		try {
-			this.mLocationListener.requestLocationUpdates();
-		} catch (IllegalArgumentException ex) {
-			// The provider doesn't exist because its emulator
-			Toast.makeText(this, "Your running on an emulator dip shit.", 
-					Toast.LENGTH_SHORT).show();
-		}
+//		//		this.mMenuItemMappings = new HashMap<MenuItem, CurrentOrderItem>();		
+//		this.mLocationListener = new UserLocationListener();
+//		try {
+//			this.mLocationListener.requestLocationUpdates();
+//		} catch (IllegalArgumentException ex) {
+//			// The provider doesn't exist because its emulator
+//			Toast.makeText(this, "Your running on an emulator dip shit.", 
+//					Toast.LENGTH_SHORT).show();
+//		}
 	}
 
 	@Override
@@ -563,85 +563,85 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		DineOnUserApplication.clearCurrentOrder();
 	}
 
-	/**
-	 * Listener for getting restaurant location at creation time.
-	 * @author mtrathjen08
-	 *
-	 */
-	private class UserLocationListener implements android.location.LocationListener {
-
-		/**
-		 * Location Manager for location services.
-		 */
-		private LocationManager mLocationManager;
-
-		/**
-		 * Last received location from mananger. Initially null.
-		 */
-		private Location mLocation;
-
-		/**
-		 * Constructor for the location listener.
-		 */
-		public UserLocationListener() {
-			this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-			this.mLocation = null;
-		}
-
-		/**
-		 * Return the last recorder location of the user. Null if no update.
-		 * @return last recorder location.
-		 */
-		private Location getLastLocation() {
-			return this.mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-			// TODO add support for gps
-		}
-
-		/**
-		 * Request a location reading from the Location Manager.
-		 */
-		private void requestLocationUpdates() {
-			this.mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, 
-					this, 
-					null);
-			this.mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 
-					DineOnConstants.MIN_LOCATION_UPDATE_INTERVAL_MILLIS, 
-					DineOnConstants.MIN_LOCATION_UPDATE_DISTANCE_METERS, 
-					this);
-			// TODO add support for gps
-		}
-
-		@Override
-		public void onLocationChanged(Location loc) {
-			this.mLocation = loc;
-		}
-
-		@Override
-		public void onProviderDisabled(String arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onProviderEnabled(String arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			// TODO Auto-generated method stub
-
-		}
-	}
-
-	/**
-	 * Return the last location updated by the location manager.
-	 * @return last known location.
-	 */
-	public Location getLastKnownLocation() {
-		return this.mLocationListener.getLastLocation();
-	}
+//	/**
+//	 * Listener for getting restaurant location at creation time.
+//	 * @author mtrathjen08
+//	 *
+//	 */
+//	private class UserLocationListener implements android.location.LocationListener {
+//
+//		/**
+//		 * Location Manager for location services.
+//		 */
+//		private LocationManager mLocationManager;
+//
+//		/**
+//		 * Last received location from mananger. Initially null.
+//		 */
+//		private Location mLocation;
+//
+//		/**
+//		 * Constructor for the location listener.
+//		 */
+//		public UserLocationListener() {
+//			this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//			this.mLocation = null;
+//		}
+//
+//		/**
+//		 * Return the last recorder location of the user. Null if no update.
+//		 * @return last recorder location.
+//		 */
+//		private Location getLastLocation() {
+//			return this.mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//			// TODO add support for gps
+//		}
+//
+//		/**
+//		 * Request a location reading from the Location Manager.
+//		 */
+//		private void requestLocationUpdates() {
+//			this.mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, 
+//					this, 
+//					null);
+//			this.mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 
+//					DineOnConstants.MIN_LOCATION_UPDATE_INTERVAL_MILLIS, 
+//					DineOnConstants.MIN_LOCATION_UPDATE_DISTANCE_METERS, 
+//					this);
+//			// TODO add support for gps
+//		}
+//
+//		@Override
+//		public void onLocationChanged(Location loc) {
+//			this.mLocation = loc;
+//		}
+//
+//		@Override
+//		public void onProviderDisabled(String arg0) {
+//			// TODO Auto-generated method stub
+//
+//		}
+//
+//		@Override
+//		public void onProviderEnabled(String arg0) {
+//			// TODO Auto-generated method stub
+//
+//		}
+//
+//		@Override
+//		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+//			// TODO Auto-generated method stub
+//
+//		}
+//	}
+//
+//	/**
+//	 * Return the last location updated by the location manager.
+//	 * @return last known location.
+//	 */
+//	public Location getLastKnownLocation() {
+//		return this.mLocationListener.getLastLocation();
+//	}
 
 	@Override
 	public void doneWithOrder() {

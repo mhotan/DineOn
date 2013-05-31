@@ -3,21 +3,18 @@ package uw.cse.dineon.restaurant;
 import java.util.List;
 
 import uw.cse.dineon.library.CustomerRequest;
-import uw.cse.dineon.library.DineOnStandardActivity;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.android.DineOnStandardActivity;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.restaurant.RestaurantSatellite.SateliteListener;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -74,7 +71,7 @@ implements SateliteListener {
 	/**
 	 * Location Listener for location based services.
 	 */
-	private RestaurantLocationListener mLocationListener;
+//	private RestaurantLocationListener mLocationListener;
 
 
 	/**
@@ -111,7 +108,7 @@ implements SateliteListener {
 					, this).show();
 		}
 
-		this.mLocationListener = new RestaurantLocationListener();
+//		this.mLocationListener = new RestaurantLocationListener();
 	}
 
 	@Override
@@ -321,12 +318,6 @@ implements SateliteListener {
 	public void onOrderRequest(final Order order, String sessionID) {
 		Toast.makeText(this, "onOrderRequest", Toast.LENGTH_SHORT).show();
 
-		if (mRestaurant == null) {
-			Log.e(TAG, "Null Restaurant when accepting order");
-			// TODO What do we do in this case queue the request ???
-			return;
-		}
-
 		// TODO Validate Order
 		for (final DiningSession SESSION: mRestaurant.getSessions()) {
 			if (SESSION.getObjId().equals(sessionID)) {
@@ -356,11 +347,6 @@ implements SateliteListener {
 	@Override
 	public void onCustomerRequest(final CustomerRequest request, String sessionID) {
 		Toast.makeText(this, "onOrderRequest", Toast.LENGTH_SHORT).show();
-
-		if (mRestaurant == null) {
-			Log.e(TAG, "Null Restaurant when accepting customer request.");
-			return;
-		}
 
 		// TODO Validate Request
 
@@ -556,68 +542,68 @@ implements SateliteListener {
 			mProgressDialog.dismiss();
 		}
 	}
-
-	/**
-	 * Listener for getting restaurant location at creation time.
-	 * @author mtrathjen08
-	 *
-	 */
-	private class RestaurantLocationListener implements android.location.LocationListener {
-
-		/**
-		 * Location Manager for location services.
-		 */
-		private LocationManager mLocationManager;
-
-		/**
-		 * Last received location from mananger. Initially null.
-		 */
-		private Location mLocation;
-
-		/**
-		 * Constructor for the location listener.
-		 */
-		public RestaurantLocationListener() {
-			this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-			this.mLocation = null;
-		}
-
-		/**
-		 * Return the last recorder location of the user. Null if no update.
-		 * @return last recorder location.
-		 */
-		private Location getLastLocation() {
-			return this.mLocation;
-			// TODO add support for gps
-		}
-
-		/**
-		 * Request a location reading from the Location Manager.
-		 */
-		private void requestLocationUpdate() {
-			this.mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
-			// TODO add support for gps
-		}
-
-		@Override
-		public void onLocationChanged(Location loc) {
-			this.mLocation = loc;
-		}
-
-		@Override
-		public void onProviderDisabled(String arg0) { 
-			// Do nothing
-		}
-
-		@Override
-		public void onProviderEnabled(String arg0) {
-			// Do nothing
-		}
-
-		@Override
-		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			// Do nothing
-		}
-	}
+	
+//	/**
+//	 * Listener for getting restaurant location at creation time.
+//	 * @author mtrathjen08
+//	 *
+//	 */
+//	private class RestaurantLocationListener implements android.location.LocationListener {
+//
+//		/**
+//		 * Location Manager for location services.
+//		 */
+//		private LocationManager mLocationManager;
+//
+//		/**
+//		 * Last received location from mananger. Initially null.
+//		 */
+//		private Location mLocation;
+//
+//		/**
+//		 * Constructor for the location listener.
+//		 */
+//		public RestaurantLocationListener() {
+//			this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//			this.mLocation = null;
+//		}
+//
+//		/**
+//		 * Return the last recorder location of the user. Null if no update.
+//		 * @return last recorder location.
+//		 */
+//		Location getLastLocation() {
+//			return this.mLocation;
+//			// TODO add support for gps
+//		}
+//
+//		/**
+//		 * Request a location reading from the Location Manager.
+//		 */
+//		private void requestLocationUpdate() {
+//			this.mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
+//			// TODO add support for gps
+//		}
+//
+//		@Override
+//		public void onLocationChanged(Location loc) {
+//			this.mLocation = loc;
+//		}
+//
+//		@Override
+//		public void onProviderDisabled(String arg0) { 
+//			// Do nothing
+//		}
+//
+//		@Override
+//		public void onProviderEnabled(String arg0) {
+//			// Do nothing
+//		}
+//
+//		@Override
+//		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+//			// Do nothing
+//		}
+//	}
 
 }
