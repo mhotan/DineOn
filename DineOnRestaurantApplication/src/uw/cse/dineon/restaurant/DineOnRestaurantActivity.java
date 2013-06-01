@@ -109,7 +109,6 @@ implements SateliteListener {
 					, this).show();
 		}
 
-//		this.mLocationListener = new RestaurantLocationListener();
 	}
 
 	@Override

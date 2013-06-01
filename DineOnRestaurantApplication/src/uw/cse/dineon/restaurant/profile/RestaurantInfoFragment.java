@@ -22,6 +22,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.telephony.PhoneNumberUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -411,7 +412,7 @@ public class RestaurantInfoFragment extends Fragment {
 			
 			// Populate the phone number
 			mPhoneInput.setText(info.getPhone());
-
+			
 			// Populate the 
 			mHourInput.setText(info.getHours());
 			
@@ -502,7 +503,9 @@ public class RestaurantInfoFragment extends Fragment {
  			} else if (v == mSaveButton) {
 				// Build on the new data.
 				mInfo.setAddr(fieldsToAddress());
-				mInfo.setPhone(mPhoneInput.getText().toString());
+				String phoneNum = PhoneNumberUtils.formatNumber(mPhoneInput.getText().toString());
+				mInfo.setPhone(phoneNum);
+				mPhoneInput.setText(phoneNum);
 				mInfo.setHours(mHourInput.getText().toString());		
 				mListener.onRestaurantInfoUpdate(mInfo);
 			} else { 

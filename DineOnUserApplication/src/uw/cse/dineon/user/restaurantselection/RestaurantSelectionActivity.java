@@ -31,6 +31,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 /**
+ * Activity to handle restaurant selection.
  * @author mhotan
  */
 public class RestaurantSelectionActivity extends DineOnUserActivity implements 
@@ -49,8 +50,6 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 
 	private RestaurantInfo currentRestaurant;
 
-	private RestaurantSelectionActivity thisActivity;
-
 
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
@@ -60,9 +59,7 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_restaurant_selection);
-
-		this.thisActivity = this;
-
+		
 		// Replace the Action bar title with a message letting the 
 		// user know this is the restaurant selection page
 		final ActionBar ACTION_BAR = getActionBar();
@@ -175,7 +172,7 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 		createProgressDialog();
 		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		query.whereEqualTo(RestaurantInfo.NAME, name);
-		queryForRestaurants(query, "No restaurants match. Check spelling.");
+		queryForRestaurants(query, "No restaurants match. Please check spelling.");
 	}
 
 	@Override
@@ -188,9 +185,9 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 					new ParseGeoPoint(lastLoc.getLatitude(), lastLoc.getLongitude()), 
 					DineOnConstants.MAX_RESTAURANT_DISTANCE);
 			queryForRestaurants(query, 
-					"There are no restaurants nearby. Your in the middle of nowhere.");
+					"There are no restaurants nearby.");
 		} else {
-			Toast.makeText(this, "You don't have location info stupid!", 
+			Toast.makeText(this, "Your device does not support Location finding", 
 					Toast.LENGTH_SHORT).show();
 			Log.d(TAG, "Don't have current location info.");
 			destroyProgressDialog();
@@ -213,7 +210,7 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 			objIds[i] = favs.get(i).getObjId();
 		}
 		query.whereContainedIn("objectId", Arrays.asList(objIds));
-		queryForRestaurants(query, "No restaurants in your favorites. Add some.");
+		queryForRestaurants(query, "No restaurants in your favorites. Please do a search.");
 	}
 
 	/**

@@ -1,8 +1,5 @@
 package uw.cse.dineon.user.login;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.CredentialValidator;
@@ -20,13 +17,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -77,24 +69,9 @@ LoginFragment.OnLoginListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		mLoginCallback = new DineOnLoginCallback(this);
+		mLoginCallback = new DineOnLoginCallback();
 		thisCxt = this;
 		
-		// Add code to print out the key hash
-	    try {
-	        PackageInfo info = getPackageManager().getPackageInfo(
-	                "uw.cse.dineon.user", 
-	                PackageManager.GET_SIGNATURES);
-	        for (Signature signature : info.signatures) {
-	            MessageDigest md = MessageDigest.getInstance("SHA");
-	            md.update(signature.toByteArray());
-	            Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-	            }
-	    } catch (NameNotFoundException e) {
-
-	    } catch (NoSuchAlgorithmException e) {
-
-	    }
 	}
 	
 	/**
@@ -244,29 +221,18 @@ LoginFragment.OnLoginListener {
 	 */
 	private class DineOnLoginCallback extends com.parse.LogInCallback {
 
-		private final Context mContext;
-
-		/**
-		 * Creates a callback associated with this context.
-		 * @param ctx Owning context 
-		 */ 
-		DineOnLoginCallback(Context ctx) {
-			mContext = ctx;
-		}
-
 		@Override
 		public void done(ParseUser user, ParseException e) {
 
-			destroyProgressDialog();
-			
 			// Unable to login
 			if (user == null) {
+				destroyProgressDialog();
 				Utility.getGeneralAlertDialog("Login Failed", 
 						"Invalid Login Credentials", thisCxt).show();
 				return;
 			} 
-			
 			if (e != null) {
+				destroyProgressDialog();
 				Utility.getGeneralAlertDialog("Login Failed", e.getMessage(), thisCxt).show();
 				return;
 			}
@@ -335,16 +301,19 @@ LoginFragment.OnLoginListener {
 		
 		@Override
 		public void done(ParseObject object, ParseException e) {
-			destroyProgressDialog();
+			
 			
 			if (e == null) {
 				// We have found the correct object
 				try {
-					startRestSelectionAct(new DineOnUser(object));
+					DineOnUser user = new DineOnUser(object);
+					destroyProgressDialog();
+					startRestSelectionAct(user);
 				} catch (Exception e1) { // Unable to fetch UserInfo
 					Log.e(TAG, "unable to extract user info: " + e1);
 				}
 			} else {
+				destroyProgressDialog();
 				Utility.getGeneralAlertDialog("Server Failure", 
 						"Failed to get your information", thisCxt).show();
 			}
