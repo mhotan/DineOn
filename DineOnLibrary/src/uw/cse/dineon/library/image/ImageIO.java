@@ -1,15 +1,11 @@
 package uw.cse.dineon.library.image;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.content.ContentResolver;
-import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -32,30 +28,30 @@ public final class ImageIO {
 
 	private static final String TAG = ImageIO.class.getSimpleName();
 
-	private static final String IMAGE_PREFIX = "DineOnImage_";
-	private static final String BITMAP_SUFFIX = ".bmp";
-	
-	/**
-	 * Creates a temporary file from the context inputted.
-	 * This File is only temporary and therefore has a time span.
-	 * It will eventually to be removed
-	 * @param ctx Context to grab temporary directory
-	 * @return temporary file for image storage
-	 * @throws IOException If there was an error creating a temp file
-	 */
-	public static File createImageFile(Context ctx) throws IOException {
-	    // Create an image file name
-	    String timeStamp = new SimpleDateFormat("ddMMyyyyhhmmss", Locale.getDefault()).
-	    		format(Calendar.getInstance().getTime());
-	    String imageFileName = IMAGE_PREFIX + timeStamp + "_";
-	    File image = File.createTempFile(
-	        imageFileName, 
-	        BITMAP_SUFFIX, 
-	        ctx.getCacheDir()
-	    );
-	    return image;
-	}
-	
+//	private static final String IMAGE_PREFIX = "DineOnImage_";
+//	private static final String BITMAP_SUFFIX = ".bmp";
+	//	
+	//	/**
+	//	 * Creates a temporary file from the context inputted.
+	//	 * This File is only temporary and therefore has a time span.
+	//	 * It will eventually to be removed
+	//	 * @param ctx Context to grab temporary directory
+	//	 * @return temporary file for image storage
+	//	 * @throws IOException If there was an error creating a temp file
+	//	 */
+	//	public static File createImageFile(Context ctx) throws IOException {
+	//	    // Create an image file name
+	//	    String timeStamp = new SimpleDateFormat("ddMMyyyyhhmmss", Locale.getDefault()).
+	//	    		format(Calendar.getInstance().getTime());
+	//	    String imageFileName = IMAGE_PREFIX + timeStamp + "_";
+	//	    File image = File.createTempFile(
+	//	        imageFileName, 
+	//	        BITMAP_SUFFIX, 
+	//	        ctx.getCacheDir()
+	//	    );
+	//	    return image;
+	//	}
+
 	/**
 	 * Gives the size of the image at the given uri.
 	 * @param resolver Content resolver to establish access
@@ -75,64 +71,50 @@ public final class ImageIO {
 		return toReturn;
 	}
 
-	//	/**
-	//	 * Gives the size of the image at the given file path.
-	//	 * @param filePath File path of the image.
-	//	 * @return Size of the image at the file path.
-	//	 */
-	//	public static Size getSizeOfImage(String filePath) {
-	//		BitmapFactory.Options bmpOptions = new BitmapFactory.Options();
-	//		bmpOptions.inJustDecodeBounds = true;
-	//		BitmapFactory.decodeFile(filePath, bmpOptions);
-	//		return new Size(bmpOptions.outWidth, bmpOptions.outHeight);
-	//	}
-	//
-	//	/**
-	//	 * Gives the orientation of the image at the given uri.
-	//	 * 
-	//	 * Returned is Configuration.ORIENTATION_LANDSCAPE if landscape
-	//	 * or Configuration.ORIENTATION_PORTRAIT if portrait.
-	//	 * 
-	//	 * @param resolver Content resolver to establish access
-	//	 * @param uri Uri of the image
-	//	 * @return Orientation of the image being downloaded
-	//	 */
-	//	public static int getOrientationOfImage(ContentResolver resolver, Uri uri) {
-	//		Size current = getSizeOfImage(resolver, uri);
-	//		if (current.width > current.height) {
-	//			return Configuration.ORIENTATION_LANDSCAPE;
-	//		}
-	//		return Configuration.ORIENTATION_PORTRAIT;
-	//	}
-	//
-	//	/**
-	//	 * Gives the orientation of the image at the given file path.
-	//	 * 
-	//	 * Returned is Configuration.ORIENTATION_LANDSCAPE if landscape
-	//	 * or Configuration.ORIENTATION_PORTRAIT if portrait.
-	//	 * 
-	//	 * @param filePath Filepath of image
-	//	 * @return Orientation of the image being downloaded
-	//	 */
-	//	public static int getOrientationOfImage(String filePath) {
-	//		Size current = getSizeOfImage(filePath);
-	//		if (current.width > current.height) {
-	//			return Configuration.ORIENTATION_LANDSCAPE;
-	//		}
-	//		return Configuration.ORIENTATION_PORTRAIT;
-	//	}
+	/**
+	 * Get the size of an image.
+	 * @param res Resource where image is fould
+	 * @param resId Resource id of the image
+	 * @return Size of the image.
+	 */
+	private static Size getSizeOfImage(Resources res, int resId) {
+		BitmapFactory.Options bmpOptions = new BitmapFactory.Options();
+		bmpOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeResource(res, resId, bmpOptions);
+		return new Size(bmpOptions.outWidth, bmpOptions.outHeight); 
+	}
 
 	/**
 	 * Processes the bitmap stored at the corresponding uri as the standard
 	 * format for our image.
 	 * @param cr Content resolver for obtaining image from uri.
 	 * @param uri URI path directed toward our image
-	 * @return Formatted Bitmap
+	 * @return Scaled bitmap size that conforms to app specific requirements.
 	 * @throws IOException When error occurred processing the bitmap 
 	 */
-	private static Size processBitmap(ContentResolver cr, Uri uri) throws IOException {
-		int width, height;
+	private static Size processBitmapScaledSize(ContentResolver cr, Uri uri) throws IOException {
 		Size size = getSizeOfImage(cr, uri);
+		return processBitmapSize(size);
+	}
+
+	/**
+	 * Processes bitmap scaled size.
+	 * @param res Resource
+	 * @param resId Resource Id
+	 * @return Scaled bitmap size that conforms to app specific requirements.
+	 */
+	private static Size processBitmapScaledSize(Resources res, int resId) {
+		Size size = getSizeOfImage(res, resId);
+		return processBitmapSize(size);
+	}
+
+	/**
+	 * Process re scaling of size with our app specific dimensions.
+	 * @param size Size to scale to.
+	 * @return proportional and scaled size
+	 */
+	private static Size processBitmapSize(Size size) {
+		int width, height;
 		if (size.width < size.height) { // if portrait orientation.
 			// Longest side is the height.
 			height = DineOnConstants.LONGEST_IMAGE_DIMENSION;
@@ -164,7 +146,7 @@ public final class ImageIO {
 		Bitmap image = null;
 		try {
 			// Get the standerd size determince by a static constant
-			Size size = processBitmap(resolver, uri);
+			Size size = processBitmapScaledSize(resolver, uri);
 
 			// Open an initial input stream to for either loading the image or the sizes
 			// depending on the open 
@@ -204,55 +186,37 @@ public final class ImageIO {
 		}
 	}
 
-	//	/**
-	//	 * Load an image from the designated relative or complete path.
-	//	 * Relative path should be determined by the context of the caller
-	//	 * generally it is safe to use absolute paths
-	//	 * @param filePath Path to the image
-	//	 * @param size Desired size of the image to be returned
-	//	 * @return Image at desired size or full size
-	//	 */
-	//	public static Bitmap loadBitmapFromFilePath(String filePath, Size size) {
-	//		if (size != null && size.width > 0 && size.height > 0) {
-	//			// Obtain the original size of the bitmap image before scaling
-	//			BitmapFactory.Options bmpOptions = new BitmapFactory.Options();
-	//			bmpOptions.inJustDecodeBounds = true;
-	//			BitmapFactory.decodeFile(filePath, bmpOptions);
-	//			int currHeight = bmpOptions.outHeight;
-	//			int currWidth = bmpOptions.outWidth;
-	//
-	//			// Find the correct sample size
-	//			int sampleSize = 1;
-	//
-	//			//use either width or height
-	//			if ((currWidth > currHeight)) { // landscape
-	//				sampleSize = Math.round((float)currHeight / (float)size.height);
-	//			} else { // portrait
-	//				sampleSize = Math.round((float)currWidth / (float)size.width);
-	//			}
-	//
-	//			bmpOptions.inSampleSize = sampleSize;
-	//			bmpOptions.inJustDecodeBounds = false;
-	//			//decode the file with restricted sizee
-	//			return BitmapFactory.decodeFile(filePath, bmpOptions);
-	//		} else { // return full size image
-	//			return BitmapFactory.decodeFile(filePath);
-	//		}
-	//	}
+	/**
+	 * Loads a bitmap scaled to this apps specific size requirements.
+	 * @param res Resource to get the image
+	 * @param resID Resource ID of image.
+	 * @return scales bitmap image of this resource.
+	 */
+	public static Bitmap loadBitmapFromResource(Resources res, int resID) {
+		// Get the standerd size determince by a static constant
+		Size size = processBitmapScaledSize(res, resID);
+		if (size != null && size.width > 0 && size.height > 0) {
+			BitmapFactory.Options bmpOptions = new BitmapFactory.Options();
+			bmpOptions.inJustDecodeBounds = true;
 
-	//	/**
-	//	 * Retrieves a unique temporary file to for storing Bitmap images.
-	//	 * @param context Context to get where to store data
-	//	 * @return Temporary file to use.
-	//	 * @throws IOException Unable to initialize the file
-	//	 */
-	//	public static File getTempFile(Context context) throws IOException {
-	//		File outputDir = context.getCacheDir();
-	//		Date now = Calendar.getInstance().getTime();
-	//		DateFormat format = DineOnConstants.getCurrentDateFormat();
-	//		String nowStr = format.format(now);
-	//		nowStr = nowStr.trim();
-	//		nowStr = nowStr.replace(" ", "_");
-	//		return File.createTempFile(nowStr, IMAGE_EXTENSION, outputDir);
-	//	}
+			BitmapFactory.decodeResource(res, resID, bmpOptions);
+			int currHeight = bmpOptions.outHeight;
+			int currWidth = bmpOptions.outWidth;
+
+			int sampleSize = 1;
+			//use either width or height
+			if (currWidth > currHeight) {
+				sampleSize = Math.round((float)currHeight / (float)size.height);
+			} else {
+				sampleSize = Math.round((float)currWidth / (float)size.width);
+			}
+			bmpOptions.inSampleSize = sampleSize;
+			bmpOptions.inJustDecodeBounds = false;
+
+			//decode the file with restricted sizee
+			return BitmapFactory.decodeResource(res, resID, bmpOptions);
+		} else {
+			return BitmapFactory.decodeResource(res, resID);
+		}
+	}
 }

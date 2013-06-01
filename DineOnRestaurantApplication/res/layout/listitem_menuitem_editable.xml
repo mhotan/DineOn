@@ -57,6 +57,6 @@
         android:layout_marginRight="5dp"
         android:background="?android:attr/selectableItemBackground"
         android:contentDescription="@string/button_remove_menu_item"
-        android:src="@drawable/remove" />
+        android:src="@drawable/discard_content" />
 
 </LinearLayout>
