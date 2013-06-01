@@ -1,93 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/menuitem_top"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:padding="5dp" >
 
     <ImageView
         android:id="@+id/image_menuitem"
-        android:contentDescription="@string/menu_item_pic"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:contentDescription="@string/menu_item_pic"
         android:scaleType="centerCrop"
         android:src="@drawable/menu_image_placeholder" />
 
-    <TextView
-        android:id="@+id/label_menuitem_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dp"
-        android:layout_toLeftOf="@+id/numberpicker_menuitem_qty"
-        android:layout_toRightOf="@+id/image_menuitem"
-        android:gravity="center_vertical"
-        android:text="@string/medium_text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="21.33"
+        android:orientation="vertical" >
 
-     <TextView
-         android:id="@+id/label_more_info_hint"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignBottom="@+id/image_menuitem"
-         android:layout_toLeftOf="@+id/numberpicker_menuitem_qty"
-         android:layout_toRightOf="@+id/image_menuitem"
-         android:layout_marginLeft="5dp"
-         android:text="@string/hint_click_more_options"
-         android:textAppearance="?android:attr/textAppearanceSmall"
-         android:textStyle="italic" />
-    
+        <TextView
+            android:id="@+id/label_menuitem_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:gravity="center_vertical"
+            android:text="@string/medium_text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/label_more_info_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="@string/hint_click_more_options"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="italic" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/numberpicker_menuitem_qty"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/image_menuitem"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="vertical" >
 
         <ImageButton
             android:id="@+id/button_increment_order"
-            android:contentDescription="@string/increment_order"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/increment_order"
             android:src="@drawable/navigation_collapse" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#000000" />
-        
+
         <TextView
             android:id="@+id/input_order_qty"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_margin="2dip"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_margin="2dip"
             android:text="@string/zero" >
-
         </TextView>
-        
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#000000" />
-        
+
         <ImageButton
             android:id="@+id/button_decrement_order"
-            android:contentDescription="@string/decrement_order"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/decrement_order"
             android:src="@drawable/navigation_expand" />
-        
     </LinearLayout>
 
-   
-
-</RelativeLayout>
+</LinearLayout>

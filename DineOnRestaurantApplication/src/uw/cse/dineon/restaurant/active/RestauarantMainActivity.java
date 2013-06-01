@@ -13,6 +13,9 @@ import uw.cse.dineon.restaurant.active.DiningSessionDetailFragment.DiningSession
 import uw.cse.dineon.restaurant.active.DiningSessionListFragment.DiningSessionListListener;
 import uw.cse.dineon.restaurant.active.OrderDetailFragment.OrderDetailListener;
 import uw.cse.dineon.restaurant.active.RequestDetailFragment.RequestDetailListener;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -116,6 +119,10 @@ RequestDetailListener {
 		if (frag != null) {
 			frag.deleteOrder(order);
 		}
+		
+		// TODO if the current detail fragment is showing the current order
+		// hide the fragment. and focus the screen.
+		
 
 		super.completeOrder(order);
 	}
@@ -253,6 +260,31 @@ RequestDetailListener {
 	public void onProgressChanged(Order order, int progress) {
 		// TODO Implement
 		Log.i(TAG, "Progress of order: " + order + " changed to " + progress);
+		
+		if (progress != 100) {
+			return;
+		}
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.title_complete_order);
+		builder.setMessage(R.string.message_complete_order_question);
+		final Order ORDER = order;
+		builder.setPositiveButton(R.string.ok, new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				completeOrder(ORDER);
+			}
+		});
+		builder.setNegativeButton(R.string.cancel, new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.setCancelable(true);
+		builder.create().show();
 	}
 
 	@Override

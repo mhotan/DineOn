@@ -90,5 +90,8 @@
     <string name="total">Total:</string>
     <string name="price_summary">Price Summary</string>
     <string name="magic_money">Pay with Magic Money!</string>
+    <string name="string_format_hours">Hours: %1$s</string>
+    <string name="string_format_address">Address: %1$s</string>
+    <string name="string_format_phone">Phone: %1$s</string>
 
 </resources>

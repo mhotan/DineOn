@@ -117,8 +117,46 @@ public class RestaurantInfo extends LocatableStorable {
 		if (mAddress == null) {
 			return UNDETERMINED;
 		}
-		String thoroughfare = mAddress.getThoroughfare();
-		return thoroughfare == null ? UNDETERMINED : thoroughfare;
+		
+		// This android provided code returns null.
+//		String thoroughfare = mAddress.getThoroughfare();
+//		return thoroughfare == null ? UNDETERMINED : thoroughfare;
+
+		String line1 = mAddress.getAddressLine(0);
+		String line2 = mAddress.getAddressLine(1);
+		String city = mAddress.getLocality();
+		String state = mAddress.getAdminArea();
+		String zipCode = mAddress.getPostalCode();
+
+		StringBuffer b = new StringBuffer();
+		if (line1 != null) {
+			b.append(line1);
+		}
+		if (line2 != null) {
+			if (b.length() > 0) {
+				b.append(" ");
+			}
+			b.append(line2);
+		}
+		if (city != null) {
+			if (b.length() > 0) {
+				b.append(", ");
+			}
+			b.append(city);
+		}
+		if (state != null) {
+			if (b.length() > 0) {
+				b.append(", ");
+			}
+			b.append(state);
+		}
+		if (zipCode != null) {
+			if (b.length() > 0) {
+				b.append(", ");
+			}
+			b.append(zipCode);
+		}
+		return b.toString();
 	}
 
 	/**

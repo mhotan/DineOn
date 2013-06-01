@@ -25,7 +25,7 @@
             android:text="@string/medium_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/button_expand_down"
             android:contentDescription="@string/list_down_arrow_button"
             android:layout_width="wrap_content"

@@ -17,8 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
- * 
- * @author 
+ * Detial Fragment showing the detail page of a particular menu item.
+ * @author mhotan
  */
 public class MenuItemDetailFragment extends Fragment {
 

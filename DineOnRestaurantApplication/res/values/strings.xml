@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, RestaurantLoginActivity</string>
     <string name="app_name">DineOn Restaurant</string>
     <string name="TaskTitle">Restaurant Order</string>
     <string name="item_rest_profile">Profile</string>
@@ -24,7 +22,6 @@
     <string name="label_urgency_priority">Do it NOW!</string>
     <string name="tablabel_profile">Profile</string>
     <string name="tablabel_menuitems">Menu Items</string>
-    <string name="debug1">Test Message</string>
     <string name="debug2">Another Test Message</string>
     <string name="debug3">YANT (Yet Another Test Message)</string>
     <string name="tab_actionbar_restaurant_profile">Profile</string>
@@ -102,4 +99,8 @@
         <item >Big Bird</item>
         <item >Cookie Monster</item>
     </string-array>
+    <string name="title_complete_order">Served Up?</string>
+    <string name="message_complete_order_question">Are you done with this order?  This order will be removed from this list.</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 </resources>

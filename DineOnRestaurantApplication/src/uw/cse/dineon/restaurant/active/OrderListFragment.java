@@ -97,6 +97,17 @@ public class OrderListFragment extends ListFragment {
 		}
 		mAdapter.notifyDataSetChanged();
 	}
+	
+	/**
+	 * Completes an order from this fragment.
+	 * Effectively removing it from the list.
+	 * @param order Order to complete
+	 */
+	public void completeOrder(Order order) {
+		mAdapter.remove(order);
+		mListener.onOrderComplete(order);
+		mAdapter.notifyDataSetChanged();
+	}
 
 	/**
 	 * Deletes this order if it finds it.
@@ -332,12 +343,8 @@ public class OrderListFragment extends ListFragment {
 					mBottom.startAnimation(expandAni);
 
 				} else if (v.getId() == R.id.button_completed_order) {
-					mAdapter.remove(mOrder);
-					mListener.onOrderComplete(mOrder);
-					mAdapter.notifyDataSetChanged();
-				}
-				
-				if (v == mPickOrder) {
+					completeOrder(mOrder);
+				} else if (v == mPickOrder) {
 					mListener.onOrderSelected(mOrder);
 				}
 			}
@@ -346,12 +353,6 @@ public class OrderListFragment extends ListFragment {
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				mListener.onProgressChanged(mOrder, progress);
-
-				if (progress == seekBar.getMax()) {
-					mAdapter.remove(mOrder);
-					mListener.onOrderComplete(mOrder);
-					mAdapter.notifyDataSetChanged();
-				}
 			}
 
 			@Override
