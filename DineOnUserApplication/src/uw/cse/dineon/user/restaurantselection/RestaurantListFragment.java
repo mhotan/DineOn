@@ -246,7 +246,6 @@ public class RestaurantListFragment extends ListFragment {
 				
 				// Set the bottom view to initial to be invisible
 				mBottom.setVisibility(View.GONE);
-				
 				mTop.setOnClickListener(this);
 				mPickRestaurant.setOnClickListener(this);
 			}
