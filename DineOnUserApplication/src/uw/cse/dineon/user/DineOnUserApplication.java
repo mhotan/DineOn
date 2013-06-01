@@ -1,6 +1,7 @@
 package uw.cse.dineon.user;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import uw.cse.dineon.library.CurrentOrderItem;
@@ -11,6 +12,7 @@ import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.app.Application;
+import android.util.Log;
 
 import com.parse.Parse;
 import com.parse.ParseACL;
@@ -18,13 +20,16 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
+import static junit.framework.Assert.*;
+
 /**
  * Application for DineOn user side.
  */
 public class DineOnUserApplication extends Application {
 	
 	public static DineOnUser currentUser = null;
-	public static HashMap<MenuItem, CurrentOrderItem> currentOrderMapping;
+	public static HashMap<MenuItem, CurrentOrderItem> currentOrderMapping = 
+			new HashMap<MenuItem, CurrentOrderItem>();
 	private static RestaurantInfo restaurantOfInterest;
 	private static List<RestaurantInfo> restaurantInfos;
 	
@@ -51,8 +56,6 @@ public class DineOnUserApplication extends Application {
 		ParseACL.setDefaultACL(defaultACL, true);
 		
 		ParseInstallation.getCurrentInstallation().saveInBackground();
-		
-		DineOnUserApplication.currentOrderMapping = new HashMap<MenuItem, CurrentOrderItem>();
 	}
 	
 	/**
@@ -101,6 +104,19 @@ public class DineOnUserApplication extends Application {
 	 */
 	public static HashMap<MenuItem, CurrentOrderItem> getCurrentOrder() {
 		return currentOrderMapping;
+	}
+	
+	/**
+	 * Set the current order.
+	 * @param items list of current order items to save.
+	 */
+	public static void setCurrentOrder(List<CurrentOrderItem> items) {
+		Iterator<CurrentOrderItem> it = items.iterator();
+		while (it.hasNext()) {
+			CurrentOrderItem item = it.next();
+			currentOrderMapping.put(item.getMenuItem(), item);
+		}
+		Log.d("asfd", "h");
 	}
 
 	/**

@@ -1,9 +1,5 @@
 package uw.cse.dineon.user.restaurant.home.test;
 
-import java.util.Date;
-import java.util.List;
-
-import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
@@ -13,14 +9,25 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
+import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurant.home.MenuItemDetailActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
+import uw.cse.dineon.user.restaurant.home.RestaurantHomeMainFragment.RestaurantMenuCategoryAdapter;
+import uw.cse.dineon.user.restaurant.home.RestaurantInfoFragment;
+import uw.cse.dineon.user.restaurant.home.SubMenuFragment;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.parse.ParseUser;
 
@@ -138,7 +145,7 @@ public class RestaurantHomeActivityTest extends
 	/**
 	 * Test the swiping of tabs in the restaurant home screen.
 	 */
-	public void testInfoMenuTabs() {
+	public void testInfoMenuTabsFragmentChange() {
 		android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
 				this.mActivity.findViewById(uw.cse.dineon.user.R.id.pager_menu_info);
 		assertNotNull(pager);
@@ -162,5 +169,133 @@ public class RestaurantHomeActivityTest extends
 		this.mActivity.finish();
 	}
 
+	/**
+	 * Pop up alert dialog and make sure its destroyed.
+	 */
+	public void testPopUpAlertDialog() {
+		android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+				this.mActivity.findViewById(uw.cse.dineon.user.R.id.pager_menu_info);
+		assertNotNull(pager);
+		
+		PagerAdapter adapter = pager.getAdapter();   
+		assertNotNull(adapter);
+
+		final android.support.v4.view.ViewPager PAGER = pager;
+		this.mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				PAGER.setCurrentItem(0);
+			}
+		});	
+		mInstrumentation.waitForIdleSync();
+		
+		RestaurantMenuCategoryAdapter rmca = (RestaurantMenuCategoryAdapter)adapter;
+		
+		RestaurantInfoFragment rInfo = (RestaurantInfoFragment) rmca.getItem(0);
+		assertNotNull(rInfo);
+		View v = this.mActivity.findViewById(R.id.button_request);
+		assertNotNull(v);
+		
+		final Button BUT = (Button)v;
+		this.mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				assertTrue(BUT.performClick());
+			}
+		});	
+		mInstrumentation.waitForIdleSync();
+		
+		rInfo.destroyAlertDialog();
+		this.mActivity.finish();
+	}
 	
+	/**
+	 * Test that produceImageView returns a valid ImageView.
+	 */
+	@SuppressWarnings("static-access")
+	public void testProduceImageView() {
+		android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+				this.mActivity.findViewById(uw.cse.dineon.user.R.id.pager_menu_info);
+		assertNotNull(pager);
+		
+		PagerAdapter adapter = pager.getAdapter();   
+		assertNotNull(adapter);
+
+		final android.support.v4.view.ViewPager PAGER = pager;
+		this.mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				PAGER.setCurrentItem(0);
+			}
+		});	
+		mInstrumentation.waitForIdleSync();
+		
+		RestaurantMenuCategoryAdapter rmca = (RestaurantMenuCategoryAdapter)adapter;
+		
+		RestaurantInfoFragment rInfo = (RestaurantInfoFragment) rmca.getItem(0);
+		assertNotNull(rInfo);
+		View v = this.mActivity.findViewById(R.id.button_request);
+		assertNotNull(v);
+		
+		ImageView mv1 = rInfo.produceView(this.mActivity, R.drawable.chili);
+		assertNotNull(mv1);
+	
+		Bitmap b = BitmapFactory.decodeResource(this.mActivity.getResources(), R.drawable.chili);
+		ImageView mv2 = rInfo.produceView(this.mActivity, b);
+		assertNotNull(mv2);
+	
+		assertNotNull(rInfo.getStanderdLinearLayout(this.mActivity));
+		
+		this.mActivity.finish();
+	}
+	
+	/**
+	 * Simulate a menuitem click and make sure it goes to the detail activity.
+	 */
+	public void testOnMenuItemClick() {
+		android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+				this.mActivity.findViewById(uw.cse.dineon.user.R.id.pager_menu_info);
+		assertNotNull(pager);
+		
+		PagerAdapter adapter = pager.getAdapter();   
+		assertNotNull(adapter);
+
+		final android.support.v4.view.ViewPager PAGER = pager;
+		this.mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				PAGER.setCurrentItem(1);
+			}
+		});	
+		mInstrumentation.waitForIdleSync();
+		
+		RestaurantMenuCategoryAdapter rmca = (RestaurantMenuCategoryAdapter)adapter;
+		
+		SubMenuFragment menu = (SubMenuFragment) rmca.getItem(1);
+		assertNotNull(menu);
+		final TextView v = (TextView)this.mActivity.findViewById(R.id.label_more_info_hint);
+		assertNotNull(v);
+		
+		this.mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				assertTrue(v.performClick());
+			}
+		});	
+		mInstrumentation.waitForIdleSync();
+		
+		ActivityMonitor mon = this.mInstrumentation.addMonitor(MenuItemDetailActivity.class.getName(), 
+				null, false);
+		
+		final ImageButton imgBut = (ImageButton)this.mActivity.findViewById(
+				R.id.button_about_menuitem);
+		assertNotNull(imgBut);
+		this.mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				assertTrue(imgBut.performClick());
+			}
+		});
+		
+		MenuItemDetailActivity detailAct = (MenuItemDetailActivity)
+				mon.waitForActivityWithTimeout(5000);
+		assertNotNull(detailAct);
+		
+		detailAct.finish();
+		this.mActivity.finish();
+	}
 }

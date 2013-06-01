@@ -152,7 +152,7 @@ public class RestaurantSelectionActivityTest extends
 	        	  
 	          }
 	      });
-		mInstrumentation.waitForIdleSync();
+//		mInstrumentation.waitForIdleSync();
 		RSA.runOnUiThread(new Runnable() {
 	          public void run() {
 	        	  RSA.destroyProgressDialog();

@@ -49,6 +49,8 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	private RestaurantInfoListener mListener;
 
 	private RestaurantInfo mRestaurant;
+	
+	private AlertDialog mAlert;
 
 	// UI Components
 	private TextView mRestNameLabel, mAddressLabel, mHoursLabel;
@@ -63,6 +65,8 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 
 		// Get the list from the activity.
 		mRestaurant = mListener.getCurrentRestaurant();
+		
+		mAlert = null;
 	}
 
 	@Override
@@ -261,7 +265,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	 * @param ctx Context to create Layout in.
 	 * @return LinearLayout that contain an ImageView
 	 */
-	private static LinearLayout getStanderdLinearLayout(Context ctx) {
+	public static LinearLayout getStanderdLinearLayout(Context ctx) {
 		LinearLayout layout = new LinearLayout(ctx);
 		layout.setLayoutParams(new LayoutParams(IMAGEVIEW_WIDTH, IMAGEVIEW_HEIGHT));
 		layout.setGravity(Gravity.CENTER);
@@ -274,7 +278,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	 * @param b Bitmap to create a view with.  
 	 * @return ImageView with image centered and cropped appropiately.
 	 */
-	private static ImageView produceView(Context ctx, Bitmap b) {
+	public static ImageView produceView(Context ctx, Bitmap b) {
 		ImageView imageView = new ImageView(ctx);
 		imageView.setLayoutParams(new LayoutParams(
 				IMAGEVIEW_WIDTH, 
@@ -290,7 +294,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	 * @param resId Resource id of image
 	 * @return ImageView with image centered and cropped appropiately.
 	 */
-	private static ImageView produceView(Context ctx, int resId) {
+	public static ImageView produceView(Context ctx, int resId) {
 		ImageView imageView = new ImageView(ctx);
 		imageView.setLayoutParams(new LayoutParams(
 				IMAGEVIEW_WIDTH, 
@@ -305,7 +309,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	 * @param ctx Context to create progress bar in.
 	 * @return Indeterminate progress bar.
 	 */
-	private static View getLoadingImageProgressDialog(Context ctx) {
+	public static View getLoadingImageProgressDialog(Context ctx) {
 		ProgressBar p = new ProgressBar(ctx);
 		p.setIndeterminate(true);
 		return p;
@@ -358,7 +362,17 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 				// Do nothing
 			}
 		});
-		alert.show();
+		this.mAlert = alert.show();
+	}
+	
+	/**
+	 * Destroy the alert dialog if in view.
+	 */
+	public void destroyAlertDialog() {
+		if (this.mAlert != null) {
+			this.mAlert.cancel();
+			this.mAlert = null;
+		}
 	}
 
 	/**
