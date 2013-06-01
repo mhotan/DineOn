@@ -72,10 +72,11 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 		    public void run() {
 				 
 				message.requestFocus();
-				message.setText("Your order is on its way.");
 		    }
 		});
-		assertEquals("Your order is on its way.", message.getText());
+		getInstrumentation().waitForIdleSync();
+		this.sendKeys("T E S T SPACE M E S S A G E SPACE 2");
+		assertEquals("test message 2", message.getText().toString().toLowerCase());
 	}
 	
 	/**
