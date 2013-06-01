@@ -2,6 +2,7 @@ package uw.cse.dineon.user.general.test;
 
 import com.parse.ParseUser;
 import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.general.ProfileActivity;
@@ -29,11 +30,7 @@ public class ProfileActivityTest extends
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		ParseUser user = new ParseUser();
-		user.setUsername("testUser");
-		user.setPassword("12345");
-		user.setEmail("test@test.com");
-		dineOnUser = new DineOnUser(user);
+		dineOnUser = TestUtility.createFakeUser();
 		dineOnUser.getUserInfo().setPhone("0-123-456-789");
 		
 		this.setActivityInitialTouchMode(false);
@@ -59,6 +56,7 @@ public class ProfileActivityTest extends
 	 */
 	public void testGetInfo() {
 		assertNotNull(this.mActivity);
+		this.mInstrumentation.waitForIdleSync();
 		View v = this.mActivity.findViewById(R.id.label_profile_name);
 		assertNotNull(v);
 		assertTrue(v instanceof TextView);
@@ -77,7 +75,6 @@ public class ProfileActivityTest extends
 		assertTrue(v instanceof TextView);
 		tv = (TextView) v;
 		assertEquals(this.dineOnUser.getUserInfo().getPhone(),tv.getText());
-		
 		mInstrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
 		mInstrumentation.invokeMenuActionSync(mActivity, R.id.option_edit_profile, 0);		
 		this.mInstrumentation.waitForIdleSync();
@@ -104,7 +101,7 @@ public class ProfileActivityTest extends
 	 */
 	public void testOnUserInfoUpdate() {
 		assertNotNull(this.mActivity);
-		
+		this.mInstrumentation.waitForIdleSync();
 		mInstrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
 		mInstrumentation.invokeMenuActionSync(mActivity, R.id.option_edit_profile, 0);		
 		this.mInstrumentation.waitForIdleSync();

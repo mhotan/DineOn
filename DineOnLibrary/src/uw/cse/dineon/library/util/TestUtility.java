@@ -129,9 +129,10 @@ public final class TestUtility {
 	public static DineOnUser createFakeUser() {
 		// create a user
 		ParseUser user = new ParseUser();
+		user.setObjectId("_marksuser");
 		user.setUsername("testUser");
 		user.setPassword("12345");
-		user.setObjectId("_marksuser");
+		user.setEmail("testUser@testUser.com");
 		return new DineOnUser(user);
 	}
 	

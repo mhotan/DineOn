@@ -76,13 +76,6 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		mHoursLabel = (TextView) view.findViewById(R.id.label_restaurant_hours);
 		mRatingBar = (RatingBar) view.findViewById(R.id.ratingbar_restaurant);
 		mGallery = (LinearLayout) view.findViewById(R.id.gallery_restaurant_images);
-
-		View v = view.findViewById(R.id.button_user_favorites);
-		if(v != null && v instanceof ImageButton) {
-			this.determineFavorite((ImageButton) v, this.mRestaurant);
-		} else {
-			Log.d(TAG, "Favorites button not found.");
-		}
 				
 		mReqButton = (Button) view.findViewById(R.id.button_request);
 		mReqButton.setOnClickListener(this);
@@ -98,6 +91,13 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		// Update the display
 		setRestaurantForDisplay(mRestaurant);
 
+		View v = view.findViewById(R.id.button_user_favorites);
+		if(v != null && v instanceof ImageButton) {
+			this.determineFavorite((ImageButton) v, this.mRestaurant);
+		} else {
+			Log.d(TAG, "Favorites button not found.");
+		}
+		
 		return view;
 	}
 

@@ -31,13 +31,11 @@ import com.parse.ParseUser;
 public class RestaurantSelectionActivityTest extends
 		ActivityInstrumentationTestCase2<RestaurantSelectionActivity> {
 
-	private ParseUser testUser;
 	private DineOnUser dineOnUser;
 	private RestaurantSelectionActivity mActivity;
 	private RestaurantInfo testRInfo;
 	private Instrumentation mInstrumentation;
-	private DiningSession mDs;
-	private long time = 1000;
+	private long time = 5000;
 
 	public RestaurantSelectionActivityTest() {
 		super(RestaurantSelectionActivity.class);
@@ -62,18 +60,16 @@ public class RestaurantSelectionActivityTest extends
 		
 		Menu m = TestUtility.createFakeMenu();
 		rest.getInfo().addMenu(m);
-		
+			    
+	    // initilize static data
+	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setCurrentDiningSession(ds);
+	    DineOnUserApplication.setRestaurantOfInterest(rest.getInfo());
 		// Initialize activity testing parameters
 		this.setActivityInitialTouchMode(false);
 		mInstrumentation = this.getInstrumentation();
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);
-	    
-	    // initilize static data
-	    DineOnUserApplication.setDineOnUser(dineOnUser);
-	    DineOnUserApplication.setCurrentDiningSession(ds);
-	    DineOnUserApplication.setRestaurantOfInterest(rest.getInfo());
-	    
 		mActivity = getActivity();
 	}
 

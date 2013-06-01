@@ -93,15 +93,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 					"Unable to find your information", UserLoginActivity.class).show();
 		}
 
-//		//		this.mMenuItemMappings = new HashMap<MenuItem, CurrentOrderItem>();		
-//		this.mLocationListener = new UserLocationListener();
-//		try {
-//			this.mLocationListener.requestLocationUpdates();
-//		} catch (IllegalArgumentException ex) {
-//			// The provider doesn't exist because its emulator
-//			Toast.makeText(this, "Your running on an emulator dip shit.", 
-//					Toast.LENGTH_SHORT).show();
-//		}
 	}
 
 	@Override

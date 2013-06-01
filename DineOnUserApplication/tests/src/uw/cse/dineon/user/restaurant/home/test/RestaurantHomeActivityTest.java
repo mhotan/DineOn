@@ -118,20 +118,20 @@ public class RestaurantHomeActivityTest extends
 	 * RestaurantSelectionActivity
 	 */
 	public void testOnBackPressed() {
-		ActivityMonitor monRsa = this.mInstrumentation.addMonitor(
+		ActivityMonitor monRha = this.mInstrumentation.addMonitor(
 				RestaurantSelectionActivity.class.getName(), null, false);
 		
-		final RestaurantHomeActivity RSA = this.mActivity; 
-		RSA.runOnUiThread(new Runnable() {
+		final RestaurantHomeActivity RHA = this.mActivity; 
+		RHA.runOnUiThread(new Runnable() {
 	          public void run() {
-	        	  RSA.onBackPressed();
+	        	  RHA.onBackPressed();
 	          }
 	      });
-		mInstrumentation.waitForIdleSync();
 		
-		RestaurantSelectionActivity resSelect = (RestaurantSelectionActivity) monRsa
+		RestaurantSelectionActivity resSelect = (RestaurantSelectionActivity) monRha
 				.waitForActivityWithTimeout(time);
 		assertNotNull(resSelect);
+		resSelect.destroyProgressDialog();
 		resSelect.finish();
 	}
 	
