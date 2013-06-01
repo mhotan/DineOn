@@ -3,6 +3,7 @@ package uw.cse.dineon.restaurant.test;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Restaurant;
+import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.profile.MenuItemsFragment;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
@@ -13,13 +14,16 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.parse.LogInCallback;
 import com.parse.Parse;
+import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -34,7 +38,6 @@ public class RestaurantProfileActivityTest extends
 	private ProfileActivity mActivity;
 	private Restaurant r;
 
-	private ParseUser mUser;
 
 	private MenuItem mMenuItem;
 
@@ -66,14 +69,10 @@ public class RestaurantProfileActivityTest extends
 				"RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul",
 				"wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		setActivityInitialTouchMode(false);
-		mUser = new ParseUser();
-		mUser.setUsername(fakeUserName);
-		mUser.setPassword(fakePassword);
-
-		
+				
 		
 		// construct fake restaurant for intent
-		r = createFakeRestaurant(mUser);
+		r = TestUtility.createFakeRestaurant();
 		//TODO: Update for current address display r.getInfo().setAddr(TEST_ADDR);
 		r.getInfo().setPhone(TEST_PHONE);
 

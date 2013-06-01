@@ -3,8 +3,10 @@ package uw.cse.dineon.restaurant.test;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
+import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.jayway.android.robotium.solo.Solo;
@@ -25,6 +27,7 @@ public class RobotiumRestaurantWalkthrough extends
 	public static final String PASSWORD = "test34";
 
 	private Solo solo;
+	private Activity mActivity;
 
 	public RobotiumRestaurantWalkthrough() {
 		super(RestaurantLoginActivity.class);
@@ -33,6 +36,7 @@ public class RobotiumRestaurantWalkthrough extends
 	@Override
 	public void setUp() {
 		solo = new Solo(getInstrumentation(), getActivity());
+		mActivity = getActivity();
 
 	}
 
@@ -72,7 +76,16 @@ public class RobotiumRestaurantWalkthrough extends
 		assertNotNull(et2);
 		solo.typeText(et2, PASSWORD);
 
-		solo.clickOnButton("Log in");
+		mActivity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				((Button) mActivity.findViewById(R.id.button_login))
+						.performClick();
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		
 		solo.waitForDialogToClose(1000); // wait for login validation
 		// XXX good for waiting for logins, etc
 
@@ -89,7 +102,7 @@ public class RobotiumRestaurantWalkthrough extends
 	private void makeAccount() {
 		solo.clickOnButton("Dismiss");//dismiss "invalid credentials"
 		solo.waitForDialogToClose(500);
-		solo.clickOnActionBarItem(R.id.option_create_new_account);
+		solo.clickOnText("Create New Account");
 		// XXX ^ use this to select action bar items via their id.
 		// Type in new account info
 		EditText et = solo.getEditText("Your Restaurant Name");
@@ -107,8 +120,14 @@ public class RobotiumRestaurantWalkthrough extends
 		et = solo.getEditText("Repeat Password");
 		assertNotNull(et);
 		solo.typeText(et, PASSWORD);
-
-		solo.clickOnButton("Create New Account");
+		mActivity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				((Button) mActivity.findViewById(R.id.button_create_account))
+						.performClick();
+			}
+		});
+		getInstrumentation().waitForIdleSync();
 	}
 
 }

@@ -151,4 +151,8 @@ public final class TestUtility {
 		return new Restaurant(restUser);
 	}
 	
+	public static Restaurant createFakeRestaurant(ParseUser u) throws ParseException {
+		return createFakeRestaurant();
+	}
+	
 }
