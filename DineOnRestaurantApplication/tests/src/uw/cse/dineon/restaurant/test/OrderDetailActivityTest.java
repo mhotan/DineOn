@@ -2,20 +2,13 @@ package uw.cse.dineon.restaurant.test;
 
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.active.OrderDetailActivity;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.TouchUtils;
 import android.widget.EditText;
-import android.widget.ImageButton;
-
-import com.parse.Parse;
-import com.parse.ParseException;
 import com.parse.ParseUser;
 
 /**
@@ -32,7 +25,6 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 	private ParseUser mUser;
 	private Restaurant mRestaurant;
 	private UserInfo mUI;
-	private RestaurantInfo mRI;
 	private DiningSession mDiningSession;
 
 	public OrderDetailActivityTest() {
@@ -49,14 +41,12 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 		mUser.setUsername(fakeUserName);
 		mUser.setPassword(fakePassword);
 		
-		//mRestaurant = TestUtility.createFakeRestaurant(mUser);
-		mRI = new RestaurantInfo(mUser);
+		mRestaurant = TestUtility.createFakeRestaurant();
 		mUI = new UserInfo(mUser);
 		mRestaurant.addOrder(TestUtility.createFakeOrder(1, mUI));
 		mRestaurant.addDiningSession(mDiningSession);
 		Intent intent = new Intent(getInstrumentation().getTargetContext(),
 				OrderDetailActivity.class);
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		setActivityIntent(intent);
 		
 		DineOnRestaurantApplication.logIn(mRestaurant);
@@ -76,14 +66,16 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 	 * White box
 	 */
 	public void testEditMessageText() {
+		final EditText message = (EditText) mActivity.findViewById(
+				uw.cse.dineon.restaurant.R.id.edittext_message_block);
 		mActivity.runOnUiThread(new Runnable() {
 		    public void run() {
-				EditText message = (EditText) mActivity.findViewById(
-						uw.cse.dineon.restaurant.R.id.edittext_message_block);
+				 
 				message.requestFocus();
 				message.setText("Your order is on its way.");
 		    }
 		});
+		assertEquals("Your order is on its way.", message.getText());
 	}
 	
 	/**
@@ -105,6 +97,9 @@ ActivityInstrumentationTestCase2<OrderDetailActivity> {
 	 */
 	public void testSendShoutOut(){
 		mActivity.sendShoutOut(mUI, "Your order is on its way.");
+		//TODO No way to find without modifying toast creation
 	}
+	
+	//TODO: More tests
 	
 }

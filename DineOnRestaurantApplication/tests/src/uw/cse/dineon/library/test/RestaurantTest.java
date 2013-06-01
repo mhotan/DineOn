@@ -16,8 +16,6 @@ import uw.cse.dineon.library.UserInfo;
 import android.app.Activity;
 import android.content.Context;
 import android.test.AndroidTestCase;
-import android.util.Log;
-
 import com.parse.ParseUser;
 
 /**

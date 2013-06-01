@@ -10,8 +10,8 @@ import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
+import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.DiningSessionDetailActivity;
 import uw.cse.dineon.restaurant.active.OrderDetailActivity;
 import uw.cse.dineon.restaurant.active.RequestDetailActivity;
@@ -83,7 +83,6 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 
 		Intent intent = new Intent(getInstrumentation().getTargetContext(),
 				RestauarantMainActivity.class);
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		setActivityIntent(intent);
 		
 		DineOnRestaurantApplication.logIn(mRestaurant);
@@ -128,11 +127,13 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 			}
 		});
 		getInstrumentation().waitForIdleSync();
+		
+		final View infoButton = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_proceed);
 		mActivity.runOnUiThread(new Runnable() {
 
 			@Override
 			public void run() {
-				button.performClick();
+				infoButton.performClick();
 			}
 		});
 		
@@ -141,9 +142,14 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		
 		OrderDetailActivity startedActivity = (OrderDetailActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
+		assertNotNull(startedActivity);
+		
+		//TODO Add assertion about activity state?
 		if (startedActivity != null) {
 			startedActivity.finish();
 		}
+		
+		
 	}
 
 	/**
@@ -167,7 +173,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		
 		getInstrumentation().waitForIdleSync();
 		
-		final View button = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.label_request_title);
+		final View button = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_expand_request);
 		assertNotNull(button);
 
 		mActivity.runOnUiThread(new Runnable() {
@@ -178,11 +184,15 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 			}
 		});
 		getInstrumentation().waitForIdleSync();
+		
+		final View newActButton = mActivity.findViewById(R.id.button_proceed);
+		assertNotNull(newActButton);
+		
 		mActivity.runOnUiThread(new Runnable() {
 
 			@Override
 			public void run() {
-				button.performClick();
+				newActButton.performClick();
 			}
 		});
 		
@@ -191,13 +201,17 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		
 		RequestDetailActivity startedActivity = (RequestDetailActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
+		assertNotNull(startedActivity); //TODO Fails, can't figure out why (order page is same setup and passes)
+		//TODO test for activity state?
+		
 		if (startedActivity != null) {
 			startedActivity.finish();
 		}
+		
 	}
 	
 	/**
-	 * Tests for requests page
+	 * Tests for dining session detail page
 	 * Whitebox testing
 	 */
 	public void testDiningSessionDetailPage() {
@@ -228,11 +242,15 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 			}
 		});
 		getInstrumentation().waitForIdleSync();
+		
+		final View proButton = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_proceed);
+		assertNotNull(proButton);
+		
 		mActivity.runOnUiThread(new Runnable() {
 
 			@Override
 			public void run() {
-				button.performClick();
+				proButton.performClick();
 			}
 		});
 		
@@ -241,6 +259,9 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		
 		DiningSessionDetailActivity startedActivity = (DiningSessionDetailActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME );
+		
+		assertNotNull(startedActivity); //TODO fails
+		
 		if (startedActivity != null) {
 			startedActivity.finish();
 		}
@@ -248,7 +269,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 
 
 	/**
-	 * Tests for requests page
+	 * Tests for requests page components
 	 * Whitebox testing
 	 */
 	public void testRequestLayoutItemsPopulate() {

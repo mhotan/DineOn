@@ -13,17 +13,16 @@ import android.widget.EditText;
 import com.parse.Parse;
 import com.parse.ParseException;
 
+/**
+ * Tests the Activity for creating a new restaurant account
+ * @author Zach
+ *
+ */
 public class CreateRestaurantAccountTest extends
 ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 
-	private static final int WAIT_TIME = 10000;
 	private static final int WAIT_LOGIN_TIME = 500;
 	
-	private String validCreditCard = "4222222222222";
-	private String validSecurityCode = "411";
-	private String month = "12";
-	private String year = "2099";
-	private String zip = "98105";
 	private static String fakeUserName = "createRestAcctUN";
 	private static final String fakePassword = "createRestAcctFakePassword";
 	private static final String fakeEmail = "createRestAcct@yourmomhouse.com";
@@ -34,11 +33,6 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	private EditText passwordrepeat;
 	private EditText email;
 	private Button submit;
-	private EditText creditCard;
-	private EditText securityCode;
-	private EditText expMonth;
-	private EditText expYear;
-	private EditText zipCode;
 	
 	public CreateRestaurantAccountTest() throws ParseException {
 		super(CreateNewRestaurantAccountActivity.class);
@@ -75,26 +69,6 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				current.findViewById(
 						uw.cse.dineon.restaurant.R.id.input_createnewaccount_email);
 		
-		creditCard = (EditText) 
-				current.findViewById(
-						uw.cse.dineon.restaurant.R.id.input_credit_card_number);
-		
-		securityCode = (EditText) 
-				current.findViewById(
-						uw.cse.dineon.restaurant.R.id.input_security_code);
-		
-		expMonth = (EditText) 
-				current.findViewById(
-						uw.cse.dineon.restaurant.R.id.input_expiration_month);
-		
-		expYear = (EditText) 
-				current.findViewById(
-						uw.cse.dineon.restaurant.R.id.input_expiration_year);
-		
-		zipCode = (EditText) 
-				current.findViewById(
-						uw.cse.dineon.restaurant.R.id.input_zip_code);
-		
 		submit = (Button) current.findViewById(
 				uw.cse.dineon.restaurant.R.id.button_create_account);
 	}
@@ -119,7 +93,7 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	/**
 	 * Asserts that a user correctly creates an account
 	 * with valid credentials.
-	 * Commented out because it requires a network call
+	 *TODO Commented out because it requires a network call
 	 * 
 	 * Black-box
 	 */
@@ -188,11 +162,6 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				password.setText(fakePassword);
 				passwordrepeat.setText(fakePassword);
 				email.setText(fakeEmail);
-				creditCard.setText(validCreditCard);
-				securityCode.setText(validSecurityCode);
-				expMonth.setText(month);
-				expYear.setText(year);
-				zipCode.setText(zip);
 				submit.requestFocus();
 				submit.performClick();
 			} // end of run() method definition
@@ -200,6 +169,7 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
+		//TODO test that correct dialog appears 
 	}
 	
 	/**
@@ -216,11 +186,6 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				username.setText(fakeUserName);
 				password.setText(fakePassword);
 				passwordrepeat.setText(fakePassword);
-				creditCard.setText(validCreditCard);
-				securityCode.setText(validSecurityCode);
-				expMonth.setText(month);
-				expYear.setText(year);
-				zipCode.setText(zip);
 				submit.requestFocus();
 				submit.performClick();
 			} // end of run() method definition
@@ -244,11 +209,6 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				username.setText(fakeUserName);
 				email.setText(fakeEmail);
 				password.setText(null);
-				creditCard.setText(validCreditCard);
-				securityCode.setText(validSecurityCode);
-				expMonth.setText(month);
-				expYear.setText(year);
-				zipCode.setText(zip);
 				submit.requestFocus();
 				submit.performClick();
 			} // end of run() method definition
@@ -273,11 +233,6 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				email.setText(fakeEmail);
 				password.setText(fakePassword);
 				passwordrepeat.setText("lolz");
-				creditCard.setText(validCreditCard);
-				securityCode.setText(validSecurityCode);
-				expMonth.setText(month);
-				expYear.setText(year);
-				zipCode.setText(zip);
 				submit.requestFocus();
 				submit.performClick();
 			} // end of run() method definition

@@ -3,7 +3,6 @@ package uw.cse.dineon.restaurant.test;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.profile.MenuItemsFragment;
 import uw.cse.dineon.restaurant.profile.ProfileActivity;
@@ -42,8 +41,9 @@ public class RestaurantProfileActivityTest extends
 	private Menu testMenu;
 	
 	View mView;
+	protected static final int RESTAURANT_INFO = 0;
 
-	private static final String TEST_ADDR = "5513";
+	//private static final String TEST_ADDR = "5513";
 	private static final String TEST_PHONE = "555-1234";
 
 	private static final String TEST_MENU_TITLE = "Test Menu 17";
@@ -74,7 +74,7 @@ public class RestaurantProfileActivityTest extends
 		
 		// construct fake restaurant for intent
 		r = createFakeRestaurant(mUser);
-		//r.getInfo().setAddr(TEST_ADDR);
+		//TODO: Update for current address display r.getInfo().setAddr(TEST_ADDR);
 		r.getInfo().setPhone(TEST_PHONE);
 
 		testMenu = new Menu(TEST_MENU_TITLE);
@@ -85,7 +85,6 @@ public class RestaurantProfileActivityTest extends
 		DineOnRestaurantApplication.logIn(r);
 		
 		Intent intent = new Intent(getInstrumentation().getTargetContext(), ProfileActivity.class);
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, r);
 		setActivityIntent(intent);
 
 		
@@ -111,13 +110,13 @@ public class RestaurantProfileActivityTest extends
 		mActivity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() { // TODO set all these 0/1 to constants.
-				mActivity.getActionBar().setSelectedNavigationItem(0);
+				mActivity.getActionBar().setSelectedNavigationItem(RESTAURANT_INFO);
 			}
 		});
 		getInstrumentation().waitForIdleSync();
 		Fragment frag = mActivity.getSupportFragmentManager().findFragmentByTag(
 				ProfileActivity.LAST_FRAG_TAG);
-		assertEquals(RestaurantInfoFragment.class, frag.getClass());
+		assertEquals(RestaurantInfoFragment.class, frag.getClass()); //displaying info fragment
 		mActivity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -127,7 +126,7 @@ public class RestaurantProfileActivityTest extends
 		getInstrumentation().waitForIdleSync();
 		frag = mActivity.getSupportFragmentManager().findFragmentByTag(
 				ProfileActivity.LAST_FRAG_TAG);
-		assertEquals(MenuItemsFragment.class, frag.getClass());
+		assertEquals(MenuItemsFragment.class, frag.getClass()); //displaying menu fragment
 	}
 
 	/**
@@ -170,14 +169,13 @@ public class RestaurantProfileActivityTest extends
 			}
 		});
 		getInstrumentation().waitForIdleSync();
-/*		Not working as of Mikes profile refactor: 05/30/13 10:14PM	*/ 		
-//		String address = ((TextView) mActivity
-//				.findViewById(uw.cse.dineon.restaurant.R.id.edittext_restaurant_address)).getText()
-//				.toString();
+		//TODO: Correct address getter String address = ((TextView) mActivity
+		//		.findViewById(uw.cse.dineon.restaurant.R.id.edittext_restaurant_address)).getText()
+		//		.toString();
 		String phone = ((TextView) mActivity
 				.findViewById(uw.cse.dineon.restaurant.R.id.edittext_restaurant_phone)).getText()
 				.toString();
-//		assertEquals(TEST_ADDR, address);
+		//assertEquals(TEST_ADDR, address);
 		assertEquals(TEST_PHONE, phone);
 	}
 

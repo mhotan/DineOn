@@ -5,22 +5,17 @@ import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.active.RequestDetailActivity;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.parse.Parse;
-import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class RequestDetailActivityTest extends
 ActivityInstrumentationTestCase2<RequestDetailActivity> {
 
-	private static final String fakeUserName = "createRestaurantFakeUserName";
-	private static final String fakePassword = "createRestaurantFakePassword";
 	private static final String fakeEmail = "fakeemail@yourmomhouse.com";
 	private RequestDetailActivity mActivity;
 	private ParseUser mUser;
@@ -41,7 +36,7 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 		mUser = new ParseUser();
 		mUser.setEmail(fakeEmail);
 	
-		//mRestaurant = TestUtility.createFakeRestaurant(mUser);
+		mRestaurant = TestUtility.createFakeRestaurant();
 		mUI = new UserInfo(mUser);
 		mRequest = TestUtility.createFakeRequest(mUI);
 		mDiningSession = TestUtility.createFakeDiningSession(mUI, mRI);
@@ -49,7 +44,6 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 		mRestaurant.addCustomerRequest(mRequest);
 		Intent intent = new Intent(getInstrumentation().getTargetContext(),
 				RequestDetailActivity.class);
-		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
 		setActivityIntent(intent);
 		
 		DineOnRestaurantApplication.logIn(mRestaurant);
@@ -82,6 +76,7 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 	 */
 	public void testOnSendRequestToStaff(){
 		mActivity.onSendTaskToStaff(mRequest, "Marty", "");
+		assertEquals("Marty", mRequest.getWaiter());
 	}
 	
 	/**
@@ -91,6 +86,9 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 	 */
 	public void testSendShoutOut(){
 		mActivity.sendShoutOut(mUI, "Your order is on its way.");
+		//TODO Need to modify toast creation to assert here
 	}
+	
+	//TODO: More tests
 	
 }

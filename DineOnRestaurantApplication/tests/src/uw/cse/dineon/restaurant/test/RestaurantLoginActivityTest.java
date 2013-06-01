@@ -1,6 +1,5 @@
 package uw.cse.dineon.restaurant.test;
 
-import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.LoginFragment;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
@@ -61,7 +60,7 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		mUser.setPassword(fakePassword);
 		
 		// Have to create the restaurant for this user
-		Restaurant mRestaurant = new Restaurant(mUser);
+		//Restaurant mRestaurant = new Restaurant(mUser);
 	}
 	
 	
@@ -110,12 +109,14 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 //		
 //		RestauarantMainActivity mainAct = (RestauarantMainActivity) 
 //				mMonitor.waitForActivityWithTimeout(WAIT_TIME);
-//		assertNotNull(mainAct);
+//		TODO assertNotNull(mainAct);
 //		mainAct.finish();
 	}
 	
 	/**
 	 * Asserts that a user can't log in without a username.
+	 * 
+	 * Black box
 	 */
 	public void testLoginNoUsernameFailure() {
 		ActivityMonitor monitor = getInstrumentation().addMonitor(
@@ -130,6 +131,7 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
+		//TODO Assert correct dialog displayed
 	}
 	
 	/**
@@ -148,6 +150,7 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
+		//TODO
 	}
 	
 }

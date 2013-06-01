@@ -4,19 +4,18 @@ import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.active.DiningSessionDetailActivity;
-import uw.cse.dineon.restaurant.active.OrderDetailActivity;
-import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
-import android.widget.EditText;
-
 import com.parse.Parse;
-import com.parse.ParseException;
 import com.parse.ParseUser;
 
+/**
+ * 
+ * Tests the Activity which displays dining session details
+ *
+ */
 public class DiningSessionDetailActivityTest extends
 ActivityInstrumentationTestCase2<DiningSessionDetailActivity> {
 
@@ -49,7 +48,7 @@ ActivityInstrumentationTestCase2<DiningSessionDetailActivity> {
 		mRI = new RestaurantInfo(mUser);
 		mUI = new UserInfo(mUser);
 		mDiningSession = TestUtility.createFakeDiningSession(mUI, mRI);
-		//mRestaurant = TestUtility.createFakeRestaurant(mUser);
+		mRestaurant = TestUtility.createFakeRestaurant();
 		mRestaurant.addDiningSession(mDiningSession);
 
 
@@ -84,6 +83,9 @@ ActivityInstrumentationTestCase2<DiningSessionDetailActivity> {
 	 */
 	public void testSetDiningSession(){
 		mActivity.sendShoutOut(mUI, "Wazzup home slice???");
+		//TODO: Only way to check toast is adding a boolean or something in toast creation
 	}
+	
+	//TODO: More Tests
 	
 }
