@@ -87,8 +87,6 @@ public class MenuItemDetailFragment extends Fragment {
 			public void onImageReceived(Exception e, Bitmap b) {
 				if (e == null) {
 					IMAGEVIEW.setImageBitmap(b);
-				} else {
-					IMAGEVIEW.setVisibility(View.GONE);
 				}
 			}
 		});

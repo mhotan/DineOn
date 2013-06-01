@@ -5,14 +5,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ImageButton
+    <Button
         android:id="@+id/button_proceed"
+        style="@style/DineOnBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@null"
-        android:gravity="center"
-        android:src="@drawable/moreinfo" />
-    
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:drawableRight="@drawable/taninfoarrow"
+        android:text="More Info" />
+
     <TextView
         android:id="@+id/label_user_order_header"
         style="@style/DineOnHeadingBackground"
@@ -21,7 +23,7 @@
         android:gravity="center"
         android:text="@string/label_orders"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-    
+
     <TextView
         android:id="@+id/label_user_orders"
         android:layout_width="match_parent"

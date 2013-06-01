@@ -293,6 +293,8 @@ public class SubMenuFragment extends ListFragment {
 							}
 						}
 					});
+				} else {
+					mImage.setVisibility(View.VISIBLE);
 				}
 
 				mBottom.setVisibility(View.GONE);

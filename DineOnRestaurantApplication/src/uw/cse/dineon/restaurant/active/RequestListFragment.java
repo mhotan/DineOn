@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -248,7 +249,7 @@ public class RequestListFragment extends ListFragment {
 
 			private final CustomerRequest mRequest;
 			private final ImageView mExpandDown;
-			private final ImageButton mPickRequest;
+			private final Button mPickRequest;
 			private final Spinner mSpinner;
 			private final View mTop, mBottom;
 
@@ -273,7 +274,7 @@ public class RequestListFragment extends ListFragment {
 				mExpandDown = (ImageView) 
 						mTop.findViewById(R.id.button_expand_request);
 				TextView time = (TextView) mTop.findViewById(R.id.label_request_time);
-				mPickRequest = (ImageButton) mBottom.findViewById(R.id.button_proceed);	
+				mPickRequest = (Button) mBottom.findViewById(R.id.button_proceed);	
 
 				// Get a reference to all the bottom pieces
 				ImageButton assignStaffButton = (ImageButton) 

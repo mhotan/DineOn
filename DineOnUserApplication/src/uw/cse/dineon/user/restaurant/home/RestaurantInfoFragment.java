@@ -57,6 +57,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	private RatingBar mRatingBar;
 	private LinearLayout mGallery;
 	private Button mReqButton;
+	private ImageView mDefaultImage;
 
 	@Override
 	public void onCreate(Bundle onSavedInstance) {
@@ -80,6 +81,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		mHoursLabel = (TextView) view.findViewById(R.id.label_restaurant_hours);
 		mRatingBar = (RatingBar) view.findViewById(R.id.ratingbar_restaurant);
 		mGallery = (LinearLayout) view.findViewById(R.id.gallery_restaurant_images);
+		mDefaultImage = (ImageView) view.findViewById(R.id.image_restaurant_placeholder);
 				
 		mReqButton = (Button) view.findViewById(R.id.button_request);
 		mReqButton.setOnClickListener(this);
@@ -155,6 +157,12 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 					CONTAINER.invalidate();
 				}
 			});
+			
+			if(images.size() != 0) {
+				mDefaultImage.setVisibility(View.GONE);
+			} else {
+				mDefaultImage.setVisibility(View.VISIBLE);
+			}
 		}
 	}
 

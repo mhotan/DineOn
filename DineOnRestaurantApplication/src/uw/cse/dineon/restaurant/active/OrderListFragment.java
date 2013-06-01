@@ -252,7 +252,7 @@ public class OrderListFragment extends ListFragment {
 
 			private final Order mOrder;
 			private final ImageView mExpandDown;
-			private final ImageButton mPickOrder;
+			private final Button mPickOrder;
 			private final View mTop, mBottom;
 
 			/**
@@ -276,7 +276,7 @@ public class OrderListFragment extends ListFragment {
 				mExpandDown = (ImageView) 
 						mTop.findViewById(R.id.button_expand_order);
 				TextView time = (TextView) mTop.findViewById(R.id.label_order_time);
-				mPickOrder = (ImageButton) mBottom.findViewById(R.id.button_proceed);	
+				mPickOrder = (Button) mBottom.findViewById(R.id.button_proceed);	
 				
 				// Get a reference to all the bottom pieces
 				Button buttonCompleteOrder = (Button) 
@@ -344,7 +344,9 @@ public class OrderListFragment extends ListFragment {
 
 				} else if (v.getId() == R.id.button_completed_order) {
 					completeOrder(mOrder);
-				} else if (v == mPickOrder) {
+				}
+				
+				if (v == mPickOrder) {
 					mListener.onOrderSelected(mOrder);
 				}
 			}

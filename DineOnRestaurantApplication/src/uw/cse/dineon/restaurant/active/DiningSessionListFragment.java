@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -190,7 +190,7 @@ public class DiningSessionListFragment extends ListFragment {
 
 			private final DiningSession mDiningSession;
 			private final ImageView mExpandDown;
-			private final ImageButton mPickSession;
+			private final Button mPickSession;
 			private final View mTop, mBottom;
 
 			/**
@@ -213,7 +213,7 @@ public class DiningSessionListFragment extends ListFragment {
 				TextView dateText = (TextView) mTop.findViewById(R.id.label_checkin_time);
 				mExpandDown = (ImageView) 
 						mTop.findViewById(R.id.button_expand_user);
-				mPickSession = (ImageButton) mBottom.findViewById(R.id.button_proceed);	
+				mPickSession = (Button) mBottom.findViewById(R.id.button_proceed);	
 
 				// Get a reference to all the bottom pieces
 				TextView orderHeader = (TextView) 

@@ -12,7 +12,7 @@
         android:layout_height="100dp"
         android:contentDescription="@string/menu_item_pic"
         android:scaleType="centerCrop"
-        android:src="@drawable/menu_image_placeholder" />
+        android:src="@drawable/placeholdermenuitem" />
 
     <LinearLayout
         android:layout_width="match_parent"

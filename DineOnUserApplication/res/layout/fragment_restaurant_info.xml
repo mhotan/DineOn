@@ -29,12 +29,23 @@
             android:layout_gravity="center"
             android:numStars="5"
             android:stepSize="0.5" />
-
+        
+        <ImageView
+            android:id="@+id/image_restaurant_placeholder"
+            android:layout_width="fill_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/image_menu_item"
+            android:scaleType="centerInside"
+            android:src="@drawable/restaurant_photo_placeholder" />
+        
         <HorizontalScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
+            
+            
             <LinearLayout
                 android:id="@+id/gallery_restaurant_images"
                 android:layout_width="wrap_content"

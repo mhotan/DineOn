@@ -5,13 +5,15 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <ImageButton
+    <Button
         android:id="@+id/button_proceed"
+        style="@style/DineOnBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@null"
-        android:gravity="center"
-        android:src="@drawable/moreinfo" />
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:drawableRight="@drawable/taninfoarrow"
+        android:text="More Info" />
     
     <LinearLayout
         android:id="@+id/listitem_request_bot"
@@ -50,7 +52,7 @@
             android:layout_gravity="center_vertical"
             android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/button_remove_request"
-            android:src="@drawable/remove" />
+            android:src="@drawable/discard_content" />
     </LinearLayout>
 
 </LinearLayout>
