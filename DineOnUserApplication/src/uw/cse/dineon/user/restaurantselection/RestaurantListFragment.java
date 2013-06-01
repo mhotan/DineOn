@@ -190,7 +190,8 @@ public class RestaurantListFragment extends ListFragment {
 		private class RestaurantHandler implements OnClickListener {
 
 			private final RestaurantInfo mInfo;
-			private final ImageButton mExpandDownButton, mPickRestaurant;
+			private final ImageView mExpandDown;
+			private final ImageButton mPickRestaurant;
 			private final View mTop, mBottom;
 			
 			/**
@@ -211,7 +212,7 @@ public class RestaurantListFragment extends ListFragment {
 						mTop.findViewById(R.id.image_restaurant_thumbnail);
 				TextView restaurantNameView = (TextView) 
 						mTop.findViewById(R.id.label_restaurant_title);
-				mExpandDownButton = (ImageButton) 
+				mExpandDown = (ImageView) 
 						mTop.findViewById(R.id.button_expand_down);
 				
 				// Get a reference to all the bottom pieces
@@ -262,9 +263,9 @@ public class RestaurantListFragment extends ListFragment {
 					// Expand the bottom view if it is not shown
 					// Hide the expand down button.
 					if (bottomVisibility == View.GONE) {
-						mExpandDownButton.setVisibility(View.GONE);
+						mExpandDown.setVisibility(View.GONE);
 					} else if (bottomVisibility == View.VISIBLE) {
-						mExpandDownButton.setVisibility(View.VISIBLE);
+						mExpandDown.setVisibility(View.VISIBLE);
 					}
 					
 					// Expand the animation
