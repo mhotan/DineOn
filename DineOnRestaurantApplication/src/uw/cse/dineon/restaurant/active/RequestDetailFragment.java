@@ -2,6 +2,7 @@ package uw.cse.dineon.restaurant.active;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import uw.cse.dineon.library.CustomerRequest;
@@ -49,6 +50,7 @@ implements OnCheckedChangeListener, OnClickListener {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mRequest = mListener.getRequest();
+		updateState();
 	}
 	
 	@Override
@@ -63,11 +65,12 @@ implements OnCheckedChangeListener, OnClickListener {
 		mTimeTaken = (TextView) view.findViewById(R.id.label_request_time);
 
 		// TODO Add staff members implementation
-		ArrayList<String> staff = new ArrayList<String>();
-		staff.add("Bert");
-		staff.add("Ernie");
-		staff.add("Big Bird");
-		staff.add("Elmo");
+		String[] employees = getActivity().getResources().
+				getStringArray(R.array.default_employees);
+		List<String> staff = new ArrayList<String>();
+		for (String e: employees) {
+			staff.add(e);
+		}
 		mStaffAdapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, staff);
 		mStaffList = (Spinner) view.findViewById(R.id.spinner_staff);
@@ -97,8 +100,6 @@ implements OnCheckedChangeListener, OnClickListener {
 
 		mSendMessage.setOnClickListener(this);
 		mSendTask.setOnClickListener(this);
-
-		updateState();
 
 		return view;
 	}

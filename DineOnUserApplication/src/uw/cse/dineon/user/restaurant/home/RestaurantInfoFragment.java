@@ -114,7 +114,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		this.mRestaurant = restaurant;
 
 		mRestNameLabel.setText(mRestaurant.getName());
-		mAddressLabel.setText(mRestaurant.getAddr().toString());
+		mAddressLabel.setText(mRestaurant.getReadableAddress());
 		mHoursLabel.setText(mRestaurant.getHours());
 		
 		// TODO Fix this so it is not random.

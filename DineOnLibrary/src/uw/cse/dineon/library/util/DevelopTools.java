@@ -13,9 +13,6 @@ import android.content.DialogInterface.OnClickListener;
  */
 public final class DevelopTools {
 
-	private static String[] MENUITEMS_V1 = {
-		"Candy", "Cookies", "Monkey Brains", "Sugar Cubes", "Dough Balls"};
-
 	/**
 	 * No Instantiation.
 	 */
@@ -45,25 +42,9 @@ public final class DevelopTools {
 		// set title
 		alertDialogBuilder.setTitle("DARN! Not Implemented");
 		alertDialogBuilder.setMessage("This feature is still being built. "
-				+ "Sorry, but we are working on it!");
+				+ "Sorry, but we are still working on it.");
 		alertDialogBuilder.setPositiveButton("OK", listener);
 		return alertDialogBuilder.create();
 	}
-
-//	/**
-//	 * Returns a defaulted Restaurant instance.
-//	 * 
-//	 * @param me ParseUser to get own restaurant for
-//	 * @return me to use for testing
-//	 */
-//	public static Restaurant getYourOwnRestaurant(ParseUser me) {
-//		Restaurant rest = null;
-//		try {
-//			rest = new Restaurant(me);
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
-//		return rest;
-//	}
 
 }

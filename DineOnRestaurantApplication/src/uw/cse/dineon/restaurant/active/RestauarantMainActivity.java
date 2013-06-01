@@ -143,9 +143,6 @@ RequestDetailListener {
 		super.removeCustomerRequest(request);
 	}
 
-
-
-
 	//////////////////////////////////////////////////////////////////////
 	////	Listener for OrderDetailFragment.OrderDetailListener
 	////	For Fragment call backs  
@@ -188,7 +185,7 @@ RequestDetailListener {
 
 		// We must assign 
 		mRestaurant.setTempOrder(order);
-		displayOrStartActivity(new OrderDetailFragment(), RequestDetailActivity.class);
+		displayOrStartActivity(new OrderDetailFragment(), OrderDetailActivity.class);
 	}
 
 	@Override
@@ -345,7 +342,8 @@ RequestDetailListener {
 				Log.wtf(TAG, "ScreenSlidePagerAdapter weird index requested: " + position);
 				return null;
 			}
-			return (mFragments[position] = f);
+			mFragments[position] = f;
+			return mFragments[position];
 		}
 
 		@Override

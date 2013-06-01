@@ -1,5 +1,6 @@
 package uw.cse.dineon.restaurant;
 
+import java.util.Collection;
 import java.util.List;
 
 import uw.cse.dineon.library.CustomerRequest;
@@ -165,11 +166,23 @@ implements SateliteListener {
 	}
 
 	/**
-	 * Adds a dining session to the restaurant.
+	 * Removes dining session from restaurant.
 	 * @param session Dining Session to add
 	 */
 	protected void removeDiningSession(DiningSession session) {
+		
+		// We have to iterate through all the orders pertaining to
+		// this dining session and remove it from the pending list
+		removeCustomerRequests(session.getRequests());
+		
+		// Cancel any pending orders for the restaurant.
+		for (Order pendingOrder: session.getOrders()) {
+			mRestaurant.cancelPendingOrder(pendingOrder);
+		}		
+		
+		// Finally remove the diningsession
 		mRestaurant.removeDiningSession(session);
+		session.deleteFromCloud();
 		mRestaurant.saveInBackGround(null);
 	}
 	
@@ -217,9 +230,24 @@ implements SateliteListener {
 		mRestaurant.addCustomerRequest(request);
 		mRestaurant.saveInBackGround(null);
 	}
+	
+	/**
+	 * Attempts to remove the requests from the restaurant.
+	 * @param requests Requests to remove from Restaurant
+	 */
+	private void removeCustomerRequests(Collection<CustomerRequest> requests) {
+		for (CustomerRequest request: requests) {
+			mRestaurant.removeCustomerRequest(request);
+		}
+		mRestaurant.saveInBackGround(null);
+	}
 
 	/**
 	 * Removes the request from the restaurant pending request record.
+	 * 
+	 * Any class that overrides this method should call super.removeCustomerRequest
+	 * at the end of the function block.
+	 * 
 	 * @param request Request to delete.
 	 */
 	protected void removeCustomerRequest(CustomerRequest request) {

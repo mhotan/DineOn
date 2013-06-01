@@ -54,7 +54,7 @@ public class DiningSessionDetailFragment extends Fragment {
 	 */
 	private UserListAdapter mUserAdapter;
 	private OrderListAdapter mOrderAdapter;
-	
+
 	/**
 	 * Independent list views for this view.
 	 */
@@ -66,8 +66,10 @@ public class DiningSessionDetailFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mDiningSession = mListener.getDiningSession();
+		// Update the state
+		update();
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -79,9 +81,7 @@ public class DiningSessionDetailFragment extends Fragment {
 		mOrderList = (ListView) view.findViewById(R.id.list_view_orders);
 		mUserList = (ListView) view.findViewById(R.id.list_view_users);
 		mOrderHeader = (TextView) view.findViewById(R.id.label_user_orders);
-		
-		// Update the state
-		update();
+
 		return view;
 	}
 
@@ -95,7 +95,7 @@ public class DiningSessionDetailFragment extends Fragment {
 					+ " must implement DiningSessionDetailFragment.DiningSessionDetailListener");
 		}
 	}
-	
+
 
 	/**
 	 * This is a call the signifies the fragment to update its
@@ -112,13 +112,13 @@ public class DiningSessionDetailFragment extends Fragment {
 			ab.setTitle("Table " + mDiningSession.getTableID());
 			mUserAdapter = new UserListAdapter(getActivity(), mDiningSession.getUsers());
 			mOrderAdapter = new OrderListAdapter(getActivity(), mDiningSession.getOrders());
-			
+
 			if(mDiningSession.getOrders().size() == 0) {
 				mOrderHeader.setVisibility(View.GONE);
 			} else {
 				mOrderHeader.setVisibility(View.VISIBLE);
 			}
-			
+
 			mUserList.setAdapter(mUserAdapter);
 			mOrderList.setAdapter(mOrderAdapter);
 			mUserAdapter.notifyDataSetChanged();
@@ -184,7 +184,7 @@ public class DiningSessionDetailFragment extends Fragment {
 		 * @return The current dining session.
 		 */
 		DiningSession getDiningSession();
-		
+
 	}
 
 	//////////////////////////////////////////////////////
@@ -360,7 +360,7 @@ public class DiningSessionDetailFragment extends Fragment {
 				List<CurrentOrderItem> items = mOrder.getMenuItems();
 				//Displays menu items as a string
 				StringBuffer buf = new StringBuffer();
-				
+
 				mOrderTime.setText(mOrder.getOriginatingTime().toString());
 				for (CurrentOrderItem item : items) {
 					MenuItem mI = item.getMenuItem();
@@ -370,7 +370,7 @@ public class DiningSessionDetailFragment extends Fragment {
 				if(items.size() != 0) {
 					buf.delete(buf.length() - 2, buf.length());
 				}
-				
+
 				mOrderContents.setText(buf.toString());
 
 			}

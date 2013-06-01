@@ -46,6 +46,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mOrder = mListener.getOrder();
+		// Get the order and produce the display
+		updateState();
 	}
 	
 	@Override
@@ -67,8 +69,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		mSendMessageButton.setOnClickListener(this);
 		mItemList = (ListView) view.findViewById(R.id.list_order);
 		
-		// Get the order and produce the display
-		updateState();
+
 		return view;
 	}
 

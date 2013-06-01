@@ -236,6 +236,14 @@ public class Restaurant extends Storable {
 			mPastOrders.add(order);
 		}
 	}
+	
+	/**
+	 * Cancels current order if it exists.
+	 * @param order Order to cancel.
+	 */
+	public void cancelPendingOrder(Order order) {
+		mPendingOrders.remove(order);
+	}
 
 	/**
 	 * Adds a pending order to a restaurant.

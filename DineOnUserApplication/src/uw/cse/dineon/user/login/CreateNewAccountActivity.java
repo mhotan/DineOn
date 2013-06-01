@@ -31,10 +31,6 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 
 	public static final String TAG = CreateNewAccountActivity.class.getSimpleName();
 
-	private boolean mLoginWithFacebook = false;
-
-	private Context thisActivity;
-	
 	private AlertDialog failDialog;
 
 
@@ -42,8 +38,6 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_account);
-
-		thisActivity = this;
 	}
 
 	/**
@@ -75,19 +69,6 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 		else {
 			showFailAlertDialog(completeRes.getMessage());
 		}
-	}
-
-	@Override
-	public void onLoginWithFacebook() {
-		// TODO Later phase
-		mLoginWithFacebook = true;
-		finish();
-	}
-
-	@Override
-	public void onLoginWithTwitter() {
-		// TODO Later phase
-		DevelopTools.getUnimplementedDialog(this, null);		
 	}
 
 	/**
@@ -137,17 +118,17 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 	
 	/**
 	 * Gets the savecallback for the given user.
-	 * @param USER being saved
+	 * @param user being saved
 	 * @return the callback object
 	 */
-	public SaveCallback getSaveCallback(final DineOnUser USER) {
+	public SaveCallback getSaveCallback(final DineOnUser user) {
 		return new SaveCallback() {
 
 			@Override
 			public void done(ParseException e) {
 				if (e == null) {
 					// Success
-					onSuccess(USER);
+					onSuccess(user);
 				} else {
 					showFailAlertDialog(e.getMessage());
 				}
@@ -166,9 +147,14 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 		
 		DineOnUserApplication.setDineOnUser(dou);
 		Intent intent = 
-				new Intent(thisActivity,
-						RestaurantSelectionActivity.class);
+				new Intent(this, RestaurantSelectionActivity.class);
 		startActivity(intent);
+	}
+
+	@Override
+	public void onLoginWithFacebook() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

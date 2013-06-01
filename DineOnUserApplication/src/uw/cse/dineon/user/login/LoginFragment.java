@@ -140,10 +140,6 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 		 */
 		void onLoginWithFacebook();
 		
-		/**
-		 * User request to login with twitter.
-		 */
-		void onLoginWithTwitter();
 	}
 
 }

@@ -75,8 +75,6 @@ public class CreateNewAccountFragment extends Fragment {
 		String password = mPassword.getText().toString();
 		String passwordRepeat = mPasswordRepeat.getText().toString();
 		
-		// TODO Probably can check here fir snakk
-		// TODO Check password
 		mListener.onCreateNewAccount(username, email, password, passwordRepeat);
 	}
 
@@ -101,10 +99,6 @@ public class CreateNewAccountFragment extends Fragment {
 		 */
 		void onLoginWithFacebook();
 		
-		/**
-		 * User decides he or she rather login via Twitter.
-		 */
-		void onLoginWithTwitter();
 	}
 
 }

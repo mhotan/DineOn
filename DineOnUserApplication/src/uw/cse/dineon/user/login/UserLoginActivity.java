@@ -1,10 +1,12 @@
 package uw.cse.dineon.user.login;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
-import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.DineOnUserApplication;
@@ -18,8 +20,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -46,8 +53,7 @@ LoginFragment.OnLoginListener {
 	private static final String TAG = UserLoginActivity.class.getSimpleName();
 
 	// Request code to create a new account
-	private static final int REQUEST_CREATE_NEW_ACCOUNT = 0x1;
-	private static final int REQUEST_LOGIN_FACEBOOK = 0x2;
+	private static final int REQUEST_LOGIN_FACEBOOK = 0x1;
 
 	public static final String EXTRA_FACEBOOK = "Login with facebook";
 
@@ -73,6 +79,22 @@ LoginFragment.OnLoginListener {
 		setContentView(R.layout.activity_login);
 		mLoginCallback = new DineOnLoginCallback(this);
 		thisCxt = this;
+		
+		// Add code to print out the key hash
+	    try {
+	        PackageInfo info = getPackageManager().getPackageInfo(
+	                "uw.cse.dineon.user", 
+	                PackageManager.GET_SIGNATURES);
+	        for (Signature signature : info.signatures) {
+	            MessageDigest md = MessageDigest.getInstance("SHA");
+	            md.update(signature.toByteArray());
+	            Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+	            }
+	    } catch (NameNotFoundException e) {
+
+	    } catch (NoSuchAlgorithmException e) {
+
+	    }
 	}
 	
 	/**
@@ -92,16 +114,7 @@ LoginFragment.OnLoginListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
-		if (resultCode != RESULT_OK) {
-			return;
-		}
-
-		// User attemtped to log in with facebook but did not have the 
-		// application on their phone.  This is the result of a Web call.
-		if (requestCode == REQUEST_LOGIN_FACEBOOK) {
-			ParseFacebookUtils.finishAuthentication(requestCode, resultCode, data);
-		}
+		ParseFacebookUtils.finishAuthentication(requestCode, resultCode, data);
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -124,14 +137,6 @@ LoginFragment.OnLoginListener {
 		}
 		startActivity(i);
 		this.finish();
-	}
-	
-	/**
-	 * Starts an activity for a result to allow the user to start a new account.
-	 */
-	private void onCreateNewAccount() {
-		Intent creatAccountIntent = new Intent(this, CreateNewAccountActivity.class);
-		startActivityForResult(creatAccountIntent, REQUEST_CREATE_NEW_ACCOUNT);
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -176,13 +181,6 @@ LoginFragment.OnLoginListener {
 
 		// Process the face book application
 		ParseFacebookUtils.logIn(this, REQUEST_LOGIN_FACEBOOK, mLoginCallback);
-	}
-
-
-	@Override
-	public void onLoginWithTwitter() {
-		// TODO Auto-generated method stub
-		DevelopTools.getUnimplementedDialog(this, null).show();
 	}
 	
 	////////////////////////////////////////////////////////////////////////
