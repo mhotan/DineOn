@@ -177,7 +177,16 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_ITEM_FILTER, 0, R.string.option_filter);
-		return super.onCreateOptionsMenu(menu);
+		boolean temp = super.onCreateOptionsMenu(menu);
+		this.disableMenuItem(menu, R.id.option_check_in);
+		return temp;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		boolean temp = super.onPrepareOptionsMenu(menu);
+		this.disableMenuItem(menu, R.id.option_check_in);
+		return temp;
 	}
 
 	@Override
