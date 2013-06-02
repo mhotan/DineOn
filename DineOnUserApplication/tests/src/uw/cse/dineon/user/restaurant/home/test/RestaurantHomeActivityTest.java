@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.parse.ParseUser;
@@ -172,7 +173,7 @@ public class RestaurantHomeActivityTest extends
 	/**
 	 * Pop up alert dialog and make sure its destroyed.
 	 */
-	public void testPopUpAlertDialog() {
+	public void testCustomRequestDialog() {
 		android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
 				this.mActivity.findViewById(uw.cse.dineon.user.R.id.pager_menu_info);
 		assertNotNull(pager);
@@ -195,12 +196,19 @@ public class RestaurantHomeActivityTest extends
 		View v = this.mActivity.findViewById(R.id.button_request);
 		assertNotNull(v);
 		
-		final Button BUT = (Button)v;
+		final Spinner spinner = (Spinner) this.mActivity.findViewById(R.id.spinner_request_to_send);
 		this.mActivity.runOnUiThread(new Runnable() {
 			public void run() {
-				assertTrue(BUT.performClick());
+				spinner.setSelection(spinner.getAdapter().getCount() - 1);
 			}
 		});	
+		
+//		final Button BUT = (Button)v;
+//		this.mActivity.runOnUiThread(new Runnable() {
+//			public void run() {
+//				assertTrue(BUT.performClick());
+//			}
+//		});	
 		mInstrumentation.waitForIdleSync();
 		
 		rInfo.destroyAlertDialog();

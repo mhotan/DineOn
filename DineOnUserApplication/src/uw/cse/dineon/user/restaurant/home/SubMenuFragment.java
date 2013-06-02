@@ -226,7 +226,7 @@ public class SubMenuFragment extends ListFragment {
 			 */
 			private final MenuItem mItem;
 
-			private final View mBottom;
+			private final View mBottom, mTop;
 
 			/**
 			 * MenuItem image. 
@@ -260,6 +260,7 @@ public class SubMenuFragment extends ListFragment {
 				mItem = item;
 				// Set the animation for all transitions
 				mBottom = bottom;
+				mTop = top;
 
 				// Assign the top portions 
 				mImage = (ImageView) top.findViewById(R.id.image_menuitem);
@@ -311,18 +312,19 @@ public class SubMenuFragment extends ListFragment {
 				mMoreInfoButton.setOnClickListener(this);
 
 				mSpecialInstructions.addTextChangedListener(this);
+				mTop.setOnClickListener(this);
 			}
 
 			@Override
 			public void onClick(View v) {
 				// If the user clicks on the name or the hint
 				// Expand the view exposing more instructions.
-				if (v == mHint || v == mMenuItemName) {
-					mBottom.startAnimation(new ExpandAnimation(mBottom, 400));
-				} else if (v == mIncrementButton) {
+				if (v == mIncrementButton) {
 					incrementQty();
 				} else if (v == mDecrementButton) {
 					decrementQty();
+				} else if (v == mHint || v == mMenuItemName || v == mTop) {
+					mBottom.startAnimation(new ExpandAnimation(mBottom, 400));
 				} else if (v == mMoreInfoButton) {
 					mListener.onMenuItemFocusedOn(mItem);
 				}

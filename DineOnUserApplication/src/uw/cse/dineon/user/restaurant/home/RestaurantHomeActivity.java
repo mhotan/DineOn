@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -80,6 +81,22 @@ MenuItemDetailListener {
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		boolean temp = super.onCreateOptionsMenu(menu);
+		this.disableMenuItem(menu, R.id.option_check_in);
+		this.disableMenuItem(menu, R.id.option_search);
+		return temp;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		boolean temp = super.onPrepareOptionsMenu(menu);
+		this.disableMenuItem(menu, R.id.option_check_in);
+		this.disableMenuItem(menu, R.id.option_search);
+		return temp;
+	}
+	
 	//////////////////////////////////////////////////////////////////////
 	////   Call backs for Fragment methods
 	//////////////////////////////////////////////////////////////////////

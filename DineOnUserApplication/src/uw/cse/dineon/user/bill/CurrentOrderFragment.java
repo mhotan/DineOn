@@ -49,9 +49,9 @@ public class CurrentOrderFragment extends Fragment {
 	 * Current adapter for holding values to store on our list.
 	 */
 	private OrderArrayAdapter mAdapter;
-	
+
 	private View mListView;
-	
+
 	private NumberFormat mFormatter;
 
 	/**
@@ -80,10 +80,10 @@ public class CurrentOrderFragment extends Fragment {
 			mListener = (OrderUpdateListener) activity;
 		} else {
 			throw new ClassCastException(activity.toString()
-					+ " must implemenet CurrentOrderFragment.OrderUpdateListener");
+					+ " must implement CurrentOrderFragment.OrderUpdateListener");
 		}
 	}
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -95,7 +95,7 @@ public class CurrentOrderFragment extends Fragment {
 		mTax = (TextView) getView().findViewById(R.id.value_tax);
 		mTotal = (TextView) getView().findViewById(R.id.value_total);
 		mPlaceOrderButton = (Button) getView().findViewById(R.id.button_place_order);
-		
+
 		// Create the adapter to handles 
 		if (this.mListener != null) {
 			HashMap<MenuItem, CurrentOrderItem> orderItems = this.mListener.getOrder();
@@ -106,7 +106,11 @@ public class CurrentOrderFragment extends Fragment {
 				totalPrice += m.getPrice() * orderItems.get(m).getQuantity();
 			}
 			mAdapter = new OrderArrayAdapter(this.getActivity(), items, orderItems);
-			
+			if(totalPrice == 0.0) {
+				mPlaceOrderButton.setVisibility(View.GONE);
+			} else {
+				mPlaceOrderButton.setVisibility(View.VISIBLE);
+			}
 			mSubtotal.setText(mFormatter.format(totalPrice));
 			mTax.setText(mFormatter.format(totalPrice * DineOnConstants.TAX));
 			mTotal.setText(mFormatter.format(totalPrice * (1 + DineOnConstants.TAX)));
@@ -131,7 +135,7 @@ public class CurrentOrderFragment extends Fragment {
 	}
 
 
-	
+
 	/**
 	 * Return the subtotal for current order.
 	 * @return subtotal
@@ -149,7 +153,7 @@ public class CurrentOrderFragment extends Fragment {
 		return ((TextView) mListView.findViewById(R.id.value_tax)).
 				getText().toString();
 	}
-	
+
 	/**
 	 * Return the total for the order.
 	 * @return total
@@ -158,7 +162,7 @@ public class CurrentOrderFragment extends Fragment {
 		return ((TextView) mListView.findViewById(R.id.value_total)).
 				getText().toString();
 	}
-	
+
 	/**
 	 * Listener associated with this containing fragment.
 	 * <b>This allows any containing activity to receive
@@ -194,13 +198,13 @@ public class CurrentOrderFragment extends Fragment {
 		 * @param item Menu item to remove
 		 */
 		public void onRemoveItemFromOrder(MenuItem item);
-		
+
 		/**
 		 * Get the current items in the user's order.
 		 * @return hash map of items
 		 */
 		public HashMap<MenuItem, CurrentOrderItem> getOrder();
-		
+
 		/**
 		 * Once an order is placed clear the current order.
 		 */
@@ -230,7 +234,7 @@ public class CurrentOrderFragment extends Fragment {
 		 * List of menu items.
 		 */
 		private final List<MenuItem> mItems;
-		
+
 		private final HashMap<MenuItem, CurrentOrderItem> mOrderMapping;
 
 		/**
@@ -265,10 +269,10 @@ public class CurrentOrderFragment extends Fragment {
 			mButtonToTextView = new HashMap<Button, TextView>();
 
 			privateListener = new OnItemClickListener();
-			
+
 			mPlaceOrderButton.setOnClickListener(privateListener);
 			//mReqButton.setOnClickListener(privateListener);
-			
+
 			this.mOrderMapping = new HashMap<MenuItem, CurrentOrderItem>(orderItems);
 		}
 
@@ -295,7 +299,7 @@ public class CurrentOrderFragment extends Fragment {
 			// set the quantity
 			int itemCount = this.mOrderMapping.get(item).getQuantity();
 			itemQuantity.setText("" + itemCount);
-			
+
 			// set the label and description
 			label.setText(item.getTitle() + "\n" + item.getDescription());
 
@@ -365,7 +369,7 @@ public class CurrentOrderFragment extends Fragment {
 					break;
 				case R.id.button_delete:
 					priceChange = mAdapter.mOrderMapping.get(item).getQuantity() 
-							* item.getPrice() * -1;
+					* item.getPrice() * -1;
 					mListener.onRemoveItemFromOrder(item);
 					mAdapter.remove(item);
 					mAdapter.mOrderMapping.remove(item);
@@ -376,44 +380,49 @@ public class CurrentOrderFragment extends Fragment {
 				case R.id.label_order_item:
 					// TODO Add some way to show focus
 					break;
-					
+
 				case R.id.button_place_order:
 					// check to see if user is currently in a dining session
 					DiningSession session = DineOnUserApplication.getCurrentDiningSession();
 					if (session != null) {
-						// create and save the order
+
 						List<CurrentOrderItem> items = 
 								new ArrayList<CurrentOrderItem>(mAdapter.mOrderMapping.values());
+						if(items.size() > 0) {
+							// create and save the order
+							final Order NEW_ORDER = new Order(session.getTableID(),  
+									DineOnUserApplication.getUserInfo(), 
+									items);
 
-						final Order NEW_ORDER = new Order(session.getTableID(),  
-								DineOnUserApplication.getUserInfo(), 
-								items);
-						
-						// save the new order
-						NEW_ORDER.saveInBackGround(new SaveCallback() {
+							// save the new order
+							NEW_ORDER.saveInBackGround(new SaveCallback() {
 
-							@Override
-							public void done(ParseException e) {
-								if (e == null) {
-									// successful, send the push notification
-									mListener.onPlaceOrder(NEW_ORDER);
-									Toast.makeText((Context) mListener, "Your order was placed.", 
-											Toast.LENGTH_SHORT).show();
-									mListener.doneWithOrder();
-									
-								} else {
-									Log.d(TAG, "Couldn't save the new order: " + e.getMessage());
+								@Override
+								public void done(ParseException e) {
+									if (e == null) {
+										// successful, send the push notification
+										mListener.onPlaceOrder(NEW_ORDER);
+										Toast.makeText((Context) mListener, 
+												"Your order was placed.", 
+												Toast.LENGTH_SHORT).show();
+										mListener.doneWithOrder();
+
+									} else {
+										Log.d(TAG, "Couldn't save the new order: " 
+									+ e.getMessage());
+									}
 								}
-							}
-						});
-						
+							});
+						}
+
+
 					} else {
 						Toast.makeText((Context)mListener, "Must checkin before placing order.", 
 								Toast.LENGTH_SHORT).show();
 					}
-					
+
 					break;
-					
+
 				default:
 					break;
 				}

@@ -15,7 +15,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -60,7 +62,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	private TextView mRestNameLabel, mAddressLabel, mHoursLabel;
 	private RatingBar mRatingBar;
 	private LinearLayout mGallery;
-	private ImageButton mReqButton;
+	private ImageButton mReqButton, mPhoneButton;
 	private ImageView mDefaultImage;
 	private TextView messageHeader;
 	private Spinner mSpinner;
@@ -91,6 +93,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		mGallery = (LinearLayout) view.findViewById(R.id.gallery_restaurant_images);
 		mDefaultImage = (ImageView) view.findViewById(R.id.image_restaurant_placeholder);
 		mSpinner = (Spinner) view.findViewById(R.id.spinner_request_to_send);
+		mPhoneButton = (ImageButton) view.findViewById(R.id.button_call);
 		mCheckInButton = (ImageButton) view.findViewById(R.id.button_checkin);
 		mCheckInButton.setOnClickListener(this);
 		View checkInLine = (View) view.findViewById(R.id.checkinline);
@@ -134,20 +137,6 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		mReqButton = (ImageButton) view.findViewById(R.id.button_request);
 		mReqButton.setOnClickListener(this);
 
-		// if not in a dining session w/ this restaurant do not display
-		if(DineOnUserApplication.getCurrentDiningSession() == null 
-				|| !DineOnUserApplication.getCurrentDiningSession().
-				getRestaurantInfo().getName().equals(mRestaurant.getName())) {
-			mReqButton.setVisibility(View.GONE);
-			mSpinner.setVisibility(View.GONE);
-			messageHeader.setVisibility(View.GONE);
-
-		} else {
-			mReqButton.setVisibility(View.VISIBLE);
-			mSpinner.setVisibility(View.VISIBLE);
-			messageHeader.setVisibility(View.VISIBLE);
-		}
-
 		// Update the display
 		setRestaurantForDisplay(mRestaurant);
 
@@ -181,6 +170,35 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		mRatingBar.setNumStars(5);
 		mRatingBar.setMax(mRatingBar.getNumStars());
 		mRatingBar.setRating((float)(Math.random() * mRatingBar.getNumStars()));
+
+		// if not in a dining session w/ this restaurant do not display
+		if(DineOnUserApplication.getCurrentDiningSession() == null 
+				|| !DineOnUserApplication.getCurrentDiningSession().
+				getRestaurantInfo().getName().equals(mRestaurant.getName())) {
+			mReqButton.setVisibility(View.GONE);
+			mSpinner.setVisibility(View.GONE);
+			messageHeader.setVisibility(View.GONE);
+
+		} else {
+			mReqButton.setVisibility(View.VISIBLE);
+			mSpinner.setVisibility(View.VISIBLE);
+			messageHeader.setVisibility(View.VISIBLE);
+		}
+
+		if(mRestaurant.getPhone().equals("Unknown")) {
+			mPhoneButton.setVisibility(View.GONE);
+		} else {
+			mPhoneButton.setVisibility(View.VISIBLE);
+			mPhoneButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					String uri = "tel:" + mRestaurant.getPhone().trim();
+					Intent intent = new Intent(Intent.ACTION_CALL);
+					intent.setData(Uri.parse(uri));
+					startActivity(intent);
+				}
+			});
+		}
 
 		// Dump the current views in the gallery
 		mGallery.removeAllViews();
