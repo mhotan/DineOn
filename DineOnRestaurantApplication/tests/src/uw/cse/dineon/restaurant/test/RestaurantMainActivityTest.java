@@ -13,10 +13,13 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.DiningSessionDetailActivity;
+import uw.cse.dineon.restaurant.active.DiningSessionListFragment;
 import uw.cse.dineon.restaurant.active.OrderDetailActivity;
+import uw.cse.dineon.restaurant.active.OrderListFragment;
 import uw.cse.dineon.restaurant.active.RequestDetailActivity;
 import uw.cse.dineon.restaurant.active.RequestListFragment;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
+import uw.cse.dineon.restaurant.active.RestauarantMainActivity.ScreenSlidePagerAdapter;
 import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
@@ -24,6 +27,7 @@ import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.parse.Parse;
@@ -83,6 +87,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		mOrder = new Order(1, mUI.getUserInfo(), items);
 		mOrder.setObjId("435");
 		testSession = new DiningSession(1, mUI.getUserInfo(), mRestaurant.getInfo());
+		testSession.addPendingOrder(mOrder);
 		mRestaurant.addCustomerRequest(mRequest);
 		mRestaurant.addOrder(mOrder);
 		mRestaurant.addDiningSession(testSession);
@@ -329,7 +334,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		ActivityMonitor testMon = getInstrumentation().addMonitor(
 				OrderDetailActivity.class.getName(), null, false);
 		Activity testA = getInstrumentation().waitForMonitorWithTimeout(testMon, 4000);
-		testA.finish();
+		if(testA != null) testA.finish();
 		assertEquals(mOrder, mActivity.getOrder());
 		
 		mActivity.onOrderSelected(null);
@@ -374,6 +379,218 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	}
 	
 
+	/**
+	 * Tests that the OrderListFragment can handle add/deleting orders
+	 * 
+	 */
+	//testRequestOptions has inline comments on how test works
+	public void testOrderOptions() {
+		final android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+				mActivity.findViewById(uw.cse.dineon.restaurant.R.id.pager_restaurant_main);
+		ScreenSlidePagerAdapter adapter = (ScreenSlidePagerAdapter) pager.getAdapter();
+		assertNotNull(adapter);
+
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				pager.setCurrentItem(0); // order page
+			}
+			
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		final OrderListFragment olFrag = adapter.getCurrentOrderListFragment();
+		
+		ListAdapter lA = olFrag.getListAdapter();
+		
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				olFrag.addOrder(mOrder);
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(2, lA.getCount());
+		
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				olFrag.completeOrder(mOrder);
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(0, lA.getCount());
+		
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				ArrayList<Order> mOrders = new ArrayList<Order>();
+				mOrders.add(mOrder);
+				
+				olFrag.addAll(mOrders);
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(1, lA.getCount());
+		
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				olFrag.deleteOrder(mOrder);
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(0, lA.getCount());
+		
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				olFrag.addOrder(mOrder);
+				
+				olFrag.clearOrder();
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(0, lA.getCount());
+		
+	}
+	
+	/**
+	 * Test the ListFragment for requests by ensuring its unique methods work properly
+	 */
+	public void testRequestOptions() {
+		final android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+				mActivity.findViewById(uw.cse.dineon.restaurant.R.id.pager_restaurant_main);
+		ScreenSlidePagerAdapter adapter = (ScreenSlidePagerAdapter) pager.getAdapter();
+		assertNotNull(adapter);
+
+		//set to right tab
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				pager.setCurrentItem(1); // request page
+			}
+			
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		//get the fragment
+		final RequestListFragment lFrag = adapter.getCurrentRequestListFragment();
+		
+		//get its listadapter
+		ListAdapter lA = lFrag.getListAdapter();
+		
+		//add an item
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				lFrag.addRequest(mRequest);
+
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		//assert state
+		assertEquals(2, lA.getCount());
+		
+		//repeat for other methods
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				lFrag.deleteRequest(mRequest);
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(0, lA.getCount());
+		
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				ArrayList<CustomerRequest> mRequests = new ArrayList<CustomerRequest>();
+				mRequests.add(mRequest);
+				
+				lFrag.addAll(mRequests);
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(1, lA.getCount());
+		
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				lFrag.clearRequest();
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(0, lA.getCount());
+		
+	}
+	
+	/**
+	 * Tests that the DiningSession fragment can add and remove session correctly
+	 */
+	//testRequestOptions has inline comments on how test works
+	public void testSessionOptions() {
+		final android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+				mActivity.findViewById(uw.cse.dineon.restaurant.R.id.pager_restaurant_main);
+		ScreenSlidePagerAdapter adapter = (ScreenSlidePagerAdapter) pager.getAdapter();
+		assertNotNull(adapter);
+
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				pager.setCurrentItem(2); // session page
+			}
+			
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		final DiningSessionListFragment lFrag = adapter.getCurrentDiningSessionListFragment();
+		ListAdapter lA = lFrag.getListAdapter();
+		
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				lFrag.addDiningSession(testSession);
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(2, lA.getCount());
+		
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				lFrag.removeDiningSession(testSession);
+			}
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		assertEquals(0, lA.getCount());
+		
+	}
 	
 	
 }

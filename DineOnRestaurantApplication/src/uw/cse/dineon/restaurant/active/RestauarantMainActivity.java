@@ -335,7 +335,7 @@ RequestDetailListener {
 	 * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
 	 * sequence.
 	 */
-	private class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
+	public class ScreenSlidePagerAdapter extends FragmentPagerAdapter {
 
 		private final Fragment[] mFragments;
 

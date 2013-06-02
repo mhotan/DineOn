@@ -1,5 +1,8 @@
 package uw.cse.dineon.restaurant.test;
 
+import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.library.Restaurant;
+import uw.cse.dineon.restaurant.active.OrderDetailActivity;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.LoginFragment;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
@@ -9,6 +12,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class RestaurantLoginActivityTest extends
@@ -16,7 +20,7 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 
 	private static final int WAIT_LOGIN_TIME = 1000;
 	
-	private Activity mActivity;
+	private RestaurantLoginActivity mActivity;
 	private EditText mNameText;
 	private EditText mPassText;
 	private LoginFragment mFragment;
@@ -24,6 +28,8 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 	private static final String fakeUserName = "fakeRestaurantLoginName";
 	private static final String fakePassword = "fakeRestaurantLoginPassword";
 	private ParseUser mUser;
+
+	private ActivityMonitor mMonitor;
 
 	/**
 	 * Creates a new RestaurantLoginActivityTest.
@@ -51,7 +57,7 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		mSubmit = (Button) mActivity.findViewById(
 				uw.cse.dineon.restaurant.R.id.button_login);
 
-		getInstrumentation().addMonitor(
+		mMonitor = getInstrumentation().addMonitor(
 				RestauarantMainActivity.class.getName(), null, false);
 		
 		// Create the fake user
@@ -82,37 +88,6 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		assertNotNull(mSubmit);
 	}
 
-	/**
-	 * Asserts that a valid logged in user logs in.
-	 * Commented out because it requires network interaction
-	 */
-	public void testLoginSucess() {
-//		mActivity.runOnUiThread(new Runnable() {
-//			public void run() {
-//				mNameText.setText(fakeUserName);		
-//			} // end of run() method definition
-//		}); // end of invocation of runOnUiThread
-//
-//		
-//		mActivity.runOnUiThread(new Runnable() {
-//			public void run() {
-//				mPassText.setText(fakePassword);		
-//			} // end of run() method definition
-//		}); // end of invocation of runOnUiThread
-//		
-//		mActivity.runOnUiThread(new Runnable() {
-//			public void run() {
-//				mSubmit.requestFocus();
-//				mSubmit.performClick();		
-//			} // end of run() method definition
-//		});
-//		
-//		RestauarantMainActivity mainAct = (RestauarantMainActivity) 
-//				mMonitor.waitForActivityWithTimeout(WAIT_TIME);
-//		TODO assertNotNull(mainAct);
-//		mainAct.finish();
-	}
-	
 	/**
 	 * Asserts that a user can't log in without a username.
 	 * 
@@ -151,6 +126,41 @@ ActivityInstrumentationTestCase2<RestaurantLoginActivity> {
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
 		//TODO
+	}
+	
+	/**
+	 * Test for when restaurant fails to download
+	 */
+	public void testOnFailToDownloadRestaurant() {
+		mActivity.onFailToDownLoadRestaurant("login failed");
+		
+	}
+	
+	/**
+	 * Tests the handler for successfully getting a restaurant, which calls
+	 * the mainactivity
+	 * @throws ParseException
+	 * 
+	 * white box
+	 */
+	public void testOnDownloadedRestaurant() throws ParseException {
+		mUser = new ParseUser();
+		mUser.setUsername(fakeUserName);
+		mUser.setPassword(fakePassword);
+
+		ActivityMonitor monitor = getInstrumentation().addMonitor(
+				RestauarantMainActivity.class.getName(), null, false);
+		
+
+		Restaurant mRestaurant = new Restaurant(mUser);
+		mActivity.onDownloadedRestaurant(mRestaurant);
+		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
+		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
+		
+		assertNotNull(startedActivity);
+		
+		startedActivity.finish();
+		
 	}
 	
 }
