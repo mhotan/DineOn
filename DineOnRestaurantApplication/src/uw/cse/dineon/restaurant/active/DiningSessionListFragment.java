@@ -70,6 +70,7 @@ public class DiningSessionListFragment extends ListFragment {
 	public void addDiningSession(DiningSession session) {
 		if (mAdapter != null) {
 			mAdapter.add(session);
+			mAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -80,6 +81,7 @@ public class DiningSessionListFragment extends ListFragment {
 	public void removeDiningSession(DiningSession session) {
 		if (mAdapter != null) {
 			mAdapter.remove(session);
+			mAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -209,7 +211,7 @@ public class DiningSessionListFragment extends ListFragment {
 				TextView dateText = (TextView) mTop.findViewById(R.id.label_checkin_time);
 				mExpandDown = (ImageView) 
 						mTop.findViewById(R.id.button_expand_user);
-				mPickSession = (Button) mBottom.findViewById(R.id.button_proceed);	
+				mPickSession = (Button) mBottom.findViewById(R.id.button_proceed_session);	
 
 				// Get a reference to all the bottom pieces
 				TextView orderHeader = (TextView) 

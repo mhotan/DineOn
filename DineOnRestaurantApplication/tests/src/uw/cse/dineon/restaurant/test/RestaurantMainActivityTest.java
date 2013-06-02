@@ -81,12 +81,14 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		
 		mRestaurant = new Restaurant(mUser);
 		mRequest = new CustomerRequest("Me Hungy", mUI.getUserInfo());
+		mRequest.setObjId("aa");
 
 		List<CurrentOrderItem> items = new ArrayList<CurrentOrderItem>();
 		items.add(new CurrentOrderItem(new MenuItem(123, 1.99, "Yum yums", "description")));
 		mOrder = new Order(1, mUI.getUserInfo(), items);
 		mOrder.setObjId("435");
 		testSession = new DiningSession(1, mUI.getUserInfo(), mRestaurant.getInfo());
+		testSession.setObjId("334");
 		testSession.addPendingOrder(mOrder);
 		mRestaurant.addCustomerRequest(mRequest);
 		mRestaurant.addOrder(mOrder);
@@ -140,6 +142,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		assertEquals(0, pager.getCurrentItem());
 		
 		final View vwTop = mActivity.findViewById(R.id.listitem_order_top);
+		final View vwBot = mActivity.findViewById(R.id.listitem_order_bot);
 		
 		
 		assertNotNull(vwTop);
@@ -153,7 +156,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		});
 		getInstrumentation().waitForIdleSync();
 		
-		final View proButton = pager.findFocus().findViewById(uw.cse.dineon.restaurant.R.id.button_proceed);
+		final View proButton = vwBot.findViewById(uw.cse.dineon.restaurant.R.id.button_proceed_order);
 		assertNotNull(proButton);
 		
 		mActivity.runOnUiThread(new Runnable() {
@@ -199,19 +202,20 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		
 		getInstrumentation().waitForIdleSync();
 		
-		final View button = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.listitem_request_top);
-		assertNotNull(button);
+		final View vwTop = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.listitem_request_top);
+		final View vwBot = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.listitem_request_bot);
+		assertNotNull(vwTop);
 
 		mActivity.runOnUiThread(new Runnable() {
 
 			@Override
 			public void run() {
-				button.performClick();
+				vwTop.performClick();
 			}
 		});
 		getInstrumentation().waitForIdleSync();
 		
-		final View newActButton = pager.findFocus().findViewById(R.id.button_proceed);
+		final View newActButton = vwBot.findViewById(R.id.button_proceed_request);
 		assertNotNull(newActButton);
 		
 		mActivity.runOnUiThread(new Runnable() {
@@ -262,6 +266,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		
 		//Staging
 		final View vwTop = mActivity.findViewById(R.id.listitem_user_top);
+		final View vwBot = mActivity.findViewById(R.id.listitem_user_bot);
 		
 		
 		assertNotNull(vwTop);
@@ -275,7 +280,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		});
 		getInstrumentation().waitForIdleSync();
 		
-		final View proButton = pager.findFocus().findViewById(uw.cse.dineon.restaurant.R.id.button_proceed);
+		final View proButton = vwBot.findViewById(uw.cse.dineon.restaurant.R.id.button_proceed_session);
 		assertNotNull(proButton);
 		
 		mActivity.runOnUiThread(new Runnable() {
@@ -512,6 +517,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 			@Override
 			public void run() {
 				lFrag.deleteRequest(mRequest);
+				lFrag.deleteRequest(mRequest);
 			}
 		});
 		getInstrumentation().waitForIdleSync();
@@ -584,10 +590,10 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 			@Override
 			public void run() {
 				lFrag.removeDiningSession(testSession);
+				lFrag.removeDiningSession(testSession);
 			}
 		});
 		getInstrumentation().waitForIdleSync();
-		
 		assertEquals(0, lA.getCount());
 		
 	}

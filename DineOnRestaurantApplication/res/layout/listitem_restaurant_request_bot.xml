@@ -6,7 +6,7 @@
     android:orientation="vertical" >
 
     <Button
-        android:id="@+id/button_proceed"
+        android:id="@+id/button_proceed_request"
         style="@style/DineOnBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

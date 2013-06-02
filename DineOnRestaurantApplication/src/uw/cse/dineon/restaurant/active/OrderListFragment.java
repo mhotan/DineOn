@@ -276,7 +276,7 @@ public class OrderListFragment extends ListFragment {
 				mExpandDown = (ImageView) 
 						mTop.findViewById(R.id.button_expand_order);
 				TextView time = (TextView) mTop.findViewById(R.id.label_order_time);
-				mPickOrder = (Button) mBottom.findViewById(R.id.button_proceed);	
+				mPickOrder = (Button) mBottom.findViewById(R.id.button_proceed_order);	
 				
 				// Get a reference to all the bottom pieces
 				Button buttonCompleteOrder = (Button) 

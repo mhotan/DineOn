@@ -63,7 +63,7 @@
             android:text="Complete Order" />
 
         <Button
-            android:id="@+id/button_proceed"
+            android:id="@+id/button_proceed_order"
             style="@style/DineOnBackground"
             android:layout_width="0dip"
             android:layout_height="match_parent"

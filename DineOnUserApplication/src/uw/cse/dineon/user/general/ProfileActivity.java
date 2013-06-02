@@ -11,6 +11,8 @@ import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.bill.CurrentOrderActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -67,15 +69,6 @@ public class ProfileActivity extends DineOnUserActivity implements
 	
 		final android.view.Menu M = menu;
 
-		//Sets the necessary onClickListeners for the menu
-		//items with an action layout.
-		final android.view.MenuItem ITEM = menu.findItem(R.id.option_bill);
-		ITEM.setEnabled(true);
-		ITEM.setVisible(true);
-		List<android.view.MenuItem> customActionBarButtons = new ArrayList<android.view.MenuItem>();
-		customActionBarButtons.add(menu.findItem(R.id.option_bill));
-
-		setOnClick(M, customActionBarButtons);
 		return true;
 	}
 	
@@ -94,10 +87,8 @@ public class ProfileActivity extends DineOnUserActivity implements
 		// If checked in
 		if(DineOnUserApplication.getCurrentDiningSession() != null) {
 			disableMenuItem(menu, R.id.option_check_in);
-			enableMenuItem(menu, R.id.option_bill);
 		} else { // If not checked in
 			enableMenuItem(menu, R.id.option_check_in);
-			disableMenuItem(menu, R.id.option_bill);
 		}
 		return true;		
 	}

@@ -203,12 +203,6 @@ public class RestaurantHomeActivityTest extends
 			}
 		});	
 		
-//		final Button BUT = (Button)v;
-//		this.mActivity.runOnUiThread(new Runnable() {
-//			public void run() {
-//				assertTrue(BUT.performClick());
-//			}
-//		});	
 		mInstrumentation.waitForIdleSync();
 		
 		rInfo.destroyAlertDialog();
