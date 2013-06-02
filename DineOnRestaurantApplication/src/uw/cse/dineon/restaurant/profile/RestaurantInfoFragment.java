@@ -43,8 +43,8 @@ import android.widget.Toast;
  */
 public class RestaurantInfoFragment extends Fragment {
 
-//	private static final String TAG = RestaurantInfoFragment.class.getSimpleName();
-	
+	//	private static final String TAG = RestaurantInfoFragment.class.getSimpleName();
+
 	private static final int IMAGEVIEW_WIDTH = 250;
 	private static final int IMAGEVIEW_HEIGHT = 250;
 	private static final int IMAGEVIEW_WIDTH_PADDING = 30;
@@ -64,25 +64,25 @@ public class RestaurantInfoFragment extends Fragment {
 	 * Input handler for user input.
 	 */
 	private UserInputHandler mInputHandler;
-	
+
 	/**
 	 * location to use for request restaurant.
 	 */
 	private Location mLastKnownLocation;
-	
+
 	/**
 	 * Geocoder for finding location.
 	 */
 	private Geocoder mGeocoder;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		mLastKnownLocation = mListener.getLocation();
 		mGeocoder = new Geocoder(getActivity());
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -90,24 +90,16 @@ public class RestaurantInfoFragment extends Fragment {
 		RestaurantInfo info = mListener.getInfo();
 		// Check the view and its state and initialize appropriately
 		View view;
-		if (isValid(info)) {
-			view = inflater.inflate(R.layout.fragment_restaurant_info_two,
-					container, false);
 
-			mInputHandler = new UserInputHandler(view, info);
-			// Populate the gallery with all the current images
-			populateGallery(info);
-			getActivity().getActionBar().setTitle(info.getName());
-			return view;
-		} else {
-			// This fragment signifies there is no restaurant data.
-			view = inflater.inflate(R.layout.fragment_empty, container, false);
-			TextView errorMessage = (TextView) view
-					.findViewById(R.id.label_error);
-			errorMessage.setText("Illegal Dining Session: " + info);
-			return view;
-		}
-		
+		view = inflater.inflate(R.layout.fragment_restaurant_info_two,
+				container, false);
+
+		mInputHandler = new UserInputHandler(view, info);
+		// Populate the gallery with all the current images
+		populateGallery(info);
+		getActivity().getActionBar().setTitle(info.getName());
+		return view;
+
 	}
 
 	@Override
@@ -122,7 +114,7 @@ public class RestaurantInfoFragment extends Fragment {
 					+ " must implemenet RestaurantInfoFragment.InfoChangeListener");
 		}
 	}
-	
+
 	/**
 	 * Stores this restaurant. 
 	 * @param loc Location to use as restaurant location
@@ -314,7 +306,7 @@ public class RestaurantInfoFragment extends Fragment {
 		 * @return Location of this restaurant.
 		 */
 		Location getLocation();
-		
+
 		/**
 		 * Notifies the Activity that the restaurant info requested to be
 		 * updated.
@@ -323,7 +315,7 @@ public class RestaurantInfoFragment extends Fragment {
 		 *            Updated Restaurant Info
 		 */
 		void onRestaurantInfoUpdate(RestaurantInfo rest);
-		
+
 		/**
 		 * Adds this image to the restaurant.
 		 * @param b Bitmap to add to Restaurant as an Image
@@ -387,7 +379,7 @@ public class RestaurantInfoFragment extends Fragment {
 		UserInputHandler(View view, RestaurantInfo info) {
 			// Restaurant info
 			mInfo = info;
-			
+
 			// Buttons to receive user button input. 
 			mTakePicButton = (ImageButton) view.findViewById(R.id.button_take_new_picture);
 			mChoosePicButton = (ImageButton) view.findViewById(R.id.button_add_image_gallery);
@@ -405,31 +397,31 @@ public class RestaurantInfoFragment extends Fragment {
 			mPhoneInput = (TextView) view.findViewById(R.id.edittext_restaurant_phone);
 			mHourInput = (TextView) view.findViewById(R.id.edittext_restaurant_hours);
 			mGallery = (LinearLayout) view.findViewById(R.id.gallery_restaurant_images);
-			
+
 			mAddToRestaurant = new AddToRestaurantCallback();
-			
+
 			// Populate the current field based off old data.
 			populateAddressContent(info.getAddr());
-			
+
 			// Populate the phone number
 			mPhoneInput.setText(info.getPhone());
-			
+
 			// Populate the 
 			mHourInput.setText(info.getHours());
-			
+
 			mTakePicButton.setOnClickListener(this);
 			mChoosePicButton.setOnClickListener(this);
 			mDeleteButton.setOnClickListener(this);
 			mSaveButton.setOnClickListener(this);
 			mLocateButton.setOnClickListener(this);
-			
+
 			if (mLastKnownLocation == null) {
 				disableLocationButton();
 			} else {
 				enableLocationButton();	
 			}
 		}
-		
+
 		/**
 		 * Disable the location button.
 		 */
@@ -437,7 +429,7 @@ public class RestaurantInfoFragment extends Fragment {
 			mLocateButton.setEnabled(false);
 			mLocateButton.setImageResource(R.drawable.device_access_location_off);
 		}
-		
+
 		/**
 		 * Enable the location button.
 		 */
@@ -445,7 +437,7 @@ public class RestaurantInfoFragment extends Fragment {
 			mLocateButton.setEnabled(true);
 			mLocateButton.setImageResource(R.drawable.device_access_location_found);
 		}
-		
+
 		/**
 		 * Adds an actual image of the restaurant to. 
 		 * @param restaurantImage Adds a view containing a reference image to the index
@@ -487,7 +479,7 @@ public class RestaurantInfoFragment extends Fragment {
 						int index = mGallery.indexOfChild(mCurrentSelected);
 						mGallery.removeView(mCurrentSelected);
 						mListener.onImageRemoved(index);
-						
+
 						// Update the next child.
 						View nextChild = mGallery.getChildAt(0);
 						if (nextChild != null) {
@@ -503,11 +495,11 @@ public class RestaurantInfoFragment extends Fragment {
 					}
 				});
 				builder.create().show();
-				
+
 			} else if (v == mLocateButton) {
 				// Use the geocoder.
 				updateAddress();
- 			} else if (v == mSaveButton) {
+			} else if (v == mSaveButton) {
 				// Build on the new data.
 				mInfo.setAddr(fieldsToAddress());
 				String phoneNum = PhoneNumberUtils.formatNumber(mPhoneInput.getText().toString());
@@ -517,7 +509,7 @@ public class RestaurantInfoFragment extends Fragment {
 				mListener.onRestaurantInfoUpdate(mInfo);
 			} 
 		}
-		
+
 		/**
 		 * Update address from geocoder.
 		 */
@@ -536,7 +528,7 @@ public class RestaurantInfoFragment extends Fragment {
 				disableLocationButton();
 			}
 		}
-		
+
 		/**
 		 * Populates all the necessary views with the current data 
 		 * of the address.
@@ -548,7 +540,7 @@ public class RestaurantInfoFragment extends Fragment {
 			String city = add.getLocality();
 			String state = add.getAdminArea();
 			String postal = add.getPostalCode();
-			
+
 			String empty = "";
 			mAddressLine1.setText(line1 == null ? empty : line1);
 			mAddressLine2.setText(line2 == null ? empty : line2);
@@ -567,7 +559,7 @@ public class RestaurantInfoFragment extends Fragment {
 			String city = mAddressCity.getText().toString().trim();
 			String state = mAddressState.getText().toString().trim();
 			String postal = mAddressZipCode.getText().toString().trim();
-			
+
 			Address address = new Address(Locale.getDefault());
 			String empty = "";
 			if (line1 != null && !line1.equals(empty)) {
@@ -587,14 +579,14 @@ public class RestaurantInfoFragment extends Fragment {
 			}
 			return address;
 		}
-		
+
 		/**
 		 * Sets the restaurant Image as the currently selected image.
 		 * If the current image is the default image then not action is needed.
 		 * @param restaurantImage To set as selected.
 		 */
 		private void setSelected(View restaurantImage) {
-			
+
 			// reset the background of the old selected image.
 			if (mCurrentSelected != null) {
 				mCurrentSelected.setBackgroundColor(Color.TRANSPARENT);

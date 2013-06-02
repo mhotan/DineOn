@@ -96,14 +96,8 @@ public class MenuItemsFragment extends ListFragment {
 			List<MenuItem> menuitems = currentMenu.getItems();
 			mAdapter = new RestaurantMenuItemAdapter(getActivity(), menuitems);
 			setListAdapter(mAdapter);
-		} else {
-			List<String> defList = new ArrayList<String>();
-			defList.add("Illegal Restaurant Info State");
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-					getActivity(), android.R.layout.simple_list_item_1, defList);
-			setListAdapter(adapter);
-		}
-		updateTitle();
+			updateTitle();
+		} 
 	}
 
 	/**
@@ -130,6 +124,7 @@ public class MenuItemsFragment extends ListFragment {
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						// Canceled.
+						dialog.cancel();
 					}
 				});
 		alert.show();
@@ -568,7 +563,7 @@ public class MenuItemsFragment extends ListFragment {
 			/**
 			 * prepares callback for placing an image in the view.
 			 * 
-			 * @param view
+			 * @param view View to place image.
 			 */
 			public InitialGetImageCallback(ImageView view) {
 				mView = view;

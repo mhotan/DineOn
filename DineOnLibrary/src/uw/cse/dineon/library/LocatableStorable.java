@@ -1,6 +1,5 @@
 package uw.cse.dineon.library;
 
-import uw.cse.dineon.library.util.RepresentationException;
 import android.location.Location;
 
 import com.parse.ParseException;
@@ -115,7 +114,7 @@ public abstract class LocatableStorable extends Storable {
 	 */
 	protected void checkRep() {
 		if (mLocation == null) {
-			throw new RepresentationException("Null Geo Point!");
+			throw new RuntimeException("Null Geo Point!");
 		}
 	}
 //	

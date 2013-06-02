@@ -1,7 +1,5 @@
 package uw.cse.dineon.library;
 
-import uw.cse.dineon.library.util.RepresentationException;
-
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -130,7 +128,7 @@ public abstract class Storable {
 	 */
 	private void checkRep() {
 		if (mCompleteObject == null) {
-			throw new RepresentationException("Null parse object for this storable instance");
+			throw new RuntimeException("Null parse object for this storable instance");
 		}
 	}
 

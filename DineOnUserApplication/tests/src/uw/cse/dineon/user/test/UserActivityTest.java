@@ -1,8 +1,6 @@
 package uw.cse.dineon.user.test;
 
 
-import uw.cse.dineon.library.DineOnUser;
-import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;

@@ -11,6 +11,7 @@ import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.FakeRestaurantInformation;
+import uw.cse.dineon.library.util.TestUtility;
 import android.app.Activity;
 import android.content.Context;
 import android.test.AndroidTestCase;
@@ -52,8 +53,6 @@ public class DiningSessionTest extends AndroidTestCase {
 		mUser.setEmail("dst@a.com");
 		mUser.setObjectId("245");
 
-		FakeRestaurantInformation f = new FakeRestaurantInformation(mUser);
-
 		testUInfo = new UserInfo(mUser);
 		testUInfo.setObjId("tui");
 
@@ -61,11 +60,10 @@ public class DiningSessionTest extends AndroidTestCase {
 		testSession = new DiningSession(32, new Date(3254645), testUInfo, testRInfo);
 
 		testItems = new ArrayList<CurrentOrderItem>();
-		List<MenuItem> menuItems = f.getFakeMenuItems();
+		List<MenuItem> menuItems = TestUtility.createFakeMenuItems(5);
 		for (MenuItem m : menuItems) {
 			testItems.add(new CurrentOrderItem(m));
 		}
-		orders = f.getFakeOrders();
 
 	}
 	@Override

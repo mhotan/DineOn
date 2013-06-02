@@ -29,37 +29,37 @@ public final class Utility {
 	 */
 	private Utility() { }
 	
-	/**
-	 * Returns whether the screen can be split horizontally into two panes
-	 * for optimal user interaction.  Currently the restriction is 
-	 * that if the screen is very large 
-	 * <b>Currently: XLarge screen layout</b>
-	 * <b>OR if the screen is large and in landscape</b>
-	 * @param context Context of the activity
-	 * @return true if it is able to split, false otherwise
-	 */
-	public static boolean isPaneSplitable(Context context) {
-		int mask = (context.getResources().getConfiguration().screenLayout 
-				& Configuration.SCREENLAYOUT_SIZE_MASK);
-		boolean isLargeEnough = mask == Configuration.SCREENLAYOUT_SIZE_LARGE 
-				|| mask == Configuration.SCREENLAYOUT_SIZE_XLARGE;
-		//		boolean isLayoutOriented = context.getResources().getConfiguration().orientation
-		//				== Configuration.ORIENTATION_LANDSCAPE;
-		return isLargeEnough;
-	}
-
-	/**
-	 * Checks whether the given context is connected to 
-	 * the network either via wifi or data.
-	 * @param context Context that needs network
-	 * @return true if connected to the network, false otherwise
-	 */
-	public static boolean isConnectedToNetwork(Context context) {
-		ConnectivityManager connMgr = (ConnectivityManager) 
-				context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-		return (networkInfo != null && networkInfo.isConnected());
-	}
+//	/**
+//	 * Returns whether the screen can be split horizontally into two panes
+//	 * for optimal user interaction.  Currently the restriction is 
+//	 * that if the screen is very large 
+//	 * <b>Currently: XLarge screen layout</b>
+//	 * <b>OR if the screen is large and in landscape</b>
+//	 * @param context Context of the activity
+//	 * @return true if it is able to split, false otherwise
+//	 */
+//	public static boolean isPaneSplitable(Context context) {
+//		int mask = (context.getResources().getConfiguration().screenLayout 
+//				& Configuration.SCREENLAYOUT_SIZE_MASK);
+//		boolean isLargeEnough = mask == Configuration.SCREENLAYOUT_SIZE_LARGE 
+//				|| mask == Configuration.SCREENLAYOUT_SIZE_XLARGE;
+//		//		boolean isLayoutOriented = context.getResources().getConfiguration().orientation
+//		//				== Configuration.ORIENTATION_LANDSCAPE;
+//		return isLargeEnough;
+//	}
+//
+//	/**
+//	 * Checks whether the given context is connected to 
+//	 * the network either via wifi or data.
+//	 * @param context Context that needs network
+//	 * @return true if connected to the network, false otherwise
+//	 */
+//	public static boolean isConnectedToNetwork(Context context) {
+//		ConnectivityManager connMgr = (ConnectivityManager) 
+//				context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+//		return (networkInfo != null && networkInfo.isConnected());
+//	}
 
 	/**
 	 * Returns a general Alert Dialog box for notifying the user that
@@ -139,46 +139,46 @@ public final class Utility {
 		});
 		return b.create();
 	}
-
-	/**
-	 * 
-	 * @param orders Orders to sort
-	 * @return The sorted list of orders
-	 */
-	public List<Order> sortOrdersMostRecent(List<Order> orders) {
-		Collections.sort(orders, new Comparator<Order>() {
-
-			@Override
-			public int compare(Order lhs, Order rhs) {
-				return lhs.getOriginatingTime().compareTo(rhs.getOriginatingTime());
-			}
-		});
-		return orders;
-	}
-	
-	/**
-	 * For a given list of menu items, where some have the same product ID, 
-	 * this function creates a mapping of menu items to the quantity that exists
-	 * in the list.
-	 * 
-	 * If the inputted list is null or is empty an empty map is returned
-	 * 
-	 * @param items MenuItems to organize in a map
-	 * @return Mapping of MenuItems to number of occurences in the list.
-	 */
-	public static Map<MenuItem, Integer> toQuantityMap(List<MenuItem> items) {
-		HashMap<MenuItem, Integer> occurences = new HashMap<MenuItem, Integer>();
-		if (items == null || items.isEmpty()) {
-			return occurences;
-		}
-		for (MenuItem item : items) {
-			if (!occurences.containsKey(item)) {
-				occurences.put(item, 1);
-			} else {
-				int update = occurences.get(item) + 1;
-				occurences.put(item, update);
-			}
-		}
-		return occurences;
-	}
+//
+//	/**
+//	 * 
+//	 * @param orders Orders to sort
+//	 * @return The sorted list of orders
+//	 */
+//	public List<Order> sortOrdersMostRecent(List<Order> orders) {
+//		Collections.sort(orders, new Comparator<Order>() {
+//
+//			@Override
+//			public int compare(Order lhs, Order rhs) {
+//				return lhs.getOriginatingTime().compareTo(rhs.getOriginatingTime());
+//			}
+//		});
+//		return orders;
+//	}
+//	
+//	/**
+//	 * For a given list of menu items, where some have the same product ID, 
+//	 * this function creates a mapping of menu items to the quantity that exists
+//	 * in the list.
+//	 * 
+//	 * If the inputted list is null or is empty an empty map is returned
+//	 * 
+//	 * @param items MenuItems to organize in a map
+//	 * @return Mapping of MenuItems to number of occurences in the list.
+//	 */
+//	public static Map<MenuItem, Integer> toQuantityMap(List<MenuItem> items) {
+//		HashMap<MenuItem, Integer> occurences = new HashMap<MenuItem, Integer>();
+//		if (items == null || items.isEmpty()) {
+//			return occurences;
+//		}
+//		for (MenuItem item : items) {
+//			if (!occurences.containsKey(item)) {
+//				occurences.put(item, 1);
+//			} else {
+//				int update = occurences.get(item) + 1;
+//				occurences.put(item, update);
+//			}
+//		}
+//		return occurences;
+//	}
 }

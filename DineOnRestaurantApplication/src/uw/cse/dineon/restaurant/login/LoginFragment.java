@@ -1,6 +1,5 @@
 package uw.cse.dineon.restaurant.login;
 
-import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Intent;
@@ -41,7 +40,7 @@ public class LoginFragment extends Fragment implements OnClickListener {
 		Button forgotPassword = (Button) view.findViewById(R.id.button_forgot_password);
 		forgotPassword.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				DevelopTools.getUnimplementedDialog(getActivity(), null).show();
+//				DevelopTools.getUnimplementedDialog(getActivity(), null).show();
 			}
 		});
 		
