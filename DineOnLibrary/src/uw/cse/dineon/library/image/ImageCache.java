@@ -117,6 +117,10 @@ public class ImageCache {
 	public boolean hasRecentInCache(DineOnImage image) {
 		Cursor cursor = null;
 		synchronized (mLock) {
+			if (!mDb.isOpen()) {
+				return false;
+			}
+			
 			cursor = mDb.query(
 					ImageSQLiteHelper.TABLE_IMAGES, 
 					CONTAINS_ELEMENT,
@@ -168,6 +172,10 @@ public class ImageCache {
 	public void getImageFromCache(final DineOnImage image, final ImageGetCallback callback) {
 		Cursor cursor = null;
 		synchronized (mLock) {
+			if (!mDb.isOpen()) {
+				return;
+			}
+			
 			cursor = mDb.query(
 					ImageSQLiteHelper.TABLE_IMAGES, 
 					RELEVANT_COLUMNS,
@@ -293,6 +301,9 @@ public class ImageCache {
 		String where = ImageSQLiteHelper.COLUMN_PARSEID + " = ?";
 		int result = -1;
 		synchronized (mLock) {
+			if (!mDb.isOpen()) {
+				return;
+			}
 			result = mDb.update(ImageSQLiteHelper.TABLE_IMAGES, 
 					cv, where, new String[] {parseId});
 		}
@@ -396,6 +407,10 @@ public class ImageCache {
 		@Override
 		protected Void doInBackground(Void... params) {
 			synchronized (mLock) {
+				if (!mDb.isOpen()) {
+					return null;
+				}
+				
 				Cursor cursor = mDb.query(ImageSQLiteHelper.TABLE_IMAGES,
 						DELETE_COLUMNS, null, null, null, null, null);
 

@@ -156,6 +156,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_DINING_SESSION);
 		} catch (JSONException e) {
 			Log.e(TAG, "Malformated JSON: " + jobj + " exception: " + e.getMessage());
+			return;
 		}
 
 		List<UserInfo> users = ds.getUsers();
@@ -181,6 +182,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_ORDER);
 		} catch (JSONException e) {
 			Log.e(TAG, "Malformated JSON: " + jobj + " exception: " + e.getMessage());
+			return;
 		}
 
 		List<UserInfo> users = ds.getUsers();
@@ -206,6 +208,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_CUSTOMER_REQUEST);
 		} catch (JSONException e) {
 			Log.e(TAG, "Malformated JSON: " + jobj + " exception: " + e.getMessage());
+			return;
 		}
 
 		List<UserInfo> users = ds.getUsers();
@@ -229,6 +232,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CONFIRM_ORDER);
 		} catch (JSONException e) {
 			Log.e(TAG, "Malformated JSON: " + jobj + " exception: " + e.getMessage());
+			return;
 		}
 
 		ParseUtil.notifyApplication(
@@ -251,6 +255,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 			jobj.put(DineOnConstants.KEY_ACTION, DineOnConstants.ACTION_CHANGE_RESTAURANT_INFO);
 		} catch (JSONException e) {
 			Log.e(TAG, "Malformated JSON: " + jobj + " exception: " + e.getMessage());
+			return;
 		}
 
 		ParseUtil.notifyApplication(
