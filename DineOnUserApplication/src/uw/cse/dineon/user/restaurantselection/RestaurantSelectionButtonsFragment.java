@@ -1,6 +1,8 @@
 package uw.cse.dineon.user.restaurantselection;
 
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.checkin.IntentIntegrator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,7 +29,8 @@ implements View.OnClickListener {
 	/**
 	 * References to Buttons on this display.
 	 */
-	private ImageButton mNearbyButton, mFriendsFavoritesButton, mUserFavoritesButton;
+	private ImageButton mCheckInButton, mNearbyButton;
+	private ImageButton mFriendsFavoritesButton, mUserFavoritesButton;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,11 +42,22 @@ implements View.OnClickListener {
 		mNearbyButton = (ImageButton) view.findViewById(R.id.button_nearby_restaurants);
 		mFriendsFavoritesButton = (ImageButton) view.findViewById(R.id.button_friends_favorites);
 		mUserFavoritesButton = (ImageButton) view.findViewById(R.id.button_user_favorites);
+		mCheckInButton = (ImageButton) view.findViewById(R.id.button_checkin);
+		View checkInLine = (View) view.findViewById(R.id.checkinline);
 		
 		// Add listeners
 		mNearbyButton.setOnClickListener(this);
 		mFriendsFavoritesButton.setOnClickListener(this);
 		mUserFavoritesButton.setOnClickListener(this);
+		mCheckInButton.setOnClickListener(this);
+		
+		if(DineOnUserApplication.getCurrentDiningSession() != null) {
+			mCheckInButton.setVisibility(View.GONE);
+			checkInLine.setVisibility(View.GONE);
+		} else {
+			mCheckInButton.setVisibility(View.VISIBLE);
+			checkInLine.setVisibility(View.VISIBLE);
+		}
 		
 		return view;
 	}
@@ -74,6 +88,10 @@ implements View.OnClickListener {
 			break;
 		case R.id.button_user_favorites:
 			mListener.onShowUserFavorites();
+			break;
+		case R.id.button_checkin:
+			IntentIntegrator integrator = new IntentIntegrator(getActivity());
+			integrator.initiateScan();
 			break;
 		default: 
 			Log.e(TAG, "Error onClick with unrecognized view: " + v);

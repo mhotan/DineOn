@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
@@ -14,6 +14,20 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
     -->
 
+    <ImageButton
+        android:id="@+id/button_checkin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/label_nearby"
+        android:src="@drawable/checkinhor" />
+
+    <View
+        android:id="@+id/checkinline"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000000" />
 
     <!--
          <LinearLayout
@@ -30,7 +44,7 @@
         android:layout_weight="1"
         android:background="?android:attr/selectableItemBackground"
         android:contentDescription="@string/label_nearby"
-        android:src="@drawable/nearby" />
+        android:src="@drawable/nearbyhor" />
 
     <View
         android:layout_width="match_parent"
@@ -45,7 +59,7 @@
         android:layout_weight="1"
         android:background="?android:attr/selectableItemBackground"
         android:contentDescription="@string/label_friends_favorites"
-        android:src="@drawable/friendsfavorites" />
+        android:src="@drawable/friendsfavshor" />
 
     <View
         android:layout_width="match_parent"
@@ -60,7 +74,7 @@
         android:layout_weight="1"
         android:background="?android:attr/selectableItemBackground"
         android:contentDescription="@string/label_my_favorites"
-        android:src="@drawable/myfavorites" />
+        android:src="@drawable/myfavshor" />
     <!-- </LinearLayout> -->
 
 </LinearLayout>

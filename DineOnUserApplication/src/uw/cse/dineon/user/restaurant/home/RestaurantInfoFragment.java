@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.DineOnUser;
@@ -9,6 +10,7 @@ import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.checkin.IntentIntegrator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -23,13 +25,15 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.parse.ParseException;
@@ -43,21 +47,25 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 
 	private static final int IMAGEVIEW_WIDTH = 250;
 	private static final int IMAGEVIEW_HEIGHT = 250;
-	
+
 	private static final String TAG = RestaurantInfoFragment.class.getSimpleName(); 
 
 	private RestaurantInfoListener mListener;
 
 	private RestaurantInfo mRestaurant;
-	
+
 	private AlertDialog mAlert;
 
 	// UI Components
 	private TextView mRestNameLabel, mAddressLabel, mHoursLabel;
 	private RatingBar mRatingBar;
 	private LinearLayout mGallery;
-	private Button mReqButton;
+	private ImageButton mReqButton;
 	private ImageView mDefaultImage;
+	private TextView messageHeader;
+	private Spinner mSpinner;
+	private ArrayList<String> mRequests;
+	private ImageButton mCheckInButton;
 
 	@Override
 	public void onCreate(Bundle onSavedInstance) {
@@ -66,7 +74,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 
 		// Get the list from the activity.
 		mRestaurant = mListener.getCurrentRestaurant();
-		
+
 		mAlert = null;
 	}
 
@@ -82,18 +90,64 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		mRatingBar = (RatingBar) view.findViewById(R.id.ratingbar_restaurant);
 		mGallery = (LinearLayout) view.findViewById(R.id.gallery_restaurant_images);
 		mDefaultImage = (ImageView) view.findViewById(R.id.image_restaurant_placeholder);
-				
-		mReqButton = (Button) view.findViewById(R.id.button_request);
+		mSpinner = (Spinner) view.findViewById(R.id.spinner_request_to_send);
+		mCheckInButton = (ImageButton) view.findViewById(R.id.button_checkin);
+		mCheckInButton.setOnClickListener(this);
+		View checkInLine = (View) view.findViewById(R.id.checkinline);
+
+		if(DineOnUserApplication.getCurrentDiningSession() != null) {
+			mCheckInButton.setVisibility(View.GONE);
+			checkInLine.setVisibility(View.GONE);
+		} else {
+			mCheckInButton.setVisibility(View.VISIBLE);
+			checkInLine.setVisibility(View.VISIBLE);
+		}
+
+		String[] requests = getActivity().getResources().
+				getStringArray(R.array.request_list);
+		mRequests = new ArrayList<String>();
+		for (String r: requests) {
+			mRequests.add(r);
+		}		
+
+		messageHeader = (TextView) view.findViewById(R.id.label_message_waiter_header);
+		mSpinner.setAdapter(new ArrayAdapter<String>(getActivity(), 
+				android.R.layout.simple_list_item_1, mRequests));
+
+		mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int pos, long id) {
+				String request = (String) mSpinner.getSelectedItem();
+				if(request.equals("Custom Request")) {
+					getRequestDescription();
+					mSpinner.setSelection(0);
+				}
+
+			}
+
+			public void onNothingSelected(AdapterView<?> arg0) {
+				return;
+			}
+		});
+
+		mReqButton = (ImageButton) view.findViewById(R.id.button_request);
 		mReqButton.setOnClickListener(this);
-		mReqButton.setVisibility(0);
-		
+
 		// if not in a dining session w/ this restaurant do not display
 		if(DineOnUserApplication.getCurrentDiningSession() == null 
 				|| !DineOnUserApplication.getCurrentDiningSession().
 				getRestaurantInfo().getName().equals(mRestaurant.getName())) {
-			mReqButton.setVisibility(8);
+			mReqButton.setVisibility(View.GONE);
+			mSpinner.setVisibility(View.GONE);
+			messageHeader.setVisibility(View.GONE);
+
+		} else {
+			mReqButton.setVisibility(View.VISIBLE);
+			mSpinner.setVisibility(View.VISIBLE);
+			messageHeader.setVisibility(View.VISIBLE);
 		}
-		
+
 		// Update the display
 		setRestaurantForDisplay(mRestaurant);
 
@@ -103,7 +157,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		} else {
 			Log.d(TAG, "Favorites button not found.");
 		}
-		
+
 		return view;
 	}
 
@@ -116,32 +170,32 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 			Log.e(TAG, "Unable to populate fragment with null restaurant");
 			return;
 		}
-		
+
 		this.mRestaurant = restaurant;
 
 		mRestNameLabel.setText(mRestaurant.getName());
 		mAddressLabel.setText(mRestaurant.getReadableAddress());
 		mHoursLabel.setText(mRestaurant.getHours());
-		
+
 		// TODO Fix this so it is not random.
 		mRatingBar.setNumStars(5);
 		mRatingBar.setMax(mRatingBar.getNumStars());
 		mRatingBar.setRating((float)(Math.random() * mRatingBar.getNumStars()));
-		
-		// Dump the current views in the galler
+
+		// Dump the current views in the gallery
 		mGallery.removeAllViews();
-		
+
 		List<DineOnImage> images = mRestaurant.getImageList();
 		for (DineOnImage image : images) {
 			// Create a view for each image.
 			final Context CTX = getActivity();
-			final ViewGroup CONTAINER = getStanderdLinearLayout(CTX); 
+			final ViewGroup CONTAINER = getStandardLinearLayout(CTX); 
 			// Fill with place holder
 			CONTAINER.addView(getLoadingImageProgressDialog(CTX));
 			mGallery.addView(CONTAINER);
 			// Ask the listener to get the image
 			mListener.onGetImage(image, new ImageGetCallback() {
-				
+
 				@Override
 				public void onImageReceived(Exception e, Bitmap b) {
 					// Upon completion remove all the views
@@ -157,13 +211,14 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 					CONTAINER.invalidate();
 				}
 			});
-			
-			if(images.size() != 0) {
-				mDefaultImage.setVisibility(View.GONE);
-			} else {
-				mDefaultImage.setVisibility(View.VISIBLE);
-			}
 		}
+
+		if(images.size() != 0) {
+			mDefaultImage.setVisibility(View.GONE);
+		} else {
+			mDefaultImage.setVisibility(View.VISIBLE);
+		}
+
 	}
 
 	@Override
@@ -216,8 +271,8 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	 * @param ri RestaurantInfo to add to the user's favorites
 	 */
 	public void assignFavoriteImageResource(ImageButton ib,
-				DineOnUser dou,
-				RestaurantInfo ri) {
+			DineOnUser dou,
+			RestaurantInfo ri) {
 		if(!dou.isFavorite(ri)) {
 			ib.setImageResource(R.drawable.addtofavorites);
 			ib.setTag("notFavorite");
@@ -273,13 +328,13 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	 * @param ctx Context to create Layout in.
 	 * @return LinearLayout that contain an ImageView
 	 */
-	public static LinearLayout getStanderdLinearLayout(Context ctx) {
+	public static LinearLayout getStandardLinearLayout(Context ctx) {
 		LinearLayout layout = new LinearLayout(ctx);
 		layout.setLayoutParams(new LayoutParams(IMAGEVIEW_WIDTH, IMAGEVIEW_HEIGHT));
 		layout.setGravity(Gravity.CENTER);
 		return layout;
 	}
-	
+
 	/**
 	 * This produces an image view that contains the bitmap.
 	 * @param ctx Context to create image view in
@@ -295,7 +350,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		imageView.setImageBitmap(b);
 		return imageView;
 	}
-	
+
 	/**
 	 * This produces an image view that contains the bitmap.
 	 * @param ctx Context to create image view in
@@ -311,7 +366,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		imageView.setImageResource(resId);
 		return imageView;
 	}
-	
+
 	/**
 	 * Returns general image loading progess dialog.
 	 * @param ctx Context to create progress bar in.
@@ -336,14 +391,23 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		void onMakeReservation(String reservation);
 
 	}
-	
+
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == R.id.button_request) {
-			getRequestDescription();
+			String request = (String) mSpinner.getSelectedItem();
+			if(request.equals("Custom Request")) {
+				getRequestDescription();
+			} else {
+				sendRequest(request);
+			}
+
+		} else if(v.getId() == R.id.button_checkin) {
+			IntentIntegrator integrator = new IntentIntegrator(getActivity());
+			integrator.initiateScan();
 		}
 	}
-	
+
 	/**
 	 * Helper that brings up alert box for sending customer requests.
 	 */
@@ -372,7 +436,7 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		});
 		this.mAlert = alert.show();
 	}
-	
+
 	/**
 	 * Destroy the alert dialog if in view.
 	 */
@@ -392,6 +456,6 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 			act.onRequestMade(str);
 		}
 	}
-	
-	
+
+
 }

@@ -4,55 +4,75 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
-<!--     <TextView
+    <!--
+         <TextView
         android:id="@+id/label_sort_by"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="@string/label_sort_by"
-        android:textAppearance="?android:attr/textAppearanceLarge" /> -->
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    -->
 
-   <!--  <LinearLayout
+
+    <!--
+         <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" > -->
+        android:orientation="horizontal" >
+    -->
 
-        <ImageButton
-            android:id="@+id/button_nearby_restaurants"
-            android:layout_width="match_parent"
-            android:contentDescription="@string/label_nearby"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/nearby" />
+    <ImageButton
+        android:id="@+id/button_checkin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/label_nearby"
+        android:src="@drawable/checkin" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#000000" />
+    <View
+        android:id="@+id/checkinline"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#000000" />
 
-        <ImageButton
-            android:id="@+id/button_friends_favorites"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="@string/label_friends_favorites"
-            android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/friendsfavorites"/>
+    <ImageButton
+        android:id="@+id/button_nearby_restaurants"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/label_nearby"
+        android:src="@drawable/nearby" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#000000" />
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#000000" />
 
-        <ImageButton
-            android:id="@+id/button_user_favorites"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="@string/label_my_favorites"
-            android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/myfavorites" />
-  <!--   </LinearLayout> -->
+    <ImageButton
+        android:id="@+id/button_friends_favorites"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/label_friends_favorites"
+        android:src="@drawable/friendsfavorites" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#000000" />
+
+    <ImageButton
+        android:id="@+id/button_user_favorites"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/label_my_favorites"
+        android:src="@drawable/myfavorites" />
+    <!-- </LinearLayout> -->
 
 </LinearLayout>

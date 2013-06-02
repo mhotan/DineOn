@@ -29,7 +29,7 @@
             android:layout_gravity="center"
             android:numStars="5"
             android:stepSize="0.5" />
-        
+
         <ImageView
             android:id="@+id/image_restaurant_placeholder"
             android:layout_width="fill_parent"
@@ -38,14 +38,12 @@
             android:contentDescription="@string/image_menu_item"
             android:scaleType="centerInside"
             android:src="@drawable/restaurant_photo_placeholder" />
-        
+
         <HorizontalScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            
-            
             <LinearLayout
                 android:id="@+id/gallery_restaurant_images"
                 android:layout_width="wrap_content"
@@ -94,11 +92,60 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textIsSelectable="true" />
 
+        <TextView
+            android:id="@+id/label_message_waiter_header"
+            style="@style/DineOnHeadingBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="10dp"
+            android:text="@string/send_request"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textIsSelectable="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal" >
+
+            <Spinner
+                android:id="@+id/spinner_request_to_send"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/button_request"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/send_request"
+                android:src="@drawable/waiter" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/button_checkin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@string/label_nearby"
+                android:src="@drawable/checkin" />
+
+            <View
+                android:id="@+id/checkinline"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000000" />
 
             <ImageButton
                 android:id="@+id/button_call"
@@ -115,20 +162,6 @@
                 android:background="#000000" />
 
             <ImageButton
-                android:id="@+id/button_make_reservation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@string/label_make_reservation"
-                android:src="@drawable/makereservation" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="#000000" />
-
-            <ImageButton
                 android:id="@+id/button_user_favorites"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -137,14 +170,6 @@
                 android:contentDescription="@string/label_add_to_favorites"
                 android:src="@drawable/addtofavorites" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/button_request"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="@string/make_request" />
     </LinearLayout>
 
 </ScrollView>
