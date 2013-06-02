@@ -312,7 +312,6 @@ public class RestaurantProfileActivityTest extends
 		Spinner sp = (Spinner) ad.findViewById(uw.cse.dineon.restaurant.R.id.spinner_select_menu);
 		String menuname = (String) sp.getItemAtPosition(1);
 		assertEquals("samples", menuname);
-
 	}
 
 	private Restaurant createFakeRestaurant(ParseUser user) throws ParseException {
