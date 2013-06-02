@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uw.cse.dineon.user.checkin;
+package uw.cse.dineon.library.checkin;
 
 import java.util.Arrays;
 import java.util.Collection;

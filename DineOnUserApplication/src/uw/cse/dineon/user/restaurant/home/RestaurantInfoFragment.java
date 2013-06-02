@@ -5,12 +5,12 @@ import java.util.List;
 
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.checkin.IntentIntegrator;
 import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
-import uw.cse.dineon.user.checkin.IntentIntegrator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;

@@ -1,8 +1,8 @@
 package uw.cse.dineon.user.restaurantselection;
 
+import uw.cse.dineon.library.checkin.IntentIntegrator;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
-import uw.cse.dineon.user.checkin.IntentIntegrator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

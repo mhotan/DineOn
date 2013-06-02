@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uw.cse.dineon.user.checkin;
+package uw.cse.dineon.library.checkin;
 
 /**
  * <p>Encapsulates the result of a barcode scan invoked through {@link IntentIntegrator}.</p>
