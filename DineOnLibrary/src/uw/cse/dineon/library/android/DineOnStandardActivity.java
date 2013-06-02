@@ -124,6 +124,12 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 			}
 		}
 	}
+	
+	@Override
+	protected void onDestroy() {
+		
+		super.onDestroy();
+	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -141,8 +147,8 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 
 	@Override
 	protected void onResume() {
-		super.onResume();
 		mPersImageCache.open();
+		super.onResume();
 	}
 
 	@Override

@@ -329,7 +329,7 @@ public class RestaurantInfo extends LocatableStorable {
 		if (!hasMenu(menu)) {
 			return false;
 		}
-
+		
 		for (Menu m : mMenus) {
 			if (m.getName().equals(menu.getName())) {
 				menu.addNewItem(item);

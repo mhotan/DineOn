@@ -352,7 +352,7 @@ RequestDetailListener {
 		@Override
 		public Fragment getItem(int position) {
 
-			Restaurant restaurant = getRestaurant();
+			Restaurant restaurant = mRestaurant;
 			assert (restaurant != null); // WTF if that is null?
 
 			// Narrow in position

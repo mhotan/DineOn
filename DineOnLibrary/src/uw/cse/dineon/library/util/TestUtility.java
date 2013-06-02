@@ -11,9 +11,14 @@ import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.R;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageIO;
+
+import android.content.res.Resources;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -149,6 +154,23 @@ public final class TestUtility {
 		restUser.setPassword("12345");
 		restUser.setObjectId("_marksrest");
 		return new Restaurant(restUser);
+	}
+	
+	/**
+	 * From a resource and id create a test image.
+	 * @param res Resources to grab the image
+	 * @param resId Resource ID of the image
+	 * @return null if unable to locate image with correct id from resources
+	 */
+	public static DineOnImage getFakeImage(Resources res, int resId) {
+		DineOnImage image;
+		try {
+			image = new DineOnImage(ImageIO.loadBitmapFromResource(res, resId));
+		} catch (ParseException e) {
+			return null;
+		}
+		image.setObjId("test_" + resId);
+		return image;
 	}
 	
 	public static Restaurant createFakeRestaurant(ParseUser u) throws ParseException {

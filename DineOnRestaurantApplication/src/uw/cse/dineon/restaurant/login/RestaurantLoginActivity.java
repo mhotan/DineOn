@@ -67,17 +67,6 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 		}
 	}
 
-	/**
-	 * This automates the addition of the User Intent. Should never be called
-	 * when mUser is null.
-	 * @param intent Intent
-	 */
-	@Override
-	public void startActivity(Intent intent) {
-//		intent.putExtra(DineOnConstants.KEY_RESTAURANT, mRestaurant);
-		super.startActivity(intent);
-	}
-
 	@Override
 	public void onLogin(String username, String password) {
 		createProgressDialog();
@@ -107,18 +96,9 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 	 */
 	private void startMainActivity() {
 		Intent i = new Intent(this, RestauarantMainActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
 		startActivity(i);
 		finish();
-	}
-
-	/**
-	 * Attempts to create new account. Uses another activity to create this
-	 * account.
-	 */
-	private void createNewAccount() {
-		Intent i = new Intent(this, CreateNewRestaurantAccountActivity.class);
-		startActivity(i);
 	}
 	
 	@Override

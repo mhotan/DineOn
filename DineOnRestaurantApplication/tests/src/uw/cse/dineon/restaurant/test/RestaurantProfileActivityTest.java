@@ -3,6 +3,7 @@ package uw.cse.dineon.restaurant.test;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Restaurant;
+import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.profile.MenuItemsFragment;
@@ -11,7 +12,9 @@ import uw.cse.dineon.restaurant.profile.RestaurantInfoFragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
@@ -21,11 +24,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.parse.LogInCallback;
 import com.parse.Parse;
-import com.parse.ParseAnonymousUtils;
-import com.parse.ParseException;
-import com.parse.ParseUser;
 
 /**
  * Test class for testing restaurant profile
@@ -35,6 +34,8 @@ import com.parse.ParseUser;
 public class RestaurantProfileActivityTest extends
 		ActivityInstrumentationTestCase2<ProfileActivity> {
 
+	private static final String TAG = RestaurantProfileActivityTest.class.getSimpleName();
+	
 	private ProfileActivity mActivity;
 	private Restaurant r;
 
@@ -55,9 +56,6 @@ public class RestaurantProfileActivityTest extends
 	private static final double TEST_ITEM_PRICE = 9.99;
 	private static final int TEST_ITEM_ID = 1;
 
-	private final static String fakeUserName = "vinceRestProfileActTest";
-	private final static String fakePassword = "password";
-	
 	public RestaurantProfileActivityTest() {
 		super(ProfileActivity.class);
 	}
@@ -65,40 +63,40 @@ public class RestaurantProfileActivityTest extends
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		Parse.initialize(getInstrumentation().getTargetContext(),
+		Context tgtCtx = getInstrumentation().getTargetContext();
+		Parse.initialize(tgtCtx,
 				"RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul",
 				"wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 		setActivityInitialTouchMode(false);
-				
+		
+		Resources res = getInstrumentation().getContext().getResources();
+		if (res == null) {
+			Log.e(TAG, "Resources NOT Null");
+		}
 		
 		// construct fake restaurant for intent
 		r = TestUtility.createFakeRestaurant();
-		//TODO: Update for current address display r.getInfo().setAddr(TEST_ADDR);
 		r.getInfo().setPhone(TEST_PHONE);
 
 		testMenu = new Menu(TEST_MENU_TITLE);
 		mMenuItem = new MenuItem(TEST_ITEM_ID, TEST_ITEM_PRICE, TEST_ITEM_TITLE, TEST_ITEM_DESC);
+		DineOnImage image = TestUtility.getFakeImage(res, R.raw.food);
+		mMenuItem.setImage(image);
 		testMenu.addNewItem(mMenuItem);
 		r.getInfo().addMenu(testMenu);
-
+		r.addImage(TestUtility.getFakeImage(res, R.raw.martys));
+		
 		DineOnRestaurantApplication.logIn(r);
 		
 		Intent intent = new Intent(getInstrumentation().getTargetContext(), ProfileActivity.class);
 		setActivityIntent(intent);
 
-		
 		mActivity = getActivity();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		testMenu.deleteFromCloud();
-		r.deleteFromCloud();
-		mMenuItem.deleteFromCloud();
 		mActivity.finish();
-		for (Menu m : r.getInfo().getMenuList()) {
-			m.deleteFromCloud();
-		}
 		super.tearDown();
 	}
 
@@ -314,10 +312,4 @@ public class RestaurantProfileActivityTest extends
 		assertEquals("samples", menuname);
 
 	}
-
-	private Restaurant createFakeRestaurant(ParseUser user) throws ParseException {
-		Restaurant r = new Restaurant(user);
-		return r;
-	}
-
 }

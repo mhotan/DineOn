@@ -72,6 +72,9 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		mUser.setPassword(fakePassword);
 
 		mUI = new DineOnUser(mUser);
+		
+		// MH Add image
+		
 		mRestaurant = new Restaurant(mUser);
 		mRequest = new CustomerRequest("Me Hungy", mUI.getUserInfo());
 

@@ -97,18 +97,18 @@ public final class Utility {
 		return b.create();
 	}
 
-	/**
-	 * Creates an alert dialog that pushes user back to login page.
-	 * @param context Context to show Alert Dialog
-	 * @param loginClass Class of the Login to launch. 
-	 * @return The alert dialog.
-	 */
-	public static AlertDialog getBackToLoginAlertDialog(
-			final Context context, final Class<?> loginClass) {
-		return getBackToLoginAlertDialog(context, 
-				"Looks like we have misplaced your Information.  " 
-						+ "Please log back in to try again." , loginClass);
-	}
+//	/**
+//	 * Creates an alert dialog that pushes user back to login page.
+//	 * @param context Context to show Alert Dialog
+//	 * @param loginClass Class of the Login to launch. 
+//	 * @return The alert dialog.
+//	 */
+//	public static AlertDialog getBackToLoginAlertDialog(
+//			final Context context, final Class<?> loginClass) {
+//		return getBackToLoginAlertDialog(context, 
+//				"Looks like we have misplaced your Information.  " 
+//						+ "Please log back in to try again." , loginClass);
+//	}
 
 	/**
 	 * Creates an alert dialog that pushes user back to login page.

@@ -1,5 +1,9 @@
 package uw.cse.dineon.restaurant.test;
 
+import java.util.Random;
+
+import uw.cse.dineon.library.Restaurant;
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.CreateNewAccountFragment;
 import uw.cse.dineon.restaurant.login.CreateNewRestaurantAccountActivity;
@@ -12,6 +16,9 @@ import android.widget.EditText;
 
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 /**
  * Tests the Activity for creating a new restaurant account
@@ -98,54 +105,54 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	 * Black-box
 	 */
 	public void testCreateNewAccount() throws ParseException {
-//		Random r = new Random();
-//		int randomNum = r.nextInt(1000000);
-//		fakeUserName = "" + randomNum;
-//		
-//		ActivityMonitor monitor = getInstrumentation().addMonitor(
-//				RestauarantMainActivity.class.getName(), null, false);
-//		
-//		mActivity.runOnUiThread(new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				username.setText(fakeUserName);
-//				password.setText(fakePassword);
-//				passwordrepeat.setText(fakePassword);
-//				email.setText(fakeEmail);
-//				submit.performClick();
-//			}
-//		});
-//		
-//		RestauarantMainActivity mainAct = (RestauarantMainActivity) 
-//				monitor.waitForActivityWithTimeout(WAIT_TIME);
-//		assertNotNull(mainAct);
-//		
-//		ParseUser curUser = ParseUser.getCurrentUser();
-//		curUser.fetch();
-//		assertNotNull(curUser);
-//		assertEquals(curUser.getUsername(), fakeUserName);
-//		assertEquals(curUser.getEmail(), fakeEmail);
-//		
-//		ParseQuery inner = new ParseQuery(RestaurantInfo.class.getSimpleName());
-//		inner.whereEqualTo(RestaurantInfo.PARSEUSER, curUser);
-//		ParseQuery query = new ParseQuery(Restaurant.class.getSimpleName());
-//		query.whereMatchesQuery(Restaurant.INFO, inner);
-//		ParseObject object = query.getFirst();
-//		
-//		assertNotNull(object);
-//		
-//		Restaurant justMade = new Restaurant(object);
-//		
-//		assertNotNull(justMade);
-//		assertNotNull(justMade.getInfo());
-//		
-//		assertEquals(justMade.getName(), fakeUserName);
-//		
-//		justMade.deleteFromCloud();
-//		curUser.delete();
-//		
-//		mainAct.finish();
+		Random r = new Random();
+		int randomNum = r.nextInt(1000000);
+		fakeUserName = "" + randomNum;
+		
+		ActivityMonitor monitor = getInstrumentation().addMonitor(
+				RestauarantMainActivity.class.getName(), null, false);
+		
+		mActivity.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				username.setText(fakeUserName);
+				password.setText(fakePassword);
+				passwordrepeat.setText(fakePassword);
+				email.setText(fakeEmail);
+				submit.performClick();
+			}
+		});
+		
+		RestauarantMainActivity mainAct = (RestauarantMainActivity) 
+				monitor.waitForActivityWithTimeout(5000);
+		assertNotNull(mainAct);
+		
+		ParseUser curUser = ParseUser.getCurrentUser();
+		curUser.fetch();
+		assertNotNull(curUser);
+		assertEquals(curUser.getUsername(), fakeUserName);
+		assertEquals(curUser.getEmail(), fakeEmail);
+		
+		ParseQuery inner = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		inner.whereEqualTo(RestaurantInfo.PARSEUSER, curUser);
+		ParseQuery query = new ParseQuery(Restaurant.class.getSimpleName());
+		query.whereMatchesQuery(Restaurant.INFO, inner);
+		ParseObject object = query.getFirst();
+		
+		assertNotNull(object);
+		
+		Restaurant justMade = new Restaurant(object);
+		
+		assertNotNull(justMade);
+		assertNotNull(justMade.getInfo());
+		
+		assertEquals(justMade.getName(), fakeUserName);
+		
+		justMade.deleteFromCloud();
+		curUser.delete();
+		
+		mainAct.finish();
 	}
 	
 	/**

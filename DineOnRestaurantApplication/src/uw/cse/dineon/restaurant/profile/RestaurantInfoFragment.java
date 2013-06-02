@@ -487,6 +487,12 @@ public class RestaurantInfoFragment extends Fragment {
 						int index = mGallery.indexOfChild(mCurrentSelected);
 						mGallery.removeView(mCurrentSelected);
 						mListener.onImageRemoved(index);
+						
+						// Update the next child.
+						View nextChild = mGallery.getChildAt(0);
+						if (nextChild != null) {
+							setSelected(nextChild);
+						}
 					}
 				});
 				builder.setNegativeButton("Cancel", new OnClickListener() {
@@ -509,9 +515,7 @@ public class RestaurantInfoFragment extends Fragment {
 				mPhoneInput.setText(phoneNum);
 				mInfo.setHours(mHourInput.getText().toString());		
 				mListener.onRestaurantInfoUpdate(mInfo);
-			} else { 
-				setSelected(v);
-			}
+			} 
 		}
 		
 		/**

@@ -116,12 +116,12 @@ public class MenuItemsFragment extends ListFragment {
 		alert.setMessage("Please choose a title for your first menu");
 		// Stock input dialog code
 		// Set an EditText view to get user input
-		final EditText input = new EditText(getActivity());
-		alert.setView(input);
+		final EditText INPUT = new EditText(getActivity());
+		alert.setView(INPUT);
 
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				String value = input.getText().toString();
+				String value = INPUT.getText().toString();
 				m.setName(value);
 			}
 		});
@@ -149,15 +149,6 @@ public class MenuItemsFragment extends ListFragment {
 		// TODO Add your menu entries here
 		inflater.inflate(R.menu.menu_menu, menu);
 		super.onCreateOptionsMenu(menu, inflater);
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(android.view.Menu menu) {
-		if (currentMenu == null) {
-
-		}
-
-		super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override

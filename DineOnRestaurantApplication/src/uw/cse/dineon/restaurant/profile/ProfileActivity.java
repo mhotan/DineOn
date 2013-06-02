@@ -7,6 +7,7 @@ import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.R;
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
@@ -71,7 +72,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 		ActionBar ab = getActionBar();
 		if (ab != null) { // Support older builds
 			ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			ab.setTitle(getRestaurant().getName());
+			ab.setTitle(mRestaurant.getName());
 			ab.setDisplayShowTitleEnabled(true);
 			ab.addTab(ab.newTab()
 					.setText(R.string.tab_actionbar_restaurant_profile)
@@ -125,7 +126,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 		android.support.v4.app.FragmentTransaction supFT = getSupportFragmentManager()
 				.beginTransaction();
 
-		Restaurant rest = getRestaurant();
+		Restaurant rest = mRestaurant;
 		RestaurantInfo info = rest.getInfo();
 		assert (info != null);
 
@@ -210,7 +211,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 
 	@Override
 	public void onMenuItemModified(MenuItem item) {
-		getRestaurant().saveInBackGround(new SaveCallback() {
+		mRestaurant.saveInBackGround(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
 				if (e == null) {
@@ -219,7 +220,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 							"Menu Item Updated!", Toast.LENGTH_SHORT).show();
 				} else {
 					Log.e(TAG, e.getMessage() + " #" + e.getCode());
-					Log.d(TAG, getRestaurant().packObject().toString());
+					Log.d(TAG, mRestaurant.packObject().toString());
 				}
 			}
 		});
@@ -237,7 +238,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 							.show();
 				} else {
 					Log.e(TAG, e.getMessage() + " #" + e.getCode());
-					Log.d(TAG, getRestaurant().packObject().toString());
+					Log.d(TAG, mRestaurant.packObject().toString());
 				}
 			}
 		});
@@ -245,20 +246,16 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 
 	@Override
 	public RestaurantInfo getInfo() {
-		if (getRestaurant() == null) {
+		if (mRestaurant == null) {
 			return null;
 		}
-		return getRestaurant().getInfo();
-	}
-
-	public void onSelectImageAsDefault(int i) {
-		// TODO set image at index I as the default
+		return mRestaurant.getInfo();
 	}
 
 	@Override
 	public void onImageRemoved(int index) {
-		getRestaurant().getInfo().removeAtIndex(index);
-		getRestaurant().saveInBackGround(new SaveCallback() {
+		mRestaurant.getInfo().removeAtIndex(index);
+		mRestaurant.saveInBackGround(new SaveCallback() {
 
 			@Override
 			public void done(ParseException e) {
@@ -278,7 +275,28 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 		MenuItemImageCreator creator = new MenuItemImageCreator(item, b);
 		creator.execute();
 	}
-
+	
+	/**
+	 * @return returns a progress dialog to show while the image is saving.
+	 */
+	private ProgressDialog getSavingImageDialog() {
+		return getSaveDialog(R.string.saving_new_image);
+	}
+	
+	/**
+	 * Returns a progress dialog for showing that a certain item is saving.
+	 * @param messageResId Resource message id.
+	 * @return Progress dialog 
+	 */
+	private ProgressDialog getSaveDialog(int messageResId) {
+		ProgressDialog d = new ProgressDialog(this);
+		d.setIndeterminate(true);
+		d.setCancelable(false);
+		d.setTitle(R.string.saving);
+		d.setMessage(getResources().getString(messageResId));
+		return d;
+	}
+	
 	/**
 	 * This class helps in saving an image to the restaurant. There must be a
 	 * sequence of steps to take in order to add an image successfully
@@ -290,7 +308,8 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 
 		// Bitmap we wish to save as a DineOnimage
 		private final Bitmap mBitmap;
-
+		private final ProgressDialog mDialog;
+		
 		/**
 		 * Creates an asynchronous process to save images for this restaurant.
 		 * 
@@ -303,12 +322,14 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 						"AsynchronousImageSaver image cannot be null");
 			}
 			mBitmap = b;
+			mDialog = getSavingImageDialog();
 		}
 
 		@Override
 		protected void onPreExecute() {
 			isWorkingBackground = true;
 			invalidateOptionsMenu();
+			mDialog.show();
 		}
 
 		@Override
@@ -316,7 +337,9 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 			try {
 				DineOnImage image = new DineOnImage(mBitmap);
 				image.saveOnCurrentThread();
+				// We are locking the user while we are saving.
 				mRestaurant.addImage(image);
+				mRestaurant.saveOnCurrentThread();
 				return image;
 			} catch (ParseException e) {
 				Log.e(TAG, "Unable to save image exception: " + e.getMessage());
@@ -340,8 +363,31 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 			// Stop the progress spinner
 			isWorkingBackground = false;
 			invalidateOptionsMenu();
+			
+			mDialog.dismiss();
 		}
 	}
+//	
+//	/**
+//	 * Saves a menu item in the background.
+//	 * @author mhotan
+//	 */
+//	private class MenuItemSaver extends AsyncTask<MenuItem, Void, Void> {
+//
+//		private final MenuItem mItem;
+//		
+//		@Override
+//		protected Void doInBackground(MenuItem... params) {
+//			MenuItem item = params[0];
+//			try {
+//				item.saveOnCurrentThread();
+//			} catch (ParseException e) {
+//				Log.e(TAG, "Unable to save new menu item.");
+//			}
+//			return null;
+//		}
+//		
+//	}
 
 	/**
 	 * Creates a DineOnImage for MenuItem.
@@ -353,6 +399,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 
 		private final Bitmap mBitmap;
 		private final MenuItem mItem;
+		private final ProgressDialog mDialog;
 
 		/**
 		 * Prepares the saving process.
@@ -365,12 +412,14 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 		public MenuItemImageCreator(MenuItem item, Bitmap b) {
 			mBitmap = b;
 			mItem = item;
+			mDialog = getSavingImageDialog();
 		}
 
 		@Override
 		protected void onPreExecute() {
 			isWorkingBackground = true;
 			invalidateOptionsMenu();
+			mDialog.show();
 		}
 
 		@Override
@@ -401,6 +450,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 			// Stop the progress spinner
 			isWorkingBackground = false;
 			invalidateOptionsMenu();
+			mDialog.dismiss();
 		}
 	}
 

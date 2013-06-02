@@ -126,16 +126,6 @@ implements SateliteListener {
 	}
 
 	/**
-	 * Returns the reference to the current Restaurant object associated with this user.
-	 * 
-	 * @return restaurant associated with this, or null if restaurant has not uploaded yet.
-	 */
-	protected Restaurant getRestaurant() {
-		return mRestaurant;
-	}
-	
-
-	/**
 	 * Notifies all the users that a Change in this restaurant has changed.
 	 */
 	protected void notifyAllRestaurantChange() {
@@ -523,7 +513,7 @@ implements SateliteListener {
 	 */
 	public void startLoginActivity() {
 		Intent i = new Intent(this, RestaurantLoginActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
 		startActivity(i);
 		finish();
 	}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">DineOn Restaurant</string>
     <string name="TaskTitle">Restaurant Order</string>
     <string name="item_rest_profile">Profile</string>
@@ -84,7 +85,6 @@
     <string name="newline">"\n"</string>
     <string name="save_changes">Save Changes</string>
     <string name="hint_hours_of_operation">Hours of operation</string>
-    
     <string name="credit_card_header"><u>"Credit Card Information"</u></string>
     <string name="invalid_card">"Invalid Credit Card Information Entered"</string>
     <string name="disclaimer">By creating an account, you agree to allow DineOnRestaurant to charge your credit card a monthly fee of $99/month to use our service.</string>
@@ -93,14 +93,21 @@
     <string name="expiration_month">Expiration Month</string>
     <string name="expiration_year">Expiration Year</string>
     <string name="zip_code">Zip Code</string>
+
     <string-array name="default_employees">
-        <item >Bert</item>
-        <item >Ernie</item>
-        <item >Big Bird</item>
-        <item >Cookie Monster</item>
+        <item>Bert</item>
+        <item>Ernie</item>
+        <item>Big Bird</item>
+        <item>Cookie Monster</item>
     </string-array>
+
     <string name="title_complete_order">Served Up?</string>
     <string name="message_complete_order_question">Are you done with this order?  This order will be removed from this list.</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="saving">Saving…</string>
+    <string name="loading">Loading...</string>
+    <string name="saving_new_image">Give me a little bit while we save your image.</string>
+    <string name="saving_menuitem">Please wait while we save your new menu item</string>
+
 </resources>
