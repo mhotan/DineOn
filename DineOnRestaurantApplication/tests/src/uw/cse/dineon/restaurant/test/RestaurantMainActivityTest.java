@@ -15,7 +15,9 @@ import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.DiningSessionDetailActivity;
 import uw.cse.dineon.restaurant.active.OrderDetailActivity;
 import uw.cse.dineon.restaurant.active.RequestDetailActivity;
+import uw.cse.dineon.restaurant.active.RequestListFragment;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
+import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
@@ -76,6 +78,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		List<CurrentOrderItem> items = new ArrayList<CurrentOrderItem>();
 		items.add(new CurrentOrderItem(new MenuItem(123, 1.99, "Yum yums", "description")));
 		mOrder = new Order(1, mUI.getUserInfo(), items);
+		mOrder.setObjId("435");
 		testSession = new DiningSession(1, mUI.getUserInfo(), mRestaurant.getInfo());
 		mRestaurant.addCustomerRequest(mRequest);
 		mRestaurant.addOrder(mOrder);
@@ -108,32 +111,48 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	 * Whitebox testing
 	 */
 	public void testOrdersPage() { 
-		android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
+		final android.support.v4.view.ViewPager pager = (android.support.v4.view.ViewPager) 
 				mActivity.findViewById(uw.cse.dineon.restaurant.R.id.pager_restaurant_main);
 		PagerAdapter adapter = pager.getAdapter();
 		assertNotNull(adapter);
 
-		pager.setCurrentItem(0);
+		mActivity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				pager.setCurrentItem(0); // requests page
+			}
+			
+		});
+		
+		
+		
 		getInstrumentation().waitForIdleSync();
 		
-		final View button = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_expand_order);
-		assertNotNull(button);
+		assertEquals(0, pager.getCurrentItem());
+		
+		final View vwTop = mActivity.findViewById(R.id.listitem_order_top);
+		
+		
+		assertNotNull(vwTop);
 
 		mActivity.runOnUiThread(new Runnable() {
 
 			@Override
 			public void run() {
-				button.performClick();
+				vwTop.performClick();
 			}
 		});
 		getInstrumentation().waitForIdleSync();
 		
-		final View infoButton = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_proceed);
+		final View proButton = pager.findFocus().findViewById(uw.cse.dineon.restaurant.R.id.button_proceed);
+		assertNotNull(proButton);
+		
 		mActivity.runOnUiThread(new Runnable() {
 
 			@Override
 			public void run() {
-				infoButton.performClick();
+				proButton.performClick();
 			}
 		});
 		
@@ -144,7 +163,6 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNotNull(startedActivity);
 		
-		//TODO Add assertion about activity state?
 		if (startedActivity != null) {
 			startedActivity.finish();
 		}
@@ -173,7 +191,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		
 		getInstrumentation().waitForIdleSync();
 		
-		final View button = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_expand_request);
+		final View button = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.listitem_request_top);
 		assertNotNull(button);
 
 		mActivity.runOnUiThread(new Runnable() {
@@ -185,7 +203,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		});
 		getInstrumentation().waitForIdleSync();
 		
-		final View newActButton = mActivity.findViewById(R.id.button_proceed);
+		final View newActButton = pager.findFocus().findViewById(R.id.button_proceed);
 		assertNotNull(newActButton);
 		
 		mActivity.runOnUiThread(new Runnable() {
@@ -201,8 +219,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		
 		RequestDetailActivity startedActivity = (RequestDetailActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
-		assertNotNull(startedActivity); //TODO Fails, can't figure out why (order page is same setup and passes)
-		//TODO test for activity state?
+		assertNotNull(startedActivity);
 		
 		if (startedActivity != null) {
 			startedActivity.finish();
@@ -229,21 +246,28 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 			
 		});
 		
-		getInstrumentation().waitForIdleSync();
 		
-		final View button = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_expand_user);
-		assertNotNull(button);
+		
+		getInstrumentation().waitForIdleSync();
+		assertEquals(2, pager.getCurrentItem());
+		
+		
+		//Staging
+		final View vwTop = mActivity.findViewById(R.id.listitem_user_top);
+		
+		
+		assertNotNull(vwTop);
 
 		mActivity.runOnUiThread(new Runnable() {
 
 			@Override
 			public void run() {
-				button.performClick();
+				vwTop.performClick();
 			}
 		});
 		getInstrumentation().waitForIdleSync();
 		
-		final View proButton = mActivity.findViewById(uw.cse.dineon.restaurant.R.id.button_proceed);
+		final View proButton = pager.findFocus().findViewById(uw.cse.dineon.restaurant.R.id.button_proceed);
 		assertNotNull(proButton);
 		
 		mActivity.runOnUiThread(new Runnable() {
@@ -260,7 +284,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		DiningSessionDetailActivity startedActivity = (DiningSessionDetailActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME );
 		
-		assertNotNull(startedActivity); //TODO fails
+		assertNotNull(startedActivity);
 		
 		if (startedActivity != null) {
 			startedActivity.finish();
@@ -280,5 +304,73 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		assertNotNull(requestTime);
 		assertNotNull(arrowButton);
 	}
+	
+	/**
+	 * Asserts that the customer request does not store nulls
+	 */
+	public void testOnRequestSelectedNull() {
+		mActivity.onRequestSelected(mRequest);
+		ActivityMonitor testMon = getInstrumentation().addMonitor(
+				RequestDetailActivity.class.getName(), null, false);
+		Activity testA = getInstrumentation().waitForMonitorWithTimeout(testMon, 4000);
+		testA.finish();
+		mActivity.onRequestSelected(null);
+		assertNotNull(mActivity.getRequest());
+	}
+	
+	/**
+	 * Asserts that orders are correctly updated with null and nonnull values
+	 */
+	public void testOnOrderSelected() {
+		mActivity.onOrderSelected(mOrder);
+		ActivityMonitor testMon = getInstrumentation().addMonitor(
+				OrderDetailActivity.class.getName(), null, false);
+		Activity testA = getInstrumentation().waitForMonitorWithTimeout(testMon, 4000);
+		testA.finish();
+		assertEquals(mOrder, mActivity.getOrder());
+		
+		mActivity.onOrderSelected(null);
+		assertNotNull(mActivity.getOrder());
+	}
+	
+	/**
+	 * Asserts that null dining sessions are not stored
+	 */
+	public void testOnDiningSessionSelectedNull() {
+		mActivity.onDiningSessionSelected(testSession);
+		
+		ActivityMonitor monRia = getInstrumentation().addMonitor(
+				DiningSessionDetailActivity.class.getName(), null, false);
+		Activity dsda = getInstrumentation().waitForMonitorWithTimeout(monRia, 4000);
+		if(dsda != null) dsda.finish();
+		mActivity.onDiningSessionSelected(null);
+		assertNotNull(mActivity.getDiningSession());
+		
+		
+	}
+	
+	/**
+	 * Tests that progress changed correctly displays
+	 */
+	public void testOnProgressChanged() {
+		mActivity.onProgressChanged(mOrder, 100);
+	}
+	
+	/**
+	 * Tests that shout outs are sent correctly
+	 */
+	public void testSendShoutOut() {
+		mActivity.sendShoutOut(mUI.getUserInfo(), "Testing");
+	}
+	
+	/**
+	 * Toast that tasks are sent to staff
+	 */
+	public void testOnSendTaskToStaff() {
+		mActivity.onSendTaskToStaff(mRequest, "Bert", "Low");
+	}
+	
 
+	
+	
 }

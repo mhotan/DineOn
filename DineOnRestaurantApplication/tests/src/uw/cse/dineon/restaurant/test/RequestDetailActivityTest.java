@@ -7,10 +7,13 @@ import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
+import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.RequestDetailActivity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
+import com.parse.Parse;
 import com.parse.ParseUser;
 
 public class RequestDetailActivityTest extends
@@ -32,6 +35,10 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
+		Parse.initialize(getInstrumentation().getTargetContext(), 
+				"RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", 
+				"wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 
 		mUser = new ParseUser();
 		mUser.setEmail(fakeEmail);
@@ -45,6 +52,8 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 		Intent intent = new Intent(getInstrumentation().getTargetContext(),
 				RequestDetailActivity.class);
 		setActivityIntent(intent);
+		
+		mRestaurant.setTempRequest(mRequest);
 		
 		DineOnRestaurantApplication.logIn(mRestaurant);
 
@@ -89,6 +98,18 @@ ActivityInstrumentationTestCase2<RequestDetailActivity> {
 		//TODO Need to modify toast creation to assert here
 	}
 	
-	//TODO: More tests
-	
+	/**
+	 * Tests clicking the button to send a request
+	 */
+	public void testClickRequest() {
+		//Fragment mFrag = mActivity.getFragmentManager().findFragmentById(R.layout.fragment_request_detail);
+		mActivity.runOnUiThread(new Runnable() {
+		    public void run() {
+		    	mActivity.findViewById(R.id.button_send_to_staff).performClick();
+		    }
+		});
+		getInstrumentation().waitForIdleSync();
+		
+		//TODO Assert
+	}	
 }

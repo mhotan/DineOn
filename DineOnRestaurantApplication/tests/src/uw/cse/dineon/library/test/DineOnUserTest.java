@@ -14,6 +14,7 @@ import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.TestUtility;
 import android.test.AndroidTestCase;
 
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -33,6 +34,8 @@ public class DineOnUserTest extends AndroidTestCase {
 	private Restaurant mRestaurant;
 	
 	protected void setUp() throws Exception {
+		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
+
 		mUser = new ParseUser();
 		dUser = new DineOnUser(mUser);
 		mRestaurant = TestUtility.createFakeRestaurant();
