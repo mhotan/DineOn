@@ -20,15 +20,14 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
-import static junit.framework.Assert.*;
 
 /**
  * Application for DineOn user side.
  */
 public class DineOnUserApplication extends Application {
 	
-	public static DineOnUser currentUser = null;
-	public static HashMap<MenuItem, CurrentOrderItem> currentOrderMapping = 
+	private static DineOnUser currentUser = null;
+	private static HashMap<MenuItem, CurrentOrderItem> currentOrderMapping = 
 			new HashMap<MenuItem, CurrentOrderItem>();
 	private static RestaurantInfo restaurantOfInterest;
 	private static List<RestaurantInfo> restaurantInfos;
@@ -39,7 +38,6 @@ public class DineOnUserApplication extends Application {
 
 		// Add your initialization code here
 		Parse.initialize(this, DineOnConstants.APPLICATION_ID, DineOnConstants.CLIENT_KEY);
-
 		// TODO Initialize Twitter
 		// https://www.parse.com/docs/android_guide#twitterusers-setup
 		

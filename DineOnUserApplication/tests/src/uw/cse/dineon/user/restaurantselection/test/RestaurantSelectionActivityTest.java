@@ -15,12 +15,15 @@ import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.login.UserLoginActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
+import android.app.AlertDialog;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.KeyEvent;
 import android.widget.Button;
 
 import com.parse.FindCallback;
@@ -68,8 +71,6 @@ public class RestaurantSelectionActivityTest extends
 		// Initialize activity testing parameters
 		this.setActivityInitialTouchMode(false);
 		mInstrumentation = this.getInstrumentation();
-	    Intent addEvent = new Intent();
-	    setActivityIntent(addEvent);
 		mActivity = getActivity();
 	}
 
@@ -176,39 +177,71 @@ public class RestaurantSelectionActivityTest extends
 		RSA.finish();
 	}
 	
-	/**
-	 * Test that the parse query callback update fields.
-	 */
-	public void testFindCallback() {
-		ParseUser user = new ParseUser();
-		user.setUsername("bill");
-		user.setPassword("lovefred");
-		FindCallback fCall = mActivity.getFindCallback("TestMessage");
-		RestaurantInfo testRI = null;
-		try {
-			testRI = new RestaurantInfo(user);
-		} catch (ParseException e) {
-			fail("Couldn't build a restaurantInfo");
-		}
-		
-		List<ParseObject> testL = new ArrayList<ParseObject>();
-		testL.add(testRI.packObject());
-		final List<ParseObject> list = testL;
-		final FindCallback callback = fCall;
-		final RestaurantSelectionActivity RSA = this.mActivity;
-		RSA.runOnUiThread(new Runnable() {
-		      public void run() {
-		    	  callback.done(list, null);
-		      }
-		  });
-		mInstrumentation.waitForIdleSync();
-		RSA.runOnUiThread(new Runnable() {
-		      public void run() {
-		    	  callback.done(list, new ParseException(4, "Test error"));
-		      }
-		  });
-		mInstrumentation.waitForIdleSync();
-		RSA.finish();
+//	/**
+//	 * Test that the parse query callback update fields.
+//	 */
+//	public void testFindCallback() {
+//		ParseUser user = new ParseUser();
+//		user.setUsername("bill");
+//		user.setPassword("lovefred");
+//		FindCallback fCall = mActivity.getFindCallback("TestMessage");
+//		RestaurantInfo testRI = null;
+//		try {
+//			testRI = new RestaurantInfo(user);
+//		} catch (ParseException e) {
+//			fail("Couldn't build a restaurantInfo");
+//		}
+//		
+//		List<ParseObject> testL = new ArrayList<ParseObject>();
+//		testL.add(testRI.packObject());
+//		final List<ParseObject> list = testL;
+//		final FindCallback callback = fCall;
+//		final RestaurantSelectionActivity RSA = this.mActivity;
+//		RSA.runOnUiThread(new Runnable() {
+//		      public void run() {
+//		    	  callback.done(list, null);
+//		      }
+//		  });
+//		mInstrumentation.waitForIdleSync();
+//		RSA.runOnUiThread(new Runnable() {
+//		      public void run() {
+//		    	  callback.done(list, new ParseException(4, "Test error"));
+//		      }
+//		  });
+//		mInstrumentation.waitForIdleSync();
+//		RSA.finish();
+//	}
+	
+	public void testBackPressed(){
+		assertNotNull(this.mActivity);
+		this.mInstrumentation.waitForIdleSync();
+		this.mInstrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+		this.mInstrumentation.waitForIdleSync();
+		AlertDialog ad = this.mActivity.getLogoutAlertDialog();
+		final Button BN = ad.getButton(AlertDialog.BUTTON_NEGATIVE);
+		assertNotNull(BN);
+		this.mActivity.runOnUiThread(new Runnable(){
+			@Override
+			public void run() {
+				BN.performClick();				
+			}
+			
+		});
+		this.mInstrumentation.waitForIdleSync();
+		ActivityMonitor logMon = this.mInstrumentation.addMonitor(UserLoginActivity.class.getName(), null, false);
+		final Button BA = ad.getButton(AlertDialog.BUTTON_POSITIVE);
+		assertNotNull(BA);
+		this.mActivity.runOnUiThread(new Runnable(){
+			@Override
+			public void run() {
+				BA.performClick();				
+			}
+			
+		});
+		UserLoginActivity ula = (UserLoginActivity) logMon.waitForActivityWithTimeout(5000);
+		assertTrue(this.mActivity.isDestroyed() || this.mActivity.isFinishing());
+		assertNotNull(ula);
+		ula.finish();
 	}
 
 }

@@ -1,9 +1,11 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.user.DineOnUserActivity;
+import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,7 +38,8 @@ MenuItemDetailFragment.MenuItemDetailListener {
 		}
 		
 		// Ugly way to find the item
-		DiningSession session = mUser.getDiningSession();
+		DineOnUser dou = DineOnUserApplication.getDineOnUser();
+		DiningSession session = dou.getDiningSession();
 		if (session != null) {
 			for (Menu menu: session.getRestaurantInfo().getMenuList()) {
 				for (MenuItem item : menu.getItems()) {

@@ -5,6 +5,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import uw.cse.dineon.library.CustomerRequest;
+import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
@@ -62,7 +63,8 @@ MenuItemDetailListener {
 		super.onCreate(savedInstanceState);
 		
 		// Make sure we have the current restaurant
-		DiningSession currentSession = mUser.getDiningSession();
+		DineOnUser dou = DineOnUserApplication.getDineOnUser();
+		DiningSession currentSession = dou.getDiningSession();
 		if (currentSession != null) { // We have a current session with a restaurant info
 			mRestaurant = currentSession.getRestaurantInfo();
 		} else if (DineOnUserApplication.getRestaurantOfInterest() != null) {

@@ -29,13 +29,13 @@ public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUse
 	protected void setUp() throws Exception{
 		super.setUp();
 		this.dineOnUser = TestUtility.createFakeUser();
+		assertNotNull(this.dineOnUser);
 		DineOnUserApplication.setDineOnUser(this.dineOnUser);
 		this.setActivityInitialTouchMode(false);
-		this.mInstr = this.getInstrumentation();
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);
+		this.mInstr = this.getInstrumentation();
 		this.mActivity = this.getActivity();
-		assertNotNull(DineOnUserApplication.getDineOnUser());
 
 	}
 	
@@ -54,7 +54,7 @@ public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUse
 		this.mInstr.waitForIdleSync();
 		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
 		this.mInstr.waitForIdleSync();
-		this.mInstr.invokeMenuActionSync(mActivity, R.id.option_search, 0);
+		assertTrue(this.mInstr.invokeMenuActionSync(mActivity, R.id.option_search, 0));
 		this.mInstr.waitForIdleSync();
 		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
 		this.mInstr.waitForIdleSync();
@@ -64,27 +64,6 @@ public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUse
 		
 	}
 	
-	/**
-	 * Tests to see if the menu buttons perform the correct action
-	 * and return on back press
-	 */
-	public void testMenuOptionFilter(){
-		assertNotNull(this.mActivity);
-		assertNotNull(DineOnUserApplication.getDineOnUser());
-		this.mInstr.waitForIdleSync();
-		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-		this.mInstr.waitForIdleSync();
-		assertNotNull(DineOnUserApplication.getDineOnUser());
-		this.mInstr.invokeMenuActionSync(mActivity, R.id.option_filter, 0);
-		this.mInstr.waitForIdleSync();
-		assertNotNull(DineOnUserApplication.getDineOnUser());
-		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
-		this.mInstr.waitForIdleSync();
-		
-		assertTrue(this.mActivity instanceof DineOnUserActivity);
-		this.mActivity.finish();
-
-	}
 	
 	/**
 	 * Tests to see if the menu buttons perform the correct action
@@ -97,7 +76,7 @@ public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUse
 		this.mInstr.waitForIdleSync();
 		ActivityMonitor proMon = this.mInstr.addMonitor(
 				ProfileActivity.class.getName(), null, false);
-		this.mInstr.invokeMenuActionSync(mActivity, R.id.option_profile, 0);
+		assertTrue(this.mInstr.invokeMenuActionSync(mActivity, R.id.option_profile, 0));
 		ProfileActivity pa = (ProfileActivity)
 				proMon.waitForActivityWithTimeout(5000);
 		assertNotNull(pa);
@@ -115,14 +94,17 @@ public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUse
 	 */
 	public void testMenuOptionLogOut(){
 		assertNotNull(this.mActivity);
+		assertNotNull(DineOnUserApplication.getDineOnUser());
 		this.mInstr.waitForIdleSync();
 		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
 		this.mInstr.waitForIdleSync();
 		ActivityMonitor logMon = this.mInstr.addMonitor(
 				UserLoginActivity.class.getName(), null, false);
-		this.mInstr.invokeMenuActionSync(this.mActivity, R.id.option_logout, 0);
+		assertTrue(this.mInstr.invokeMenuActionSync(this.mActivity, R.id.option_logout, 0));
+		assertTrue(this.mActivity.isFinishing() || this.mActivity.isDestroyed());
 		UserLoginActivity ula = (UserLoginActivity)
 				logMon.waitForActivityWithTimeout(5000);
+		
 		assertNull(DineOnUserApplication.getDineOnUser());
 		assertNotNull(ula);
 		ula.finish();

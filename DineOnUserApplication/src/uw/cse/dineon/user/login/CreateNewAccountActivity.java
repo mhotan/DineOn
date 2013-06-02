@@ -144,11 +144,12 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 	}
 	
 	public void onSuccess(DineOnUser dou){
-		
-		DineOnUserApplication.setDineOnUser(dou);
-		Intent intent = 
-				new Intent(this, RestaurantSelectionActivity.class);
-		startActivity(intent);
+		if(dou != null){
+			DineOnUserApplication.setDineOnUser(dou);
+			Intent intent = 
+					new Intent(this, RestaurantSelectionActivity.class);
+			startActivity(intent);
+		}
 	}
 
 	@Override

@@ -14,7 +14,10 @@ import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -49,6 +52,8 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 	private ProgressDialog mProgressDialog;
 
 	private RestaurantInfo currentRestaurant;
+	
+	private AlertDialog mAd;
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -86,6 +91,7 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 		super.onSaveInstanceState(outState);
 	}
 
+
 	/**
 	 * Add the list of restaurant infos to the list.
 	 */
@@ -94,6 +100,55 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 		this.mRestaurants.clear();
 	}
 
+	/**
+	 * Overrides the traditional on back and causes a alert to appear
+	 * asking the user to confirm to avoid accidental logout/quit.
+	 */
+	@Override
+	public void onBackPressed() {
+		AlertDialog.Builder adb = new AlertDialog.Builder(this);
+		adb.setMessage(R.string.string_log_out_alert);
+		adb.setCancelable(true);
+		final RestaurantSelectionActivity RSA = this;
+		adb.setPositiveButton("OK", new OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				RSA.destroyLogoutAlert();
+				RSA.startLoginActivity();
+				
+				
+			}
+			
+		});
+		
+		adb.setNegativeButton("Cancel", new OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				RSA.destroyLogoutAlert();
+			}
+			
+		});
+		this.mAd = adb.show();
+	}
+	
+	/**
+	 * Returns the alert dialog that is generated on back pressed.
+	 * Not thread safe. Mainly for testing.
+	 * 
+	 * @return The instance of the alert dialog, null otherwise.
+	 */
+	public AlertDialog getLogoutAlertDialog(){
+		return this.mAd;
+	}
+	
+	public void destroyLogoutAlert(){
+		if(this.mAd != null && this.mAd.isShowing()){
+			this.mAd.cancel();
+		}
+	}
+	
 	/**
 	 * Add a new restaurant info object to the restaurant list.
 	 * @param infos RestaurantInfo object to add to list.

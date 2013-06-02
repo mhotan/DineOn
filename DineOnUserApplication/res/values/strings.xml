@@ -93,8 +93,8 @@
     <string name="string_format_hours">Hours: %1$s</string>
     <string name="string_format_address">Address: %1$s</string>
     <string name="string_format_phone">Phone: %1$s</string>
+    <string name="string_log_out_alert">Are you sure you want to quit?</string>
     <string name="send_request">Send Request</string>
-
     <string-array name="request_list">
         <item>Water Refill Please!</item>
         <item>Drink Refill Please!</item>

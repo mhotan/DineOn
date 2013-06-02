@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -96,8 +97,9 @@ public class UserSatellite extends BroadcastReceiver {
 
 		// Check for null values
 		if (user == null) {
-			throw new IllegalArgumentException(
+			Log.d(TAG,
 					"Null user when registering broadcast receiver");
+			return;
 		}
 		if (activity == null) {
 			Log.w(TAG, "UserSatelite attempted to register null activity");
