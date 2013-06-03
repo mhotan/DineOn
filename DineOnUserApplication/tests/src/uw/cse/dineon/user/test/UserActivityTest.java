@@ -8,6 +8,7 @@ import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
+import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
@@ -92,4 +93,48 @@ public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUse
 	}
 
 	
+	/**
+	 * Test to see if the Checkin Dialog Creates itself and destroys itself 
+	 * properly
+	 */
+	public void testCheckinDialogCreationDestruction() {
+		final DineOnUserActivity DUA = this.mActivity; 
+		DUA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  DUA.createProgressDialog("Hello", "Test World");
+	          }
+	      });
+		DUA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  DUA.destroyProgressDialog();
+	          }
+	      });
+		mInstr.waitForIdleSync();
+		DUA.finish();
+	}
+	
+	/**
+	 * Test that on a timeout the checkin error dialog pops up.
+	 */
+	public void testCheckinTimeoutDialogCreation() {
+		final DineOnUserActivity DUA = this.mActivity; 
+		DUA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  DUA.createProgressDialog("Hello", "Test World");
+	          }
+	      });
+		DUA.runOnUiThread(new Runnable() {
+	          public void run() {
+	        	  DUA.timerDelayRemoveDialog((long)500);
+	          }
+	      });
+		mInstr.waitForIdleSync();
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.mActivity.finish();
+	}
 }

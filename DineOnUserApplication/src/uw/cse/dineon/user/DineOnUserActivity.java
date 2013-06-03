@@ -217,7 +217,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	 * @param title title of the dialog
 	 * @param message message in the dialog
 	 */
-	protected void createProgressDialog(String title, String message) {
+	public void createProgressDialog(String title, String message) {
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			return;
 		}
@@ -232,7 +232,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	/**
 	 * Hides the progress dialog if there is one.
 	 */
-	protected void destroyProgressDialog() {
+	public void destroyProgressDialog() {
 		if(mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
 			mProgressDialog = null;
@@ -243,7 +243,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	 * If an error occurs while checking in show error dialog to user.
 	 * @param message message to display to the user
 	 */
-	protected void showErrorCheckingInDialog(String message) {
+	public void showErrorCheckingInDialog(String message) {
 		AlertDialog.Builder b = new Builder(this);
 		b.setTitle("Failed to Check In!");
 		b.setMessage(message);
