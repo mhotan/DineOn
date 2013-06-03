@@ -546,6 +546,7 @@ MenuItemsFragment.MenuItemListener {
 		RestaurantInfo info = mRestaurant.getInfo();
 		if (!info.hasMenu(menu)) {
 			info.addMenu(menu);
+			info.saveOnCurrentThread();
 		}
 	}
 
