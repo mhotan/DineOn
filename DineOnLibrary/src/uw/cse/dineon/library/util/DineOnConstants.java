@@ -26,7 +26,7 @@ public final class DineOnConstants {
 	/**
 	 * Constant that controls whether applications are in testing mode.
 	 */
-	public static boolean TESTING = true;
+	public static boolean TESTING = false;
 
 	// Parse Related Constants to access Parse API
 	public static final String APPLICATION_ID = "10dCEpc2D8Rp7pC2uFaLCN7CtRcNSeZkz8d7eAaX";

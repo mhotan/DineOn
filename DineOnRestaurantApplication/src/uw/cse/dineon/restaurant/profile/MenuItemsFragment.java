@@ -78,8 +78,7 @@ public class MenuItemsFragment extends ListFragment {
 		
 		// No current menus from the user.
 		if (mMenus.size() < 1) {
-			Menu defaultMenu = new Menu("Default");
-			makeFirstMenu(defaultMenu);
+			makeFirstMenu();
 			Log.v(TAG, "No Default menu, prompting user");
 		} else {
 			updateMenuView(mMenus.get(0));
@@ -111,6 +110,12 @@ public class MenuItemsFragment extends ListFragment {
 	 */
 	public void addMenu(Menu menu) {
 		mMenus.add(menu);
+		
+		// Add the menu and update the view.
+		if (mCurrentMenu == null) {
+			updateMenuView(mMenus.get(0));
+		}
+		
 		Toast.makeText(getActivity(), "Menu added",
 				Toast.LENGTH_SHORT).show();
 	}
@@ -129,9 +134,8 @@ public class MenuItemsFragment extends ListFragment {
 
 	/**
 	 * Prompt user for title of initial menu.
-	 * @param m 
 	 */
-	private void makeFirstMenu(final Menu m) {
+	private void makeFirstMenu() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 		alert.setTitle("You have no menus!");
 		alert.setMessage("Please choose a title for your first menu");
@@ -143,8 +147,8 @@ public class MenuItemsFragment extends ListFragment {
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = INPUT.getText().toString();
+				
 				Menu newMenu = new Menu(value);
-
 				if (DineOnConstants.TESTING) {
 					// add directly to list
 					mMenus.add(newMenu);
