@@ -301,7 +301,7 @@ public class DiningSessionDetailFragment extends Fragment {
 	 * @author glee23
 	 */
 	@SuppressWarnings("SIC_INNER_SHOULD_BE_STATIC")
-	private class OrderListAdapter extends ArrayAdapter<Order> {
+	private static class OrderListAdapter extends ArrayAdapter<Order> {
 
 		private final Context mContext;
 		private List<Order> mOrders;

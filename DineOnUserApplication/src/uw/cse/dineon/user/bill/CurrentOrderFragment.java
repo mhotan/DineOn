@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DiningSession;
@@ -101,9 +102,9 @@ public class CurrentOrderFragment extends Fragment {
 			HashMap<MenuItem, CurrentOrderItem> orderItems = this.mListener.getOrder();
 			List<MenuItem> items = new ArrayList<MenuItem>();
 			double totalPrice = 0.0;
-			for (MenuItem m : orderItems.keySet()) {
-				items.add(m);
-				totalPrice += m.getPrice() * orderItems.get(m).getQuantity();
+			for (Entry<MenuItem, CurrentOrderItem> entry : orderItems.entrySet()) {
+				items.add(entry.getKey());
+				totalPrice += entry.getKey().getPrice() * entry.getValue().getQuantity();
 			}
 			mAdapter = new OrderArrayAdapter(this.getActivity(), items, orderItems);
 			if(totalPrice == 0.0) {
@@ -400,9 +401,11 @@ public class CurrentOrderFragment extends Fragment {
 									if (e == null) {
 										// successful, send the push notification
 										mListener.onPlaceOrder(NEW_ORDER);
-										Toast.makeText((Context) mListener, 
-												"Your order was placed.", 
-												Toast.LENGTH_SHORT).show();
+										if (mListener instanceof Context) {
+											Toast.makeText((Context) mListener, 
+													"Your order was placed.", 
+													Toast.LENGTH_SHORT).show();
+										}
 										mListener.doneWithOrder();
 
 									} else {
@@ -415,8 +418,10 @@ public class CurrentOrderFragment extends Fragment {
 
 
 					} else {
-						Toast.makeText((Context)mListener, "Must checkin before placing order.", 
-								Toast.LENGTH_SHORT).show();
+						if (mListener instanceof Context) {
+							Toast.makeText((Context)mListener, "Must checkin before placing order.", 
+									Toast.LENGTH_SHORT).show();
+						}
 					}
 
 					break;

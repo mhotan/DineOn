@@ -86,7 +86,7 @@ OnClickListener {
 	public void setBill(double subtotal, double tax) {
 		
 		if (this.mSession == null) {
-			DineOnUserApplication.getCurrentDiningSession();
+			this.mSession = DineOnUserApplication.getCurrentDiningSession();
 		}
 
 		mTitle.setText("Current Bill for " + mSession.getRestaurantInfo().getName());

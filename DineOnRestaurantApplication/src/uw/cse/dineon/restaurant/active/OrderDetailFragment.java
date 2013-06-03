@@ -174,7 +174,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	 * @author mhotan
 	 */
 	@SuppressWarnings("SIC_INNER_SHOULD_BE_STATIC")
-	private class MenuItemAdapter extends ArrayAdapter<CurrentOrderItem> {
+	private static class MenuItemAdapter extends ArrayAdapter<CurrentOrderItem> {
 
 		private final Context mContext;
 		
