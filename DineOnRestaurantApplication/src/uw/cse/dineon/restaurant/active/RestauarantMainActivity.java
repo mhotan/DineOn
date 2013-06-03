@@ -48,8 +48,7 @@ RequestDetailListener {
 
 	private static final String TAG = RestauarantMainActivity.class.getSimpleName(); 
 
-	private static final String[] CONTENT = 
-		{"Pending Orders" , "Pending Requests", "Current Sessions"};
+	private static String[] content;
 
 	/**
 	 * The pager widget, which handles animation and allows swiping horizontally to access previous
@@ -67,6 +66,9 @@ RequestDetailListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_restaurant_main);
 
+		content = getResources().
+				getStringArray(R.array.fragment_titles);
+		
 		mPager = (ViewPager) findViewById(R.id.pager_restaurant_main);
 		// Reset the adapter
 		mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -298,8 +300,11 @@ RequestDetailListener {
 	public void sendShoutOut(UserInfo user, String message) {
 		// TODO Send push notification back to  
 		Toast.makeText(this, 
-				"Shout out to " + user.getName() 
-				+ " \"" + message + "\"", Toast.LENGTH_SHORT).show();
+				getString(R.string.shout_out) + user.getName() 
+				+ getString(R.string.quote) 
+				+ message 
+				+ getString(R.string.quote), 
+				Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -307,8 +312,9 @@ RequestDetailListener {
 			String urgency) {
 		// TODO Auto-generated method stub
 		Toast.makeText(this, 
-				"Sending customer request " + request.getDescription() 
-				+ " to " + staff, Toast.LENGTH_SHORT).show();
+				getString(R.string.sending_customer_request) 
+				+ request.getDescription() 
+				+ getString(R.string.to) + staff, Toast.LENGTH_SHORT).show();
 	}
 	
 
@@ -356,7 +362,7 @@ RequestDetailListener {
 			assert (restaurant != null); // WTF if that is null?
 
 			// Narrow in position
-			position = Math.min(Math.max(position, 0), CONTENT.length - 1);
+			position = Math.min(Math.max(position, 0), content.length - 1);
 
 			Fragment f;
 			switch (position) {
@@ -380,13 +386,13 @@ RequestDetailListener {
 
 		@Override
 		public int getCount() {
-			return CONTENT.length;
+			return content.length;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			position = Math.max(Math.min(position, CONTENT.length - 1), 0);
-			return CONTENT[position];
+			position = Math.max(Math.min(position, content.length - 1), 0);
+			return content[position];
 		}
 
 		/**

@@ -63,11 +63,20 @@ public class DiningSessionDetailFragment extends Fragment {
 	private ListView mOrderList;
 	private ListView mUserList;
 	private TextView mOrderHeader;
+	
+	private static String tableLabel;
+	private static String menuItemLabel;
+	private static String qtyLabel;
+	private static String newLine;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mDiningSession = mListener.getDiningSession();
+		tableLabel = getString(R.string.table_label);
+		menuItemLabel = getString(R.string.menu_item_label);
+		qtyLabel = getString(R.string.qty_label);
+		newLine = getString(R.string.new_line);
 		// Update the state
 		update();
 	}
@@ -357,7 +366,7 @@ public class DiningSessionDetailFragment extends Fragment {
 							"Invalid view (" + v + "), Not a order view");
 				}
 				
-				mOrderTitle.setText("Table " + mOrder.getTableID());
+				mOrderTitle.setText(tableLabel + mOrder.getTableID());
 				List<CurrentOrderItem> items = mOrder.getMenuItems();
 				//Displays menu items as a string
 				StringBuffer buf = new StringBuffer();
@@ -365,8 +374,8 @@ public class DiningSessionDetailFragment extends Fragment {
 				mOrderTime.setText(mOrder.getOriginatingTime().toString());
 				for (CurrentOrderItem item : items) {
 					MenuItem mI = item.getMenuItem();
-					buf.append("Menu Item: " + mI.getTitle() + "\n");
-					buf.append("Quantity: " + item.getQuantity() + "\n\n");
+					buf.append(menuItemLabel + mI.getTitle() + newLine);
+					buf.append(qtyLabel + item.getQuantity() + newLine + newLine);
 				}
 				if(items.size() != 0) {
 					buf.delete(buf.length() - 2, buf.length());

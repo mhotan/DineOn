@@ -105,7 +105,8 @@ implements SateliteListener {
 		mRestaurant = DineOnRestaurantApplication.getRestaurant();
 
 		if (mRestaurant == null) {
-			Utility.getGeneralAlertDialog("Uh OH!", "Doesn't look like your logged in"
+			Utility.getGeneralAlertDialog(getString(R.string.uh_oh), 
+					getString(R.string.not_logged_in)
 					, this).show();
 		}
 
@@ -303,7 +304,7 @@ implements SateliteListener {
 
 	@Override
 	public void onFail(String message) {
-		Toast.makeText(this, "Failed to do something: " + message, Toast.LENGTH_LONG).show();
+		Toast.makeText(this, getString(R.string.failed) + message, Toast.LENGTH_LONG).show();
 	}
 
 	@Override
@@ -319,19 +320,20 @@ implements SateliteListener {
 					// Adds the dining session to the restaurant
 					addDiningSession(DS);
 				} else {
-					Log.e(TAG, "unable to confirm dining session: " + e.getMessage());
+					Log.e(TAG, getString(R.string.unable_to_confirm_dining_session)
+							+ e.getMessage());
 				}
 			}
 		});
-		Toast.makeText(this, "onUserCheckedIn", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, getString(R.string.checked_in), Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void onUserChanged(UserInfo user) {
-		Toast.makeText(this, "onUserChanged", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, getString(R.string.user_changed), Toast.LENGTH_SHORT).show();
 
 		if (mRestaurant == null) {
-			Log.e(TAG, "Null Restaurant when accepting user change");
+			Log.e(TAG, getString(R.string.null_restaurant));
 			// TODO What do we do in this case queue the request ???
 			return;
 		}
@@ -345,7 +347,7 @@ implements SateliteListener {
 
 	@Override
 	public void onOrderRequest(final Order order, String sessionID) {
-		Toast.makeText(this, "onOrderRequest", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, getString(R.string.order_request), Toast.LENGTH_SHORT).show();
 
 		// TODO Validate Order
 		for (final DiningSession SESSION: mRestaurant.getSessions()) {
@@ -363,7 +365,7 @@ implements SateliteListener {
 							// Add the order to our restaurant
 							addOrder(order);
 						} else {
-							Log.e(TAG, "Error saving dining session" + e.getMessage());
+							Log.e(TAG, getString(R.string.error_saving_dining_session) + e.getMessage());
 						}
 					}
 				});
@@ -375,7 +377,7 @@ implements SateliteListener {
 
 	@Override
 	public void onCustomerRequest(final CustomerRequest request, String sessionID) {
-		Toast.makeText(this, "onOrderRequest", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, getString(R.string.order_request), Toast.LENGTH_SHORT).show();
 
 		// TODO Validate Request
 
@@ -394,7 +396,8 @@ implements SateliteListener {
 							// Update our state as well
 							addCustomerRequest(request);
 						} else {
-							Log.e(TAG, "Error saving dining session" + e.getMessage());
+							Log.e(TAG, getString(R.string.error_saving_dining_session) 
+									+ e.getMessage());
 						}
 					}
 				});
@@ -406,7 +409,7 @@ implements SateliteListener {
 
 	@Override
 	public void onReservationRequest(Reservation reservation) {
-		Toast.makeText(this, "onReservationRequest", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, getString(R.string.reservation_request), Toast.LENGTH_SHORT).show();
 
 		if (mRestaurant == null) {
 			Log.e(TAG, "Null Restaurant when accepting customer request.");
@@ -424,7 +427,7 @@ implements SateliteListener {
 	@Override
 	public void onCheckedOut(DiningSession session) {
 		// TODO Auto-generated method stub
-		Toast.makeText(this, "onCheckedOut", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, getString(R.string.checked_out), Toast.LENGTH_SHORT).show();
 
 		// All we do is call the 
 		removeDiningSession(session);
@@ -454,7 +457,7 @@ implements SateliteListener {
 			return true;
 		case R.id.item_logout:
 			if (mRestaurant != null) {
-				createProgressDialog(true, "Saving...", "Cleaning up and logging out");
+				createProgressDialog(true, getString(R.string.saving), getString(R.string.logging_out));
 				mRestaurant.saveInBackGround(new SaveCallback() {
 
 					@Override
@@ -508,7 +511,7 @@ implements SateliteListener {
 		}
 
 		// Add a ability to log in
-		MenuItem item = menu.add("Log in");
+		MenuItem item = menu.add(getString(R.string.login));
 		item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
 			@Override

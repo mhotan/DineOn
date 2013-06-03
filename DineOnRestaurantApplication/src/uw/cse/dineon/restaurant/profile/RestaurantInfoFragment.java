@@ -469,10 +469,10 @@ public class RestaurantInfoFragment extends Fragment {
 			} else if (v == mDeleteButton) {
 				// Handle image deletion
 				AlertDialog.Builder builder = new Builder(mOwner);
-				builder.setTitle("Confirm image deletion");
-				builder.setMessage("Are you sure you want to delete it?");
+				builder.setTitle(getString(R.string.confirm_image_deletion));
+				builder.setMessage(getString(R.string.delete_confirmation));
 				builder.setCancelable(true);
-				builder.setPositiveButton("Yes", new OnClickListener() {
+				builder.setPositiveButton(getString(R.string.yes), new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -487,7 +487,7 @@ public class RestaurantInfoFragment extends Fragment {
 						}
 					}
 				});
-				builder.setNegativeButton("Cancel", new OnClickListener() {
+				builder.setNegativeButton(getString(R.string.cancel), new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {

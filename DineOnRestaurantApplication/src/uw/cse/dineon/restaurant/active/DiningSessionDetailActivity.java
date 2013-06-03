@@ -52,8 +52,8 @@ implements DiningSessionDetailListener {
 
 	@Override
 	public void sendShoutOut(UserInfo user, String message) {
-		String log = "Restaurant wants to sent message \"" 
-				+ message  + "\" to user " + user.getName();
+		String log = getString(R.string.restaurant_part1)
+				+ message  + getString(R.string.restaurant_part2) + user.getName();
 		Log.d(TAG, log);
 		Toast.makeText(this, log, Toast.LENGTH_SHORT).show();
 	}

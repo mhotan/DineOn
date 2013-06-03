@@ -39,6 +39,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 
 	private OrderDetailListener mListener;
 	
+	private static String idLabel, qtyLabel;
+	
 	/**
 	 * Obtain the reference to the current order.
 	 */
@@ -48,6 +50,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mOrder = mListener.getOrder();
+		idLabel = getString(R.string.id_label);
+		qtyLabel = getString(R.string.qty_short);
 		// Get the order and produce the display
 		updateState();
 	}
@@ -97,8 +101,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			// Here we have an order so lets update the state
 			mSendMessageButton.setVisibility(View.VISIBLE);
 			mSendMessageButton.setEnabled(true);
-			mTitle.setText("Order placed by: " + mOrder.getOriginalUser().getName());
-			mTableInput.setText("Table " + mOrder.getTableID());
+			mTitle.setText(getString(R.string.order_placed_by) + mOrder.getOriginalUser().getName());
+			mTableInput.setText(getString(R.string.table_label) + mOrder.getTableID());
 			mTakenTime.setText(mOrder.getOriginatingTime().toString());
 			mAdapter = new MenuItemAdapter(this.getActivity(), mOrder.getMenuItems());
 			mItemList.setAdapter(mAdapter);
@@ -212,8 +216,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			// TODO Download the Image Asyncronously
 
 			menuItemTitle.setText(toShow.getMenuItem().getTitle());
-			menuItemDesc.setText("ID: " + toShow.getMenuItem().getProductID());
-			menuItemPrice.setText("QTY: " + qty);
+			menuItemDesc.setText(idLabel + toShow.getMenuItem().getProductID());
+			menuItemPrice.setText(qtyLabel + qty);
 
 			return view;
 		}

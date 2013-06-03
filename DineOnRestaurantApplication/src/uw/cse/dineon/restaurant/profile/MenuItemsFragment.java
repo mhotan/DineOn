@@ -116,7 +116,7 @@ public class MenuItemsFragment extends ListFragment {
 			updateMenuView(mMenus.get(0));
 		}
 		
-		Toast.makeText(getActivity(), "Menu added",
+		Toast.makeText(getActivity(), getString(R.string.menu_added),
 				Toast.LENGTH_SHORT).show();
 	}
 
@@ -137,14 +137,14 @@ public class MenuItemsFragment extends ListFragment {
 	 */
 	private void makeFirstMenu() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-		alert.setTitle("You have no menus!");
-		alert.setMessage("Please choose a title for your first menu");
+		alert.setTitle(getString(R.string.no_menu));
+		alert.setMessage(getString(R.string.pick_menu_title));
 		// Stock input dialog code
 		// Set an EditText view to get user input
 		final EditText INPUT = new EditText(getActivity());
 		alert.setView(INPUT);
 
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = INPUT.getText().toString();
 				
@@ -162,7 +162,7 @@ public class MenuItemsFragment extends ListFragment {
 			}
 		});
 
-		alert.setNegativeButton("Cancel",
+		alert.setNegativeButton(getString(R.string.cancel),
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				// Canceled.
@@ -177,7 +177,8 @@ public class MenuItemsFragment extends ListFragment {
 	 * Updates the title to reflect the current menu.
 	 */
 	private void updateTitle() {
-		getActivity().getActionBar().setTitle("Menu: " + mCurrentMenu.getName());
+		getActivity().getActionBar().setTitle(
+				getString(R.string.menu_label) + mCurrentMenu.getName());
 	}
 
 	@Override
@@ -206,13 +207,13 @@ public class MenuItemsFragment extends ListFragment {
 	 */
 	private void makeNewMenuItem() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-		alert.setTitle("Add New Menu Item");
-		alert.setMessage("Input Menu Item Details");
+		alert.setTitle(getString(R.string.add_menu_item));
+		alert.setMessage(getString(R.string.input_menu_item_details));
 		final View AV = getLayoutInflater(getArguments()).inflate(
 				R.layout.alert_new_menuitem, null);
 
 		alert.setView(AV);
-		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface d, int arg1) {
@@ -227,7 +228,7 @@ public class MenuItemsFragment extends ListFragment {
 						.toString();
 				if (title.trim().equals("") || priceString.equals("")) {
 					Toast.makeText(getActivity(),
-							"Please input Title and Price", Toast.LENGTH_SHORT)
+							getString(R.string.input_title_price), Toast.LENGTH_SHORT)
 							.show();
 					return;
 				}
@@ -250,7 +251,7 @@ public class MenuItemsFragment extends ListFragment {
 				Log.v(TAG, "Adding new menu item");
 			}
 		});
-		alert.setNegativeButton("Cancel",
+		alert.setNegativeButton(getString(R.string.cancel),
 				new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
@@ -265,8 +266,8 @@ public class MenuItemsFragment extends ListFragment {
 	 */
 	private void switchMenus() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-		alert.setTitle("Add New Menu Item");
-		alert.setMessage("Input Menu Item Details");
+		alert.setTitle(getString(R.string.add_menu_item));
+		alert.setMessage(getString(R.string.input_menu_item_details));
 		final View AV = getLayoutInflater(getArguments()).inflate(
 				R.layout.alert_select_menu, null);
 
@@ -323,7 +324,8 @@ public class MenuItemsFragment extends ListFragment {
 				((TextView) AV.findViewById(R.id.input_new_menu_title))
 				.setText("");
 				if (newTitle.trim().equals("")) {
-					Toast.makeText(getActivity(), "Please input title",
+					Toast.makeText(getActivity(), 
+							getString(R.string.input_title),
 							Toast.LENGTH_SHORT).show();
 					return;
 				}
@@ -334,13 +336,14 @@ public class MenuItemsFragment extends ListFragment {
 					mMenus.add(newMenu);
 				} else {
 					mListener.onAddMenu(newMenu);
-					Toast.makeText(getActivity(), "Creating new menu",
+					Toast.makeText(getActivity(), 
+							getString(R.string.creating_new_menu),
 							Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
 
-		alert.setPositiveButton("Select",
+		alert.setPositiveButton(getString(R.string.select),
 				new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface d, int x) {

@@ -180,8 +180,8 @@ MenuItemsFragment.MenuItemListener {
 
 	@Override
 	public void onMenuItemDeleted(MenuItem item) {
-		Toast.makeText(this, "Delete not available yet", Toast.LENGTH_SHORT)
-		.show();
+		Toast.makeText(this, getString(R.string.not_implemented), 
+				Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -232,7 +232,7 @@ MenuItemsFragment.MenuItemListener {
 				if (e == null) {
 					notifyAllRestaurantChange();
 					Toast.makeText(getApplicationContext(),
-							"Menu Item Updated!", Toast.LENGTH_SHORT).show();
+							getString(R.string.menu_item_updated), Toast.LENGTH_SHORT).show();
 				} else {
 					Log.e(TAG, e.getMessage() + " #" + e.getCode());
 					Log.d(TAG, mRestaurant.packObject().toString());
@@ -249,7 +249,7 @@ MenuItemsFragment.MenuItemListener {
 				if (e == null) {
 					notifyAllRestaurantChange();
 					Toast.makeText(getApplicationContext(),
-							"Restaurant Info Updated!", Toast.LENGTH_SHORT)
+							getString(R.string.rest_info_updated), Toast.LENGTH_SHORT)
 							.show();
 				} else {
 					Log.e(TAG, e.getMessage() + " #" + e.getCode());
@@ -371,7 +371,8 @@ MenuItemsFragment.MenuItemListener {
 				// Success add image to the cache
 				addImageToCache(result, mBitmap);
 			} else {
-				Toast.makeText(This, "Unable to save image", Toast.LENGTH_SHORT)
+				Toast.makeText(This, 
+						getString(R.string.unable_save_image), Toast.LENGTH_SHORT)
 				.show();
 			}
 

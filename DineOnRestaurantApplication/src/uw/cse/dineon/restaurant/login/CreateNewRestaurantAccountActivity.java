@@ -58,7 +58,7 @@ implements CreateNewAccountListener {
 			this.mLocationListener.requestLocationUpdate();
 		} catch (IllegalArgumentException ex) {
 			// provider is not available because using emulator
-			Toast.makeText(this, "Stop using an emulator idiot!", 
+			Toast.makeText(this, getString(R.string.emulator), 
 					Toast.LENGTH_SHORT).show();
 		}
 
@@ -288,8 +288,8 @@ implements CreateNewAccountListener {
 			return;
 		}
 		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setTitle("Logging in...");
-		mProgressDialog.setMessage("Getting you your own restaurant");
+		mProgressDialog.setTitle(getString(R.string.logging_in));
+		mProgressDialog.setMessage(getString(R.string.getting_restaurant));
 		mProgressDialog.setIndeterminate(true);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		mProgressDialog.show();

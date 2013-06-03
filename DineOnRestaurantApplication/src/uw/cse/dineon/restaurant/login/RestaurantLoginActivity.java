@@ -76,14 +76,14 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 
 		StringBuffer buf = new StringBuffer();
 		if (!unResolution.isValid()) {
-			buf.append(unResolution.getMessage() + "\n");
+			buf.append(unResolution.getMessage() + getString(R.string.new_line));
 		}
 		if (!pwResolution.isValid()) {
-			buf.append(pwResolution.getMessage() + "\n");
+			buf.append(pwResolution.getMessage() + getString(R.string.new_line));
 		}
 
 		if (buf.length() > 0) {
-			Utility.getGeneralAlertDialog("Log in failure", buf.toString(), this).show();
+			Utility.getGeneralAlertDialog(getString(R.string.login_failure), buf.toString(), this).show();
 			return;
 		}
 	
@@ -129,10 +129,12 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 				
 			} else if (user == null) {
 				destroyProgressDialog();
-				Utility.getFailedToCreateAccountDialog("Invalid Credentials", This).show();
+				Utility.getFailedToCreateAccountDialog(
+						getString(R.string.invalid_credentials), This).show();
 			} else {
 				destroyProgressDialog();
-				Utility.getGeneralAlertDialog("Server Error", e.getMessage(), This).show();
+				Utility.getGeneralAlertDialog(
+						getString(R.string.server_error), e.getMessage(), This).show();
 			}
 		}
 	}
@@ -149,8 +151,8 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 			return;
 		}
 		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setTitle("Logging in...");
-		mProgressDialog.setMessage("Getting you ready to work!");
+		mProgressDialog.setTitle(getString(R.string.logging_in));
+		mProgressDialog.setMessage(getString(R.string.getting_ready));
 		mProgressDialog.setIndeterminate(true);
 		mProgressDialog.setCancelable(false);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -169,8 +171,8 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 	@Override
 	public void onFailToDownLoadRestaurant(String message) {
 		ParseUser.logOut();
-		Utility.getGeneralAlertDialog("No Restaurant Account", 
-				"Unable to get your Restaurant account because: " + message, This).show();
+		Utility.getGeneralAlertDialog(getString(R.string.no_restaurant), 
+				getString(R.string.no_restaurant_reason) + message, This).show();
 	}
 
 	@Override

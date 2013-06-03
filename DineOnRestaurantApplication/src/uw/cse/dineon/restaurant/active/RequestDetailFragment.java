@@ -83,9 +83,9 @@ implements OnCheckedChangeListener, OnClickListener {
 		RadioButton important = (RadioButton) view.findViewById(R.id.radio_urgency_important);
 		RadioButton priority = (RadioButton) view.findViewById(R.id.radio_urgency_priority);
 		mUrgencyMap = new HashMap<RadioButton, String>();
-		mUrgencyMap.put(normal, "Normal");
-		mUrgencyMap.put(important, "Important");
-		mUrgencyMap.put(priority, "Priority");
+		mUrgencyMap.put(normal, getString(R.string.normal));
+		mUrgencyMap.put(important, getString(R.string.important));
+		mUrgencyMap.put(priority, getString(R.string.priority));
 		mUrgency = mUrgencyMap.get(normal);	
 		normal.setOnCheckedChangeListener(this);
 		important.setOnCheckedChangeListener(this);
@@ -145,9 +145,9 @@ implements OnCheckedChangeListener, OnClickListener {
 		} else { // Valid Request
 			mSendMessage.setEnabled(true);
 			mSendTask.setEnabled(true);
-			mMessageBlock.setHint("Quick Response");
-			mTitle.setText("Request From " + mRequest.getUserInfo().getName());
-			mDetails.setText("Message: " + mRequest.getDescription());
+			mMessageBlock.setHint(getString(R.string.quick_response));
+			mTitle.setText(getString(R.string.request_from) + mRequest.getUserInfo().getName());
+			mDetails.setText(getString(R.string.message) + mRequest.getDescription());
 			mTimeTaken.setText(mRequest.getOriginatingTime().toString());
 		}
 	}
