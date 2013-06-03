@@ -116,7 +116,7 @@ public class UserSatellite extends BroadcastReceiver {
 		// Registers this activity to this receiver
 		mCurrentActivity.registerReceiver(this, mIF);
 	}
-
+	
 	/**
 	 * Turns off this receiver.
 	 */

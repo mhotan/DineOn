@@ -103,6 +103,10 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 
 	}
 
+	public UserSatellite getSat(){
+		return this.mSat;
+	}
+	
 	@Override
 	protected void onDestroy(){
 		super.onDestroy();

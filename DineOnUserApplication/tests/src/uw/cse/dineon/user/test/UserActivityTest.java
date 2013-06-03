@@ -2,18 +2,17 @@ package uw.cse.dineon.user.test;
 
 
 import uw.cse.dineon.library.DineOnUser;
+import uw.cse.dineon.library.util.DineOnConstants;
+import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.general.ProfileActivity;
-import uw.cse.dineon.user.login.UserLoginActivity;
-import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
 import android.view.KeyEvent;
 
 public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUserActivity>{
@@ -89,6 +88,51 @@ public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUse
 		this.mInstr.waitForIdleSync();
 		assertNotNull(DineOnUserApplication.getDineOnUser());
 		assertTrue(this.mActivity instanceof DineOnUserActivity);
+		this.mActivity.finish();
+	}
+	
+	/**
+	 * Tests the on receive of the user satellite.
+	 */
+	public void testUserSat(){
+		Intent i = new Intent();
+		i.putExtra(DineOnConstants.PARSE_CHANNEL, ParseUtil.getChannel(this.dineOnUser.getUserInfo()));
+		i.setAction("fake.action");
+		i.putExtra(DineOnConstants.PARSE_DATA, "{" + DineOnConstants.OBJ_ID + ":awda}");
+		this.mActivity.getSat().onReceive(this.mActivity, i);
+		this.mActivity.finish();
+	}
+	
+	/**
+	 * Tests the on receive of the user satellite.
+	 */
+	public void testUserSatwithNullIntent(){
+		Intent i = new Intent();
+		this.mActivity.getSat().onReceive(this.mActivity, i);
+		this.mActivity.finish();
+	}
+	
+	/**
+	 * Tests the on receive of the user satellite.
+	 */
+	public void testUserSatwithNullChannel(){
+		Intent i = new Intent();
+		i.setAction("fake.action");
+		i.putExtra(DineOnConstants.PARSE_DATA, "{" + DineOnConstants.OBJ_ID + ":awda}");
+		this.mActivity.getSat().onReceive(this.mActivity, i);
+		this.mActivity.finish();
+	}
+	
+	/**
+	 * Tests the on receive of the user satellite.
+	 */
+	public void testUserSatwithBadChannel(){
+		Intent i = new Intent();
+		i.putExtra(DineOnConstants.PARSE_CHANNEL, "badchan");
+
+		i.setAction("fake.action");
+		i.putExtra(DineOnConstants.PARSE_DATA, "{" + DineOnConstants.OBJ_ID + ":awda}");
+		this.mActivity.getSat().onReceive(this.mActivity, i);
 		this.mActivity.finish();
 	}
 
