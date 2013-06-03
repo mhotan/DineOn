@@ -1,6 +1,5 @@
 package uw.cse.dineon.user.general;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.parse.ParseException;
@@ -11,8 +10,6 @@ import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
-import uw.cse.dineon.user.bill.CurrentOrderActivity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -67,8 +64,6 @@ public class ProfileActivity extends DineOnUserActivity implements
 		//  UI Menu is updated this is done manually
 		inflater.inflate(R.menu.profile_menu, menu);
 	
-		final android.view.Menu M = menu;
-
 		return true;
 	}
 	

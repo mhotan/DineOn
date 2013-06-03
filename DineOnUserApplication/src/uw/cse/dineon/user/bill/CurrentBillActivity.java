@@ -37,7 +37,6 @@ implements PayBillListener {
 			return;
 		}
 		setContentView(R.layout.activity_current_bill);
-		Bundle extras = getIntent().getExtras();
 		
 		calculateBill();
 	}

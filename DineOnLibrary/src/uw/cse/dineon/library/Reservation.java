@@ -26,6 +26,14 @@ public class Reservation extends TimeableStorable {
 	 */
 	public Reservation(UserInfo userInfo, RestaurantInfo restInfo, Date date) {
 		super(Reservation.class, date);
+		if(restInfo == null) {
+			throw new IllegalArgumentException(
+					"Can't create a reservation with a null RestaurantInfo.");
+		} else if(userInfo == null) {
+			throw new IllegalArgumentException(
+					"Can't create a reservation with a null UserInfo.");		
+		}
+		
 		this.mUserInfo = userInfo;
 		this.mRestInfo = restInfo;
 	}
@@ -40,6 +48,14 @@ public class Reservation extends TimeableStorable {
 		super(po);
 		mUserInfo = new UserInfo(po.getParseObject(USER_INFO));
 		mRestInfo = new RestaurantInfo(po.getParseObject(REST_INFO));
+		
+		if(mRestInfo == null) {
+			throw new IllegalArgumentException(
+					"Can't create a reservation with a null RestaurantInfo.");
+		} else if(mUserInfo == null) {
+			throw new IllegalArgumentException(
+					"Can't create a reservation with a null UserInfo.");		
+		}
 	}
 
 	/**

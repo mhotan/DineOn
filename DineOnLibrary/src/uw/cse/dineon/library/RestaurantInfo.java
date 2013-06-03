@@ -165,10 +165,14 @@ public class RestaurantInfo extends LocatableStorable {
 	 * @param address Address to set the address value to.
 	 */
 	public void setAddr(Address address) {
-		this.mAddress = address;
+		if(address == null) {
+			this.mAddress = new Address(Locale.US);
+		} else {
+			this.mAddress = address;
+		}
 		
 		// Set the location based off this address
-		if (address.hasLatitude() && address.hasLongitude()) {
+		if (mAddress.hasLatitude() && mAddress.hasLongitude()) {
 			updateLocation(address.getLongitude(), address.getLatitude());
 		}
 	}

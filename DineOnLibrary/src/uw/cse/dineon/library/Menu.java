@@ -123,8 +123,6 @@ public class Menu extends Storable {
 			return false;
 		}
 		return mItems.remove(item);
-
-		// TODO delete from database
 	}
 
 	/**

@@ -28,7 +28,12 @@ public class CurrentOrderItem extends Storable {
 	 */
 	public CurrentOrderItem(MenuItem menuItem) {
 		super(CurrentOrderItem.class);
-		this.mMenuItem = menuItem;
+		if(menuItem != null) {
+			this.mMenuItem = menuItem;			
+		} else {
+			this.mMenuItem = new MenuItem(0, 1, "Name", "Description");
+		}
+		
 		this.mQuantity = 1;
 	}
 	
@@ -87,11 +92,13 @@ public class CurrentOrderItem extends Storable {
 	}
 	
 	/**
-	 * Set the menu item for this order item.
+	 * Set the menu item for this order item unless it's null.
 	 * @param item item to set
 	 */
 	public void setMenuItem(MenuItem item) {
-		this.mMenuItem = item;
+		if(item != null) {
+			this.mMenuItem = item;
+		}
 	}
 	
 	/**

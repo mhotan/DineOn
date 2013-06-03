@@ -33,6 +33,10 @@ public class Order extends TimeableStorable {
 	 */
 	public Order(int tableID, UserInfo originator, List<CurrentOrderItem> menuItems) {
 		super(Order.class);
+		if(originator == null) {
+			throw new IllegalArgumentException("Can't create order with null user.");
+		}
+		
 		this.mTableID = tableID;
 		this.mUserInfo = originator;
 		this.mMenuItems = new ArrayList<CurrentOrderItem>(menuItems);
@@ -48,6 +52,10 @@ public class Order extends TimeableStorable {
 		super(po);
 		mTableID = po.getInt(TABLE_ID);
 		mUserInfo = new UserInfo(po.getParseObject(USER_INFO));
+		if(mUserInfo == null) {
+			throw new IllegalArgumentException("Can't create order with null user.");	
+		}
+		
 		mMenuItems = ParseUtil.toListOfStorables(CurrentOrderItem.class, po.getList(MENU_ITEMS));
 
 	}

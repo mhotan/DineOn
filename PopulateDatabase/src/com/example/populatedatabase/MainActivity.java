@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.image.DineOnImage;
@@ -60,7 +59,7 @@ public class MainActivity extends Activity {
 					rest.getInfo().setHours("Mon-Fri: 8am-11pm\n" +
 									"Sat-Sun: All Day!!");
 					rest.getInfo().setPhone("4031541423");
-					Locale l = new Locale("en");
+					Locale l = Locale.US;
 					Address addr = new Address(l);
 					addr.setAddressLine(0, "1110 NE SW Pkwy");
 					rest.getInfo().setAddr(addr);

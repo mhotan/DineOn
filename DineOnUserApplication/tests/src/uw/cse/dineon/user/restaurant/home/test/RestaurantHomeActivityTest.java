@@ -6,7 +6,6 @@ import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
@@ -24,26 +23,19 @@ import android.graphics.BitmapFactory;
 import android.support.v4.view.PagerAdapter;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.parse.ParseUser;
-
 public class RestaurantHomeActivityTest extends
 		ActivityInstrumentationTestCase2<RestaurantHomeActivity> {
 
-	private ParseUser testUser;
-	private DiningSession testSession;
 	private RestaurantHomeActivity mActivity;
-	private ParseUser testUser1;
 	private DineOnUser dineOnUser;
-	private RestaurantInfo testRInfo;
 	private Restaurant rest;
 	private Instrumentation mInstrumentation;
-	private long time = 1000;
+	private long time = 5000;
 	
 	public RestaurantHomeActivityTest() {
 		super(RestaurantHomeActivity.class);
@@ -111,6 +103,7 @@ public class RestaurantHomeActivityTest extends
 				.waitForActivityWithTimeout(time);
 		assertNotNull(itemSelect);
 		itemSelect.finish();
+		this.mActivity.finish();
 	}
 	
 	/** 
@@ -140,7 +133,11 @@ public class RestaurantHomeActivityTest extends
 				.waitForActivityWithTimeout(time);
 		assertNotNull(resSelect);
 		resSelect.destroyProgressDialog();
+		mInstrumentation.waitForIdleSync();
 		resSelect.finish();
+		
+		mInstrumentation.waitForIdleSync();		
+		this.mActivity.finish();
 	}
 	
 	/**
@@ -242,9 +239,7 @@ public class RestaurantHomeActivityTest extends
 		Bitmap b = BitmapFactory.decodeResource(this.mActivity.getResources(), R.drawable.chili);
 		ImageView mv2 = rInfo.produceView(this.mActivity, b);
 		assertNotNull(mv2);
-	
-//		assertNotNull(rInfo.getStanderdLinearLayout(this.mActivity));
-		
+			
 		this.mActivity.finish();
 	}
 	
@@ -298,6 +293,20 @@ public class RestaurantHomeActivityTest extends
 		assertNotNull(detailAct);
 		
 		detailAct.finish();
+		this.mActivity.finish();
+	}
+	
+	/**
+	 * Test that the correct restaurant info is being displayed.
+	 */
+	public void testInfoDisplay() {
+		// get address
+		TextView address = (TextView) this.mActivity.findViewById(R.id.label_restaurant_address);
+		assertEquals(rest.getInfo().getReadableAddress(), address.getText().toString());
+		// get hours
+		TextView hours = (TextView) this.mActivity.findViewById(R.id.label_restaurant_hours);
+		assertEquals(rest.getInfo().getHours(), hours.getText().toString());
+		mInstrumentation.waitForIdleSync();
 		this.mActivity.finish();
 	}
 }

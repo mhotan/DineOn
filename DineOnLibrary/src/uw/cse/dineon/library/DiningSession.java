@@ -57,7 +57,7 @@ public class DiningSession extends TimeableStorable {
 	 * @param rInfo RestaurantInfo of current restaurant
 	 */
 	public DiningSession(int tableID, UserInfo uInfo, RestaurantInfo rInfo) {
-		this(tableID, null, uInfo, rInfo);
+		this(tableID, new Date(), uInfo, rInfo);
 	}
 
 	/**

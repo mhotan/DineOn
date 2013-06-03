@@ -32,6 +32,10 @@ public class CustomerRequest extends TimeableStorable {
 	 */
 	public CustomerRequest(String description, UserInfo info, Date date) {
 		super(CustomerRequest.class, date);
+		
+		if(info == null) {
+			throw new IllegalArgumentException("Request could not be created with a null user.");
+		}
 		this.mDescription = description;
 		this.mUserInfo = info; 
 	}
@@ -43,7 +47,7 @@ public class CustomerRequest extends TimeableStorable {
 	 * @param info User information
 	 */
 	public CustomerRequest(String description, UserInfo info) {	
-		this(description, info, null); // null mean
+		this(description, info, new Date());
 	}
 
 	/**
@@ -56,6 +60,9 @@ public class CustomerRequest extends TimeableStorable {
 		super(parseObject);
 		mDescription = parseObject.getString(DESCRIPTION);
 		mUserInfo = new UserInfo(parseObject.getParseObject(USER));
+		if(mUserInfo == null) {
+			throw new IllegalArgumentException("Request could not be created with a null user.");
+		}
 	}
 
 	/**
@@ -76,7 +83,11 @@ public class CustomerRequest extends TimeableStorable {
 	 * @param waiter to assign this request to
 	 */
 	public void setWaiter(String waiter) {
-		mWaiter = waiter;
+		if(waiter == null) {
+			mWaiter = "";
+		} else {
+			mWaiter = waiter;
+		}
 	}
 
 	/**
