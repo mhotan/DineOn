@@ -30,6 +30,7 @@ import android.widget.Toast;
  * 
  * @author mhotan, mtrathjen08
  */
+@SuppressWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class DineOnStandardActivity extends FragmentActivity implements ImageObtainable, Locatable {
 
 	/**
@@ -177,6 +178,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 			uriForInfoFragment = data.getData();
 			break;
 		default:
+			Log.wtf(tag, "Unknown Photo Request");
 		}
 
 		// Only handle the image if there is a valid uri and
@@ -197,7 +199,10 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 
 		// Delete the old temporary file
 		if (mTempFile != null) {
-			mTempFile.delete();
+			boolean deleted = mTempFile.delete();
+			if(!deleted) {
+				Log.e(tag, "Old temporary file not deleted");
+			}
 		}
 
 		// Create a new temporary file

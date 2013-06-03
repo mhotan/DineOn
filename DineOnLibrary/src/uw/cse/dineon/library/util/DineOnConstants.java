@@ -2,6 +2,8 @@ package uw.cse.dineon.library.util;
 
 import java.text.DateFormat;
 import java.util.Locale;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 
 
 /**
@@ -9,6 +11,7 @@ import java.util.Locale;
  * with the applications.
  * @author mhotan
  */
+@SuppressWarnings("MS_SHOULD_BE_FINAL")
 public final class DineOnConstants {
 
 	/**
