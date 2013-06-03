@@ -76,9 +76,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 
 	/**
 	 * Set this value to the current dining user.
+	 * @param savedInstanceState bundle to create activity from
 	 */
-	
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -142,7 +141,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	protected void onResume() {
 		super.onResume();
 		Bundle ex = this.getIntent().getExtras();
-		if(ex == null || !ex.containsKey("isLoggingOut")){
+		if(ex == null || !ex.containsKey("isLoggingOut")) {
 			mSat.register(DineOnUserApplication.getDineOnUser(), This);
 			intializeUI();
 		}

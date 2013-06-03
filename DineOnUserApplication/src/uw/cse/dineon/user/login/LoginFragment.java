@@ -1,6 +1,5 @@
 package uw.cse.dineon.user.login;
 
-import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.app.ProgressDialog;

@@ -1,8 +1,6 @@
 package uw.cse.dineon.library.image;
 
 import java.io.File;
-import java.io.IOException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;

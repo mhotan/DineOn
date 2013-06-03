@@ -1,6 +1,5 @@
 package uw.cse.dineon.restaurant.active;
 
-import java.util.Collection;
 import java.util.List;
 
 import uw.cse.dineon.library.DiningSession;

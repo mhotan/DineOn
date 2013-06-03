@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.bill.test;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 import uw.cse.dineon.library.CurrentOrderItem;
@@ -8,13 +9,11 @@ import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.bill.CurrentBillActivity;
 import uw.cse.dineon.user.bill.CurrentBillFragment;
-import uw.cse.dineon.user.bill.CurrentOrderActivity;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
@@ -26,6 +25,8 @@ public class CurrentBillActivityTest extends
 	private CurrentBillActivity mActivity;
 	private DineOnUser dineOnUser;
 	private Instrumentation mInstrumentation;
+	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
+	
 	
 	public CurrentBillActivityTest() {
 		super(CurrentBillActivity.class);
@@ -80,29 +81,41 @@ public class CurrentBillActivityTest extends
 		this.mActivity.finish();
 	}
 	
+	/**
+	 * Test that the numbers displayed are the actual subtotal and total.
+	 */
 	public void testCalculateBillAccuracy() {
-//		// get the actual total for the pending order
-//		List<Order> orders = DineOnUserApplication.
-//				getCurrentDiningSession().getOrders();
-//		double sum = 0.0;
-//		for (Order order : orders) {
-//			for (CurrentOrderItem item : order.getMenuItems()) {
-//				sum += item.getMenuItem().getPrice() * item.getQuantity();
-//			}
-//		}
-//		
-//		// check that the amounts displayed are  whats expected
-//		CurrentBillFragment fragment = (CurrentBillFragment)
-//				this.mActivity.getSupportFragmentManager().
-//				findFragmentById(R.id.fragment_current_bill);
-//		TextView mSubTotal = (TextView) this.mActivity.findViewById(R.id.value_order_total);
-//		TextView mTotalTax = (TextView) this.mActivity.findViewById(R.id.value_order_tax);
-//		TextView mTotal = (TextView) this.mActivity.findViewById(R.id.value_final_total);
-//		
-//		String subtotal = mSubTotal.getText().toString();
-//		String tax = mTotalTax.getText().toString();
-//		String total = mTotal.getText().toString();
-//      
+		// get the actual total for the pending order
+		List<Order> orders = DineOnUserApplication.
+				getCurrentDiningSession().getOrders();
+		double sum = 0.0;
+		for (Order order : orders) {
+			for (CurrentOrderItem item : order.getMenuItems()) {
+				sum += item.getMenuItem().getPrice() * item.getQuantity();
+			}
+		}
+		
+		// check that the amounts displayed are  whats expected
+		CurrentBillFragment fragment = (CurrentBillFragment)
+				this.mActivity.getSupportFragmentManager().
+				findFragmentById(R.id.fragment_current_bill);
+		assertNotNull(fragment);
+		
+		TextView mSubTotal = (TextView) this.mActivity.findViewById(R.id.value_order_total);
+		TextView mTotalTax = (TextView) this.mActivity.findViewById(R.id.value_order_tax);
+		TextView mTotal = (TextView) this.mActivity.findViewById(R.id.value_final_total);
+		
+		// get displayed numbers
+		String subtotal = mSubTotal.getText().toString();
+		String tax = mTotalTax.getText().toString();
+		String total = mTotal.getText().toString();
+		
+		String expectedSum = mFormatter.format(sum);
+		assertEquals(expectedSum, subtotal);
+
+		String expectedTotal = mFormatter.format(Double.parseDouble(tax.substring(1)) + sum);
+		assertEquals(expectedTotal, total);
+		
 	}
 	
 }

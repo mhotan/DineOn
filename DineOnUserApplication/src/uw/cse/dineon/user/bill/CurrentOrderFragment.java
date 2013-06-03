@@ -355,11 +355,9 @@ public class CurrentOrderFragment extends Fragment {
 					// Notify the listener appropiately
 					priceChange = 0.0;
 					if (newVal - curVal > 0) {
-						mListener.onIncrementItemOrder(item);
 						mAdapter.mOrderMapping.get(item).incrementQuantity();
 						priceChange = item.getPrice();
 					} else if (newVal - curVal < 0) {
-						mListener.onDecrementItemOrder(item);
 						mAdapter.mOrderMapping.get(item).decrementQuantity();
 						priceChange = item.getPrice() * -1;
 					}

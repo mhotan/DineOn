@@ -64,7 +64,7 @@ public class Menu extends Storable {
 	/**
 	 * @param name The new name for the menu
 	 */
-	public void setName(String name){
+	public void setName(String name) {
 		this.mName = name;
 	}
 

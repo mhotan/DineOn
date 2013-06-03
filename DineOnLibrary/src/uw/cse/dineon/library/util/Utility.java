@@ -1,22 +1,11 @@
 package uw.cse.dineon.library.util;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import uw.cse.dineon.library.MenuItem;
-import uw.cse.dineon.library.Order;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 /**
  * Utility class to hold a lot of reusable method and procedures.

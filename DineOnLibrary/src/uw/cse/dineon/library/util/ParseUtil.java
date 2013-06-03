@@ -5,8 +5,6 @@ package uw.cse.dineon.library.util;
 
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,15 +14,10 @@ import org.json.JSONObject;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.Storable;
 import uw.cse.dineon.library.UserInfo;
-import android.app.Activity;
 import android.util.Log;
 
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-import com.parse.SignUpCallback;
 
 //TODO Test the ParseUtil functions to ensure correctness.
 
@@ -257,7 +250,8 @@ public final class ParseUtil {
 	////							for (ParseObject p : list) {
 	////								Class<?> clazz = 
 	////										Class.forName("uw.cse.dineon.library." + className);
-	////								Constructor<?> ctor = clazz.getConstructor(ParseObject.class);
+	////								Constructor<?> ctor = 
+	//											clazz.getConstructor(ParseObject.class);
 	////								Object object = ctor.newInstance(new Object[] {p});
 	////								classList.add((Storable) object);
 	////								
@@ -324,7 +318,8 @@ public final class ParseUtil {
 	////							for (ParseObject p : list) {
 	////								Class<?> clazz = 
 	////										Class.forName("uw.cse.dineon.library." + className);
-	////								Constructor<?> ctor = clazz.getConstructor(ParseObject.class);
+	////								Constructor<?> ctor = 
+	//											clazz.getConstructor(ParseObject.class);
 	////								Object object = ctor.newInstance(new Object[] {p});
 	////								classList.add((Storable) object);
 	////							}

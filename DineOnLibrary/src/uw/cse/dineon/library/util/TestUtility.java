@@ -11,7 +11,6 @@ import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
-import uw.cse.dineon.library.R;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
@@ -173,6 +172,12 @@ public final class TestUtility {
 		return image;
 	}
 	
+	/**
+	 * Creates a fake restaurant for the given user.
+	 * @param u ParseUser to create a restaurant for
+	 * @return the new fake restaurant that is not saved to the cloud
+	 * @throws ParseException if there's an error with the given ParseUser (i.e. it's null)
+	 */
 	public static Restaurant createFakeRestaurant(ParseUser u) throws ParseException {
 		return createFakeRestaurant();
 	}

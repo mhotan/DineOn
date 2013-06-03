@@ -69,9 +69,9 @@ LoginFragment.OnLoginListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle ex = this.getIntent().getExtras();
-		if(ex != null && 
-				ex.containsKey("isLoggingOut") &&
-				ex.getBoolean("isLoggingOut")){
+		if(ex != null 
+				&& ex.containsKey("isLoggingOut") 
+				&& ex.getBoolean("isLoggingOut")) {
 			// Making this null makes sure there is no 
 			// data leakage to the login page
 			DineOnUserApplication.setDineOnUser(null);
@@ -117,7 +117,7 @@ LoginFragment.OnLoginListener {
 	 */
 	public void startRestSelectionAct(DineOnUser user) {
 		// Destroy any running progress dialog
-		if(user != null){
+		if(user != null) {
 			DineOnUserApplication.setDineOnUser(user);
 			destroyProgressDialog();
 			Intent i;

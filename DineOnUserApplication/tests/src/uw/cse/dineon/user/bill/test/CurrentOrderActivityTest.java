@@ -1,7 +1,5 @@
 package uw.cse.dineon.user.bill.test;
 
-import java.util.List;
-
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
@@ -93,36 +91,92 @@ public class CurrentOrderActivityTest extends
 		super.tearDown();
 	}
 
+	/**
+	 * Test that incrementing quantities runs and increases the quantity.
+	 * 
+	 * Blackbox test
+	 */
 	public void testOnIncrementItemQuantity() {
 		final CurrentOrderActivity RSA = this.mActivity; 
+		int startQuantity = 0, endQuantity = 0;
+		
+		String startDisplay = itemQuantity.getText().toString();		
+		
+		for(CurrentOrderItem item : DineOnUserApplication.getCurrentOrder().values()) {
+			startQuantity = item.getQuantity();
+		}		
+		
 		RSA.runOnUiThread(new Runnable() {
 	          public void run() {
 	        	  incButton.performClick();
 	          }
 	      });
 		mInstrumentation.waitForIdleSync();
+		
+		String endDisplay = itemQuantity.getText().toString();
+		
+		for(CurrentOrderItem item : DineOnUserApplication.getCurrentOrder().values()) {
+			endQuantity = item.getQuantity();
+		}
+		// assert that incremented number is displayed and saved in the order
+		assertEquals(Integer.parseInt(startDisplay) + 1, Integer.parseInt(endDisplay));
+		assertEquals(startQuantity + 1, endQuantity);
 		RSA.finish();
 	}
 	
+	/**
+	 * Test that decrementing quantities runs and decreases the quantity.
+	 * 
+	 * Blackbox test
+	 */
 	public void testOnDecrementItemQuantity() {
 		final CurrentOrderActivity RSA = this.mActivity; 
+		int startQuantity = 0, endQuantity = 0;
+		
+		String startDisplay = itemQuantity.getText().toString();
+		
+		for(CurrentOrderItem item : DineOnUserApplication.getCurrentOrder().values()) {
+			startQuantity = item.getQuantity();
+		}
+		
 		RSA.runOnUiThread(new Runnable() {
 	          public void run() {
 	        	  decButton.performClick();
 	          }
 	      });
 		mInstrumentation.waitForIdleSync();
+		String endDisplay = itemQuantity.getText().toString();
+		
+		for(CurrentOrderItem item : DineOnUserApplication.getCurrentOrder().values()) {
+			endQuantity = item.getQuantity();
+		}
+		// assert that decremented number is displayed and saved in the order
+		assertEquals(Integer.parseInt(startDisplay) - 1, Integer.parseInt(endDisplay));
+		assertEquals(startQuantity - 1, endQuantity);
 		RSA.finish();
 	}
 	
+	/**
+	 * Test that item deletion from orders works.
+	 * 
+	 * Blackbox test
+	 */
 	public void testOnDeleteItem() {
 		final CurrentOrderActivity RSA = this.mActivity; 
+		
+		// should be 1
+		int start = DineOnUserApplication.getCurrentOrder().size();
 		RSA.runOnUiThread(new Runnable() {
 	          public void run() {
 	        	  deleteButton.performClick();
 	          }
 	      });
 		mInstrumentation.waitForIdleSync();
+		
+		// should be 0
+		int end = DineOnUserApplication.getCurrentOrder().size();
+		assertEquals(start - 1, end);	// assert that item was removed from the order mapping
+		
 		RSA.finish();
 		
 	}

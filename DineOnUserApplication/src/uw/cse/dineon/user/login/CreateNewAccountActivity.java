@@ -3,13 +3,11 @@ package uw.cse.dineon.user.login;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
-import uw.cse.dineon.library.util.DevelopTools;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -136,15 +134,22 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 		};
 	}
 	
-	public void destroyFailDialog(){
-		if(this.failDialog != null){
+	/**
+	 * Gets rid of failure to create account dialog.
+	 */
+	public void destroyFailDialog() {
+		if(this.failDialog != null) {
 			this.failDialog.cancel();
 		}
 		
 	}
 	
-	public void onSuccess(DineOnUser dou){
-		if(dou != null){
+	/**
+	 * 
+	 * @param dou DineOnUser that's created
+	 */
+	public void onSuccess(DineOnUser dou) {
+		if(dou != null) {
 			DineOnUserApplication.setDineOnUser(dou);
 			Intent intent = 
 					new Intent(this, RestaurantSelectionActivity.class);

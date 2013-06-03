@@ -100,7 +100,7 @@ public final class CreditCardValidator {
 	 */
 	private static boolean isValidSecurityCode(
 			String cardNumber, String securityCode) {
-		if(cardNumber.length() < 13 || securityCode.length() < 2){
+		if(cardNumber.length() < 13 || securityCode.length() < 2) {
 			return false;
 		}
 		boolean isValid = false;
@@ -131,8 +131,8 @@ public final class CreditCardValidator {
 		int month = Integer.parseInt(getDigitsOnly(expMo));
 		int year = Integer.parseInt(getDigitsOnly(expYr));
 		Calendar cal = Calendar.getInstance();
-		int thisMonth = cal.get(cal.MONTH) + 1; //zero_based
-		int thisYear = cal.get(cal.YEAR);
+		int thisMonth = cal.get(Calendar.MONTH) + 1; //zero_based
+		int thisYear = cal.get(Calendar.YEAR);
 
 		return (year < MAX_YEAR && month < 13 && month > 0 
 				&& (year > thisYear || (year == thisYear && month > thisMonth)));
