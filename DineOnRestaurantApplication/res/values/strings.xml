@@ -107,7 +107,7 @@
     <string name="cancel">Cancel</string>
     <string name="saving">Saving…</string>
     <string name="loading">Loading...</string>
-    <string name="saving_new_image">Give me a little bit while we save your image.</string>
+    <string name="saving_new_image">Give me a little bit while we save your changes.</string>
     <string name="saving_menuitem">Please wait while we save your new menu item</string>
 
 </resources>
