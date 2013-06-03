@@ -271,6 +271,9 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 
 			@Override
 			public void onClick(View v) {
+				if(!(v instanceof ImageButton)){
+					return;
+				}
 				ImageButton ib = (ImageButton) v;
 				if(ib.getTag().equals("notFavorite")) {
 					favoriteRestaurant(mRestaurant);

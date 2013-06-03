@@ -2,6 +2,7 @@ package uw.cse.dineon.user;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,9 +96,8 @@ public class UserSatellite extends BroadcastReceiver {
 
 		// Check for null values
 		if (user == null) {
-			Log.d(TAG,
-					"Null user when registering broadcast receiver");
-			return;
+			throw new IllegalArgumentException("User was null when registering " + 
+					"broadcast reciever.");
 		}
 		if (activity == null) {
 			Log.w(TAG, "UserSatelite attempted to register null activity");
@@ -291,8 +291,9 @@ public class UserSatellite extends BroadcastReceiver {
 		JSONObject jobj = new JSONObject();
 		try {
 			jobj.put(DineOnConstants.KEY_ACTION, action);
-			for (String k : attr.keySet()) {
-				jobj.put(k, attr.get(k));				
+			
+			for (Entry<String, String> e : attr.entrySet()) {
+				jobj.put(e.getKey(), e.getValue());				
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -409,7 +410,7 @@ public class UserSatellite extends BroadcastReceiver {
 	 * different types of Gets.
 	 * @author mhotan
 	 */
-	private class SatelliteGetCallback extends GetCallback {
+	private static class SatelliteGetCallback extends GetCallback {
 
 		private ACTION_OPTION mOption;
 

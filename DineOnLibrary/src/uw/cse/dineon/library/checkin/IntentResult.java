@@ -16,6 +16,8 @@
 
 package uw.cse.dineon.library.checkin;
 
+import java.lang.reflect.Array;
+
 /**
  * <p>Encapsulates the result of a barcode scan invoked through {@link IntentIntegrator}.</p>
  *
@@ -75,7 +77,16 @@ public final class IntentResult {
    * @return raw bytes of the barcode content, if applicable, or null otherwise
    */
   public byte[] getRawBytes() {
-    return rawBytes.clone();
+
+	if(rawBytes == null){ 
+		return null;
+	}
+	
+	byte[] ba = new byte[rawBytes.length];
+	for(int i = 0; i < rawBytes.length; i++){
+		ba[i] = rawBytes[i];
+	}
+    return ba;
   }
 
   /**

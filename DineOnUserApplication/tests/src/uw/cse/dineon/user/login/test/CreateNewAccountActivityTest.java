@@ -90,6 +90,8 @@ public class CreateNewAccountActivityTest extends
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		this.setActivity(null);
+
 	}
 
 	/**

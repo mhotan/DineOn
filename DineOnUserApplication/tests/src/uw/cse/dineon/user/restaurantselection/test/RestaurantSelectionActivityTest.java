@@ -22,7 +22,9 @@ import android.app.AlertDialog;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
+import android.os.Bundle;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Button;
 
@@ -71,12 +73,17 @@ public class RestaurantSelectionActivityTest extends
 		// Initialize activity testing parameters
 		this.setActivityInitialTouchMode(false);
 		mInstrumentation = this.getInstrumentation();
-		mActivity = getActivity();
+		this.mActivity = this.getActivity();
+		
+		
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		this.setActivity(null);
+
+		
 	}
 
 	/**
@@ -153,13 +160,12 @@ public class RestaurantSelectionActivityTest extends
 	        	  
 	          }
 	      });
-//		mInstrumentation.waitForIdleSync();
 		RSA.runOnUiThread(new Runnable() {
 	          public void run() {
 	        	  RSA.destroyProgressDialog();
 	          }
 	      });
-		mInstrumentation.waitForIdleSync();
+		this.mInstrumentation.waitForIdleSync();
 		RSA.finish();
 	}
 	
@@ -177,71 +183,6 @@ public class RestaurantSelectionActivityTest extends
 		RSA.finish();
 	}
 	
-//	/**
-//	 * Test that the parse query callback update fields.
-//	 */
-//	public void testFindCallback() {
-//		ParseUser user = new ParseUser();
-//		user.setUsername("bill");
-//		user.setPassword("lovefred");
-//		FindCallback fCall = mActivity.getFindCallback("TestMessage");
-//		RestaurantInfo testRI = null;
-//		try {
-//			testRI = new RestaurantInfo(user);
-//		} catch (ParseException e) {
-//			fail("Couldn't build a restaurantInfo");
-//		}
-//		
-//		List<ParseObject> testL = new ArrayList<ParseObject>();
-//		testL.add(testRI.packObject());
-//		final List<ParseObject> list = testL;
-//		final FindCallback callback = fCall;
-//		final RestaurantSelectionActivity RSA = this.mActivity;
-//		RSA.runOnUiThread(new Runnable() {
-//		      public void run() {
-//		    	  callback.done(list, null);
-//		      }
-//		  });
-//		mInstrumentation.waitForIdleSync();
-//		RSA.runOnUiThread(new Runnable() {
-//		      public void run() {
-//		    	  callback.done(list, new ParseException(4, "Test error"));
-//		      }
-//		  });
-//		mInstrumentation.waitForIdleSync();
-//		RSA.finish();
-//	}
-	
-	public void testBackPressed(){
-		assertNotNull(this.mActivity);
-		this.mInstrumentation.waitForIdleSync();
-		this.mInstrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
-		this.mInstrumentation.waitForIdleSync();
-		AlertDialog ad = this.mActivity.getLogoutAlertDialog();
-		final Button BN = ad.getButton(AlertDialog.BUTTON_NEGATIVE);
-		assertNotNull(BN);
-		this.mActivity.runOnUiThread(new Runnable(){
-			@Override
-			public void run() {
-				BN.performClick();				
-			}
-			
-		});
-		this.mInstrumentation.waitForIdleSync();
-		ActivityMonitor logMon = this.mInstrumentation.addMonitor(UserLoginActivity.class.getName(), null, false);
-		final Button BA = ad.getButton(AlertDialog.BUTTON_POSITIVE);
-		assertNotNull(BA);
-		this.mActivity.runOnUiThread(new Runnable(){
-			@Override
-			public void run() {
-				BA.performClick();				
-			}
-			
-		});
-		UserLoginActivity ula = (UserLoginActivity) logMon.waitForActivityWithTimeout(5000);
-		assertTrue(this.mActivity.isDestroyed() || this.mActivity.isFinishing());
-		assertNotNull(ula);
-		ula.finish();
-	}
+
 
 }

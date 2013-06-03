@@ -68,21 +68,11 @@ LoginFragment.OnLoginListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Bundle ex = this.getIntent().getExtras();
-		if(ex != null 
-				&& ex.containsKey("isLoggingOut") 
-				&& ex.getBoolean("isLoggingOut")) {
-			// Making this null makes sure there is no 
-			// data leakage to the login page
-			DineOnUserApplication.setDineOnUser(null);
-			DineOnUserApplication.clearResaurantList();
-			DineOnUserApplication.setRestaurantOfInterest(null);
-		}
 
 		setContentView(R.layout.activity_login);
 		mLoginCallback = new DineOnLoginCallback();
 		thisCxt = this;
-		
+		Log.d(TAG, "Createing UserLoginActivity after logout");
 
 		
 	}

@@ -89,6 +89,8 @@ public class CurrentOrderActivityTest extends
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		this.setActivity(null);
+
 	}
 
 	/**

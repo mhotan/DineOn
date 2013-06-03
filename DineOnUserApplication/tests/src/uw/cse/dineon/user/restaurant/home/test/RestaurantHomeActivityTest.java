@@ -79,6 +79,7 @@ public class RestaurantHomeActivityTest extends
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		this.setActivity(null);
 	}
 
 	/**

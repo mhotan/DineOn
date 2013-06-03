@@ -81,6 +81,8 @@ public class UserLoginActivityTest extends
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		this.setActivity(null);
+
 	}
 
 	/**
@@ -111,7 +113,9 @@ public class UserLoginActivityTest extends
 	  	RestaurantHomeActivity rha = (RestaurantHomeActivity) 
 	  			mInstrumentation.waitForMonitorWithTimeout(monRia, time);
 	  	assertNotNull(rha);
+	  	this.mActivity.finish();
 	  	rha.finish();
+	  	
 
 	}
 	
@@ -143,7 +147,11 @@ public class UserLoginActivityTest extends
 	  	RestaurantSelectionActivity rsa = (RestaurantSelectionActivity) 
 	  			mInstrumentation.waitForMonitorWithTimeout(monRsa, time);
 	  	assertNotNull(rsa);
+	  	this.mActivity.finish();
 	  	rsa.finish();
+	  	
+	  	
+	  	
 
 	}
 }

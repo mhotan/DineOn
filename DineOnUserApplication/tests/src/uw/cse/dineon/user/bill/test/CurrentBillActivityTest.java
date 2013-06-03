@@ -24,7 +24,6 @@ public class CurrentBillActivityTest extends
 
 	private CurrentBillActivity mActivity;
 	private DineOnUser dineOnUser;
-	private Instrumentation mInstrumentation;
 	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
 	
 	
@@ -57,7 +56,6 @@ public class CurrentBillActivityTest extends
 		
 		// Initialize activity testing parameters
 		this.setActivityInitialTouchMode(false);
-		mInstrumentation = this.getInstrumentation();
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);
 	    
@@ -71,6 +69,8 @@ public class CurrentBillActivityTest extends
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		this.setActivity(null);
+
 	}
 
 	/**

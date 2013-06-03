@@ -2,7 +2,6 @@ package uw.cse.dineon.user.login;
 
 import uw.cse.dineon.user.R;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,9 +22,7 @@ public class LoginFragment extends android.support.v4.app.Fragment {
 	private OnLoginListener mListener;
 
 	private EditText emailInput, passwordInput;
-	
-	private static ProgressDialog mProgressDialog;
-	
+		
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

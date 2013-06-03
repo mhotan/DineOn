@@ -26,11 +26,11 @@ import com.parse.ParseUser;
  */
 public class DineOnUserApplication extends Application {
 	
-	private static DineOnUser currentUser = null;
-	private static HashMap<MenuItem, CurrentOrderItem> currentOrderMapping = 
+	protected static DineOnUser currentUser = null;
+	protected static HashMap<MenuItem, CurrentOrderItem> currentOrderMapping = 
 			new HashMap<MenuItem, CurrentOrderItem>();
-	private static RestaurantInfo restaurantOfInterest;
-	private static List<RestaurantInfo> restaurantInfos;
+	protected static RestaurantInfo restaurantOfInterest;
+	protected static List<RestaurantInfo> restaurantInfos;
 	
 	@Override
 	public void onCreate() {

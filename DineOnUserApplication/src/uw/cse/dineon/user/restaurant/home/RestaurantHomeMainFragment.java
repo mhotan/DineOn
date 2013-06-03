@@ -74,7 +74,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 	 * fragments of a particular view.
 	 * @author mhotan
 	 */
-	public class RestaurantMenuCategoryAdapter extends FragmentPagerAdapter {
+	public static class RestaurantMenuCategoryAdapter extends FragmentPagerAdapter {
 
 		private List<Fragment> mFragments;
 		private RestaurantInfo mRestaurantInfo;

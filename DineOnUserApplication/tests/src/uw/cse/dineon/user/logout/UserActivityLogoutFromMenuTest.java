@@ -1,4 +1,4 @@
-package uw.cse.dineon.user.test;
+package uw.cse.dineon.user.logout;
 
 
 import uw.cse.dineon.library.DineOnUser;
@@ -15,13 +15,13 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 import android.view.KeyEvent;
 
-public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUserActivity>{
+public class UserActivityLogoutFromMenuTest extends ActivityInstrumentationTestCase2<DineOnUserActivity>{
 	
 	DineOnUser dineOnUser;
 	DineOnUserActivity mActivity;
 	Instrumentation mInstr;
 	
-	public UserActivityTest(){
+	public UserActivityLogoutFromMenuTest(){
 		super(DineOnUserActivity.class);
 
 	}
@@ -47,49 +47,28 @@ public class UserActivityTest extends ActivityInstrumentationTestCase2<DineOnUse
 
 	}
 	
-	/**
-	 * Tests to see if the menu buttons perform the correct action
-	 * and return on back press
-	 */
-	public void testMenuOptionSearch(){
-		assertNotNull(this.mActivity);
-		assertNotNull(DineOnUserApplication.getDineOnUser());
-		this.mInstr.waitForIdleSync();
-		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-		this.mInstr.waitForIdleSync();
-		assertTrue(this.mInstr.invokeMenuActionSync(mActivity, R.id.option_search, 0));
-		this.mInstr.waitForIdleSync();
-		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
-		this.mInstr.waitForIdleSync();
-		assertNotNull(DineOnUserApplication.getDineOnUser());
-		assertTrue(this.mActivity instanceof DineOnUserActivity);
-		this.mActivity.finish();
-		
-	}
-	
-	
-	/**
-	 * Tests to see if the menu buttons perform the correct action
-	 * and return on back press
-	 */
-	public void testMenuOptionProfile(){
-		assertNotNull(this.mActivity);
-		this.mInstr.waitForIdleSync();
-		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-		this.mInstr.waitForIdleSync();
-		ActivityMonitor proMon = this.mInstr.addMonitor(
-				ProfileActivity.class.getName(), null, false);
-		assertTrue(this.mInstr.invokeMenuActionSync(mActivity, R.id.option_profile, 0));
-		ProfileActivity pa = (ProfileActivity)
-				proMon.waitForActivityWithTimeout(5000);
-		assertNotNull(pa);
-		assertNotNull(DineOnUserApplication.getDineOnUser());
-		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
-		this.mInstr.waitForIdleSync();
-		assertNotNull(DineOnUserApplication.getDineOnUser());
-		assertTrue(this.mActivity instanceof DineOnUserActivity);
-		this.mActivity.finish();
-	}
 
+
+	/**
+	 * Tests to see if the menu buttons perform the correct action
+	 * and return on back press
+	 */
+	public void testMenuOptionLogOut(){
+		assertNotNull(this.mActivity);
+		assertNotNull(DineOnUserApplication.getDineOnUser());
+		this.mInstr.waitForIdleSync();
+		this.mInstr.sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
+		this.mInstr.waitForIdleSync();
+		ActivityMonitor logMon = this.mInstr.addMonitor(
+				UserLoginActivity.class.getName(), null, false);
+		assertTrue(this.mInstr.invokeMenuActionSync(this.mActivity, R.id.option_logout, 0));
+
+		UserLoginActivity ula = (UserLoginActivity)
+				logMon.waitForActivityWithTimeout(5000);
+		assertNotNull(ula);
+		ula.finish();
+
+
+	}
 	
 }
