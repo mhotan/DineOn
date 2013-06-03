@@ -180,6 +180,10 @@ implements SateliteListener {
 	 * @return a list of sessions
 	 */
 	public List<DiningSession> getCurrentSessions() {
+		if (mRestaurant == null) {
+			mRestaurant = DineOnRestaurantApplication.getRestaurant();
+		}
+		
 		return mRestaurant.getSessions();
 	}
 
@@ -207,6 +211,10 @@ implements SateliteListener {
 	 * @return a list of pending orders
 	 */
 	protected List<Order> getPendingOrders() {
+		if (mRestaurant == null) {
+			mRestaurant = DineOnRestaurantApplication.getRestaurant();
+		}
+		
 		return mRestaurant.getPendingOrders();
 	}
 
@@ -251,6 +259,10 @@ implements SateliteListener {
 	 * @return a list of customer requests
 	 */
 	protected List<CustomerRequest> getCurrentRequests() {
+		if (mRestaurant == null) {
+			mRestaurant = DineOnRestaurantApplication.getRestaurant();
+		}
+		
 		return mRestaurant.getCustomerRequests();
 	}
 

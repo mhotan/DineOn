@@ -64,8 +64,8 @@ public class MenuItemsFragment extends ListFragment {
 	public AlertDialog newMenuAlert; // for testing. Otherwise can't access
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
 
 		// IF there are arguments
