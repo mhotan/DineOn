@@ -43,6 +43,7 @@ public class RobotiumRestaurantWalkthrough extends
 	@Override
 	public void tearDown() throws Exception {
 		solo.finishOpenedActivities();
+		mActivity.finish();
 	}
 
 	/**

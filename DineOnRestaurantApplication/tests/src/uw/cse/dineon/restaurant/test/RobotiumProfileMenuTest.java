@@ -40,6 +40,7 @@ ActivityInstrumentationTestCase2<ProfileActivity> {
 	public void tearDown() throws Exception {
 		solo.finishOpenedActivities();
 		DineOnRestaurantApplication.logOut(null);
+		mActivity.finish();
 	}
 
 	/**
