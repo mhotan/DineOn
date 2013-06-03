@@ -28,10 +28,14 @@ import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import uw.cse.dineon.user.restaurant.home.SubMenuFragment;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
@@ -58,6 +62,8 @@ SubMenuFragment.MenuItemListListener, /* manipulation of order from sub menu */
 OrderUpdateListener /* manipulation of list from the current order activity */ { 
 
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
+	
+	private static final Long MAX_RESPONSE_TIME = (long) 30000;
 
 	/**
 	 * Satellite for communication.
@@ -68,6 +74,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	 * A self reference.
 	 */
 	private DineOnUserActivity This;
+	
+	private ProgressDialog mProgressDialog;
 
 //	/**
 //	 * Location Listener for location based services.
@@ -90,6 +98,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			Utility.getBackToLoginAlertDialog(this, 
 					"Unable to find your information", UserLoginActivity.class).show();
 		}
+		
+		this.mProgressDialog = null;
 
 	}
 
@@ -176,10 +186,17 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 				data = new JSONObject(contents);
 				if(data.has(DineOnConstants.KEY_RESTAURANT) 
 						&& data.has(DineOnConstants.TABLE_NUM)) {
+					
+					// block the user until dining session is returned
+					createProgressDialog("Checking In...", "Contacting " 
+							+ data.getString(DineOnConstants.KEY_RESTAURANT));
 
 					mSat.requestCheckIn(DineOnUserApplication.getUserInfo(),
 							data.getInt(DineOnConstants.TABLE_NUM), 
 							data.getString(DineOnConstants.KEY_RESTAURANT));
+					
+					// Add a timeout to dialog
+					timerDelayRemoveDialog(MAX_RESPONSE_TIME);
 				}
 
 			} catch (JSONException e) {
@@ -187,6 +204,61 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			}
 		}
 	}
+	
+	/**
+	 * Create a progress dialog to notify the user.
+	 * @param title title of the dialog
+	 * @param message message in the dialog
+	 */
+	protected void createProgressDialog(String title, String message) {
+		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+			return;
+		}
+		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setTitle(title);
+		mProgressDialog.setMessage(message);       
+		mProgressDialog.setIndeterminate(true);
+		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		mProgressDialog.show();
+	}
+
+	/**
+	 * Hides the progress dialog if there is one.
+	 */
+	protected void destroyProgressDialog() {
+		if(mProgressDialog != null && mProgressDialog.isShowing()) {
+			mProgressDialog.dismiss();
+			mProgressDialog = null;
+		}
+	}
+	
+	/**
+	 * If an error occurs while checking in show error dialog to user.
+	 * @param message message to display to the user
+	 */
+	protected void showErrorCheckingInDialog(String message) {
+		AlertDialog.Builder b = new Builder(this);
+		b.setTitle("Failed to Check In!");
+		b.setMessage(message);
+		b.setCancelable(true);
+		b.show();
+	}
+	
+	/**
+	 * Create a timeout for the progress dialog.
+	 * @param time timeout for progress dialog
+	 */
+	public void timerDelayRemoveDialog(long time) {
+	    new Handler().postDelayed(new Runnable() {
+	        public void run() {        
+	        	if (mProgressDialog != null && mProgressDialog.isShowing()) {
+	        		destroyProgressDialog();
+		        	showErrorCheckingInDialog("No response from restaurant. Try again.");
+	        	}
+	        }
+	    }, time); 
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(android.view.Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -366,7 +438,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		case R.id.option_view_order:
 			i = new Intent(getApplicationContext(), CurrentOrderActivity.class);
 			// Count all the elements that the user has currently selected
-			//startActivityForResult(i, DineOnConstants.REQUEST_VIEW_CURRENT_ORDER);
 			startActivity(i);
 			break;
 		case R.id.option_bill:
@@ -382,9 +453,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			//Unknown
 			Log.e(TAG, "None of the specified action items were selected.");
 		}
-		//		if (i != null) {
-		//			startActivity(i);
-		//		}
 		return true;
 	}
 
@@ -416,6 +484,9 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 
 		// DEBUG:
 		Log.d("GOT_DINING_SESSION_FROM_CLOUD", session.getTableID() + "");
+		
+		// kill the checkin progress dialog
+		destroyProgressDialog();
 
 		final DiningSession M_SESSION = session;
 		DineOnUserApplication.setCurrentDiningSession(session);
@@ -455,8 +526,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	@Override
 	public void onConfirmOrder(DiningSession ds, String orderId) {
 		Toast.makeText(this, "onConfirmOrder", Toast.LENGTH_SHORT).show();
-		DineOnUserApplication.setCurrentDiningSession(ds);
-		DineOnUserApplication.clearCurrentOrder();
+//		DineOnUserApplication.setCurrentDiningSession(ds);
 	}
 
 	@Override
@@ -478,7 +548,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	public void placeRequest(CustomerRequest cr) {
 		mSat.requestCustomerRequest(DineOnUserApplication.getCurrentDiningSession(), cr, 
 				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
-		Toast.makeText(this, "Made Request", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "Made Request!", Toast.LENGTH_LONG).show();
 	}
 
 	/**
@@ -516,6 +586,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		mSat.requestOrder(DineOnUserApplication.getCurrentDiningSession(), 
 				order, 
 				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
+		DineOnUserApplication.clearCurrentOrder();
+		Toast.makeText(this, "Order Sent!", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override

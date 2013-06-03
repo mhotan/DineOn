@@ -110,13 +110,11 @@ public class UserSatellite extends BroadcastReceiver {
 		// Establish the channel to make 
 		mChannel = ParseUtil.getChannel(DineOnUserApplication.getUserInfo());
 
+		// Subscribe to my channel so I can hear incoming messages
+		PushService.subscribe(activity, mChannel, activity.getClass());
+		
 		// Registers this activity to this receiver
 		mCurrentActivity.registerReceiver(this, mIF);
-
-		// Subscribe to my channel so I can hear incoming messages
-		PushService.subscribe(activity, 
-				mChannel, 
-				activity.getClass());
 	}
 
 	/**
@@ -377,10 +375,13 @@ public class UserSatellite extends BroadcastReceiver {
 		}
 		else if (DineOnConstants.ACTION_CONFIRM_ORDER.equals(action)) {
 			// Attempt to get the Dining Session that was updated.
-			query = new ParseQuery(DiningSession.class.getSimpleName());
-			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
-			callback.setOption(ACTION_OPTION.CONFIRM_ORDER);
-			query.getInBackground(id, callback);
+//			query = new ParseQuery(DiningSession.class.getSimpleName());
+//			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
+//			callback.setOption(ACTION_OPTION.CONFIRM_ORDER);
+//			query.getInBackground(id, callback);
+			
+			DiningSessionDownloader sessionDownloader = new DiningSessionDownloader(id);
+			sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 		}
 		else if (DineOnConstants.ACTION_CONFIRM_RESERVATION.equals(action)) {
 			// Attempt to get the Reservation that was updated.
@@ -391,10 +392,13 @@ public class UserSatellite extends BroadcastReceiver {
 		}
 		else if (DineOnConstants.ACTION_CONFIRM_CUSTOMER_REQUEST.equals(action)) {
 			// Attempt to get the Dining Session that was updated.
-			query = new ParseQuery(DiningSession.class.getSimpleName());
-			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
-			callback.setOption(ACTION_OPTION.CONFIRM_CUSTOMER_REQUEST);
-			query.getInBackground(id, callback);
+//			query = new ParseQuery(DiningSession.class.getSimpleName());
+//			query.setCachePolicy(CachePolicy.NETWORK_ONLY);
+//			callback.setOption(ACTION_OPTION.CONFIRM_CUSTOMER_REQUEST);
+//			query.getInBackground(id, callback);
+			
+			DiningSessionDownloader sessionDownloader = new DiningSessionDownloader(id);
+			sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 		}
 	}
 
