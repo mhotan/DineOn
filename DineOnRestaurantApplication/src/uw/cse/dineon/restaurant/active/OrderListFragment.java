@@ -173,6 +173,7 @@ public class OrderListFragment extends ListFragment {
 	 * Adapter to handle.
 	 * @author mhotan
 	 */
+	@SuppressWarnings("SIC_INNER_SHOULD_BE_STATIC")
 	private class OrderListAdapter extends ArrayAdapter<Order> {
 
 		private final Context mContext;
@@ -268,8 +269,8 @@ public class OrderListFragment extends ListFragment {
 				mBottom = bottom;
 
 				// Get a reference to all the top pieces 
-				final ImageView ORDERIMAGE = (ImageView) 
-						mTop.findViewById(R.id.image_order_thumbnail);
+//				final ImageView ORDERIMAGE = (ImageView) 
+//						mTop.findViewById(R.id.image_order_thumbnail);
 				TextView orderTitle = 
 						(TextView) mTop.findViewById(R.id.label_order_title);
 				mExpandDown = (ImageView) 

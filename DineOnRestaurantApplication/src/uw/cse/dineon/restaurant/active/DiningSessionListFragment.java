@@ -204,8 +204,8 @@ public class DiningSessionListFragment extends ListFragment {
 				mBottom = bottom;
 
 				// Get a reference to all the top pieces 
-				final ImageView SESSIONIMAGE = (ImageView) 
-						mTop.findViewById(R.id.image_user_thumbnail);
+//				final ImageView SESSIONIMAGE = (ImageView) 
+//						mTop.findViewById(R.id.image_user_thumbnail);
 				TextView title = (TextView) mTop.findViewById(R.id.label_user_name);
 				TextView dateText = (TextView) mTop.findViewById(R.id.label_checkin_time);
 				mExpandDown = (ImageView) 
@@ -223,37 +223,35 @@ public class DiningSessionListFragment extends ListFragment {
 				//Populate
 				dateText.setText(mDiningSession.getOriginatingTime().toString());
 
+				//Displays Order information as a string
+				StringBuffer buf = new StringBuffer();
+				
 				if(orders == null) {
 					orderHeader.setVisibility(View.GONE);
 					orderText.setVisibility(View.GONE);
 				} else {
 
+					for (Order o : orders) {
+
+						int tableID = o.getTableID();
+						if(tableID != -1) {
+							buf.append(getString(R.string.table));
+							buf.append(tableID);
+						}
+
+						buf.append(getString(R.string.newline));
+						buf.append(o.getOriginatingTime().toString());
+						buf.append(getString(R.string.newline) + getString(R.string.newline));
+					}
+					
 					if(orders.size() == 0) {
 						orderText.setVisibility(View.GONE);
 						orderHeader.setText(getString(R.string.no_orders));
 					} else {
 						orderText.setVisibility(View.VISIBLE);
 						orderHeader.setText(getString(R.string.label_orders));
+						buf.delete(buf.length() - 2, buf.length());
 					}
-				}
-
-				//Displays Order information as a string
-				StringBuffer buf = new StringBuffer();
-
-				for (Order o : orders) {
-
-					int tableID = o.getTableID();
-					if(tableID != -1) {
-						buf.append(getString(R.string.table));
-						buf.append(tableID);
-					}
-
-					buf.append(getString(R.string.newline));
-					buf.append(o.getOriginatingTime().toString());
-					buf.append(getString(R.string.newline) + getString(R.string.newline));
-				}
-				if(orders.size() != 0) {
-					buf.delete(buf.length() - 2, buf.length());
 				}
 
 				orderText.setText(buf.toString());

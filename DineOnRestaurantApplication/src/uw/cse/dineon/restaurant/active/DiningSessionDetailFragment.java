@@ -2,6 +2,8 @@ package uw.cse.dineon.restaurant.active;
 
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
@@ -197,6 +199,7 @@ public class DiningSessionDetailFragment extends Fragment {
 	 * for this particular dining session.
 	 * @author mhotan
 	 */
+	@SuppressWarnings("SIC_INNER_SHOULD_BE_STATIC")
 	private class UserListAdapter extends ArrayAdapter<UserInfo> {
 
 		private final Context mContext;
@@ -297,6 +300,7 @@ public class DiningSessionDetailFragment extends Fragment {
 	 * for this particular dining session.
 	 * @author glee23
 	 */
+	@SuppressWarnings("SIC_INNER_SHOULD_BE_STATIC")
 	private class OrderListAdapter extends ArrayAdapter<Order> {
 
 		private final Context mContext;
@@ -352,10 +356,7 @@ public class DiningSessionDetailFragment extends Fragment {
 					throw new IllegalArgumentException(
 							"Invalid view (" + v + "), Not a order view");
 				}
-				if (mOrder == null) {
-					throw new IllegalArgumentException(
-							TAG + ":[OrderListItemListener] Order is null");
-				}
+				
 				mOrderTitle.setText("Table " + mOrder.getTableID());
 				List<CurrentOrderItem> items = mOrder.getMenuItems();
 				//Displays menu items as a string

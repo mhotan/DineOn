@@ -494,6 +494,7 @@ public class MenuItemsFragment extends ListFragment {
 			// Set an onlick listener to handle the changing of images.
 			imageView.setOnClickListener(new OnClickListener() {
 
+				@SuppressWarnings("BC_UNCONFIRMED_CAST")
 				@Override
 				public void onClick(View v) {
 					ImageView imageView = (ImageView) v;
