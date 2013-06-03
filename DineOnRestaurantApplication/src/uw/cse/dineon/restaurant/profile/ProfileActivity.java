@@ -31,8 +31,8 @@ import com.parse.SaveCallback;
  * @author mhotan
  */
 public class ProfileActivity extends DineOnRestaurantActivity implements
-		TabListener, RestaurantInfoFragment.InfoChangeListener,
-		MenuItemsFragment.MenuItemListener {
+TabListener, RestaurantInfoFragment.InfoChangeListener,
+MenuItemsFragment.MenuItemListener {
 
 	private static final String TAG = ProfileActivity.class.getSimpleName();
 
@@ -181,33 +181,48 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 	@Override
 	public void onMenuItemDeleted(MenuItem item) {
 		Toast.makeText(this, "Delete not available yet", Toast.LENGTH_SHORT)
-				.show();
+		.show();
 	}
 
 	@Override
-	public void onMenuItemAdded(MenuItem item) {
-		// getRestaurant().saveInBackGround(new SaveCallback() {
-		
-		//TODO ACTUALLY REWRITE THIS FUNCTION.
-		//Currently disabled because it doesn't work anyways
-		//and it's breaking testing
-		Toast.makeText(getApplicationContext(), "Menu Item Added!",
-				Toast.LENGTH_SHORT).show();
-		return;
-		/*
-		
-		getRestaurant().getInfo().saveInBackGround(new SaveCallback() {
-
-			@Override
-			public void done(ParseException e) {
-				notifyAllRestaurantChange();
-				Toast.makeText(getApplicationContext(), "Menu Item Added!",
-						Toast.LENGTH_SHORT).show();
-			}
-
-		});
-		*/
+	public void onAddMenuItemToMenu(uw.cse.dineon.library.Menu menu,
+			MenuItem item) {
+		// TODO Auto-generated method stub
+		MenuItemSaver saver = new MenuItemSaver(menu, item);
+		saver.execute();
 	}
+
+	@Override
+	public void onAddMenu(uw.cse.dineon.library.Menu menu) {
+		// TODO Auto-generated method stub
+		MenuSaver saver = new MenuSaver(menu);
+		saver.execute();
+	}
+
+	//	@Override
+	//	public void onMenuItemAdded(MenuItem item) {
+	//		// getRestaurant().saveInBackGround(new SaveCallback() {
+	//		
+	//		//TODO ACTUALLY REWRITE THIS FUNCTION.
+	//		//Currently disabled because it doesn't work anyways
+	//		//and it's breaking testing
+	//		Toast.makeText(getApplicationContext(), "Menu Item Added!",
+	//				Toast.LENGTH_SHORT).show();
+	//		return;
+	//		/*
+	//		
+	//		getRestaurant().getInfo().saveInBackGround(new SaveCallback() {
+	//
+	//			@Override
+	//			public void done(ParseException e) {
+	//				notifyAllRestaurantChange();
+	//				Toast.makeText(getApplicationContext(), "Menu Item Added!",
+	//						Toast.LENGTH_SHORT).show();
+	//			}
+	//
+	//		});
+	//		*/
+	//	}
 
 	@Override
 	public void onMenuItemModified(MenuItem item) {
@@ -275,14 +290,14 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 		MenuItemImageCreator creator = new MenuItemImageCreator(item, b);
 		creator.execute();
 	}
-	
+
 	/**
 	 * @return returns a progress dialog to show while the image is saving.
 	 */
 	private ProgressDialog getSavingImageDialog() {
 		return getSaveDialog(R.string.saving_new_image);
 	}
-	
+
 	/**
 	 * Returns a progress dialog for showing that a certain item is saving.
 	 * @param messageResId Resource message id.
@@ -296,7 +311,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 		d.setMessage(getResources().getString(messageResId));
 		return d;
 	}
-	
+
 	/**
 	 * This class helps in saving an image to the restaurant. There must be a
 	 * sequence of steps to take in order to add an image successfully
@@ -304,12 +319,12 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 	 * @author mhotan
 	 */
 	private class RestaurantImageCreator extends
-			AsyncTask<Void, Void, DineOnImage> {
+	AsyncTask<Void, Void, DineOnImage> {
 
 		// Bitmap we wish to save as a DineOnimage
 		private final Bitmap mBitmap;
 		private final ProgressDialog mDialog;
-		
+
 		/**
 		 * Creates an asynchronous process to save images for this restaurant.
 		 * 
@@ -357,37 +372,182 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 				addImageToCache(result, mBitmap);
 			} else {
 				Toast.makeText(This, "Unable to save image", Toast.LENGTH_SHORT)
-						.show();
+				.show();
 			}
 
 			// Stop the progress spinner
 			isWorkingBackground = false;
 			invalidateOptionsMenu();
-			
+
 			mDialog.dismiss();
 		}
 	}
-//	
-//	/**
-//	 * Saves a menu item in the background.
-//	 * @author mhotan
-//	 */
-//	private class MenuItemSaver extends AsyncTask<MenuItem, Void, Void> {
-//
-//		private final MenuItem mItem;
-//		
-//		@Override
-//		protected Void doInBackground(MenuItem... params) {
-//			MenuItem item = params[0];
-//			try {
-//				item.saveOnCurrentThread();
-//			} catch (ParseException e) {
-//				Log.e(TAG, "Unable to save new menu item.");
-//			}
-//			return null;
-//		}
-//		
-//	}
+
+	/**
+	 * Saves a menu item to the menu of the restaurant sepcified in the background.
+	 * @author mhotan
+	 */
+	private class MenuItemSaver extends AsyncTask<Void, Exception, Void> {
+
+		private final uw.cse.dineon.library.Menu mMenu;
+		private final MenuItem mItem;
+		private Exception mException;
+		private final ProgressDialog mDialog;
+
+		
+		
+		/**
+		 * Prepares this menu item to be added to the menu.
+		 * @param menu Menu to add to.
+		 * @param item Menu Item to add to.
+		 */
+		public MenuItemSaver(uw.cse.dineon.library.Menu menu, MenuItem item) {
+			mMenu = menu;
+			mItem = item;
+			mDialog = getSavingImageDialog();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			isWorkingBackground = true;
+			invalidateOptionsMenu();
+			mDialog.show();
+		}
+
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			try {
+				synchronousAddMenuItem(mMenu, mItem);
+			} catch (ParseException e) {
+				publishProgress(e);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Exception... progress) {
+			mException = progress[0];
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// Stop the progress spinner
+			isWorkingBackground = false;
+			invalidateOptionsMenu();
+			mDialog.dismiss();
+
+			if (mException != null) {
+				Log.e(tag, "Exception occured while saving menu item");
+				return;
+			}
+
+			// Update the fragment if it is available
+			if (mItemsFragment != null) {
+				mItemsFragment.addMenuItem(mMenu, mItem);
+			}
+		}
+	}
+
+	/**
+	 * Attempts to a menuitem to menu synchronously.
+	 * @param menu Menu to add to
+	 * @param item item to add to menu
+	 * @throws ParseException If error occured.
+	 */
+	private synchronized void synchronousAddMenuItem(
+			uw.cse.dineon.library.Menu menu, MenuItem item) 
+					throws ParseException {
+		// Save the item
+		item.saveOnCurrentThread();
+
+		// Add it to the menu then save.
+		menu.addNewItem(item);
+		menu.saveOnCurrentThread();
+		RestaurantInfo info = mRestaurant.getInfo();
+		if (!info.hasMenu(menu)) {
+			info.addMenu(menu);
+		}
+		if (!menu.hasMenuItem(item)) {
+			menu.addNewItem(item);
+		}
+		info.saveOnCurrentThread();
+	}
+
+	/**
+	 * Saves a menu in the background and adds it to the restaurant.
+	 * @author mhotan
+	 */
+	private class MenuSaver extends AsyncTask<Void, Exception, Void> { 
+
+		private final uw.cse.dineon.library.Menu mMenu;
+		private Exception mException;
+		private final ProgressDialog mDialog;
+
+		@Override
+		protected void onPreExecute() {
+			isWorkingBackground = true;
+			invalidateOptionsMenu();
+			mDialog.show();
+		}
+
+		/**
+		 * Prepares this menu item to be added to the menu.
+		 * @param menu Menu to add to.
+		 */
+		public MenuSaver(uw.cse.dineon.library.Menu menu) {
+			mMenu = menu;
+			mDialog = getSavingImageDialog();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			try {
+				synchronousAddMenu(mMenu);
+			} catch (ParseException e) {
+				publishProgress(e);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Exception... progress) {
+			mException = progress[0];
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// Stop the progress spinner
+			isWorkingBackground = false;
+			invalidateOptionsMenu();
+			mDialog.dismiss();
+
+			if (mException != null) {
+				Log.e(tag, "Exception occured while saving menu item");
+				return;
+			}
+
+			// Update the fragment if it is available
+			if (mItemsFragment != null) {
+				mItemsFragment.addMenu(mMenu);
+			}
+		}
+	}
+
+	/**
+	 * Saves a menu on the current running thread and then adds it to
+	 * the restaurant.
+	 * @param menu Menu to add.
+	 * @throws ParseException Error occurred on save
+	 */
+	private synchronized void synchronousAddMenu(
+			uw.cse.dineon.library.Menu menu) throws ParseException {
+		menu.saveOnCurrentThread();
+		RestaurantInfo info = mRestaurant.getInfo();
+		if (!info.hasMenu(menu)) {
+			info.addMenu(menu);
+		}
+	}
 
 	/**
 	 * Creates a DineOnImage for MenuItem.
@@ -395,7 +555,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 	 * @author mhotan
 	 */
 	private class MenuItemImageCreator extends
-			AsyncTask<Void, Void, DineOnImage> {
+	AsyncTask<Void, Void, DineOnImage> {
 
 		private final Bitmap mBitmap;
 		private final MenuItem mItem;
@@ -458,7 +618,7 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 	public Location getLocation() {
 		return getLastKnownLocation();
 	}
-	
+
 	@Override
 	public void onLocationChanged(Location location) {
 		super.onLocationChanged(location);
@@ -466,4 +626,6 @@ public class ProfileActivity extends DineOnRestaurantActivity implements
 			mRestInfoFragment.setLocationToUse(location);
 		}
 	}
+
+
 }

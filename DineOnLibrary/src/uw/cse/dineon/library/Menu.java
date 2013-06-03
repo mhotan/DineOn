@@ -141,7 +141,15 @@ public class Menu extends Storable {
 		return po;
 	}
 
-
+	/**
+	 * Return the menu name for string.
+	 * @return String name of the menu
+	 */
+	@Override
+	public String toString() {
+		return mName;
+	}
+	
 //	/**
 //	 * Creates a new Menu from a given Parcel.
 //	 * 

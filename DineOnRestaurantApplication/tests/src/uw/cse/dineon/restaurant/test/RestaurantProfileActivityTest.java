@@ -259,9 +259,9 @@ public class RestaurantProfileActivityTest extends
 		boolean vis = ad.findViewById(uw.cse.dineon.restaurant.R.id.container_new_menu).isShown();
 		assertFalse(vis);
 		// this container should be hidden by default. Test showing in next test
-		String menuname = (String) sp.getItemAtPosition(0);
+		Menu menu = (Menu) sp.getItemAtPosition(0);
 		// This should be the test menu added in the intent
-		assertEquals(TEST_MENU_TITLE, menuname);
+		assertEquals(TEST_MENU_TITLE, menu.getName());
 	}
 
 	/**
@@ -308,8 +308,8 @@ public class RestaurantProfileActivityTest extends
 		});
 		getInstrumentation().waitForIdleSync();
 		Spinner sp = (Spinner) ad.findViewById(uw.cse.dineon.restaurant.R.id.spinner_select_menu);
-		String menuname = (String) sp.getItemAtPosition(1);
-		assertEquals("samples", menuname);
+		Menu menuname = (Menu) sp.getItemAtPosition(1);
+		assertEquals("samples", menuname.getName());
 
 	}
 }

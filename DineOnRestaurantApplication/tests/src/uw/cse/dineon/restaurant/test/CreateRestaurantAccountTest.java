@@ -400,6 +400,9 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				submit.performClick();
 			} // end of run() method definition
 		});
+		
+		getInstrumentation().waitForIdleSync();
+		
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);
@@ -428,6 +431,9 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				submit.performClick();
 			} // end of run() method definition
 		});
+		
+		getInstrumentation().waitForIdleSync();
+		
 		RestauarantMainActivity startedActivity = (RestauarantMainActivity) monitor
 		        .waitForActivityWithTimeout(WAIT_LOGIN_TIME);
 		assertNull(startedActivity);

@@ -125,9 +125,7 @@ ActivityInstrumentationTestCase2<ProfileActivity> {
 	}
 
 	public void testUpdateAddress() {
-
-
-
+		
 	}
 
 }
