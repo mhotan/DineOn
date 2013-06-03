@@ -97,6 +97,7 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	@Override
 	protected void tearDown() throws Exception {
 		mActivity.finish();
+		
 		super.tearDown();
 	}
 	
@@ -416,7 +417,7 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 				passwordrepeat.setText(fakePassword);
 				mCreditCard.setText(fakeCreditCardNum);
 				mSecurityCode.setText(fakeSecurityCode);
-				mExpMo.setText("01");
+				mExpMo.setText("1");
 				mExpYr.setText("2013");
 				mZip.setText(zipCode);
 				submit.requestFocus();

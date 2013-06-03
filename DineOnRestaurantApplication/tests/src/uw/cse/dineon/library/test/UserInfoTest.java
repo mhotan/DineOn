@@ -4,6 +4,8 @@ import uw.cse.dineon.library.UserInfo;
 import android.test.AndroidTestCase;
 
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 
@@ -65,6 +67,21 @@ public class UserInfoTest extends AndroidTestCase {
 		testUInfo.setEmail("tester@cs.washington.edu");
 		assertEquals("tester@cs.washington.edu", testUInfo.getEmail());
 	}
+	
+	/**
+	 * Asserts that the userinfo stays the same when packed and
+	 * unpacked.
+	 */
+	public void testPackAndUnpack() throws ParseException {
+		ParseObject pObj = testUInfo.packObject();
+		UserInfo unPacked = new UserInfo(pObj);
+		assertEquals(testUInfo.getEmail(), unPacked.getEmail());
+		assertEquals(testUInfo.getName(), unPacked.getName());
+		assertEquals(testUInfo.getPhone(), unPacked.getPhone());
+		assertEquals(testUInfo.getObjId(), unPacked.getObjId());
+		assertEquals(testUInfo.getClass(), unPacked.getClass());
+	}
+	
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

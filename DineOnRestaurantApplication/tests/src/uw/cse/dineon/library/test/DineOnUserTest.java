@@ -16,6 +16,7 @@ import android.test.AndroidTestCase;
 
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 /**
@@ -37,6 +38,7 @@ public class DineOnUserTest extends AndroidTestCase {
 		Parse.initialize(this.getContext(), "RUWTM02tSuenJPcHGyZ0foyemuL6fjyiIwlMO0Ul", "wvhUoFw5IudTuKIjpfqQoj8dADTT1vJcJHVFKWtK");
 
 		mUser = new ParseUser();
+		mUser.setUsername("name");
 		dUser = new DineOnUser(mUser);
 		mRestaurant = TestUtility.createFakeRestaurant();
 		super.setUp();
@@ -55,7 +57,7 @@ public class DineOnUserTest extends AndroidTestCase {
 		assertEquals(new ArrayList<RestaurantInfo>(), dUser.getFavs());
 		assertEquals(new ArrayList<UserInfo>(), dUser.getFriendList());
 		assertEquals(new ArrayList<Reservation>(), dUser.getReserves());
-		assertEquals(null, dUser.getName());
+		assertEquals("name", dUser.getName());
 		assertEquals(null, dUser.getDiningSession());
 	}
 	
@@ -145,6 +147,23 @@ public class DineOnUserTest extends AndroidTestCase {
 				dUser.getUserInfo(), mRestaurant.getInfo());
 		dUser.setDiningSession(d);
 		assertEquals(d, dUser.getDiningSession());
+	}
+	
+	/**
+	 * Asserts that the DineOnUser stays the same when packed and
+	 * unpacked.
+	 */
+	public void testPackAndUnpack() throws ParseException {
+		
+		ParseObject pObj = dUser.packObject();
+		DineOnUser unPacked = new DineOnUser(pObj);
+		assertEquals(dUser.getName(), unPacked.getName());
+		assertEquals(dUser.getObjId(), unPacked.getObjId());
+		assertEquals(dUser.getDiningSession(), unPacked.getDiningSession());
+		assertEquals(dUser.getFavs(), unPacked.getFavs());
+		assertEquals(dUser.getFriendList(), unPacked.getFriendList());
+		assertEquals(dUser.getReserves(), unPacked.getReserves());
+		assertEquals(dUser.getClass(), unPacked.getClass());
 	}
 	
 	/**

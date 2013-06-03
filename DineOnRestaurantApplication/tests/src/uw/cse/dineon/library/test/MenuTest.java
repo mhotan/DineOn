@@ -3,6 +3,9 @@ package uw.cse.dineon.library.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.parse.ParseException;
+import com.parse.ParseObject;
+
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import android.test.AndroidTestCase;
@@ -87,4 +90,19 @@ public class MenuTest extends AndroidTestCase {
 		assertFalse(testMenu.hasMenuItem(testItem));
 	}
 
+	/**
+	 * Asserts that the Menu stays the same when packed and
+	 * unpacked.
+	 */
+	public void testPackAndUnpack() throws ParseException {
+		
+		ParseObject pObj = testMenu.packObject();
+		Menu unPacked = new Menu(pObj);
+		
+		assertEquals(testMenu.getObjId(), unPacked.getObjId());
+		assertEquals(testMenu.getName(), unPacked.getName());
+		assertEquals(testMenu.getClass(), unPacked.getClass());
+		assertEquals(testMenu.getItems(), unPacked.getItems());
+
+	}
 }

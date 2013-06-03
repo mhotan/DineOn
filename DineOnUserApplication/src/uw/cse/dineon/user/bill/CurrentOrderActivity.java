@@ -2,6 +2,7 @@ package uw.cse.dineon.user.bill;
 
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.bill.CurrentBillFragment.PayBillListener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,7 +11,7 @@ import android.view.MenuItem;
  * 
  * @author mhotan
  */
-public class CurrentOrderActivity extends DineOnUserActivity { 
+public class CurrentOrderActivity extends DineOnUserActivity implements PayBillListener { 
 	
 	
 	private final String TAG = "CurrentOrderActivity";
@@ -47,6 +48,12 @@ public class CurrentOrderActivity extends DineOnUserActivity {
 
 	@Override
 	public void doneWithOrder() {
+		finish();
+	}
+
+	@Override
+	public void payCurrentBill() {
+		super.payBill();
 		finish();
 	}
 			

@@ -16,6 +16,9 @@ import uw.cse.dineon.library.UserInfo;
 import android.app.Activity;
 import android.content.Context;
 import android.test.AndroidTestCase;
+
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 /**
@@ -59,6 +62,7 @@ public class RestaurantTest extends AndroidTestCase {
 		mContext = this.getContext();
 		
 		mUser = new ParseUser();
+		mUser.setUsername("hello");
 		mUser.setPassword("rtest");
 		
 		testSession = new DiningSession(32, new Date(3254645), testUInfo, testRestaurantInfo);
@@ -185,6 +189,28 @@ public class RestaurantTest extends AndroidTestCase {
 		testRestaurant.completeOrder(testOrder);
 		testRestaurant.clearPastOrders();
 		assertEquals(new ArrayList<Order>(), testRestaurant.getPastOrders());
+	}
+	
+	/**
+	 * Asserts that the Restaurant stays the same when packed and
+	 * unpacked.
+	 */
+	public void testPackAndUnpack() throws ParseException {
+		
+		ParseObject pObj = testRestaurant.packObject();
+		Restaurant unPacked = new Restaurant(pObj);
+		
+		assertEquals(testRestaurant.getObjId(), unPacked.getObjId());
+		assertEquals(testRestaurant.getName(), unPacked.getName());
+		assertEquals(testRestaurant.getClass(), unPacked.getClass());
+		assertEquals(testRestaurant.getCustomerRequests(), unPacked.getCustomerRequests());
+		assertEquals(testRestaurant.getPastOrders(), unPacked.getPastOrders());
+		assertEquals(testRestaurant.getPendingOrders(), unPacked.getPendingOrders());
+		assertEquals(testRestaurant.getReservationList(), unPacked.getReservationList());
+		assertEquals(testRestaurant.getSessions(), unPacked.getSessions());
+		assertEquals(testRestaurant.getTempCustomerRequest(), unPacked.getTempCustomerRequest());
+		assertEquals(testRestaurant.getTempDiningSession(), unPacked.getTempDiningSession());
+
 	}
 
 }

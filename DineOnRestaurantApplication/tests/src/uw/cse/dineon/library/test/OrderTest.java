@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.CurrentOrderItem;
+import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
 import android.test.AndroidTestCase;
 
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 /**
@@ -33,6 +36,7 @@ public class OrderTest extends AndroidTestCase {
 		super.setUp();
 		
 		testUser = new ParseUser();
+		testUser.setUsername("hello");
 		testUser.setPassword("pass");
 		
 		testUInfo = new UserInfo(testUser);
@@ -83,6 +87,22 @@ public class OrderTest extends AndroidTestCase {
 		assertEquals(testItems, testOrder.getMenuItems());
 	}
 
+	/**
+	 * Asserts that the Order stays the same when packed and
+	 * unpacked.
+	 */
+	public void testPackAndUnpack() throws ParseException {
+		
+		ParseObject pObj = testOrder.packObject();
+		Order unPacked = new Order(pObj);
+		
+		assertEquals(testOrder.getObjId(), unPacked.getObjId());
+		assertEquals(testOrder.getTableID(), unPacked.getTableID());
+		assertEquals(testOrder.getClass(), unPacked.getClass());
+		assertEquals(testOrder.getMenuItems(), unPacked.getMenuItems());
+		assertEquals(testOrder.getOriginatingTime(), unPacked.getOriginatingTime());
+
+	}
 
 
 }

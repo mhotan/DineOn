@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5dp" >
@@ -11,7 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/medium_text"
+        android:layout_gravity="center"
+        android:text="@string/bill_summary"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TableLayout
@@ -36,7 +41,7 @@
                 android:layout_gravity="right"
                 android:layout_weight="1"
                 android:textStyle="bold"
-                android:text="@string/total"
+                android:text="@string/subtotal"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
@@ -140,3 +145,4 @@
     </TableLayout>
 
 </RelativeLayout>
+</ScrollView>

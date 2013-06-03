@@ -1,5 +1,9 @@
 package uw.cse.dineon.library.test;
 
+import com.parse.ParseException;
+import com.parse.ParseObject;
+
+import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import android.test.AndroidTestCase;
 
@@ -89,5 +93,23 @@ public class MenuItemTest extends AndroidTestCase {
 	 */
 	public void testGetDescription() {
 		assertEquals("Chicken...that's been fried", testMenuItem.getDescription());
+	}
+	
+	/**
+	 * Asserts that the MenuItem stays the same when packed and
+	 * unpacked.
+	 */
+	public void testPackAndUnpack() throws ParseException {
+		
+		ParseObject pObj = testMenuItem.packObject();
+		MenuItem unPacked = new MenuItem(pObj);
+		
+		assertEquals(testMenuItem.getObjId(), unPacked.getObjId());
+		assertEquals(testMenuItem.getPrice(), unPacked.getPrice());
+		assertEquals(testMenuItem.getProductID(), unPacked.getProductID());
+		assertEquals(testMenuItem.getTitle(), unPacked.getTitle());
+		assertEquals(testMenuItem.getClass(), unPacked.getClass());
+		assertEquals(testMenuItem.getImage(), unPacked.getImage());
+
 	}
 }
