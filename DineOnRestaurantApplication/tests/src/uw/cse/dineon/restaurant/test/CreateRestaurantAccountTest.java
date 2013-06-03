@@ -97,7 +97,11 @@ ActivityInstrumentationTestCase2<CreateNewRestaurantAccountActivity> {
 	@Override
 	protected void tearDown() throws Exception {
 		mActivity.finish();
-		
+		mCreditCard = null;
+		mSecurityCode = null;
+		mExpMo = null;
+		mExpYr = null;
+		mZip = null;
 		super.tearDown();
 	}
 	
