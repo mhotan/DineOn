@@ -83,7 +83,8 @@ LoginFragment.OnLoginListener, RestaurantDownLoaderCallback {
 		}
 
 		if (buf.length() > 0) {
-			Utility.getGeneralAlertDialog(getString(R.string.login_failure), buf.toString(), this).show();
+			Utility.getGeneralAlertDialog(getString(R.string.login_failure), 
+					buf.toString(), this).show();
 			return;
 		}
 	

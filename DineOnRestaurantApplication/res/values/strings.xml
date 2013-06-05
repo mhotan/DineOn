@@ -133,7 +133,7 @@
     <string name="unknown_error">Unknown Error</string>
     <string name="restaurant_part1">"Restaurant wants to sent message \""</string>
     <string name="restaurant_part2">"\" to user "</string>
-    <string name="table_label">"Table :"</string>
+    <string name="table_label">"Table:"</string>
     <string name="menu_item_label">"Menu Item :"</string>
     <string name="qty_label">"Quantity :"</string>
     <string name="new_line">"\n"</string>
@@ -181,5 +181,13 @@
     <string name="confirm_image_deletion">Confirm image deletion.</string>
     <string name="delete_confirmation">Are you sure you want to delete it?</string>
 	<string name="yes">Yes</string>
+	<string name="time_requested">Time Requested:</string>
+	<string name="request_details">Details:</string>
+	<string name="send_staff">Send to staff</string>
+	<string name="large_placeholder">Large Text</string>
+	<string name="more_info">More Info</string>
+	<string name="order_progress">Order Progress:</string>
+	<string name="zero_percent">0%</string>
+	<string name="hundred_percent">100%</string>
     
 </resources>

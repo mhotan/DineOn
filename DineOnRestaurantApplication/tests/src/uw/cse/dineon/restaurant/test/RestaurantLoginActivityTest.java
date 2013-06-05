@@ -1,12 +1,9 @@
 package uw.cse.dineon.restaurant.test;
 
-import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.restaurant.active.OrderDetailActivity;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import uw.cse.dineon.restaurant.login.LoginFragment;
 import uw.cse.dineon.restaurant.login.RestaurantLoginActivity;
-import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;

@@ -365,7 +365,8 @@ implements SateliteListener {
 							// Add the order to our restaurant
 							addOrder(order);
 						} else {
-							Log.e(TAG, getString(R.string.error_saving_dining_session) + e.getMessage());
+							Log.e(TAG, getString(R.string.error_saving_dining_session) 
+									+ e.getMessage());
 						}
 					}
 				});
@@ -457,7 +458,8 @@ implements SateliteListener {
 			return true;
 		case R.id.item_logout:
 			if (mRestaurant != null) {
-				createProgressDialog(true, getString(R.string.saving), getString(R.string.logging_out));
+				createProgressDialog(true, getString(R.string.saving), 
+						getString(R.string.logging_out));
 				mRestaurant.saveInBackGround(new SaveCallback() {
 
 					@Override

@@ -28,13 +28,15 @@
             android:id="@+id/label_order_table"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Table Number: " />
+            android:padding="5dp"
+            android:text="@string/table_label" />
 
         <TextView
             android:id="@+id/label_order_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Time requested: " />
+            android:padding="5dp"
+            android:text="@string/time_requested" />
 
         <TextView
             android:id="@+id/label_message_customer"
@@ -67,6 +69,7 @@
 
             <ImageButton
                 android:id="@+id/button_send_message_fororder"
+                android:contentDescription="@string/hint_send_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="right"
@@ -94,7 +97,8 @@
         <ListView
             android:id="@+id/list_order"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            android:padding="5dp" />
     </LinearLayout>
 
 </LinearLayout>

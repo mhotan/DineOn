@@ -3,32 +3,21 @@ package uw.cse.dineon.user.login.test;
 import java.util.Date;
 import java.util.List;
 
-import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
-import com.parse.SignUpCallback;
-
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
-import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.login.CreateNewAccountActivity;
-import uw.cse.dineon.user.login.CreateNewAccountFragment;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 

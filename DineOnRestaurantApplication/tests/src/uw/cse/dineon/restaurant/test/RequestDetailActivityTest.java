@@ -9,7 +9,6 @@ import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
 import uw.cse.dineon.restaurant.R;
 import uw.cse.dineon.restaurant.active.RequestDetailActivity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 

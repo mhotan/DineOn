@@ -1,7 +1,6 @@
 package uw.cse.dineon.restaurant.profile;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.Menu;
