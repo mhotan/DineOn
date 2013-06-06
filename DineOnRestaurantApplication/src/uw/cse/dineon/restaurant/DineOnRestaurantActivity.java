@@ -499,7 +499,6 @@ implements SateliteListener {
 				});
 			}
 			return true;
-		case R.id.button_update_menu:
 		case R.id.item_restaurant_menu:
 			startProfileActivity();
 			return true;
