@@ -61,7 +61,7 @@
     <string name="label_address">Address</string>
     <string name="label_phone">Phone</string>
     <string name="dineonad">DineOn Ad</string>
-    <string name="item_rest_menu">Update your Menu!</string>
+    <string name="item_rest_menu">Update Your Menu!</string>
     <string name="dialog_title_getimage">Get an image</string>
     <string name="dialog_message_getimage_for_menuitem">Want to put your own image for this menu item?</string>
     <string name="dialog_option_take_picture">Take Pic</string>
