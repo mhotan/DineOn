@@ -101,7 +101,6 @@
         <item>Call Waiter/Waitress</item>
         <item>Custom Request</item>
     </string-array>
-    <string name="subtotal">Subtotal:</string>
     <string name="bill_summary">Bill Summary</string>
     
 </resources>

@@ -3,6 +3,7 @@
 
     <item
         android:id="@+id/option_search"
+        style="@style/DineOnMenuItem"
         android:actionViewClass="android.widget.SearchView"
         android:icon="@drawable/action_search"
         android:showAsAction="collapseActionView|ifRoom"
@@ -10,16 +11,19 @@
     </item>
     <item
         android:id="@+id/option_profile"
+        style="@style/DineOnMenuItem"
         android:showAsAction="never"
         android:title="@string/option_profile">
     </item>
     <item
         android:id="@+id/option_logout"
+        style="@style/DineOnMenuItem"
         android:showAsAction="never"
         android:title="@string/option_logout">
     </item>
     <item
         android:id="@+id/option_check_in"
+        style="@style/DineOnMenuItem"
         android:layout_width="wrap_content"
         android:actionLayout="@layout/action_button_checkin"
         android:showAsAction="always"
@@ -27,6 +31,7 @@
     </item>
     <item
         android:id="@+id/option_view_order"
+        style="@style/DineOnMenuItem"
         android:layout_width="wrap_content"
         android:actionLayout="@layout/action_button_view_order"
         android:showAsAction="always"
@@ -34,6 +39,7 @@
     </item>
     <item
         android:id="@+id/option_bill"
+        style="@style/DineOnMenuItem"
         android:layout_width="wrap_content"
         android:actionLayout="@layout/action_button_bill"
         android:showAsAction="always"
