@@ -450,32 +450,7 @@ implements SateliteListener {
 		//  UI Menu is updated this is done manually
 		//  See basic_menu under res/menu for ids
 		inflater.inflate(R.menu.basic_menu, menu);
-		final android.view.Menu M = menu;
-
-		//Sets the necessary onClickListeners for the menu
-		//items with an action layout.
-		List<android.view.MenuItem> customActionBarButtons = new ArrayList<android.view.MenuItem>();
-		customActionBarButtons.add(menu.findItem(R.id.item_restaurant_menu));
-		setOnClick(M, customActionBarButtons);
 		return true;
-	}
-
-	/**
-	 * Creates the onClick listeners for the specified menu items.
-	 * 
-	 * @param m the parent menu
-	 * @param items the list of MenuItems to create listeners for
-	 */
-	private void setOnClick(final android.view.Menu m, List<android.view.MenuItem> items) {
-		for (final android.view.MenuItem ITEM : items) {
-			ITEM.getActionView().setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {   
-					m.performIdentifierAction(ITEM.getItemId(), 0);
-				}
-			});
-		}
 	}
 	
 	@Override

@@ -32,6 +32,7 @@
 
     <style name="DineOnTheme" parent="@android:Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/DineOnActionBar</item>
+        <item name="android:actionMenuTextColor">#b10202</item>
     </style>
 
     <style name="DineOnActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">

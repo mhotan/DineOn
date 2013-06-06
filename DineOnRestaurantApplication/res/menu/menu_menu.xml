@@ -3,15 +3,12 @@
 
     <item
         android:id="@+id/menu_add_menu_item"
-        style="@style/DineOnMenuItem"
-        android:textColor="#b10202"
         android:icon="@drawable/new_item"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_add_menu_item">
     </item>
     <item
         android:id="@+id/menu_switch_menu"
-        style="@style/DineOnMenuItem"
         android:icon="@drawable/bill"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_switch_menu">
