@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/button_update_menu"
+    style="@style/DineOnMenuItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    android:text="@string/item_rest_menu"
+    android:textAppearance="?android:attr/textAppearanceSmall" >
+
+</Button>
