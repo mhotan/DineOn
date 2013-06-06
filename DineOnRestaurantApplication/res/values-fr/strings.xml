@@ -163,7 +163,7 @@
     <string name="no_restaurant_reason">"Impossible d'obtenir votre compte restaurant car: "</string>
     <string name="getting_restaurant">Vous obtenir votre propre restaurant.</string>
     <string name="menu_added">Carte ajoutée</string>
-    <string name="no_menu">Vous n'avez pas de menus!</string>
+    <string name="no_menu">Vous n\'avez pas de menus!</string>
     <string name="cancel">Résilier</string>
     <string name="menu_label">"La Carte: "</string>
     <string name="save">"Sauver"</string>
