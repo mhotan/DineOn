@@ -10,7 +10,7 @@
     <string name="label_login">Log in</string>
     <string name="option_create_new_account"><u>Create New Account</u></string>
     <string name="option_forgot_password"><u>Forgot Password?</u></string>
-    <string name="label_login_title">Log in to Work in Dine On</string>
+    <string name="label_login_title">Log in to Work in DineOn</string>
     <string name="button_assign_waiter">Assign</string>
     <string name="content_description_dismiss">Dismiss the current request</string>
     <string name="label_request_blank">Request Title Goes here</string>
@@ -169,7 +169,7 @@
     <string name="save">"Save"</string>
     <string name="select">"Select"</string>
     <string name="add_menu_item">Add New Menu Item</string>
-    <string name="creating_new_menu">Crreating New Menu.</string>
+    <string name="creating_new_menu">Creating New Menu.</string>
     <string name="input_menu_item_details">Input Menu Item Details</string>
     <string name="pick_menu_title">Please choose a title for your first menu.</string>
     <string name="input_title_price">Please input title and price.</string>
