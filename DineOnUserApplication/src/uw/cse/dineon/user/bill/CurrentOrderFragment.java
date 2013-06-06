@@ -419,7 +419,8 @@ public class CurrentOrderFragment extends Fragment {
 
 					} else {
 						if (mListener instanceof Context) {
-							Toast.makeText((Context)mListener, "Must checkin before placing order.", 
+							Toast.makeText((Context)mListener, 
+									"Must checkin before placing order.", 
 									Toast.LENGTH_SHORT).show();
 						}
 					}

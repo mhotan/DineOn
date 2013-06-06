@@ -3,13 +3,14 @@
     android:id="@+id/listitem_order_bot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="5dp" >
 
     <TextView
         android:id="@+id/label_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Order Progress:"
+        android:text="@string/order_progress"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <RelativeLayout
@@ -23,7 +24,7 @@
             android:layout_alignBottom="@+id/button_completed_order"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/seekbar_order_progress"
-            android:text="0%"
+            android:text="@string/zero_percent"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
@@ -33,7 +34,7 @@
             android:layout_alignBottom="@+id/button_completed_order"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/seekbar_order_progress"
-            android:text="100%"
+            android:text="@string/hundred_percent"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <SeekBar
@@ -60,7 +61,7 @@
             android:layout_marginRight="4dp"
             android:layout_weight="1"
             android:contentDescription="@string/content_description_complete_order"
-            android:text="Complete Order" />
+            android:text="@string/title_complete_order" />
 
         <Button
             android:id="@+id/button_proceed_order"
@@ -71,7 +72,7 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="8dp"
             android:layout_weight="1"
-            android:text="More Info" />
+            android:text="@string/more_info" />
     </LinearLayout>
 
 </LinearLayout>

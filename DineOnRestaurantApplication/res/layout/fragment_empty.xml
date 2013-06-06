@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:padding="5dp" >
 
     <TextView
         android:id="@+id/label_error"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Large Text"
+        android:text="@string/large_placeholder"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </FrameLayout>

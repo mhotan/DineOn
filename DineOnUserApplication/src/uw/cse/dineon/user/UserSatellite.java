@@ -96,8 +96,8 @@ public class UserSatellite extends BroadcastReceiver {
 
 		// Check for null values
 		if (user == null) {
-			throw new IllegalArgumentException("User was null when registering " + 
-					"broadcast reciever.");
+			throw new IllegalArgumentException("User was null when registering " 
+					+ "broadcast reciever.");
 		}
 		if (activity == null) {
 			Log.w(TAG, "UserSatelite attempted to register null activity");

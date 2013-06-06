@@ -3,7 +3,6 @@ package uw.cse.dineon.library.test;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 
-import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import android.test.AndroidTestCase;
 
