@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/button_view_order"
+    style="@style/DineOnMenuItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
+    android:drawableLeft="@drawable/cart"
     android:paddingLeft="4dp"
     android:paddingRight="4dp"
     android:text="@string/button_view_order"
     android:textAppearance="?android:attr/textAppearanceSmall"
-    android:textColor="#333333"
     android:textStyle="bold" >
 
 </Button>
