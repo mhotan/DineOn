@@ -82,6 +82,9 @@ implements PayBillListener {
 			viewOrderItem.setEnabled(false);
 			viewOrderItem.setVisible(false);
 		}
+		MenuItem searchItem = menu.findItem(R.id.option_search);
+		searchItem.setEnabled(false);
+		searchItem.setVisible(false);
 		
 		return true;
 	}
