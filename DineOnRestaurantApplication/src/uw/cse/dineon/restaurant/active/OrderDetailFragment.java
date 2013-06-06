@@ -101,7 +101,8 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			// Here we have an order so lets update the state
 			mSendMessageButton.setVisibility(View.VISIBLE);
 			mSendMessageButton.setEnabled(true);
-			mTitle.setText(getString(R.string.order_placed_by) + mOrder.getOriginalUser().getName());
+			mTitle.setText(getString(R.string.order_placed_by) 
+					+ mOrder.getOriginalUser().getName());
 			mTableInput.setText(getString(R.string.table_label) + mOrder.getTableID());
 			mTakenTime.setText(mOrder.getOriginatingTime().toString());
 			mAdapter = new MenuItemAdapter(this.getActivity(), mOrder.getMenuItems());

@@ -1,14 +1,11 @@
 package uw.cse.dineon.user.general.test;
 
-import com.parse.ParseUser;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.general.ProfileActivity;
-import uw.cse.dineon.user.login.UserLoginActivity;
 import android.app.Instrumentation;
-import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.KeyEvent;

@@ -3,7 +3,8 @@
     android:id="@+id/listitem_request_bot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="5dp" >
 
     <Button
         android:id="@+id/button_proceed_request"
@@ -13,10 +14,9 @@
         android:layout_gravity="center"
         android:layout_margin="8dp"
         android:drawableRight="@drawable/taninfoarrow"
-        android:text="More Info" />
+        android:text="@string/more_info" />
     
     <LinearLayout
-        android:id="@+id/listitem_request_bot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
