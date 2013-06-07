@@ -147,7 +147,7 @@ public abstract class Storable {
 	 */
 	@Override
 	public String toString() {
-		return mCompleteObject.toString();
+		return mCompleteObject.getClassName() + " : " + mCompleteObject.getObjectId();
 	}
 
 	@Override

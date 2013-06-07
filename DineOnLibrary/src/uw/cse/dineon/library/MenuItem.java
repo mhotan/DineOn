@@ -19,7 +19,7 @@ public class MenuItem extends Storable {
 	private static final String TITLE = "menuItemTitle";
 	private static final String IMAGE = "dineOnImage";
 
-	private int mProductID;		// ID of this product
+	private String mProductID;		// ID of this product
 	private double mPrice;
 	private String mTitle; // price of this product
 	private String mDescription;	// description of this product
@@ -33,8 +33,11 @@ public class MenuItem extends Storable {
 	 * @param title of menu item
 	 * @param description of this item in String form
 	 */
-	public MenuItem(int productID, double price, String title, String description) {
+	public MenuItem(String productID, double price, String title, String description) {
 		super(MenuItem.class);
+		if (productID == null) {
+			throw new IllegalArgumentException("Menu Items can't have null Ids");
+		}
 		this.mProductID = productID;
 		this.mPrice = price;
 		this.mDescription = description;
@@ -52,7 +55,7 @@ public class MenuItem extends Storable {
 	 */
 	public MenuItem(ParseObject po) throws ParseException {
 		super(po);
-		mProductID = po.getInt(PRODUCT_ID);
+		mProductID = po.getString(PRODUCT_ID);
 		mPrice = po.getDouble(PRICE);
 		mDescription = po.getString(DESCRIPTION);
 		mTitle = po.getString(TITLE);
@@ -81,17 +84,18 @@ public class MenuItem extends Storable {
 	/**
 	 * @return the productID
 	 */
-	public int getProductID() {
+	public String getProductID() {
 		return mProductID;
 	}
 
 	/**
 	 * @param productID the productID to set
 	 */
-	public void setProductID(int productID) {
-		if(productID > -1) {	// or some other arbitrary value
-			this.mProductID = productID;			
+	public void setProductID(String productID) {
+		if(productID == null) {	// or some other arbitrary value
+			throw new IllegalArgumentException("Menu Items can't have null Ids");
 		}
+		this.mProductID = productID;
 	}
 
 	/**
