@@ -1,7 +1,9 @@
 package uw.cse.dineon.library.util;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
+
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 
@@ -187,8 +189,7 @@ public final class DineOnConstants {
 	 * @return Date format to use.
 	 */
 	public static DateFormat getCurrentDateFormat() { 
-		return DateFormat.getDateTimeInstance(
-				DateFormat.FULL, DateFormat.FULL, Locale.getDefault());
+		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
 	}
 	
 }
