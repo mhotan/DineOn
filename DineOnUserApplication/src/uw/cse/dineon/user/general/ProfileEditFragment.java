@@ -1,18 +1,23 @@
 package uw.cse.dineon.user.general;
 
-import com.parse.ParseException;
-import com.parse.ParseUser;
-
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.telephony.PhoneNumberUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
@@ -21,7 +26,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.telephony.PhoneNumberUtils;
+
+import com.parse.ParseException;
+import com.parse.ParseUser;
+
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
  * Fragment with editable text fields. Used for changing profile information.
@@ -32,7 +41,7 @@ public class ProfileEditFragment extends Fragment {
 
 	private ImageButton mProfileImage;
 	private InfoChangeListener mListener;
-	
+	private Context mContext;
 	/**
 	 * Returns a fragment that will present the information present in the
 	 * User Info object.
@@ -56,7 +65,7 @@ public class ProfileEditFragment extends Fragment {
 		final UserInfo INFO = mListener.getInfo();
 		final View EDIT_VIEW = inflater.inflate(R.layout.fragment_profile_edit,
 				container, false);
-		
+		mContext = getActivity();
 		if (INFO != null) {
 	
 			mProfileImage = (ImageButton) EDIT_VIEW.findViewById(R.id.image_profile_picture);
@@ -78,6 +87,24 @@ public class ProfileEditFragment extends Fragment {
 				PHONENUMBER.setText("");				
 			}
 			
+			DineOnImage image = INFO.getImage();
+			if (image != null) {
+				mListener.onGetImage(image, new InitialGetImageCallback(
+						mProfileImage));
+			}
+
+			// Set an onlick listener to handle the changing of images.
+			mProfileImage.setOnClickListener(new OnClickListener() {
+
+				@SuppressWarnings("BC_UNCONFIRMED_CAST")
+				@Override
+				public void onClick(View v) {
+					ImageButton imageView = (ImageButton) v;
+					AlertDialog getImageDialog = getRequestImageDialog(new UserImageGetCallback(
+							INFO, imageView));
+					getImageDialog.show();
+				}
+			});
 			
 			Button mSaveButton = (Button) EDIT_VIEW.findViewById(R.id.button_save_changes);
 			mSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +148,49 @@ public class ProfileEditFragment extends Fragment {
 	}
 	
 	/**
+	 * Get an alert dialog to present the user with the option to take
+	 * pictures.
+	 * 
+	 * @param callback
+	 *            Callback to accept pictures
+	 * @return Get a dialog that will handle getting images for a menu item
+	 */
+	private AlertDialog getRequestImageDialog(
+			final ImageGetCallback callback) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		builder.setTitle(R.string.dialog_title_getimage);
+		builder.setMessage(R.string.dialog_message_getimage_for_menuitem);
+		builder.setPositiveButton(R.string.dialog_option_take_picture,
+				new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				mListener.onRequestTakePicture(callback);
+				dialog.dismiss();
+			}
+		});
+		builder.setNeutralButton(R.string.dialog_option_choose_picture,
+				new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				mListener.onRequestGetPictureFromGallery(callback);
+				dialog.dismiss();
+			}
+		});
+		builder.setNegativeButton(R.string.cancel,
+				new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+
+		return builder.create();
+	}
+	
+	/**
 	 * 
 	 * @param view inflater.inflate(R.layout.fragment_profile_edit,
 					container, false)
@@ -153,7 +223,6 @@ public class ProfileEditFragment extends Fragment {
 	}
 	
 	/**
-	 * 
 	 * @param b bitmap to set Profile image as
 	 */
 	public void setProfileImage(Bitmap b) {
@@ -163,14 +232,14 @@ public class ProfileEditFragment extends Fragment {
 	/**
 	 * Listener for this fragment to communicate back to its attached activity.
 	 * 
-	 * @author mhotan
+	 * @author glee23
 	 */
-	public interface InfoChangeListener {
+	public interface InfoChangeListener extends ImageObtainable {
 
 		// process is completely replace the restaurant
 
 		/**
-		 * Notifies the Activity that the restaurant info requested to be
+		 * Notifies the Activity that the user requested to be
 		 * updated.
 		 * 
 		 * @param user updated User Info
@@ -178,9 +247,19 @@ public class ProfileEditFragment extends Fragment {
 		void onUserInfoUpdate(UserInfo user);
 
 		/**
-		 * @return The RestaurantInfo object of this listener
+		 * @return The UserInfo object of this listener
 		 */
 		UserInfo getInfo();
+		
+		/**
+		 * The user has just added an image to their profile.
+		 * 
+		 * @param info
+		 *            UserInfo to change
+		 * @param b
+		 *            Bitmap to use.
+		 */
+		void onImageAddedToUserInfo(UserInfo info, Bitmap b);
 
 	}
 
@@ -210,4 +289,67 @@ public class ProfileEditFragment extends Fragment {
 		return layout;
 	}
 
+	/**
+	 * Get the pre set image for this userinfo.
+	 * 
+	 * @author glee23
+	 */
+	private class InitialGetImageCallback implements ImageGetCallback {
+
+		private ImageView mView;
+
+		/**
+		 * prepares callback for placing an image in the view.
+		 * 
+		 * @param view View to place image.
+		 */
+		public InitialGetImageCallback(ImageView view) {
+			mView = view;
+		}
+
+		@Override
+		public void onImageReceived(Exception e, Bitmap b) {
+			if (e == null && mView != null) {
+				mView.setImageBitmap(b);
+			}
+		}
+	}
+	
+	/**
+	 * An image get callback to to populate user profile view.
+	 * 
+	 * @author glee23
+	 */
+	private class UserImageGetCallback implements ImageGetCallback {
+
+		private final UserInfo mInfo;
+		private final ImageButton mButton;
+
+		/**
+		 * A callback to handle the retrieving of images.
+		 * 
+		 * @param info
+		 *            UserInfo to get image for.
+		 * @param button
+		 *            ImageButton to hold image.
+		 */
+		public UserImageGetCallback(UserInfo info, ImageButton button) {
+			mInfo = info;
+			mButton = button;
+		}
+
+		@Override
+		public void onImageReceived(Exception e, Bitmap b) {
+			if (e == null) {
+				mButton.setImageBitmap(b);
+				mListener.onImageAddedToUserInfo(mInfo, b);
+			} else {
+				String message = getActivity().getResources().getString(
+						R.string.message_unable_get_image);
+				Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT)
+				.show();
+			}
+		}
+	}
+	
 }
