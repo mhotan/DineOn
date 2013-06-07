@@ -146,10 +146,17 @@ public class Order extends TimeableStorable {
 	}
 
 	/**
+	 * Return a convenient list the contains order items
 	 * @return the menuItems
 	 */
-	public Map<MenuItem, Integer> getMenuItems() {
-		return new HashMap<MenuItem, Integer>(mMenuItems);
+	public List<CurrentOrderItem> getMenuItems() {
+		List<CurrentOrderItem> orderItems = new ArrayList<CurrentOrderItem>();
+		for (MenuItem item: mMenuItems.keySet()) {
+			CurrentOrderItem orderItem = new CurrentOrderItem(item);
+			orderItem.setQuantity(mMenuItems.get(item));
+			orderItems.add(orderItem);
+		}
+		return orderItems;
 	}
 
 }

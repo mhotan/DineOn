@@ -187,6 +187,13 @@ public class DineOnUser extends Storable {
 	public DiningSession getDiningSession() {
 		return mDiningSession;
 	}
+	
+	/**
+	 * @return true if there is a non empty pending order
+	 */
+	public boolean hasPendingOrder() {
+		return mPendingOrder != null && !mPendingOrder.isEmpty();
+	}
 
 	/**
 	 * Sets the current dining session for this user.
