@@ -1,7 +1,9 @@
 package uw.cse.dineon.library;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uw.cse.dineon.library.util.ParseUtil;
 
@@ -19,11 +21,25 @@ public class Order extends TimeableStorable {
 	public static final String TABLE_ID = "tableID";
 	public static final String USER_INFO = "userInfo";
 	public static final String MENU_ITEMS = "menuItems";
+	public static final String MENU_ITEMS_QUANTITIES = "menuItemQtys";
 
 	private final int mTableID;		// ID for table the order is from
 	private final UserInfo mUserInfo;			// Info of user who placed order
-	private final List<CurrentOrderItem> mMenuItems;	// list of items in this order
+	
+	/**
+	 * Map from menu item to current order item.
+	 */
+	private final Map<MenuItem, Integer> mMenuItems;	// list of items in this order
 
+	/**
+	 * 
+	 * @param tableID 
+	 * @param originator User that has the order is originally derived from 
+	 */
+	public Order(int tableID, UserInfo originator) {
+		this(tableID, originator, new ArrayList<MenuItem>());
+	}
+	
 	/**
 	 * Creates a new Order object from the given parameters.
 	 * 
@@ -31,7 +47,7 @@ public class Order extends TimeableStorable {
 	 * @param originator Info of user placing order
 	 * @param menuItems List of items in the order
 	 */
-	public Order(int tableID, UserInfo originator, List<CurrentOrderItem> menuItems) {
+	public Order(int tableID, UserInfo originator, List<MenuItem> menuItems) {
 		super(Order.class);
 		if(originator == null) {
 			throw new IllegalArgumentException("Can't create order with null user.");
@@ -39,7 +55,10 @@ public class Order extends TimeableStorable {
 		
 		this.mTableID = tableID;
 		this.mUserInfo = originator;
-		this.mMenuItems = new ArrayList<CurrentOrderItem>(menuItems);
+		this.mMenuItems = new HashMap<MenuItem, Integer>();
+		for (MenuItem item : menuItems) {
+			mMenuItems.put(item, 1);
+		}
 	}
 
 	/**
@@ -52,41 +71,16 @@ public class Order extends TimeableStorable {
 		super(po);
 		mTableID = po.getInt(TABLE_ID);
 		mUserInfo = new UserInfo(po.getParseObject(USER_INFO));
-		if(mUserInfo == null) {
-			throw new IllegalArgumentException("Can't create order with null user.");	
-		}
+		List<MenuItem> items = ParseUtil.toListOfStorables(MenuItem.class, po.getList(MENU_ITEMS));
+		List<Integer> quantities = po.getList(MENU_ITEMS_QUANTITIES);
+		assert (items.size() == quantities.size());
 		
-		mMenuItems = ParseUtil.toListOfStorables(CurrentOrderItem.class, po.getList(MENU_ITEMS));
-
+		mMenuItems = new HashMap<MenuItem, Integer>();
+		for (int i = 0; i < items.size(); ++i) {
+			mMenuItems.put(items.get(i), quantities.get(i));
+		}
 	}
-
-	/**
-	 * @return the tableID
-	 */
-	public int getTableID() {
-		return mTableID;
-	}
-
-	//	/**
-	//	 * @param tableID the tableID to set
-	//	 */
-	//	public void setTableID(int tableID) {
-	//		this.mTableID = tableID;
-	//	}
-
-	/**
-	 * @return the userID
-	 */
-	public UserInfo getOriginalUser() {
-		return mUserInfo;
-	}
-
-	/**
-	 * @return the menuItems
-	 */
-	public List<CurrentOrderItem> getMenuItems() {
-		return new ArrayList<CurrentOrderItem>(mMenuItems);
-	}
+	
 
 	/**
 	 * Packs this Order into a ParseObject to be stored.
@@ -98,55 +92,64 @@ public class Order extends TimeableStorable {
 		ParseObject po = super.packObject();
 		po.put(TABLE_ID, mTableID);
 		po.put(USER_INFO, mUserInfo.packObject());
-		po.put(MENU_ITEMS, ParseUtil.toListOfParseObjects(mMenuItems));
+		
+		// Construct sequenced arrays
+		List<MenuItem> items = new ArrayList<MenuItem>(mMenuItems.keySet());
+		List<Integer> quantities = new ArrayList<Integer>(items.size());
+		for (MenuItem item : items) {
+			// For each over list is sequential so we are good
+			quantities.add(mMenuItems.get(item));
+		}
+		
+		po.put(MENU_ITEMS, ParseUtil.toListOfParseObjects(items));
+		po.put(MENU_ITEMS_QUANTITIES, quantities);
 		return po;
 	}
+	
+	/**
+	 * Sets the current qty of this menu item to the specified value
+	 * determined by qty.  if qty is non positive then the item is removed.
+	 * Other then that the quantity is set appropiately.
+	 * @param item Item whose quantity will change
+	 * @param qty Quantity to set to
+	 */
+	void setItemQuantity(MenuItem item, int qty) {
+		if (qty <= 0) {
+			// Remove from the order
+			mMenuItems.remove(item);
+			return;
+		}
+		
+		// Just add like normal
+		mMenuItems.put(item, qty);
+	}
+	
+	/**
+	 * @return Whether this order is currently empty.
+	 */
+	public boolean isEmpty() {
+		return mMenuItems.isEmpty();
+	}
 
-//	/**
-//	 * Writes this Order to Parcel dest in the order:
-//	 * int, int, int, int, List<MenuItem>
-//	 * to be retrieved at a later time.
-//	 * 
-//	 * @param dest Parcel to write Order data to.
-//	 * @param flags int
-//	 */
-//	// NOTE: if you change the write order you must change the read order
-//	// below.
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		super.writeToParcel(dest, flags);
-//		dest.writeInt(mTableID);
-//		dest.writeParcelable(mUserInfo, flags);
-//		dest.writeTypedList(mMenuItems);
-//	}
-//	
-//	/**
-//	 * Creates an Order from a Parcel.
-//	 * @param source Source to create an order from
-//	 */
-//	public Order(Parcel source) {
-//		super(source);
-//		mTableID = source.readInt();
-//		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
-//		mMenuItems = new ArrayList<CurrentOrderItem>();
-//		source.readTypedList(mMenuItems, CurrentOrderItem.CREATOR);
-//	}
-//
-//	/**
-//	 * Parcelable creator object of a Order.
-//	 * Can create a Order from a Parcel.
-//	 */
-//	public static final Parcelable.Creator<Order> CREATOR = 
-//			new Parcelable.Creator<Order>() {
-//
-//		@Override
-//		public Order createFromParcel(Parcel source) {
-//			return new Order(source);
-//		}
-//
-//		@Override
-//		public Order[] newArray(int size) {
-//			return new Order[size];
-//		}
-//	};
+	/**
+	 * @return the tableID
+	 */
+	public int getTableID() {
+		return mTableID;
+	}
+
+	/**
+	 * @return the userID
+	 */
+	public UserInfo getOriginalUser() {
+		return mUserInfo;
+	}
+
+	/**
+	 * @return the menuItems
+	 */
+	public Map<MenuItem, Integer> getMenuItems() {
+		return new HashMap<MenuItem, Integer>(mMenuItems);
+	}
+
 }

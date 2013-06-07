@@ -48,6 +48,18 @@ public class DineOnUser extends Storable {
 	 * This is the dining session the team is currently involved in.
 	 */
 	private DiningSession mDiningSession;
+	
+	/**
+	 * This is a order instance that only lives through the lifetime of the 
+	 * application.  
+	 * 
+	 * There can only exist a pending order if there exists a dining session
+	 * 	In other words
+	 * 		mPendingOrder == null if and only if mDiningSession == null.
+	 * 	therfore 
+	 * 		mPendingOrder != null if and only if mDiningSession != null
+	 */
+	private Order mPendingOrder;
 
 	/**
 	 * Constructs a DineOnUser from a ParseUser.
@@ -60,7 +72,7 @@ public class DineOnUser extends Storable {
 		mReservations = new ArrayList<Reservation>();
 		mFriendsLists = new ArrayList<UserInfo>();
 		mDiningSession = null;
-		// Dining sessions are not instantiated until the user begins a dining session
+		mPendingOrder = null;
 	}
 
 	private static final String EMPTY_DS = "NULL";
@@ -177,77 +189,58 @@ public class DineOnUser extends Storable {
 	}
 
 	/**
-	 *
+	 * Sets the current dining session for this user.
 	 * @param diningSession The specified dining session
 	 */
 	public void setDiningSession(DiningSession diningSession) {
 		this.mDiningSession = diningSession;
+		
+		// Maintain our invariant
+		// No dining session means no pending order
+		if (mDiningSession == null) {
+			mPendingOrder = null;
+		} else {
+			// Create an empty order to add to later
+			mPendingOrder = new Order(mDiningSession.getTableID(), mUserInfo);
+		} 
 	}
 
+	/**
+	 * Sets the current menu item quantity in the current pending
+	 * order if it exists.  If quantity is non positive then
+	 * the menu item is removed.
+	 * 
+	 * @param item Item to set quantity to.
+	 * @param qty Quantity to set order to
+	 * @return true if pending order exist false otherwise
+	 */
+	public boolean setMenuItemToOrder(MenuItem item, int qty) {
+		if (mPendingOrder == null) {
+			return false;
+		}
+		mPendingOrder.setItemQuantity(item, qty);
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @param item item to remove from the order
+	 * @return true if pending order exist false otherwise
+	 */
+	public boolean removeItemFormOrder(MenuItem item) {
+		if (mPendingOrder == null) {
+			return false;
+		}
+		mPendingOrder.setItemQuantity(item, 0);
+		return true;
+	}
+	
 	/**
 	 * @return String name of User
 	 */
 	public String getName() {
 		return mUserInfo.getName();
 	}
-
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		super.writeToParcel(dest, flags);
-//		dest.writeTypedList(mFavRestaurants);
-//		dest.writeTypedList(mReservations);
-//		dest.writeTypedList(mFriendsLists);
-//		dest.writeParcelable(mUserInfo, flags);
-//
-//		// have to do some logic for checking if there is a dining session.
-//		if (mDiningSession != null) {
-//			dest.writeByte((byte) 1);
-//			dest.writeParcelable(mDiningSession, flags);
-//		} else {
-//			dest.writeByte((byte)0);
-//		}
-//	}
-//	
-//	/**
-//	 * Creates a Dine On User from a Parcel Source.
-//	 * @param source source to create user
-//	 */
-//	protected DineOnUser(Parcel source) {
-//		super(source);
-//		mFavRestaurants = new ArrayList<RestaurantInfo>();
-//		mReservations = new ArrayList<Reservation>();
-//		mFriendsLists = new ArrayList<UserInfo>();
-//		
-//		// Read in each list independently
-//		source.readTypedList(mFavRestaurants, RestaurantInfo.CREATOR);
-//		source.readTypedList(mReservations, Reservation.CREATOR);
-//		source.readTypedList(mFriendsLists, UserInfo.CREATOR);
-//
-//		// Read my user info
-//		mUserInfo = source.readParcelable(UserInfo.class.getClassLoader());
-//		
-//		if (source.readByte() == 1) { // If there is a current dining session
-//			mDiningSession = source.readParcelable(DiningSession.class.getClassLoader());
-//		}
-//	}
-//
-//	/**
-//	 * Parcelable creator object of a User.
-//	 * Can create a User from a Parcel.
-//	 */
-//	public static final Parcelable.Creator<DineOnUser> CREATOR = 
-//			new Parcelable.Creator<DineOnUser>() {
-//
-//		@Override
-//		public DineOnUser createFromParcel(Parcel source) {
-//			return new DineOnUser(source);
-//		}
-//
-//		@Override
-//		public DineOnUser[] newArray(int size) {
-//			return new DineOnUser[size];
-//		}
-//	};
 
 	@Override
 	public void deleteFromCloud() {

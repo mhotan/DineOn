@@ -44,7 +44,7 @@ public final class TestUtility {
 	 * @return a fake order
 	 */
 	public static Order createFakeOrder(int orderNum, UserInfo info) {
-		Order newOrder = new Order(orderNum, info, createFakeOrderItems(5));
+		Order newOrder = new Order(orderNum, info, createFakeMenuItems(5));
 		newOrder.setObjId("order");
 		return newOrder;
 	}
