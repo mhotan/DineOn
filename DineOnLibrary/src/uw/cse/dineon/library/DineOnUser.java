@@ -6,6 +6,7 @@ import java.util.List;
 import org.json.JSONObject;
 
 import uw.cse.dineon.library.util.ParseUtil;
+import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -17,6 +18,9 @@ import com.parse.ParseUser;
  *
  */
 public class DineOnUser extends Storable {
+	
+	private static final String TAG = DineOnUser.class.getSimpleName();
+	
 	public static final String FAVORITE_RESTAURANTS = "favs";
 	public static final String USER_INFO = "userInfo";
 	public static final String RESERVATIONS = "reserves";
@@ -223,6 +227,7 @@ public class DineOnUser extends Storable {
 	 */
 	public boolean setMenuItemToOrder(MenuItem item, int qty) {
 		if (mPendingOrder == null) {
+			Log.e(TAG, "Attempting to add menu item " + item + " while not in dining session");
 			return false;
 		}
 		mPendingOrder.setItemQuantity(item, qty);
@@ -236,6 +241,7 @@ public class DineOnUser extends Storable {
 	 */
 	public boolean removeItemFormOrder(MenuItem item) {
 		if (mPendingOrder == null) {
+			Log.e(TAG, "Attempting to remove menu item " + item + " while not in dining session");
 			return false;
 		}
 		mPendingOrder.setItemQuantity(item, 0);

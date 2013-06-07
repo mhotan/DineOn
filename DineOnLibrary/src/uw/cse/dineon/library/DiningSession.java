@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.ParseUtil;
 
 import com.parse.ParseException;
@@ -48,6 +49,8 @@ public class DiningSession extends TimeableStorable {
 
 	// ID of table the dining is taking place at
 	private int mTableID;	
+	
+	private double mSubTotal, mTax;
 
 	/**
 	 * Creates a dining session instance that is associated to a particular table.
@@ -76,6 +79,7 @@ public class DiningSession extends TimeableStorable {
 		mOrders = new ArrayList<Order>();
 		mPendingRequests = new ArrayList<CustomerRequest>();
 		mRest = rInfo;
+		mSubTotal = mTax = 0;
 	}
 
 	/**
@@ -92,6 +96,12 @@ public class DiningSession extends TimeableStorable {
 		mOrders = ParseUtil.toListOfStorables(Order.class, po.getList(ORDERS));
 		mPendingRequests = ParseUtil.toListOfStorables(CustomerRequest.class, po.getList(REQUESTS));
 		mRest = new RestaurantInfo(po.getParseObject(RESTAURANT_INFO));
+		
+		mSubTotal = 0;
+		for (Order order : mOrders) {
+			mSubTotal += order.getTotalCost();
+		}
+		mTax = mSubTotal * DineOnConstants.TAX;
 	}
 
 	/**
@@ -149,6 +159,28 @@ public class DiningSession extends TimeableStorable {
 	}
 	
 	/**
+	 * @return The subtotal cost excluding tax.
+	 */
+	public double getSubTotal() {
+		return mSubTotal;
+	}
+	
+	/**
+	 * @return Current cost of tax for all the orders of the session
+	 */
+	public double getTax() {
+		return mTax;
+	}
+	
+	/**
+	 * @return Total cost of all the current orders in the dining
+	 * 	session.
+	 */
+	public double getTotal() {
+		return mSubTotal + mTax;
+	}
+	
+	/**
 	 * @return restaurant
 	 */
 	public RestaurantInfo getRestaurantInfo() {
@@ -161,6 +193,8 @@ public class DiningSession extends TimeableStorable {
 	 */
 	public void addPendingOrder(Order order) {
 		mOrders.add(order);
+		mSubTotal += order.getTotalCost();
+		mTax = mSubTotal * DineOnConstants.TAX;
 	}
 
 	/**
@@ -205,7 +239,7 @@ public class DiningSession extends TimeableStorable {
 	 * @param request request to be added
 	 */
 	public void addRequest(CustomerRequest request) {
-
+		mPendingRequests.add(request);
 	}
 
 	@Override

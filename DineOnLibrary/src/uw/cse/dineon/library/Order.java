@@ -125,6 +125,19 @@ public class Order extends TimeableStorable {
 	}
 	
 	/**
+	 * Returns the total cost of this order.
+	 * @return the total cost in the form of a double floating point number
+	 */
+	public double getTotalCost() {
+		double sum = 0;
+		for (MenuItem item: mMenuItems.keySet()) {
+			// Update the sum with the price times quantity.
+			sum += item.getPrice() * mMenuItems.get(item);
+		}
+		return sum;
+	}
+	
+	/**
 	 * @return Whether this order is currently empty.
 	 */
 	public boolean isEmpty() {
@@ -146,8 +159,8 @@ public class Order extends TimeableStorable {
 	}
 
 	/**
-	 * Return a convenient list the contains order items
-	 * @return the menuItems
+	 * Return a convenient list the contains order items.
+	 * @return the menuItems as CurrentOrderItem instances.
 	 */
 	public List<CurrentOrderItem> getMenuItems() {
 		List<CurrentOrderItem> orderItems = new ArrayList<CurrentOrderItem>();
