@@ -189,6 +189,15 @@ public class DiningSession extends TimeableStorable {
 	public void removeUser(UserInfo userInfo) {
 		this.mUsers.remove(userInfo);
 	}
+	
+	/**
+	 * Returns if this dining session has this user info.
+	 * @param user User to check for
+	 * @return true if the user exists in this dining session, false other wise.
+	 */
+	public boolean hasUser(UserInfo user) {
+		return mUsers.contains(user);
+	}
 
 	/**
 	 * Adds the Customer Request to the this dining session.
@@ -211,62 +220,4 @@ public class DiningSession extends TimeableStorable {
 
 		super.deleteFromCloud();
 	}
-
-//	/**
-//	 * Create a new DiningSession from a given Parcel.
-//	 * 
-//	 * @param source Parcel containing information in the following form:
-//	 * 		List<UserInfo>, long, long, list<Order>, int, int.
-//	 */
-//	protected DiningSession(Parcel source) {
-//		super(source);
-//		mUsers = new ArrayList<UserInfo>();
-//		mOrders = new ArrayList<Order>();
-//		mPendingRequests = new ArrayList<CustomerRequest>();
-//		source.readTypedList(mUsers, UserInfo.CREATOR);
-//		source.readTypedList(mOrders, Order.CREATOR);
-//		source.readTypedList(mPendingRequests, CustomerRequest.CREATOR);
-//		mTableID = source.readInt();
-//		mRest = source.readParcelable(RestaurantInfo.class.getClassLoader());
-//	}
-//
-//	/**
-//	 * Writes this DiningSession to Parcel dest in the order:
-//	 * List<User>, long, long, (boolean stored as an) int, List<Order>, int, int
-//	 * to be retrieved at a later time.
-//	 * 
-//	 * @param dest Parcel to write DiningSession data to.
-//	 * @param flags int
-//	 */
-//	// NOTE: if you change the write order you must change the read order
-//	// below.
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		super.writeToParcel(dest, flags);
-//		dest.writeTypedList(mUsers);
-//		dest.writeTypedList(mOrders);
-//		dest.writeTypedList(mPendingRequests);
-//		dest.writeInt(mTableID);
-//		dest.writeParcelable(mRest, flags);
-//	}
-//
-//	/**
-//	 * Parcelable creator object of a DiningSession.
-//	 * Can create a MenuItem from a Parcel.
-//	 */
-//	public static final Parcelable.Creator<DiningSession> CREATOR = 
-//			new Parcelable.Creator<DiningSession>() {
-//
-//		@Override
-//		public DiningSession createFromParcel(Parcel source) {
-//			return new DiningSession(source);
-//		}
-//
-//		@Override
-//		public DiningSession[] newArray(int size) {
-//			return new DiningSession[size];
-//		}
-//	};
-
-
 }

@@ -183,6 +183,35 @@ public class Restaurant extends Storable {
 	public List<Order> getPastOrders() {
 		return new ArrayList<Order>(mPastOrders);
 	}
+	
+	/**
+	 * Returns the current Dining Session which contains the user
+	 * or null if there is no dining session for that user.
+	 * @param user User to find in a dining session
+	 * @return null if no dining session has user, else dining session that contains user.
+	 */
+	public DiningSession getDiningSession(UserInfo user) {
+		for (DiningSession d : getSessions()) {
+			if (d.hasUser(user)) {
+				return d;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the dining session assocaited with tableID.
+	 * @param tableId Table ID of the dining session to find
+	 * @return null if no dining session has user, else dining session for tableID
+	 */
+	public DiningSession getDiningSession(int tableId) {
+		for (DiningSession d: getSessions()) {
+			if (d.getTableID() == tableId) {
+				return d;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * List of current running dining sessions.
