@@ -132,7 +132,7 @@
     <string name="unknown_error">Erreur Inconnue</string>
     <string name="restaurant_part1">"Restaurant veut envoyer un message \""</string>
     <string name="restaurant_part2">"\" à l'utilisateur "</string>
-    <string name="table_label">"Tableur :"</string>
+    <string name="table_label">"Tableur:"</string>
     <string name="menu_item_label">"élément de menu :"</string>
     <string name="qty_label">"Quantité :"</string>
     <string name="new_line">"\n"</string>
@@ -181,6 +181,14 @@
     <string name="confirm_image_deletion">Confirmez la suppression d\'images.</string>
     <string name="delete_confirmation">Êtes-vous sûr de vouloir supprimer?</string>
 	<string name="yes">Oui</string>
+   <string name="time_requested">Temps demandé:</string>
+   <string name="request_details">Détails:</string>
+   <string name="send_staff">Envoyer à un personnel</string>
+   <string name="large_placeholder">grand texte</string>
+   <string name="more_info">plus d\'info</string>
+   <string name="order_progress">Suivi de commande:</string>
+   <string name="zero_percent">0%</string>
+   <string name="hundred_percent">100%</string>
 
   
 </resources>
