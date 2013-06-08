@@ -2,14 +2,16 @@ package uw.cse.dineon.user.general;
 
 import java.util.List;
 
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -21,6 +23,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 /**
  * Activity that manages the profile and settings fragments.
@@ -35,6 +41,9 @@ public class ProfileActivity extends DineOnUserActivity implements
 	 */
 	public enum State { DEFAULT, EDIT, BACK };
 	private State state;
+	private Context This;
+	private ProfileEditFragment mProfileEditFragment;
+	private Fragment mFragment;
 	
 	private static final String TAG = ProfileActivity.class.getSimpleName();
 	private final int CONTAINER_ID = 10101010;	// ID of dynamically added frame layout
@@ -43,14 +52,15 @@ public class ProfileActivity extends DineOnUserActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		FrameLayout frame = new FrameLayout(this);
+		This = this;
 		frame.setId(CONTAINER_ID);
 		setContentView(frame, 
 				new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		
 		if(savedInstanceState == null) {
-			Fragment imageFrag = ProfileImageFragment.newInstance(getInfo());
+			mFragment = ProfileImageFragment.newInstance(getInfo());
 			FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
-			ft.add(CONTAINER_ID, imageFrag, "imageFrag");
+			ft.add(CONTAINER_ID, mFragment, "imageFrag");
 		//	ft.addToBackStack(null);
 			ft.commit();	
 		}
@@ -140,6 +150,12 @@ public class ProfileActivity extends DineOnUserActivity implements
 	}
 
 	@Override
+	public void onImageAddedToUserInfo(UserInfo info, Bitmap b) {
+		UserInfoImageCreator creator = new UserInfoImageCreator(info, b);
+		creator.execute();
+	}
+	
+	@Override
 	public void onUserInfoUpdate(UserInfo user) {
 		user.saveInBackGround(new SaveCallback() {
 			@Override
@@ -159,4 +175,91 @@ public class ProfileActivity extends DineOnUserActivity implements
 	public UserInfo getInfo() {
 		return DineOnUserApplication.getUserInfo();
 	}
+	
+	/**
+	 * @return returns a progress dialog to show while the image is saving.
+	 */
+	private ProgressDialog getSavingImageDialog() {
+		return getSaveDialog(R.string.saving_new_image);
+	}
+
+	/**
+	 * Returns a progress dialog for showing that a certain item is saving.
+	 * @param messageResId Resource message id.
+	 * @return Progress dialog 
+	 */
+	private ProgressDialog getSaveDialog(int messageResId) {
+		ProgressDialog d = new ProgressDialog(this);
+		d.setIndeterminate(true);
+		d.setCancelable(false);
+		d.setTitle(R.string.saving);
+		d.setMessage(getResources().getString(messageResId));
+		return d;
+	}
+	
+	/**
+	 * Creates a DineOnImage for UserInfo.
+	 * 
+	 * @author glee23
+	 */
+	private class UserInfoImageCreator extends
+	AsyncTask<Void, Void, DineOnImage> {
+
+		private final Bitmap mBitmap;
+		private final UserInfo mInfo;
+		private final ProgressDialog mDialog;
+
+		/**
+		 * Prepares the saving process.
+		 * 
+		 * @param info
+		 *            UserInfo to save
+		 * @param b
+		 *            Bitmap to use.
+		 */
+		public UserInfoImageCreator(UserInfo info, Bitmap b) {
+			mBitmap = b;
+			mInfo = info;
+			mDialog = getSavingImageDialog();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			invalidateOptionsMenu();
+			mDialog.show();
+		}
+
+		@Override
+		protected DineOnImage doInBackground(Void... arg0) {
+			try {
+				DineOnImage image = new DineOnImage(mBitmap);
+				image.saveOnCurrentThread();
+				mInfo.setImage(image);
+				mInfo.saveOnCurrentThread();
+				return image;
+			} catch (ParseException e) {
+				Log.e(TAG,
+						"Unable to save image for menu item exception: "
+								+ e.getMessage());
+				return null; // Fail case
+			}
+		}
+
+		@Override
+		protected void onPostExecute(DineOnImage result) {
+			if (result != null) {
+				addImageToCache(result, mBitmap);
+			} else {
+				String message = getResources().getString(
+						R.string.message_unable_get_image);
+				Toast.makeText(This, message, Toast.LENGTH_SHORT).show();
+			}
+			
+			// Stop the progress spinner
+			invalidateOptionsMenu();
+			mDialog.dismiss();
+		}
+	}
+
 }
+
