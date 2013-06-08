@@ -96,65 +96,65 @@ public class DineOnUserApplication extends Application {
 		return currentUser.getDiningSession();
 	}
 	
-	/**
-	 * Returns the current order.
-	 * @return current order
-	 */
-	public static HashMap<MenuItem, CurrentOrderItem> getCurrentOrder() {
-		return currentOrderMapping;
-	}
+//	/**
+//	 * Returns the current order.
+//	 * @return current order
+//	 */
+//	public static HashMap<MenuItem, CurrentOrderItem> getCurrentOrder() {
+//		return currentOrderMapping;
+//	}
 	
-	/**
-	 * Set the current order.
-	 * @param items list of current order items to save.
-	 */
-	public static void setCurrentOrder(List<CurrentOrderItem> items) {
-		Iterator<CurrentOrderItem> it = items.iterator();
-		while (it.hasNext()) {
-			CurrentOrderItem item = it.next();
-			currentOrderMapping.put(item.getMenuItem(), item);
-		}
-		Log.d("asfd", "h");
-	}
+//	/**
+//	 * Set the current order.
+//	 * @param items list of current order items to save.
+//	 */
+//	public static void setCurrentOrder(List<CurrentOrderItem> items) {
+//		Iterator<CurrentOrderItem> it = items.iterator();
+//		while (it.hasNext()) {
+//			CurrentOrderItem item = it.next();
+//			currentOrderMapping.put(item.getMenuItem(), item);
+//		}
+//		Log.d("asfd", "h");
+//	}
 
-	/**
-	 * Reset the current order.
-	 */
-	public static void clearCurrentOrder() {
-		currentOrderMapping.clear();
-	}
-	
-	/**
-	 * Increment the menuitem quantity in the current order.
-	 * @param item to increment
-	 */
-	public static void incrementItemInCurrentOrder(MenuItem item) {
-		if (!currentOrderMapping.containsKey(item)) {
-			currentOrderMapping.put(item, new CurrentOrderItem(item));
-		} else {
-			currentOrderMapping.get(item).incrementQuantity();
-		}
-	}
-	 
-	/**
-	 * Deccrement the menuitem quantity in the current order.
-	 * @param item to decrement
-	 */
-	public static void decrementItemInCurrentOrder(MenuItem item) {
-		if (currentOrderMapping.containsKey(item)) {
-			currentOrderMapping.get(item).decrementQuantity();
-		}
-	}
-	
-	/**
-	 * Remove item from the current order.
-	 * @param item to remove
-	 */
-	public static void removeItemInCurrentOrder(MenuItem item) {
-		if (currentOrderMapping.containsKey(item)) {
-			currentOrderMapping.remove(item);
-		}
-	}
+//	/**
+//	 * Reset the current order.
+//	 */
+//	public static void clearCurrentOrder() {
+//		currentOrderMapping.clear();
+//	}
+//	
+//	/**
+//	 * Increment the menuitem quantity in the current order.
+//	 * @param item to increment
+//	 */
+//	public static void incrementItemInCurrentOrder(MenuItem item) {
+//		if (!currentOrderMapping.containsKey(item)) {
+//			currentOrderMapping.put(item, new CurrentOrderItem(item));
+//		} else {
+//			currentOrderMapping.get(item).incrementQuantity();
+//		}
+//	}
+//	 
+//	/**
+//	 * Deccrement the menuitem quantity in the current order.
+//	 * @param item to decrement
+//	 */
+//	public static void decrementItemInCurrentOrder(MenuItem item) {
+//		if (currentOrderMapping.containsKey(item)) {
+//			currentOrderMapping.get(item).decrementQuantity();
+//		}
+//	}
+//	
+//	/**
+//	 * Remove item from the current order.
+//	 * @param item to remove
+//	 */
+//	public static void removeItemInCurrentOrder(MenuItem item) {
+//		if (currentOrderMapping.containsKey(item)) {
+//			currentOrderMapping.remove(item);
+//		}
+//	}
 	
 	/**
 	 * This method sets the User restaurant of interest.  Some activities will check whether 

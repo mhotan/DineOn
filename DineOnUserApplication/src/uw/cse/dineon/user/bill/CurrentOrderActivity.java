@@ -1,17 +1,22 @@
 package uw.cse.dineon.user.bill;
 
+import java.util.HashMap;
+
+import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.bill.CurrentBillFragment.PayBillListener;
+import uw.cse.dineon.user.bill.CurrentOrderFragment.OrderUpdateListener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 /**
- * 
+ * Activity that allows the the user to see their order update listener.
  * @author mhotan
  */
-public class CurrentOrderActivity extends DineOnUserActivity implements PayBillListener { 
+public class CurrentOrderActivity extends DineOnUserActivity 
+implements PayBillListener, OrderUpdateListener { 
 	
 	
 	private final String TAG = "CurrentOrderActivity";
@@ -50,14 +55,39 @@ public class CurrentOrderActivity extends DineOnUserActivity implements PayBillL
 	}
 
 	@Override
-	public void doneWithOrder() {
+	public void payCurrentBill() {
+		super.payBill();
 		finish();
 	}
 
 	@Override
-	public void payCurrentBill() {
-		super.payBill();
-		finish();
+	public void onIncrementItemOrder(uw.cse.dineon.library.MenuItem item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDecrementItemOrder(uw.cse.dineon.library.MenuItem item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRemoveItemFromOrder(uw.cse.dineon.library.MenuItem item) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public HashMap<uw.cse.dineon.library.MenuItem, CurrentOrderItem> getOrder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetCurrentOrder() {
+		// TODO Auto-generated method stub
+		
 	}
 			
 }

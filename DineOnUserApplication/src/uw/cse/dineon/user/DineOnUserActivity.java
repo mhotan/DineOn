@@ -57,9 +57,9 @@ import com.parse.SaveCallback;
  * @author mhotan
  */
 public class DineOnUserActivity extends DineOnStandardActivity implements 
-SatelliteListener,
-SubMenuFragment.MenuItemListListener, /* manipulation of order from sub menu */
-OrderUpdateListener /* manipulation of list from the current order activity */ { 
+SatelliteListener { 
+//OrderUpdateListener /* manipulation of list from the current order activity */ {
+//SubMenuFragment.MenuItemListListener /* manipulation of order from sub menu */  
 
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
 	
@@ -76,11 +76,6 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	private DineOnUserActivity This;
 	
 	private ProgressDialog mProgressDialog;
-
-//	/**
-//	 * Location Listener for location based services.
-//	 */
-//	private UserLocationListener mLocationListener;
 
 	/**
 	 * Set this value to the current dining user.
@@ -387,7 +382,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			// There is a dining session therefore 
 			if (searchView != null) {
 				searchView.setEnabled(false);
-				searchView.setVisibility(View.INVISIBLE);
+				searchView.setVisibility(View.GONE);
 			}
 		} 
 		else { // If not checked in
@@ -577,21 +572,21 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		DineOnUserApplication.setCurrentDiningSession(null);
 	}
 
-	@Override
-	public void onMenuItemFocusedOn(uw.cse.dineon.library.MenuItem menuItem) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onViewCurrentBill() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public RestaurantInfo getCurrentRestaurant() {
-		return DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo();
-	}
+//	@Override
+//	public void onMenuItemFocusedOn(uw.cse.dineon.library.MenuItem menuItem) {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	@Override
+//	public void onViewCurrentBill() {
+//		// TODO Auto-generated method stub
+//	}
+//
+//	@Override
+//	public RestaurantInfo getCurrentRestaurant() {
+//		return DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo();
+//	}
 
 	@Override
 	public void onPlaceOrder(Order order) {
@@ -602,43 +597,43 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		Toast.makeText(this, "Order Sent!", Toast.LENGTH_SHORT).show();
 	}
 
-	@Override
-	public void onIncrementItemOrder(MenuItem item) {
-		DineOnUserApplication.incrementItemInCurrentOrder(item);
-	}
-
-	@Override
-	public void onDecrementItemOrder(MenuItem item) {
-		DineOnUserApplication.decrementItemInCurrentOrder(item);
-	}
-
-	@Override
-	public void onRemoveItemFromOrder(MenuItem item) {
-		DineOnUserApplication.removeItemInCurrentOrder(item);
-	}
-
-	@Override
-	public void onMenuItemIncremented(MenuItem item) {
-		DineOnUserApplication.incrementItemInCurrentOrder(item);
-	}
-
-	@Override
-	public void onMenuItemDecremented(MenuItem item) {
-		DineOnUserApplication.decrementItemInCurrentOrder(item);
-	}
-
-	@Override
-	public HashMap<MenuItem, CurrentOrderItem> getOrder() {
-		return DineOnUserApplication.getCurrentOrder();
-	}
-
-	@Override
-	public void resetCurrentOrder() {
-		DineOnUserApplication.clearCurrentOrder();
-	}
-
-	@Override
-	public void doneWithOrder() {
-		// TODO Auto-generated method stub
-	}
+//	@Override
+//	public void onIncrementItemOrder(MenuItem item) {
+//		DineOnUserApplication.incrementItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public void onDecrementItemOrder(MenuItem item) {
+//		DineOnUserApplication.decrementItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public void onRemoveItemFromOrder(MenuItem item) {
+//		DineOnUserApplication.removeItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public void onMenuItemIncremented(MenuItem item) {
+//		DineOnUserApplication.incrementItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public void onMenuItemDecremented(MenuItem item) {
+//		DineOnUserApplication.decrementItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public HashMap<MenuItem, CurrentOrderItem> getOrder() {
+//		return DineOnUserApplication.getCurrentOrder();
+//	}
+//
+//	@Override
+//	public void resetCurrentOrder() {
+//		DineOnUserApplication.clearCurrentOrder();
+//	}
+//
+//	@Override
+//	public void doneWithOrder() {
+//		// TODO Auto-generated method stub
+//	}
 }

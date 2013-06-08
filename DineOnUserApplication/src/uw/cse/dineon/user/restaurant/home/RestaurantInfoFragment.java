@@ -7,7 +7,7 @@ import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.checkin.IntentIntegrator;
 import uw.cse.dineon.library.image.DineOnImage;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
@@ -399,20 +399,6 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 		return p;
 	}
 
-	/**
-	 * Interface for Activity callbacks.
-	 * @author mhotan
-	 */
-	public interface RestaurantInfoListener extends ImageObtainable, RestaurantRetrievable {
-
-		/**
-		 * Notifies activity that user request to make a reservation.
-		 * @param reservation Reservation the user.
-		 */
-		void onMakeReservation(String reservation);
-
-	}
-
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == R.id.button_request) {
@@ -472,11 +458,27 @@ public class RestaurantInfoFragment extends Fragment implements OnClickListener 
 	 * @param str String request to send to Restaurant.
 	 */
 	private void sendRequest(String str) {
-		if(getActivity() instanceof RestaurantHomeActivity) {
-			RestaurantHomeActivity act = (RestaurantHomeActivity) getActivity();
-			act.onRequestMade(str);
-		}
+		mListener.onMakeRequest(str);
 	}
 
+	/**
+	 * Interface for Activity callbacks.
+	 * @author mhotan
+	 */
+	public interface RestaurantInfoListener extends ImageObtainable, RestaurantRetrievable {
+
+		/**
+		 * Notifies activity that user request to make a reservation.
+		 * @param reservation Reservation the user.
+		 */
+		void onMakeReservation(String reservation);
+		
+		/**
+		 * User wishes to make a request to the restuarant end.
+		 * @param request Request to be made
+		 */
+		void onMakeRequest(String request);
+
+	}
 
 }

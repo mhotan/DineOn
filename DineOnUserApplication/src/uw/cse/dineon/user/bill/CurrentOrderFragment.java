@@ -51,8 +51,6 @@ public class CurrentOrderFragment extends Fragment {
 	 */
 	private OrderArrayAdapter mAdapter;
 
-	private View mListView;
-
 	private NumberFormat mFormatter;
 
 	/**
@@ -64,13 +62,24 @@ public class CurrentOrderFragment extends Fragment {
 	private Button mPlaceOrderButton;
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// Instantiate variable that are not view dependent
+		// but instead are fragment instance dependent.
+		this.mFormatter = NumberFormat.getCurrencyInstance();
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_view_order,
 				container, false);
 
-		this.mFormatter = NumberFormat.getCurrencyInstance();
-
+		mSubtotal = (TextView) view.findViewById(R.id.value_subtotal);
+		mTax = (TextView) view.findViewById(R.id.value_tax);
+		mTotal = (TextView) view.findViewById(R.id.value_total);
+		mPlaceOrderButton = (Button) view.findViewById(R.id.button_place_order);
 		return view;
 	}
 
@@ -88,43 +97,60 @@ public class CurrentOrderFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		// Attempt to extract argument if this fragment was created with them
-		ListView listview = (ListView) getView().findViewById(R.id.list_order);
-		this.mListView = getView();
-
-		mSubtotal = (TextView) getView().findViewById(R.id.value_subtotal);
-		mTax = (TextView) getView().findViewById(R.id.value_tax);
-		mTotal = (TextView) getView().findViewById(R.id.value_total);
-		mPlaceOrderButton = (Button) getView().findViewById(R.id.button_place_order);
-
-		// Create the adapter to handles 
-		if (this.mListener != null) {
-			HashMap<MenuItem, CurrentOrderItem> orderItems = this.mListener.getOrder();
-			List<MenuItem> items = new ArrayList<MenuItem>();
-			double totalPrice = 0.0;
-			for (Entry<MenuItem, CurrentOrderItem> entry : orderItems.entrySet()) {
-				items.add(entry.getKey());
-				totalPrice += entry.getKey().getPrice() * entry.getValue().getQuantity();
-			}
-			mAdapter = new OrderArrayAdapter(this.getActivity(), items, orderItems);
-			if(totalPrice == 0.0) {
-				mPlaceOrderButton.setVisibility(View.GONE);
-			} else {
-				mPlaceOrderButton.setVisibility(View.VISIBLE);
-			}
-			mSubtotal.setText(mFormatter.format(totalPrice));
-			mTax.setText(mFormatter.format(totalPrice * DineOnConstants.TAX));
-			mTotal.setText(mFormatter.format(totalPrice * (1 + DineOnConstants.TAX)));
+		
+		// Extract the order from the activity using this fragment.
+		Order order = mListener.getOrder();
+		
+		
+		double totalPrice = order.getTotalCost();
+		if(Math.abs(totalPrice - 0.0) < DineOnConstants.CURRENCY_EPSILON) {
+			mPlaceOrderButton.setVisibility(View.GONE);
+		} else {
+			mPlaceOrderButton.setVisibility(View.VISIBLE);
 		}
-		listview.setAdapter(mAdapter);
+		
+		mSubtotal.setText(mFormatter.format(totalPrice));
+		mTax.setText(mFormatter.format(totalPrice * DineOnConstants.TAX));
+		mTotal.setText(mFormatter.format(totalPrice * (1 + DineOnConstants.TAX)));
+		
+		// Attempt to extract argument if this fragment was created with them
+		ListView listView = (ListView) getView().findViewById(R.id.list_order);
+		listView.setAdapter(mAdapter);
 	}
 
+	/**
+	 * This call is explicitly notify the fragment
+	 * to request to get the latest copy of the order
+	 * to repopulate the screen.
+	 */
+	public void updateOrder() {
+		Order order = mListener.getOrder();
+		
+		// If the total cost of the order is near 0.0 there is no way to pl
+		// If there is no menu items in the 
+		if (order.isEmpty()) {
+			mPlaceOrderButton.setVisibility(View.GONE);
+		} else {
+			mPlaceOrderButton.setVisibility(View.VISIBLE);
+		}
+		
+		mSubtotal.setText(mFormatter.format(order.getSubTotalCost()));
+		mTax.setText(mFormatter.format(order.getTaxCost()));
+		mTotal.setText(mFormatter.format(order.getTotalCost()));
+		
+		// TODO Create a set the adapter
+		if (mAdapter != null) {
+			mAdapter.notifyDataSetInvalidated();
+		}
+		mAdapter = new 
+	}
+	
 	/**
 	 * @param newItem to add
 	 */
 	public void addNewItem(MenuItem newItem) {
 		mAdapter.add(newItem);
-
+		mAdapter.notifyDataSetChanged();
 	}
 
 	/**
@@ -135,15 +161,16 @@ public class CurrentOrderFragment extends Fragment {
 		mAdapter.notifyDataSetChanged(); // Notify the data set changed
 	}
 
-
+	//////////////////////////////////////////////////////////////////////////
+	////	Testing helper methods. Such BS that we had to be able to test
+	//////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Return the subtotal for current order.
 	 * @return subtotal
 	 */
 	public String getSubtotal() {
-		return ((TextView)mListView.findViewById(R.id.value_subtotal)).
-				getText().toString();
+		return mSubtotal.getText().toString();
 	}
 
 	/**
@@ -151,8 +178,7 @@ public class CurrentOrderFragment extends Fragment {
 	 * @return tax
 	 */
 	public String getTax() {
-		return ((TextView) mListView.findViewById(R.id.value_tax)).
-				getText().toString();
+		return mTax.getText().toString();
 	}
 
 	/**
@@ -160,8 +186,7 @@ public class CurrentOrderFragment extends Fragment {
 	 * @return total
 	 */
 	public String getTotal() {
-		return ((TextView) mListView.findViewById(R.id.value_total)).
-				getText().toString();
+		return mTotal.getText().toString();
 	}
 
 	/**
@@ -201,21 +226,15 @@ public class CurrentOrderFragment extends Fragment {
 		public void onRemoveItemFromOrder(MenuItem item);
 
 		/**
-		 * Get the current items in the user's order.
+		 * Get the order to show in this fragment.
 		 * @return hash map of items
 		 */
-		public HashMap<MenuItem, CurrentOrderItem> getOrder();
+		public Order getOrder();
 
 		/**
 		 * Once an order is placed clear the current order.
 		 */
 		public void resetCurrentOrder();
-
-		/** 
-		 * Close the activity by calling finish().
-		 */
-		public void doneWithOrder();
-
 	}
 
 	/**
@@ -410,7 +429,7 @@ public class CurrentOrderFragment extends Fragment {
 
 									} else {
 										Log.d(TAG, "Couldn't save the new order: " 
-									+ e.getMessage());
+												+ e.getMessage());
 									}
 								}
 							});

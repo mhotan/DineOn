@@ -31,7 +31,7 @@ public class RestaurantHomeMainFragment extends Fragment {
 
 	private static final String TAG = RestaurantHomeMainFragment.class.getSimpleName();
 
-	private ReferenceDataListener mListener;
+	private RestaurantRetrievable mListener;
 
 	private RestaurantInfo mRestaurantInfo;
 
@@ -61,11 +61,11 @@ public class RestaurantHomeMainFragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if (activity instanceof ReferenceDataListener) {
-			mListener = (ReferenceDataListener) activity;
+		if (activity instanceof RestaurantRetrievable) {
+			mListener = (RestaurantRetrievable) activity;
 		} else {
 			throw new ClassCastException(activity.toString()
-					+ " must implemenet RestaurantHomeMainFragment.ReferenceDataListener");
+					+ " must implement RestaurantRetrievable");
 		}
 	}
 
@@ -124,22 +124,4 @@ public class RestaurantHomeMainFragment extends Fragment {
 			return this.mRestaurantInfo.getMenuList().size() + 1;
 		}
 	}
-
-
-	/**
-	 * TODO implement.
-	 * @author mhotan
-	 */
-	public interface ReferenceDataListener {
-
-		/**
-		 * TODO change to Restaurant datatype.
-		 * @return String
-		 */
-		public RestaurantInfo getCurrentRestaurant();
-
-	}
-
-
-
 }
