@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.ParseUtil;
 
 import com.parse.ParseException;
@@ -128,13 +129,28 @@ public class Order extends TimeableStorable {
 	 * Returns the total cost of this order.
 	 * @return the total cost in the form of a double floating point number
 	 */
-	public double getTotalCost() {
+	public double getSubTotalCost() {
 		double sum = 0;
 		for (MenuItem item: mMenuItems.keySet()) {
 			// Update the sum with the price times quantity.
 			sum += item.getPrice() * mMenuItems.get(item);
 		}
 		return sum;
+	}
+	
+	/**
+	 * Get tax based off the cost of this order.
+	 * @return Tax approximation for this order.
+	 */
+	public double getTaxCost() {
+		return getSubTotalCost() * DineOnConstants.TAX;
+	}
+	
+	/**
+	 * @return Total cost of this order
+	 */
+	public double getTotalCost() {
+		return getSubTotalCost() + getTaxCost();
 	}
 	
 	/**

@@ -50,7 +50,7 @@ public class DiningSession extends TimeableStorable {
 	// ID of table the dining is taking place at
 	private int mTableID;	
 	
-	private double mSubTotal, mTax;
+	private double mSubTotal;
 
 	/**
 	 * Creates a dining session instance that is associated to a particular table.
@@ -79,7 +79,7 @@ public class DiningSession extends TimeableStorable {
 		mOrders = new ArrayList<Order>();
 		mPendingRequests = new ArrayList<CustomerRequest>();
 		mRest = rInfo;
-		mSubTotal = mTax = 0;
+		mSubTotal = 0;
 	}
 
 	/**
@@ -99,9 +99,8 @@ public class DiningSession extends TimeableStorable {
 		
 		mSubTotal = 0;
 		for (Order order : mOrders) {
-			mSubTotal += order.getTotalCost();
+			mSubTotal += order.getSubTotalCost();
 		}
-		mTax = mSubTotal * DineOnConstants.TAX;
 	}
 
 	/**
@@ -169,7 +168,7 @@ public class DiningSession extends TimeableStorable {
 	 * @return Current cost of tax for all the orders of the session
 	 */
 	public double getTax() {
-		return mTax;
+		return getSubTotal() * DineOnConstants.TAX;
 	}
 	
 	/**
@@ -177,7 +176,7 @@ public class DiningSession extends TimeableStorable {
 	 * 	session.
 	 */
 	public double getTotal() {
-		return mSubTotal + mTax;
+		return getSubTotal() + getTax();
 	}
 	
 	/**
@@ -193,8 +192,7 @@ public class DiningSession extends TimeableStorable {
 	 */
 	public void addPendingOrder(Order order) {
 		mOrders.add(order);
-		mSubTotal += order.getTotalCost();
-		mTax = mSubTotal * DineOnConstants.TAX;
+		mSubTotal += order.getSubTotalCost();
 	}
 
 	/**

@@ -50,6 +50,8 @@ public final class DineOnConstants {
 	public static final int REQUEST_CHOOSE_PHOTO = 0x1 << 4;
 	// some change
 
+	public static final double CURRENCY_EPSILON = .01; // One penny
+	
 	/**
 	 * Images stored on the parse cloud must maintain a maximum size.
 	 * Images must be able to be viewed in both orientations.  This static constant
