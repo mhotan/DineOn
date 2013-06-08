@@ -11,11 +11,15 @@ import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
+import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageObtainable;
+import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -171,7 +176,7 @@ public class CurrentOrderFragment extends Fragment {
 	 * TODO Add modify as see fit to communicate back to activity
 	 * @author mhotan
 	 */
-	public interface OrderUpdateListener {
+	public interface OrderUpdateListener extends ImageObtainable {
 
 		/**
 		 * User wishes place current order.
@@ -291,6 +296,8 @@ public class CurrentOrderFragment extends Fragment {
 			MenuItem item = mItems.get(position);	
 
 			// Assign the buttons to this order
+			final ImageView ITEMIMAGE = (ImageView) 
+					rowView.findViewById(R.id.image_order_menu_item);
 			Button incButton = (Button) rowView.findViewById(R.id.button_increment_item);
 			Button decButton = (Button) rowView.findViewById(R.id.button_decrement_item);
 			TextView itemQuantity = (TextView) rowView.findViewById(R.id.label_item_quantity);
@@ -302,8 +309,23 @@ public class CurrentOrderFragment extends Fragment {
 			itemQuantity.setText("" + itemCount);
 
 			// set the label and description
-			label.setText(item.getTitle() + "\n" + item.getDescription());
+			label.setText(item.getTitle());
 
+			// Set the image of this order item
+			DineOnImage image = item.getImage();
+			if (image != null) {
+				mListener.onGetImage(image, new ImageGetCallback() {
+					
+					@Override
+					public void onImageReceived(Exception e, Bitmap b) {
+						if (e == null) {
+							// We got the image so set the bitmap
+							ITEMIMAGE.setImageBitmap(b);
+						}
+					}
+				});
+			}
+			
 			// Place mapping from all the clickable view to the Order item
 			mViewToItem.put(incButton, item);
 			mViewToItem.put(decButton, item);
