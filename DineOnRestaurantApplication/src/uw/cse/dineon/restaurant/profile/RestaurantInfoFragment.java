@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.image.DineOnImage;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
@@ -276,17 +276,6 @@ public class RestaurantInfoFragment extends Fragment {
 				mView.invalidate();
 			}
 		}
-	}
-
-	/**
-	 * Returns whether the Restaurant Info instance is valid.
-	 * 
-	 * @param info
-	 *            Restaurant Info to check
-	 * @return true if RestaurantInfo can be displayed
-	 */
-	private boolean isValid(RestaurantInfo info) {
-		return info != null;
 	}
 
 	/**

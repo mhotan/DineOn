@@ -24,9 +24,8 @@ import android.widget.TextView;
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
- * For displaying current restaurant customers.
- * TODO Improve and complete
- * @author mhotan
+ * This View presents a list of all the current dining sessions for this restaurant.
+ * @author mhotan, glee23
  * @author blasv
  */
 public class DiningSessionListFragment extends ListFragment {
@@ -38,8 +37,6 @@ public class DiningSessionListFragment extends ListFragment {
 
 	//An activity that implements the required listener functions
 	private DiningSessionListListener mListener;
-
-	private static final String SESSIONS = TAG + "_sessions";
 
 	private DiningSessionListAdapter mAdapter;
 

@@ -312,7 +312,37 @@ implements SateliteListener {
 
 	@Override
 	public void onUserCheckedIn(UserInfo user, int tableID) {
-		final DiningSession DS = new DiningSession(tableID, user, mRestaurant.getInfo());
+		// Check if there is already a dining session for this user.
+		// If there is a dining session with that user then check 
+			// if that session has the same table ID
+		DiningSession existing = mRestaurant.getDiningSession(user);
+		if (existing != null) {
+			// Different table numbers 
+			if (existing.getTableID() != tableID) {
+				// TODO Handle the case where the user is attempting to 
+				// check in at a restaurant multiple times at a different table
+				// TODO send back a message asking wtf?
+				// TODO Remove this.  temporary just returning the current ds where user
+				// is currently still active.
+				mSatellite.confirmDiningSession(existing);
+			} else {
+				// Same Table IDs. This indicates a duplicate check in request
+				mSatellite.confirmDiningSession(existing);
+			}
+			return;	// Don't need to save because state has not changed
+		}
+		existing = mRestaurant.getDiningSession(tableID);
+		final DiningSession DS;
+		if (existing != null) {
+			// Here the user is adding himself to a currently active dining session.
+			// Now this dining session will have one plus user.
+			existing.addUser(user);
+			DS = existing;
+		} else {
+			// Here we have a completely new user with a whole new dining session.
+			DS = new DiningSession(tableID, user, mRestaurant.getInfo());
+		}
+
 		DS.saveInBackGround(new SaveCallback() {
 
 			@Override

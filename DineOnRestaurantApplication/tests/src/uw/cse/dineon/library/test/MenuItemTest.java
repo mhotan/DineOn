@@ -31,7 +31,7 @@ public class MenuItemTest extends AndroidTestCase {
 
 	@Override
 	protected void setUp() {
-		testMenuItem = new MenuItem(12, 13.53, "Fried Chicken", "Chicken...that's been fried");
+		testMenuItem = new MenuItem("12", 13.53, "Fried Chicken", "Chicken...that's been fried");
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class MenuItemTest extends AndroidTestCase {
 	 * Asserts that setProductID correctly sets the product id.
 	 */
 	public void testSetID() {
-		testMenuItem.setProductID(11);
+		testMenuItem.setProductID("11");
 		assertEquals(11, testMenuItem.getProductID());
 	}
 

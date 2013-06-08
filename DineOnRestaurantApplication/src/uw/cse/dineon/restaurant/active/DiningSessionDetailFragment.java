@@ -1,6 +1,7 @@
 package uw.cse.dineon.restaurant.active;
 
 import java.util.List;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
@@ -373,8 +374,7 @@ public class DiningSessionDetailFragment extends Fragment {
 
 				mOrderTime.setText(mOrder.getOriginatingTime().toString());
 				for (CurrentOrderItem item : items) {
-					MenuItem mI = item.getMenuItem();
-					buf.append(menuItemLabel + mI.getTitle() + newLine);
+					buf.append(menuItemLabel + item.getMenuItem().getTitle() + newLine);
 					buf.append(qtyLabel + item.getQuantity() + newLine + newLine);
 				}
 				if(items.size() != 0) {

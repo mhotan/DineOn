@@ -29,7 +29,7 @@ public class MenuTest extends AndroidTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		testItems = new ArrayList<MenuItem>();
-		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
+		testItem = new MenuItem("24", 4.5, "Root Beer Float", "Ice cream and root beer");
 		testItem.setObjId("ti");
 		testItems.add(testItem);
 		testMenu = new Menu("beverages");
