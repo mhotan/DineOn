@@ -126,6 +126,18 @@ public class Order extends TimeableStorable {
 	}
 	
 	/**
+	 * Retrieve the quantity of the specific menu item.
+	 * @param item item to get quantity for
+	 * @return quantity for this Menu item.
+	 */
+	public int getQuantity(MenuItem item) {
+		if (!mMenuItems.containsKey(item)) {
+			return 0;
+		}
+		return mMenuItems.get(item);
+	}
+	
+	/**
 	 * Returns the total cost of this order.
 	 * @return the total cost in the form of a double floating point number
 	 */

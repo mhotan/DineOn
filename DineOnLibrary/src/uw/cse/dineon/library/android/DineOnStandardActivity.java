@@ -251,6 +251,10 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 			Log.e(tag, "Can't have null image in the cache!");
 			return;
 		}
+		if (imageId == null) {
+			Log.e(tag, "Image Id number cannot to be null.  No add proceeded");
+			return;
+		}
 		// Adding to memory is fast
 		mImageMemCache.put(imageId, bitmap);
 		// Adding to the persistent cache is slow so do it in the
