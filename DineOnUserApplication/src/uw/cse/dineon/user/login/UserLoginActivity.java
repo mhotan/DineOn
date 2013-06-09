@@ -1,13 +1,13 @@
 package uw.cse.dineon.user.login;
 
 import uw.cse.dineon.library.DineOnUser;
-import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.util.CredentialValidator;
 import uw.cse.dineon.library.util.CredentialValidator.Resolution;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.login.DineOnUserDownloader.DineOnUserDownloaderCallback;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import uw.cse.dineon.user.restaurantselection.RestaurantSelectionActivity;
 import android.app.AlertDialog;
@@ -22,11 +22,9 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -40,7 +38,8 @@ import com.parse.SaveCallback;
  * @author mhotan
  */
 public class UserLoginActivity extends FragmentActivity implements 
-LoginFragment.OnLoginListener {
+LoginFragment.OnLoginListener,
+DineOnUserDownloaderCallback {
 
 	private static final String TAG = UserLoginActivity.class.getSimpleName();
 
@@ -86,7 +85,7 @@ LoginFragment.OnLoginListener {
 	}
 	
 	@Override
-	public void onBackPressed(){
+	public void onBackPressed() {
 		this.finish();
 	}
 	
@@ -276,66 +275,32 @@ LoginFragment.OnLoginListener {
 						}
 					}
 				});
-			} 
-			else {
-				// Make sure there is an instance for us
-				Log.d(TAG, "User logged in through Facebook!");
-				UserFinder finder = new UserFinder(user);
-				finder.findUser();
+			} else {
+				downloadDineOnUser(user);
 			}
 
 		}
 	}
 
 	/**
-	 * Callback For downloads of User.  Once the user is completed downloading 
-	 * the restaurant selection activity will start.
-	 * @author mhotan
+	 * Download the DineOnUser using parse user provided.
+	 * @param user parse user to use finding the DineOn User
 	 */
-	private class UserFinder extends GetCallback {
+	public void downloadDineOnUser(ParseUser user) {
+		DineOnUserDownloader userDownloader = new DineOnUserDownloader(user, this);
+		userDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
+	}
 
-		private final ParseUser mUserToFind;
+	@Override
+	public void onFailToDownLoadDineOnUser(String message) {
+		destroyProgressDialog();
+		Utility.getGeneralAlertDialog("Server Failure", 
+				"Failed to get your information", thisCxt).show();
+	}
 
-		/**
-		 * Creates a finder for extracting a User that contains this ParseUser.
-		 * @param user user to find
-		 */
-		public UserFinder(ParseUser user) {
-			mUserToFind = user;
-		}
-
-		/**
-		 * Attempts to find the User associated with this Finder.
-		 */
-		public void findUser() {
-			// use inner queries to find the right UserInfo
-			// TODO Validate if it works
-			ParseQuery inner = new ParseQuery(UserInfo.class.getSimpleName());
-			inner.whereEqualTo(UserInfo.PARSEUSER, mUserToFind);
-			ParseQuery query = new ParseQuery(DineOnUser.class.getSimpleName());
-			query.whereMatchesQuery(DineOnUser.USER_INFO, inner);
-			query.getFirstInBackground(this);
-		}
-
-		@Override
-		public void done(ParseObject object, ParseException e) {
-
-
-			if (e == null) {
-				// We have found the correct object
-				try {
-					DineOnUser user = new DineOnUser(object);
-					destroyProgressDialog();
-					startRestSelectionAct(user);
-				} catch (Exception e1) { // Unable to fetch UserInfo
-					Log.e(TAG, "unable to extract user info: " + e1);
-				}
-			} else {
-				destroyProgressDialog();
-				Utility.getGeneralAlertDialog("Server Failure", 
-						"Failed to get your information", thisCxt).show();
-			}
-		}
+	@Override
+	public void onDownloadedDineOnUser(DineOnUser user) {
+		destroyProgressDialog();
+		startRestSelectionAct(user);
 	} 
-
 }
