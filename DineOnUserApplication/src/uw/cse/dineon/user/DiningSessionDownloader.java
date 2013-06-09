@@ -27,16 +27,16 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 	 */
 	private final ParseUser mParseUser;
 
-//	/**
-//	 * Call back for completion of dining session download.
-//	 */
-//	private final DiningSessionDownLoaderCallback mCallback;
+	//	/**
+	//	 * Call back for completion of dining session download.
+	//	 */
+	//	private final DiningSessionDownLoaderCallback mCallback;
 
 	/**
 	 * The dining session parse object ID of the Dining Session to find.
 	 */
 	private final String mSessionID;
-	
+
 	private final DiningSessionGetCallback mGetCallback;
 
 	/**
@@ -44,24 +44,24 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 	 */
 	private Exception mException;
 
-//	/**
-//	 * Creates a DiningSession Downloader that retrieves the Dining Session 
-//	 * associated with the provided object id from Parse.
-//	 * 
-//	 * @param user ParseUser to use to download the dining session
-//	 * @param callback Callback to listen for events
-//	 */
-//	public DiningSessionDownloader(ParseUser user, DiningSessionDownLoaderCallback callback) {
-//		if (user == null) {
-//			throw new NullPointerException(TAG + "Can't have null user");
-//		}
-//		if (callback == null) {
-//			throw new NullPointerException(TAG + "Can't have null callback");
-//		}
-//		mParseUser = user;
-//		mCallback = callback;
-//		mSessionID = null;
-//	}
+	//	/**
+	//	 * Creates a DiningSession Downloader that retrieves the Dining Session 
+	//	 * associated with the provided object id from Parse.
+	//	 * 
+	//	 * @param user ParseUser to use to download the dining session
+	//	 * @param callback Callback to listen for events
+	//	 */
+	//	public DiningSessionDownloader(ParseUser user, DiningSessionDownLoaderCallback callback) {
+	//		if (user == null) {
+	//			throw new NullPointerException(TAG + "Can't have null user");
+	//		}
+	//		if (callback == null) {
+	//			throw new NullPointerException(TAG + "Can't have null callback");
+	//		}
+	//		mParseUser = user;
+	//		mCallback = callback;
+	//		mSessionID = null;
+	//	}
 
 	/**
 	 * DiningSession Callback. 
@@ -73,7 +73,7 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 		mParseUser = null;
 		mGetCallback = callback;
 	}
-	
+
 	/**
 	 * Creates a Dining Session Downloader that retrieves the dining session 
 	 * given the Parse object id.
@@ -97,13 +97,8 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 		CachePolicy policy = params[0];
 
 		try {
-//			// Download by Parse User
-//			if (mParseUser != null) {
-//				mParseUser.fetchIfNeeded();
-//				return getFromUser(policy);
-//			} else {
-				return getFromID(policy);
-//			}
+
+			return getFromID(policy);
 		} catch (ParseException e) {
 			// If any error case happened at all send the error back
 			onProgressUpdate(e);
@@ -137,7 +132,7 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 		}
 		mException = exception;
 	}
-	
+
 	/**
 	 * Called when the Dining Session has been successfully received.
 	 * @param result Dining Session retreived from Parse
@@ -149,33 +144,25 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 		} else {
 			Log.e(TAG, "Error occured " + mException.getMessage());
 		}
-		
+
 		if (mGetCallback == null) {
 			return;
 		}
 		mGetCallback.done(result, mException);
-		
-//		if (result == null) {
-//			Log.e(TAG, "Unable to download dining session.");
-//			// No need to call on fail.
-//			mCallback.onFailToDownLoadDiningSession(parseExceptionMessage);
-//			return;
-//		}
-//		mCallback.onDownloadedDiningSession(result);
 	}
-	
+
 	/**
 	 * Interface for getting Dining sessionss.
 	 * @author mhotan
 	 */
 	public interface DiningSessionGetCallback {
-		
+
 		/**
 		 * Called on completion of dining session retrieval.
 		 * @param session Session retrieved
 		 * @param e Exception if error occured else null
 		 */
 		void done(DiningSession session, Exception e);
-		
+
 	}
 }
