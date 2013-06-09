@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.CurrentOrderItem;
-import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;

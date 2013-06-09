@@ -14,7 +14,6 @@ import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.restaurant.DineOnRestaurantActivity;
 import uw.cse.dineon.restaurant.DineOnRestaurantApplication;
-import uw.cse.dineon.restaurant.active.RequestDetailActivity;
 import uw.cse.dineon.restaurant.active.RestauarantMainActivity;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;

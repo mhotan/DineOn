@@ -5,13 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import uw.cse.dineon.library.CurrentOrderItem;
-import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.UserInfo;
-import uw.cse.dineon.library.util.FakeRestaurantInformation;
 import uw.cse.dineon.library.util.TestUtility;
 import android.app.Activity;
 import android.content.Context;

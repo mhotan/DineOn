@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Custom DineOn Application theme. -->
     <style name="DineOnHeadingBackground" parent="android:Theme.Holo.Light">
@@ -7,27 +7,43 @@
         <item name="android:textColor">#fedbb5</item>
         <item name="android:paddingBottom">4dp</item>
         <item name="android:paddingTop">4dp</item>
-        
     </style>
-    
+
     <style name="DineOnBackground" parent="android:Theme.Holo.Light">
         <item name="android:background">#b10202</item>
         <item name="android:textColor">#fedbb5</item>
-        
     </style>
-    
+
     <style name="DineOnAd" parent="android:Theme.Holo.Light">
         <item name="android:background">#595959</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">50dp</item>
-        
     </style>
-    
+
     <style name="DineOnLine" parent="android:Theme.Holo.Light">
         <item name="android:background">#fedbb5</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">4dp</item>
-        
+    </style>
+
+    <style name="DineOnRedText" parent="android:Theme.Holo.Light">
+        <item name="android:textColor">#b10202</item>
+    </style>
+
+    <style name="DineOnTheme" parent="@android:Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/DineOnActionBar</item>
+        <item name="android:actionMenuTextColor">#b10202</item>
+    </style>
+
+    <style name="DineOnActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#fedbb5</item>
+        <item name="android:titleTextStyle">@style/DineOnMenuItem</item>
+        <item name="android:textColor">#b10202</item>
+    </style>
+
+    <style name="DineOnMenuItem" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">#b10202</item>
+        <item name="android:background">#fedbb5</item>
     </style>
 
 </resources>

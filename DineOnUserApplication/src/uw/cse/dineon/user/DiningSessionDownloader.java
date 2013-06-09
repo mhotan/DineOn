@@ -2,9 +2,6 @@ package uw.cse.dineon.user;
 
 import uw.cse.dineon.library.DiningSession;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;

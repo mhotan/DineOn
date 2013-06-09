@@ -1,5 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--  Add translation -->
+        <string name="app_name">DineOn Restaurant</string>
+    <string name="TaskTitle">Commande de Restaurant</string>
+    <string name="item_rest_profile">Profil</string>
+    <string name="hint_username">Nom d\'utilisateur</string>
+    <string name="hint_password">Mot de passe</string>
+    <string name="content_desc_password">Zone de saisie du mot de passe</string>
+    <string name="label_login">Connexion</string>
+    <string name="option_create_new_account"><u>créer un nouveau compte</u></string>
+    <string name="option_forgot_password"><u>Mot de passe oublié?</u></string>
+    <string name="label_login_title">Connectez-vous à travailler dans Dineon</string>
+    <string name="button_assign_waiter">Attribuer</string>
+    <string name="content_description_dismiss">Congédier la requête en cours</string>
+    <string name="label_request_blank">Requête titre va ici</string>
+    <string name="label_order_blank">Titre de commande va ici</string>
+    <string name="label_customer_blank">Nom du client va ici</string>
+    <string name="content_description_complete_order">Cliquez ici pour remplir instantanément cette commande</string>
+    <string name="hint_send_message">Message client</string>
+    <string name="label_radio_urgency_normal">Normale</string>
+    <string name="label_urgency_important">Importante</string>
+    <string name="label_urgency_priority">Faites-le maintenant!</string>
+    <string name="tablabel_profile">Profil</string>
+    <string name="tablabel_menuitems">Le éléments la carte</string>
+    <string name="debug2">Un autre message de test</string>
+    <string name="debug3">PAMT (Pourtant, un autre message de test)</string>
+    <string name="tab_actionbar_restaurant_profile">Profil</string>
+    <string name="tab_actionbar_restaurant_menuitems">La Carte</string>
+    <string name="hint_description">Description</string>
+    <string name="hint_price">Prix</string>
+    <string name="hint_menuitem_title">Nom</string>
+    <string name="item_logout">Déconnexion</string>
+    <string name="item_forgot_password">Mot de passe oublié?</string>
+    <string name="item_create_account">Créer un compte</string>
+    <string name="activity_start_login">Commencer l\'activité de connexion</string>
+    <string name="create_new_account">Créer un nouveau compte</string>
+    <string name="hint_email_address">Adresse E-mail</string>
+    <string name="hint_password_repeat">Rpéter Mot de Passe</string>
+    <string name="hint_restaurant_name">Votre Nom du restaurant</string>
+    <string name="menu_add_menu_item">Ajouter un article la carte</string>
+    <string name="menu_switch_menu">Sélectionner la carte</string>
+    <string name="husky_soft_logo">HuskySoft Logo</string>
+    <string name="label_assign_to">Assigner</string>
+    <string name="button_assign">Bouton Assigner</string>
+    <string name="button_remove_request">Retirer le Bouton de Demande</string>
+    <string name="label_request_default">Requête va ici</string>
+    <string name="label_time_default">14 mai 2013 14:30:00</string>
+    <string name="button_accordion">Bouton d\'accordéon</string>
+    <string name="label_order_default">Ordre va ici</string>
+    <string name="label_orders">Ordres</string>
+    <string name="label_order_contents">Informations de commande</string>
+    <string name="label_message_customer">Envoyer des message à la clientèle</string>
+    <string name="button_remove_menu_item">Supprimer l\'élément la carte</string>
+    <string name="label_menu_item_thumbnail">image élément la carte</string>
+    <string name="dineonlogo">DineOn Logo</string>
+    <string name="content_description_delete_current_image">Supprimer l\'image actuellement sélectionnée</string>
+    <string name="content_description_take_new_picture">Prendre une nouvelle photo pour l\'ajouter à votre restaurant</string>
+    <string name="content_description_get_image_from_gallery">Sélectionnez une image préexistante sur votre téléphone pour ajouter à votre restaurant</string>
+    <string name="checkbox_default_image">Par défaut</string>
+    <string name="label_address">Adresse</string>
+    <string name="label_phone">Téléphone</string>
+    <string name="dineonad">DineOn annonce</string>
+    <string name="item_rest_menu">Mettez à jour votre menu!</string>
+    <string name="dialog_title_getimage">Obtenir une image</string>
+    <string name="dialog_message_getimage_for_menuitem">Vous souhaitez mettre votre propre image pour ce menu?</string>
+    <string name="dialog_option_take_picture">Prendre une photo</string>
+    <string name="dialog_option_choose_picture">Choisissez une photo</string>
+    <string name="cancel">Résilier</string>
+    <string name="message_unable_get_image">Désolé, nous n\'avons pas été en mesure d\'obtenir l\'image</string>
+    <string name="message_customers">Clients de Messagerie</string>
+    <string name="hint_use_current_location">Utiliser l\'emplacement actuel</string>
+    <string name="hint_address_line">Adresse ligne 1</string>
+    <string name="hint_address_line_2">Adresse ligne 2</string>
+    <string name="hint_address_city">Ville</string>
+    <string name="hint_address_state">Etat</string>
+    <string name="hint_address_zipcode">Code Postal</string>
+    <string name="hint_phone_number">Numéro de téléphone</string>
+    <string name="label_hours">Heures</string>
+    <string name="no_customer">Aucun client!</string>
+    <string name="table">"Tableau "</string>
+    <string name="dash">" - "</string>
+    <string name="no_orders">Pas de Commande</string>
+    <string name="cant_retrieve_name">Ne pouvait pas récupérer le nom</string>
+    <string name="newline">"\n"</string>
+    <string name="save_changes">Enregistrer les modifications</string>
+    <string name="hint_hours_of_operation">Heures de fonctionnement</string>
+    <string name="credit_card_header"><u>"Des informations de carte de crédit"</u></string>
+    <string name="invalid_card">"Informations de carte de crédit valide est entré"</string>
+    <string name="disclaimer">En créant un compte, vous vous engagez à permettre DineOnRestaurant de débiter votre carte de crédit des frais mensuels de 99 $ par mois pour utiliser notre service.</string>
+    <string name="credit_card_number">Numéro de Carte de Crédit</string>
+    <string name="security_code">Code de Sécurité</string>
+    <string name="expiration_month">Mois d\'échéance</string>
+    <string name="expiration_year">année d\'expiration</string>
+    <string name="zip_code">Code Postal</string>
+
+    <string-array name="default_employees">
+        <item>Bart</item>
+        <item>Ernest</item>
+        <item>Le gros oiseau</item>
+        <item>Macaron</item>
+    </string-array>
+    
+     <string-array name="fragment_titles">
+        <item>Commandes en Cours</item>
+        <item>Demandes en Attente</item>
+        <item>Sessions en Cours</item>
+    </string-array>
+
+    <string name="title_complete_order">Servie?</string>
+    <string name="message_complete_order_question">Avez-vous fini avec cette commande? Cette commande sera retiré de cette liste.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Résilier</string>
+    <string name="saving">Enregistrement…</string>
+    <string name="loading">Chargement&#8230;</string>
+    <string name="saving_new_image">Donnez-moi un peu alors que nous enregistrer vos modifications.</string>
+    <string name="saving_menuitem">S\'il vous plaît patienter pendant que nous économisons votre nouvel élément de menu.</string>
+    <string name="uh_oh">Uh Oh!</string>
+    <string name="not_logged_in">"Ne pas regarder comme vous êtes connecté."</string>
+    <string name="failed">Impossible de faire quelque chose: </string>
+    <string name="unable_to_confirm_dining_session">Impossible de confirmer Salle session</string>
+    <string name="checked_in">Utilisateur a coché dans</string>
+    <string name="user_changed">Utilisateur a changé</string>
+    <string name="null_restaurant">Null restaurant lors de l\'acceptation du changement d\'utilisateur</string>
+    <string name="order_request">Requête de commande</string>
+    <string name="error_saving_dining_session">Erreur séance de salle d\'épargne</string>
+    <string name="reservation_request">Requête de réservation</string>
+    <string name="checked_out">Prêté</string>
+    <string name="saving">Enregistrement&#8230;</string>
+    <string name="login">Connexion</string>
+    <string name="logging_out">Nettoyage et déconnexion.</string>
+    <string name="invalid_account">Compte invalide. Nous vous avons dans la base de données, mais nous avons besoin de créer un restaurant.</string>
+    <string name="unknown_error">Erreur Inconnue</string>
+    <string name="restaurant_part1">"Restaurant veut envoyer un message \""</string>
+    <string name="restaurant_part2">"\" à l'utilisateur "</string>
+    <string name="table_label">"Tableur :"</string>
+    <string name="menu_item_label">"élément de menu :"</string>
+    <string name="qty_label">"Quantité :"</string>
+    <string name="new_line">"\n"</string>
+    <string name="order_placed_by">"Commande passée par: "</string>
+    <string name="qty_short">"Quantité: "</string>
+    <string name="id_label">"ID: "</string>
+    <string name="normal">Normal</string>
+    <!--  Add translation -->
+    <string name="important">Importante</string>
+    <string name="priority">Priorité</string>
+    <string name="quick_response">Réponse rapide</string>
+    <string name="request_from">"demande d\'"</string>
+    <string name="message">"Un message: "</string>
+    <string name="pending_orders">Commandes en Cours</string>
+    <string name="pending_requests">Demandes en Attente</string>
+    <string name="current_sessions">Sessions en Cours</string>
+    <string name="shout_out">"crier à "</string>
+    <string name="quote">" \"""</string>
+    <string name="to">" à "</string>
+    <string name="sending_customer_request">"L\'envoi de la demande du client "</string>
+    <string name="emulator">"Information non disponible sur un émulateur de localisation."</string>
+    <string name="logging_in">Connectant&#8230;</string>
+    <string name="login_failure">Connectez-échec</string>
+    <string name="server_error">Erreur de serveur</string>
+    <string name="getting_ready">Obtenir-vous prêt pour le travail!</string>
+    <string name="invalid_credentials">Identification non Valides</string>
+    <string name="no_restaurant">Pas Compte de Restaurant</string>
+    <string name="no_restaurant_reason">"Impossible d'obtenir votre compte restaurant car: "</string>
+    <string name="getting_restaurant">Vous obtenir votre propre restaurant.</string>
+    <string name="menu_added">Carte ajoutée</string>
+    <string name="no_menu">Vous n\'avez pas de menus!</string>
+    <string name="cancel">Résilier</string>
+    <string name="menu_label">"La Carte: "</string>
+    <string name="save">"Sauver"</string>
+    <string name="select">"Sélectionner"</string>
+    <string name="add_menu_item">Ajouter une nouvelle élément de carte</string>
+    <string name="creating_new_menu">La création de nouveaux menus.</string>
+    <string name="input_menu_item_details">Menu entrée Détails de l\'article</string>
+    <string name="pick_menu_title">S\'il vous plaît choisir un titre pour votre premier menu.</string>
+    <string name="input_title_price">S\'il vous plaît titre d\'entrée et prix.</string>
+    <string name="input_title">S\'il vous plaît titre d\'entrée.</string>
+    <string name="not_implemented">Désolé, pas encore implémenté.</string>
+	<string name="menu_item_updated">Élément de menu mis à jour!</string>
+	<string name="rest_info_updated">Info de restaurant à jour!</string>
+    <string name="unable_save_image">Impossible d\'enregistrer l\'image.</string>
+    <string name="confirm_image_deletion">Confirmez la suppression d\'images.</string>
+    <string name="delete_confirmation">Êtes-vous sûr de vouloir supprimer?</string>
+	<string name="yes">Oui</string>
+
   
 </resources>

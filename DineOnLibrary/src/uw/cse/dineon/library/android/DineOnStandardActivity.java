@@ -30,7 +30,6 @@ import android.widget.Toast;
  * 
  * @author mhotan, mtrathjen08
  */
-@SuppressWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class DineOnStandardActivity extends FragmentActivity implements ImageObtainable, Locatable {
 
 	/**

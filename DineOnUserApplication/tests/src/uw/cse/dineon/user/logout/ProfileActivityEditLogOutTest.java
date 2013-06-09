@@ -1,6 +1,5 @@
 package uw.cse.dineon.user.logout;
 
-import com.parse.ParseUser;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.util.TestUtility;
 import uw.cse.dineon.user.DineOnUserApplication;
@@ -13,7 +12,6 @@ import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 public class ProfileActivityEditLogOutTest extends 

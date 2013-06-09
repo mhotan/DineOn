@@ -1,8 +1,12 @@
 package uw.cse.dineon.user.general;
 
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.general.ProfileEditFragment.InfoChangeListener;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,14 +27,20 @@ public class ProfileImageFragment extends Fragment {
 	private TextView mProfileName;
 	private TextView mProfileEmail;
 	private TextView mProfilePhone;
+	private InfoChangeListener mListener;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_profile,
 				container, false);
-
 		mProfileImage = (ImageView) view.findViewById(R.id.image_profile_picture);
+		
+		DineOnImage image = DineOnUserApplication.getUserInfo().getImage();
+		if (image != null) {
+			mListener.onGetImage(image, new InitialGetImageCallback(
+					mProfileImage));
+		}
 		
 		mProfileName = (TextView) view.findViewById(R.id.label_profile_name);
 		mProfileName.setText(DineOnUserApplication.getDineOnUser().getName());
@@ -42,6 +52,42 @@ public class ProfileImageFragment extends Fragment {
 		mProfilePhone.setText(DineOnUserApplication.getUserInfo().getPhone());
 		
 		return view;
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if (activity instanceof InfoChangeListener) {
+			mListener = (InfoChangeListener) activity;
+		} else {
+			throw new ClassCastException("Failed to cast Activity to InfoChangeListener.");
+		}
+	}
+	
+	/**
+	 * Get the pre set image for this user.
+	 * 
+	 * @author mhotan
+	 */
+	private class InitialGetImageCallback implements ImageGetCallback {
+
+		private ImageView mView;
+
+		/**
+		 * prepares callback for placing an image in the view.
+		 * 
+		 * @param view View to place image.
+		 */
+		public InitialGetImageCallback(ImageView view) {
+			mView = view;
+		}
+
+		@Override
+		public void onImageReceived(Exception e, Bitmap b) {
+			if (e == null && mView != null) {
+				mView.setImageBitmap(b);
+			}
+		}
 	}
 	
 	/**

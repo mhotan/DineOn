@@ -1,5 +1,6 @@
 package uw.cse.dineon.restaurant;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,6 +23,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -365,7 +368,8 @@ implements SateliteListener {
 							// Add the order to our restaurant
 							addOrder(order);
 						} else {
-							Log.e(TAG, getString(R.string.error_saving_dining_session) + e.getMessage());
+							Log.e(TAG, getString(R.string.error_saving_dining_session) 
+									+ e.getMessage());
 						}
 					}
 				});
@@ -448,7 +452,7 @@ implements SateliteListener {
 		inflater.inflate(R.menu.basic_menu, menu);
 		return true;
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -457,7 +461,8 @@ implements SateliteListener {
 			return true;
 		case R.id.item_logout:
 			if (mRestaurant != null) {
-				createProgressDialog(true, getString(R.string.saving), getString(R.string.logging_out));
+				createProgressDialog(true, getString(R.string.saving), 
+						getString(R.string.logging_out));
 				mRestaurant.saveInBackGround(new SaveCallback() {
 
 					@Override
