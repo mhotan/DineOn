@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.ParseUtil;
 
 import com.parse.ParseException;
@@ -48,6 +49,8 @@ public class DiningSession extends TimeableStorable {
 
 	// ID of table the dining is taking place at
 	private int mTableID;	
+	
+	private double mSubTotal;
 
 	/**
 	 * Creates a dining session instance that is associated to a particular table.
@@ -57,7 +60,7 @@ public class DiningSession extends TimeableStorable {
 	 * @param rInfo RestaurantInfo of current restaurant
 	 */
 	public DiningSession(int tableID, UserInfo uInfo, RestaurantInfo rInfo) {
-		this(tableID, new Date(), uInfo, rInfo);
+		this(tableID, null, uInfo, rInfo);
 	}
 
 	/**
@@ -76,6 +79,7 @@ public class DiningSession extends TimeableStorable {
 		mOrders = new ArrayList<Order>();
 		mPendingRequests = new ArrayList<CustomerRequest>();
 		mRest = rInfo;
+		mSubTotal = 0;
 	}
 
 	/**
@@ -92,6 +96,11 @@ public class DiningSession extends TimeableStorable {
 		mOrders = ParseUtil.toListOfStorables(Order.class, po.getList(ORDERS));
 		mPendingRequests = ParseUtil.toListOfStorables(CustomerRequest.class, po.getList(REQUESTS));
 		mRest = new RestaurantInfo(po.getParseObject(RESTAURANT_INFO));
+		
+		mSubTotal = 0;
+		for (Order order : mOrders) {
+			mSubTotal += order.getSubTotalCost();
+		}
 	}
 
 	/**
@@ -110,6 +119,14 @@ public class DiningSession extends TimeableStorable {
 		return po;
 	}
 
+	/**
+	 * Return if this dining session has orders.
+	 * @return if dining session has orders.
+	 */
+	public boolean hasOrders() {
+		return !mOrders.isEmpty();
+	}
+	
 	/**
 	 * Pending orders are defined as orders that have been placed
 	 * but not received by the customer.
@@ -149,6 +166,28 @@ public class DiningSession extends TimeableStorable {
 	}
 	
 	/**
+	 * @return The subtotal cost excluding tax.
+	 */
+	public double getSubTotal() {
+		return mSubTotal;
+	}
+	
+	/**
+	 * @return Current cost of tax for all the orders of the session
+	 */
+	public double getTax() {
+		return getSubTotal() * DineOnConstants.TAX;
+	}
+	
+	/**
+	 * @return Total cost of all the current orders in the dining
+	 * 	session.
+	 */
+	public double getTotal() {
+		return getSubTotal() + getTax();
+	}
+	
+	/**
 	 * @return restaurant
 	 */
 	public RestaurantInfo getRestaurantInfo() {
@@ -161,6 +200,7 @@ public class DiningSession extends TimeableStorable {
 	 */
 	public void addPendingOrder(Order order) {
 		mOrders.add(order);
+		mSubTotal += order.getSubTotalCost();
 	}
 
 	/**
@@ -189,6 +229,15 @@ public class DiningSession extends TimeableStorable {
 	public void removeUser(UserInfo userInfo) {
 		this.mUsers.remove(userInfo);
 	}
+	
+	/**
+	 * Returns if this dining session has this user info.
+	 * @param user User to check for
+	 * @return true if the user exists in this dining session, false other wise.
+	 */
+	public boolean hasUser(UserInfo user) {
+		return mUsers.contains(user);
+	}
 
 	/**
 	 * Adds the Customer Request to the this dining session.
@@ -196,7 +245,7 @@ public class DiningSession extends TimeableStorable {
 	 * @param request request to be added
 	 */
 	public void addRequest(CustomerRequest request) {
-
+		mPendingRequests.add(request);
 	}
 
 	@Override
@@ -211,62 +260,4 @@ public class DiningSession extends TimeableStorable {
 
 		super.deleteFromCloud();
 	}
-
-//	/**
-//	 * Create a new DiningSession from a given Parcel.
-//	 * 
-//	 * @param source Parcel containing information in the following form:
-//	 * 		List<UserInfo>, long, long, list<Order>, int, int.
-//	 */
-//	protected DiningSession(Parcel source) {
-//		super(source);
-//		mUsers = new ArrayList<UserInfo>();
-//		mOrders = new ArrayList<Order>();
-//		mPendingRequests = new ArrayList<CustomerRequest>();
-//		source.readTypedList(mUsers, UserInfo.CREATOR);
-//		source.readTypedList(mOrders, Order.CREATOR);
-//		source.readTypedList(mPendingRequests, CustomerRequest.CREATOR);
-//		mTableID = source.readInt();
-//		mRest = source.readParcelable(RestaurantInfo.class.getClassLoader());
-//	}
-//
-//	/**
-//	 * Writes this DiningSession to Parcel dest in the order:
-//	 * List<User>, long, long, (boolean stored as an) int, List<Order>, int, int
-//	 * to be retrieved at a later time.
-//	 * 
-//	 * @param dest Parcel to write DiningSession data to.
-//	 * @param flags int
-//	 */
-//	// NOTE: if you change the write order you must change the read order
-//	// below.
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		super.writeToParcel(dest, flags);
-//		dest.writeTypedList(mUsers);
-//		dest.writeTypedList(mOrders);
-//		dest.writeTypedList(mPendingRequests);
-//		dest.writeInt(mTableID);
-//		dest.writeParcelable(mRest, flags);
-//	}
-//
-//	/**
-//	 * Parcelable creator object of a DiningSession.
-//	 * Can create a MenuItem from a Parcel.
-//	 */
-//	public static final Parcelable.Creator<DiningSession> CREATOR = 
-//			new Parcelable.Creator<DiningSession>() {
-//
-//		@Override
-//		public DiningSession createFromParcel(Parcel source) {
-//			return new DiningSession(source);
-//		}
-//
-//		@Override
-//		public DiningSession[] newArray(int size) {
-//			return new DiningSession[size];
-//		}
-//	};
-
-
 }

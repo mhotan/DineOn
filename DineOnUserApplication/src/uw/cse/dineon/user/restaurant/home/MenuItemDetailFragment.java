@@ -2,7 +2,7 @@ package uw.cse.dineon.user.restaurant.home;
 
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.image.DineOnImage;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
@@ -95,14 +95,14 @@ public class MenuItemDetailFragment extends Fragment {
 	}
 	
 	/**
-	 * TODO implement.
+	 * Listener for all containing activities to implement.
 	 * @author mrathjen
 	 */
 	public interface MenuItemDetailListener extends ImageObtainable {
 
 		/**
-		 * TODO get the current menu item.
-		 * @return MenuItem
+		 * Gets the menu item to show the detail of.
+		 * @return non null MenuItem instance
 		 */
 		public MenuItem getMenuItem();
 

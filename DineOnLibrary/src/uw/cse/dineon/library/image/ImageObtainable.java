@@ -1,7 +1,5 @@
 package uw.cse.dineon.library.image;
 
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
-
 /**
  * Interface for activities to use to react image request.
  * @author mhotan

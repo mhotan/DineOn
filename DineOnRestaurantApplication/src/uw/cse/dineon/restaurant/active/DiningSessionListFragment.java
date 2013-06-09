@@ -6,9 +6,13 @@ import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.animation.ExpandAnimation;
+import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -24,9 +28,8 @@ import android.widget.TextView;
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
- * For displaying current restaurant customers.
- * TODO Improve and complete
- * @author mhotan
+ * This View presents a list of all the current dining sessions for this restaurant.
+ * @author mhotan, glee23
  * @author blasv
  */
 public class DiningSessionListFragment extends ListFragment {
@@ -38,8 +41,6 @@ public class DiningSessionListFragment extends ListFragment {
 
 	//An activity that implements the required listener functions
 	private DiningSessionListListener mListener;
-
-	private static final String SESSIONS = TAG + "_sessions";
 
 	private DiningSessionListAdapter mAdapter;
 
@@ -88,7 +89,7 @@ public class DiningSessionListFragment extends ListFragment {
 	 * Mandatory interface for this fragment.
 	 * @author mhotan
 	 */
-	public interface DiningSessionListListener {
+	public interface DiningSessionListListener extends ImageObtainable {
 
 		/**
 		 * User request detail about a particular dining session.
@@ -168,7 +169,7 @@ public class DiningSessionListFragment extends ListFragment {
 			}
 
 			DiningSession sessionToShow = getItem(position);
-
+			
 			// For every restaurant to present create a handler for the session;
 			// We are creating this view for the very first time
 			if (layoutView != null) {
@@ -179,6 +180,32 @@ public class DiningSessionListFragment extends ListFragment {
 
 		}
 
+		/**
+		 * Get the pre set image for this user.
+		 * 
+		 * @author mhotan
+		 */
+		private class InitialGetImageCallback implements ImageGetCallback {
+
+			private ImageView mView;
+
+			/**
+			 * prepares callback for placing an image in the view.
+			 * 
+			 * @param view View to place image.
+			 */
+			public InitialGetImageCallback(ImageView view) {
+				mView = view;
+			}
+
+			@Override
+			public void onImageReceived(Exception e, Bitmap b) {
+				if (e == null && mView != null) {
+					mView.setImageBitmap(b);
+				}
+			}
+		}
+		
 		/**
 		 * Listener for certain item of a customer request view.
 		 * @author glee23
@@ -204,8 +231,8 @@ public class DiningSessionListFragment extends ListFragment {
 				mBottom = bottom;
 
 				// Get a reference to all the top pieces 
-//				final ImageView SESSIONIMAGE = (ImageView) 
-//						mTop.findViewById(R.id.image_user_thumbnail);
+				final ImageView SESSIONIMAGE = (ImageView) 
+						mTop.findViewById(R.id.image_user_thumbnail);
 				TextView title = (TextView) mTop.findViewById(R.id.label_user_name);
 				TextView dateText = (TextView) mTop.findViewById(R.id.label_checkin_time);
 				mExpandDown = (ImageView) 
@@ -220,6 +247,15 @@ public class DiningSessionListFragment extends ListFragment {
 				List<Order> orders = mDiningSession.getOrders();
 				List<UserInfo> infolist = mDiningSession.getUsers();
 
+				DineOnImage image = null;
+				if(infolist != null && infolist.size() > 0) {
+					image = infolist.get(0).getImage();
+				}
+				if (image != null) {
+					mListener.onGetImage(image, new InitialGetImageCallback(
+							SESSIONIMAGE));
+				}
+				
 				//Populate
 				dateText.setText(mDiningSession.getOriginatingTime().toString());
 

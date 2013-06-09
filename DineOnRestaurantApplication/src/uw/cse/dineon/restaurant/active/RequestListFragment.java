@@ -6,9 +6,13 @@ import java.util.List;
 
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.animation.ExpandAnimation;
+import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -112,6 +116,32 @@ public class RequestListFragment extends ListFragment {
 		mAdapter.clear();
 		mAdapter.notifyDataSetChanged();
 	}
+	
+	/**
+	 * Get the pre set image for this user.
+	 * 
+	 * @author mhotan
+	 */
+	private class InitialGetImageCallback implements ImageGetCallback {
+
+		private ImageView mView;
+
+		/**
+		 * prepares callback for placing an image in the view.
+		 * 
+		 * @param view View to place image.
+		 */
+		public InitialGetImageCallback(ImageView view) {
+			mView = view;
+		}
+
+		@Override
+		public void onImageReceived(Exception e, Bitmap b) {
+			if (e == null && mView != null) {
+				mView.setImageBitmap(b);
+			}
+		}
+	}
 
 	//////////////////////////////////////////////////////
 	//// Following is the interface in which activities
@@ -123,7 +153,7 @@ public class RequestListFragment extends ListFragment {
 	 * Mandatory Listener for this Fragment class.
 	 * @author glee23
 	 */
-	public interface RequestItemListener {
+	public interface RequestItemListener extends ImageObtainable {
 
 		/**
 		 * Request detail information to be presented
@@ -267,8 +297,8 @@ public class RequestListFragment extends ListFragment {
 				mBottom = bottom;
 
 				// Get a reference to all the top pieces 
-//				final ImageView REQUESTIMAGE = (ImageView) 
-//						mTop.findViewById(R.id.image_order_thumbnail);
+				final ImageView REQUESTIMAGE = (ImageView) 
+						mTop.findViewById(R.id.image_request_thumbnail);
 				TextView title = (TextView) mTop.findViewById(R.id.label_request_title);
 
 				mExpandDown = (ImageView) 
@@ -285,6 +315,12 @@ public class RequestListFragment extends ListFragment {
 				mSpinner = (Spinner) mBottom.findViewById(
 						R.id.spinner_staff_to_assign);
 
+				DineOnImage image = mRequest.getUserInfo().getImage();
+				if (image != null) {
+					mListener.onGetImage(image, new InitialGetImageCallback(
+							REQUESTIMAGE));
+				}
+				
 				//Populate
 
 				title.setText(mRequest.getDescription() 

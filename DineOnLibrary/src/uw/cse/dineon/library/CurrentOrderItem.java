@@ -67,21 +67,21 @@ public class CurrentOrderItem extends Storable {
 		}
 	}
 	
-	/**
-	 * Increment the quantity.
-	 */
-	public void incrementQuantity() {
-		this.mQuantity++;
-	}
-	
-	/**
-	 * Decrement the quantity.
-	 */
-	public void decrementQuantity() {
-		if (this.mQuantity > 0) {
-			this.mQuantity--;
-		}
-	}
+//	/**
+//	 * Increment the quantity.
+//	 */
+//	public void incrementQuantity() {
+//		this.mQuantity++;
+//	}
+//	
+//	/**
+//	 * Decrement the quantity.
+//	 */
+//	public void decrementQuantity() {
+//		if (this.mQuantity > 0) {
+//			this.mQuantity--;
+//		}
+//	}
 	
 	/**
 	 * Get the menu item tied to this object.
@@ -113,47 +113,4 @@ public class CurrentOrderItem extends Storable {
 		po.put(QUANTITY, this.mQuantity);
 		return po;
 	}
-	
-//	/**
-//	 * Writes this CurrentOrderItem to Parcel dest in the order:
-//	 * MenuItem, int
-//	 * to be retrieved at a later time.
-//	 * 
-//	 * @param dest Parcel to write CurrentOrderItem data to.
-//	 * @param flags int
-//	 */
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		super.writeToParcel(dest, flags);
-//		dest.writeParcelable(this.mMenuItem, flags);
-//		dest.writeInt(this.mQuantity);
-//	}
-//	
-//	/**
-//	 * Creates an CurrentOrderItem from a Parcel.
-//	 * @param source Source to create an CurrentOrderItem from
-//	 */
-//	public CurrentOrderItem(Parcel source) {
-//		super(source);
-//		this.mMenuItem = source.readParcelable(MenuItem.class.getClassLoader());
-//		this.mQuantity = source.readInt();
-//	}
-//	
-//	/**
-//	 * Parcelable creator object of a CurrentOrderItem.
-//	 * Can create a CurrentOrderItem from a Parcel.
-//	 */
-//	public static final Parcelable.Creator<CurrentOrderItem> CREATOR = 
-//			new Parcelable.Creator<CurrentOrderItem>() {
-//
-//		@Override
-//		public CurrentOrderItem createFromParcel(Parcel source) {
-//			return new CurrentOrderItem(source);
-//		}
-//
-//		@Override
-//		public CurrentOrderItem[] newArray(int size) {
-//			return new CurrentOrderItem[size];
-//		}
-//	};
 }

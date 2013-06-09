@@ -44,7 +44,7 @@ public final class TestUtility {
 	 * @return a fake order
 	 */
 	public static Order createFakeOrder(int orderNum, UserInfo info) {
-		Order newOrder = new Order(orderNum, info, createFakeOrderItems(5));
+		Order newOrder = new Order(orderNum, info, createFakeMenuItems(5));
 		newOrder.setObjId("order");
 		return newOrder;
 	}
@@ -91,7 +91,7 @@ public final class TestUtility {
 		List<MenuItem> items = new ArrayList<MenuItem>();
 		for (int i = 0; i < qty; ++i) {
 			MenuItem m = new MenuItem(
-					qty + 1 + i, 3.99, "FakeMenuItem " + (i + 1), 
+					(qty + 1 + i), 3.99, "FakeMenuItem " + (i + 1), 
 					"FakeMenuItemDescription " + (i + 1));	
 			m.setObjId("menuitem" + i);
 			items.add(m);

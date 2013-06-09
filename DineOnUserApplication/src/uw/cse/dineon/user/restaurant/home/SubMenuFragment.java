@@ -9,7 +9,7 @@ import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.animation.ExpandAnimation;
 import uw.cse.dineon.library.image.DineOnImage;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
@@ -45,6 +45,7 @@ public class SubMenuFragment extends ListFragment {
 	// Key for bundling and data storage.
 	public static final String EXTRA_WHICH_MENU = "MENU";
 
+	// book keeping variable for menus
 	private int mMenuIndex;
 	private Menu mMenu;
 
@@ -71,6 +72,8 @@ public class SubMenuFragment extends ListFragment {
 		RestaurantInfo restaurant = mListener.getCurrentRestaurant();
 		List<Menu> menus = restaurant.getMenuList();
 
+		// Everything below is to maintain the state of 
+		// menu before and after creation and deletion.
 		mMenuIndex = -1;
 		Bundle args = getArguments();
 		if (args != null) {
@@ -80,12 +83,10 @@ public class SubMenuFragment extends ListFragment {
 			// Check if in the saved instance.
 			mMenuIndex = savedInstanceState.getInt(EXTRA_WHICH_MENU, -1);
 		} 
-
 		if (mMenuIndex < 0) {
 			Log.e(TAG, "Unable to obatin menu index to construct menu fragment");
 			return;
 		}
-
 		mMenuIndex = Math.max(0, Math.min(menus.size() - 1, mMenuIndex));
 		mMenu = menus.get(mMenuIndex);
 
@@ -240,7 +241,8 @@ public class SubMenuFragment extends ListFragment {
 			/**
 			 * Buttons that handle the order adjustment.
 			 */
-			private final ImageButton mIncrementButton, mDecrementButton, mMoreInfoButton;
+			private final ImageButton mIncrementButton, mDecrementButton, 
+			mMoreInfoButton, mAddToPendingOrderButton;
 
 			/**
 			 * For manual input of orde quantity.
@@ -268,6 +270,7 @@ public class SubMenuFragment extends ListFragment {
 				mDecrementButton = (ImageButton) top.findViewById(R.id.button_decrement_order);
 				mInputQty = (TextView) top.findViewById(R.id.input_order_qty);
 				mHint = (TextView) top.findViewById(R.id.label_more_info_hint);
+				mAddToPendingOrderButton = (ImageButton) top.findViewById(R.id.button_add_to_order);
 
 				// Assign bottom portions of the view
 				mSpecialInstructions = (EditText) 
@@ -306,6 +309,7 @@ public class SubMenuFragment extends ListFragment {
 				// Set the listener for handling order quantity changes
 				mIncrementButton.setOnClickListener(this);
 				mDecrementButton.setOnClickListener(this);
+				mAddToPendingOrderButton.setOnClickListener(this);
 
 				// handle the user request for more information about a menu item
 				mMoreInfoButton.setOnClickListener(this);
@@ -326,6 +330,18 @@ public class SubMenuFragment extends ListFragment {
 					mBottom.startAnimation(new ExpandAnimation(mBottom, 400));
 				} else if (v == mMoreInfoButton) {
 					mListener.onMenuItemFocusedOn(mItem);
+				} else if (v == mAddToPendingOrderButton) {
+					// Extract the current value
+					int currentValue = Integer.parseInt("" + mInputQty.getText());
+					// If its positive notify listener.
+					// Reset the value to 0
+					clearQuantity();
+					if (currentValue <= 0) {
+						return;
+					}
+					
+					// Notify listener
+					mListener.onMenuItemAddToOrder(mItem, currentValue);
 				}
 			}
 
@@ -353,7 +369,6 @@ public class SubMenuFragment extends ListFragment {
 			private void incrementQty() {
 				int currentValue = Integer.parseInt("" + mInputQty.getText());
 				mInputQty.setText("" + (currentValue + 1));
-				mListener.onMenuItemIncremented(mItem);
 			}
 
 			/**
@@ -367,7 +382,6 @@ public class SubMenuFragment extends ListFragment {
 				}
 
 				mInputQty.setText("" + (currentValue - 1));
-				mListener.onMenuItemDecremented(mItem);
 			}
 			
 			/**
@@ -394,20 +408,11 @@ public class SubMenuFragment extends ListFragment {
 		public void onMenuItemFocusedOn(MenuItem menuItem);
 
 		/**
-		 * User wishes to increment the desired number of menu items.
-		 * @param menuItem String
+		 * User commits to adding this menu item to his/her pending order.
+		 * User does commit to the order but instead commits to the 
+		 * @param item Item to to add
+		 * @param quantity Quantity to give to the item.
 		 */
-		public void onMenuItemIncremented(MenuItem menuItem);
-
-		/**
-		 * TODO implement.
-		 * @param menuItem String
-		 */
-		public void onMenuItemDecremented(MenuItem menuItem);
-
-		/**
-		 */
-		public void onViewCurrentBill();
-
+		public void onMenuItemAddToOrder(MenuItem item, int quantity);
 	}
 }

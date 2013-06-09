@@ -2,14 +2,16 @@ package uw.cse.dineon.restaurant.active;
 
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,8 +22,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
  * This Fragment describes the detail of an order.
@@ -38,14 +42,14 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	private ListView mItemList;
 
 	private OrderDetailListener mListener;
-	
+
 	private static String idLabel, qtyLabel;
-	
+
 	/**
 	 * Obtain the reference to the current order.
 	 */
 	private Order mOrder;
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -55,11 +59,11 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		// Get the order and produce the display
 		updateState();
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+
 		// Use view determined by this layout field.
 		View view = inflater.inflate(R.layout.fragment_order_detail,
 				container, false);
@@ -74,7 +78,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		mSendMessageButton = (ImageButton) view.findViewById(R.id.button_send_message_fororder);
 		mSendMessageButton.setOnClickListener(this);
 		mItemList = (ListView) view.findViewById(R.id.list_order);
-		
+
 
 		return view;
 	}
@@ -111,6 +115,32 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		}
 	}
 
+	/**
+	 * Get the pre set image for this user.
+	 * 
+	 * @author mhotan
+	 */
+	private class InitialGetImageCallback implements ImageGetCallback {
+
+		private ImageView mView;
+
+		/**
+		 * prepares callback for placing an image in the view.
+		 * 
+		 * @param view View to place image.
+		 */
+		public InitialGetImageCallback(ImageView view) {
+			mView = view;
+		}
+
+		@Override
+		public void onImageReceived(Exception e, Bitmap b) {
+			if (e == null && mView != null) {
+				mView.setImageBitmap(b);
+			}
+		}
+	}
+
 	//////////////////////////////////////////////////////
 	//// Following are public setters.  That Activities can use
 	//// to set the values of what is showed to the user for this 
@@ -143,7 +173,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	 * must implement this Listener.
 	 * @author mhotan
 	 */
-	public interface OrderDetailListener {
+	public interface OrderDetailListener extends ImageObtainable {
 
 		/**
 		 * Call back that shows that the user wishes to send a message 
@@ -152,7 +182,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		 * @param message Message to send for this order
 		 */
 		public void sendShoutOut(UserInfo user, String message);
-		
+
 		/**
 		 * Asks the containing activity for a reference to the order.
 		 * The order 
@@ -179,10 +209,10 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 	 * @author mhotan
 	 */
 	@SuppressWarnings("SIC_INNER_SHOULD_BE_STATIC")
-	private static class MenuItemAdapter extends ArrayAdapter<CurrentOrderItem> {
+	private class MenuItemAdapter extends ArrayAdapter<CurrentOrderItem> {
 
 		private final Context mContext;
-		
+
 		/**
 		 * Creates an adapter for displaying menu items.
 		 * @param context Owning context of this adapter
@@ -203,13 +233,20 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			int qty = toShow.getQuantity();
 
 			//Commented out for findbugs
-			//			ImageView menuItemImage = (ImageView) 
-			//					view.findViewById(R.id.image_thumbnail_menuitem);
+			ImageView menuItemImage = (ImageView) 
+					view.findViewById(R.id.image_thumbnail_menuitem);
+			
+			DineOnImage image = toShow.getMenuItem().getImage();
+			if (image != null) {
+				mListener.onGetImage(image, new InitialGetImageCallback(
+						menuItemImage));
+			}
+			
 			TextView menuItemTitle = (TextView) view.findViewById(R.id.label_menuitem_title);
 			TextView menuItemDesc = (TextView) view.findViewById(R.id.label_menuitem_desc);
 			TextView menuItemPrice = (TextView) view.findViewById(R.id.label_menuitem_price);
 			ImageButton deleteButton = (ImageButton) view.findViewById(R.id.button_menuitem_delete);
-			
+
 			// Remove the delete button from restaurant context
 			deleteButton.setEnabled(false);
 			deleteButton.setVisibility(View.GONE);
@@ -217,7 +254,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			// TODO Download the Image Asyncronously
 
 			menuItemTitle.setText(toShow.getMenuItem().getTitle());
-			menuItemDesc.setText(idLabel + toShow.getMenuItem().getProductID());
+			menuItemDesc.setText(idLabel + toShow.getMenuItem().getObjId());
 			menuItemPrice.setText(qtyLabel + qty);
 
 			return view;
@@ -227,9 +264,9 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 		public int getCount() {
 			return super.getCount();
 		}
-		
+
 	}
 
-	
-	
+
+
 }
