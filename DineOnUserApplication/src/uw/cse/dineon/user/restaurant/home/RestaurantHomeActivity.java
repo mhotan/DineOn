@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 
 /**
@@ -184,6 +185,9 @@ MenuItemDetailListener {
 
 	@Override
 	public void onMenuItemAddToOrder(MenuItem item, int quantity) {
-		DineOnUserApplication.getDineOnUser().setMenuItemToOrder(item, quantity);
+		if (!mUser.setMenuItemToOrder(item, quantity)) {
+			Toast.makeText(this, "Not in a dining session", Toast.LENGTH_SHORT).show();
+		}
+		invalidateOptionsMenu();
 	}
 }

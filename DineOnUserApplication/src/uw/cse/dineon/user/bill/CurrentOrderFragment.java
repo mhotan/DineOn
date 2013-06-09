@@ -1,28 +1,20 @@
 package uw.cse.dineon.user.bill;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import uw.cse.dineon.library.CurrentOrderItem;
-import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
-import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
-import uw.cse.dineon.library.util.DineOnConstants;
-import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,13 +24,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.parse.ParseException;
-import com.parse.SaveCallback;
 
 /**
- * 
+ * Fragment that shows the state of the current Order.
  * @author mhotan
  */
 public class CurrentOrderFragment extends Fragment {
@@ -102,25 +90,7 @@ public class CurrentOrderFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
-		// Extract the order from the activity using this fragment.
-		Order order = mListener.getOrder();
-		
-		
-		double totalPrice = order.getTotalCost();
-		if(Math.abs(totalPrice - 0.0) < DineOnConstants.CURRENCY_EPSILON) {
-			mPlaceOrderButton.setVisibility(View.GONE);
-		} else {
-			mPlaceOrderButton.setVisibility(View.VISIBLE);
-		}
-		
-		mSubtotal.setText(mFormatter.format(totalPrice));
-		mTax.setText(mFormatter.format(totalPrice * DineOnConstants.TAX));
-		mTotal.setText(mFormatter.format(totalPrice * (1 + DineOnConstants.TAX)));
-		
-		// Attempt to extract argument if this fragment was created with them
-		ListView listView = (ListView) getView().findViewById(R.id.list_order);
-		listView.setAdapter(mAdapter);
+		updateOrder();
 	}
 
 	/**
@@ -130,7 +100,7 @@ public class CurrentOrderFragment extends Fragment {
 	 */
 	public void updateOrder() {
 		Order order = mListener.getOrder();
-		
+
 		// If the total cost of the order is near 0.0 there is no way to pl
 		// If there is no menu items in the 
 		if (order.isEmpty()) {
@@ -138,32 +108,26 @@ public class CurrentOrderFragment extends Fragment {
 		} else {
 			mPlaceOrderButton.setVisibility(View.VISIBLE);
 		}
-		
+
 		mSubtotal.setText(mFormatter.format(order.getSubTotalCost()));
 		mTax.setText(mFormatter.format(order.getTaxCost()));
 		mTotal.setText(mFormatter.format(order.getTotalCost()));
-		
+
 		// TODO Create a set the adapter
 		if (mAdapter != null) {
 			mAdapter.notifyDataSetInvalidated();
 		}
-		mAdapter = new 
-	}
-	
-	/**
-	 * @param newItem to add
-	 */
-	public void addNewItem(MenuItem newItem) {
-		mAdapter.add(newItem);
-		mAdapter.notifyDataSetChanged();
+		mAdapter = new OrderArrayAdapter(getActivity(), order);
+		// Attempt to extract argument if this fragment was created with them
+		ListView listView = (ListView) getView().findViewById(R.id.list_order);
+		listView.setAdapter(mAdapter);
 	}
 
 	/**
 	 * @param item MenuItem to remove from this
 	 */
 	public void removeItem(MenuItem item) {
-		mAdapter.remove(item); // Remove the item
-		mAdapter.notifyDataSetChanged(); // Notify the data set changed
+		mAdapter.removeMenuItem(item);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -204,10 +168,12 @@ public class CurrentOrderFragment extends Fragment {
 	public interface OrderUpdateListener extends ImageObtainable {
 
 		/**
-		 * User wishes place current order.
-		 * @param order to place
+		 * User wants to commit to the current pending order.
+		 * After this the activity will attempt to save the current
+		 * state of the order. Then push the request to the restaurant.
+		 * The restaurant will then decide what to do with the order.
 		 */
-		public void onPlaceOrder(Order order);
+		public void onCommitPendingOrder();
 
 		/**
 		 * User wishes to increment the quantity of a particular item on their order.
@@ -235,11 +201,6 @@ public class CurrentOrderFragment extends Fragment {
 		 * @return hash map of items
 		 */
 		public Order getOrder();
-
-		/**
-		 * Once an order is placed clear the current order.
-		 */
-		public void resetCurrentOrder();
 	}
 
 	/**
@@ -248,7 +209,7 @@ public class CurrentOrderFragment extends Fragment {
 	 * TODO Change layout of item 
 	 * @author mhotan
 	 */
-	private class OrderArrayAdapter extends ArrayAdapter<MenuItem> {
+	private class OrderArrayAdapter extends ArrayAdapter<CurrentOrderItem> {
 
 		/**
 		 * Owning context.
@@ -256,53 +217,25 @@ public class CurrentOrderFragment extends Fragment {
 		private final Context mContext;
 
 		/**
-		 * List of menu items.
+		 * This map is used for when the client code needs to alter the state of the adapter.
+		 * The Adapter Knows about the state of the CurrentOrderItems
 		 */
-		private final List<MenuItem> mItems;
-
-		private final HashMap<MenuItem, CurrentOrderItem> mOrderMapping;
-
-		/**
-		 * This is a runtime mapping between "More Info buttons"
-		 * and there respective restaurants.
-		 * NOTE (MH): Not exactly sure if this works
-		 */
-		private final HashMap<View, MenuItem> mViewToItem;
-
-		/**
-		 * Mapping to increment and decrement button
-		 * to the text view it alters.
-		 */
-		private final Map<Button, TextView> mButtonToTextView;
-
-		private final OnItemClickListener privateListener;
+		private final Map<MenuItem, CurrentOrderItem> mItemMap;
 
 		/**
 		 * Creates an array adapter to display a Order.
 		 * @param ctx Context of owning activity
-		 * @param order List of menu items to display
-		 * @param orderItems Map of MenuItems to their current order.
+		 * @param order Order to handle in the adapter
 		 */
-		public OrderArrayAdapter(Context ctx, List<MenuItem> order, 
-				HashMap<MenuItem, CurrentOrderItem> orderItems) {
-			super(ctx, R.layout.listitem_orderitem, order);
-
+		public OrderArrayAdapter(Context ctx, Order order) {
+			super(ctx, R.layout.listitem_orderitem, order.getMenuItems());
 			mContext = ctx;
-			mItems = new ArrayList<MenuItem>(order);
-
-			mViewToItem = new HashMap<View, MenuItem>();
-			mButtonToTextView = new HashMap<Button, TextView>();
-
-			privateListener = new OnItemClickListener();
-
-			mPlaceOrderButton.setOnClickListener(privateListener);
-			//mReqButton.setOnClickListener(privateListener);
-
-			this.mOrderMapping = new HashMap<MenuItem, CurrentOrderItem>(orderItems);
+			mItemMap = new HashMap<MenuItem, CurrentOrderItem>();
 		}
 
 		@Override
 		public View getView(int position, View covnertView, ViewGroup parent) {
+			// Get the view to show the Items
 			LayoutInflater inflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.listitem_orderitem, parent, false);
@@ -310,180 +243,154 @@ public class CurrentOrderFragment extends Fragment {
 			// Here is where we adjust the contents of the list row
 			// with attributes determined by the order item
 
-			// Get the Order Item by associating with the position
-			position = Math.max(0, Math.min(position, this.mItems.size() - 1));
-			MenuItem item = mItems.get(position);	
+			CurrentOrderItem item = super.getItem(position);	
+			new OrderItemHandler(item.getMenuItem(), item.getQuantity(), rowView);
 
-			// Assign the buttons to this order
-			final ImageView ITEMIMAGE = (ImageView) 
-					rowView.findViewById(R.id.image_order_menu_item);
-			Button incButton = (Button) rowView.findViewById(R.id.button_increment_item);
-			Button decButton = (Button) rowView.findViewById(R.id.button_decrement_item);
-			TextView itemQuantity = (TextView) rowView.findViewById(R.id.label_item_quantity);
-			ImageButton deleteButton = (ImageButton) rowView.findViewById(R.id.button_delete);
-			TextView label = (TextView) rowView.findViewById(R.id.label_order_item);
-
-			// set the quantity
-			int itemCount = this.mOrderMapping.get(item).getQuantity();
-			itemQuantity.setText("" + itemCount);
-
-			// set the label and description
-			label.setText(item.getTitle());
-
-			// Set the image of this order item
-			DineOnImage image = item.getImage();
-			if (image != null) {
-				mListener.onGetImage(image, new ImageGetCallback() {
-					
-					@Override
-					public void onImageReceived(Exception e, Bitmap b) {
-						if (e == null) {
-							// We got the image so set the bitmap
-							ITEMIMAGE.setImageBitmap(b);
-						}
-					}
-				});
-			}
-			
-			// Place mapping from all the clickable view to the Order item
-			mViewToItem.put(incButton, item);
-			mViewToItem.put(decButton, item);
-			mViewToItem.put(deleteButton, item);
-			mViewToItem.put(label, item);
-			mViewToItem.put(itemQuantity, item);
-
-			// Place a mapping from the increment 
-			// and decrement button to the Text View representing the
-			// item quantity
-			mButtonToTextView.put(incButton, itemQuantity);
-			mButtonToTextView.put(decButton, itemQuantity);
-
-			// Set the listeners for the buttons that alter the order state
-			incButton.setOnClickListener(privateListener);
-			decButton.setOnClickListener(privateListener);
-			deleteButton.setOnClickListener(privateListener);
-			// Set the listener when the user selects the item in the current order
-			label.setOnClickListener(privateListener);
-
+			mItemMap.put(item.getMenuItem(), item);
 			return rowView;
 		}
 
 		/**
-		 * Private click listener for this list items.
-		 * TODO Can also be used by having a this object hold references for 
-		 * all the Item
-		 * @author mhotan
+		 * Remove menu item from the adapter.
+		 * @param item item to remove.
 		 */
-		private class OnItemClickListener implements View.OnClickListener {
-
-			@Override
-			public void onClick(View v) {
-
-				MenuItem item = mViewToItem.get(v);
-				int toAdd = -1;
-
-				double priceChange = 0.0;
-				switch (v.getId()) {
-				case R.id.button_increment_item:
-					toAdd = 1;
-				case R.id.button_decrement_item:
-					TextView curValStr = mButtonToTextView.get(v);
-					assert (curValStr != null);
-
-					// Obtain the potential new Value
-					Integer curVal = Integer.parseInt(curValStr.getText().toString());
-					int newVal = Math.max(0, curVal + toAdd); // Can't have negative amounts
-
-					// Notify the listener appropiately
-					priceChange = 0.0;
-					if (newVal - curVal > 0) {
-						mAdapter.mOrderMapping.get(item).incrementQuantity();
-						priceChange = item.getPrice();
-					} else if (newVal - curVal < 0) {
-						mAdapter.mOrderMapping.get(item).decrementQuantity();
-						priceChange = item.getPrice() * -1;
-					}
-
-					mButtonToTextView.get(v).setText("" + newVal);
-
-					break;
-				case R.id.button_delete:
-					priceChange = mAdapter.mOrderMapping.get(item).getQuantity() 
-					* item.getPrice() * -1;
-					mListener.onRemoveItemFromOrder(item);
-					mAdapter.remove(item);
-					mAdapter.mOrderMapping.remove(item);
-					mAdapter.mItems.remove(item);
-					//mAdapter.mOrderMapping.remove(item);
-					// TODO Do something to remove this item
-					break;
-				case R.id.label_order_item:
-					// TODO Add some way to show focus
-					break;
-
-				case R.id.button_place_order:
-					// check to see if user is currently in a dining session
-					DiningSession session = DineOnUserApplication.getCurrentDiningSession();
-					if (session != null) {
-
-						List<CurrentOrderItem> items = 
-								new ArrayList<CurrentOrderItem>(mAdapter.mOrderMapping.values());
-						if(items.size() > 0) {
-							// create and save the order
-							final Order NEW_ORDER = new Order(session.getTableID(),  
-									DineOnUserApplication.getUserInfo(), 
-									items);
-
-							// save the new order
-							NEW_ORDER.saveInBackGround(new SaveCallback() {
-
-								@Override
-								public void done(ParseException e) {
-									if (e == null) {
-										// successful, send the push notification
-										mListener.onPlaceOrder(NEW_ORDER);
-										if (mListener instanceof Context) {
-											Toast.makeText((Context) mListener, 
-													"Your order was placed.", 
-													Toast.LENGTH_SHORT).show();
-										}
-										mListener.doneWithOrder();
-
-									} else {
-										Log.d(TAG, "Couldn't save the new order: " 
-												+ e.getMessage());
-									}
-								}
-							});
-						}
-
-
-					} else {
-						if (mListener instanceof Context) {
-							Toast.makeText((Context)mListener, 
-									"Must checkin before placing order.", 
-									Toast.LENGTH_SHORT).show();
-						}
-					}
-
-					break;
-
-				default:
-					break;
-				}
-				if (priceChange != 0.0) {
-					mSubtotal = (TextView) mListView.findViewById(R.id.value_subtotal);
-					mTax = (TextView) mListView.findViewById(R.id.value_tax);
-					mTotal = (TextView) mListView.findViewById(R.id.value_total);
-					double newTotal = priceChange 
-							+ Double.parseDouble(mSubtotal.getText().toString().substring(1));
-					mSubtotal.setText(mFormatter.format(newTotal));
-					mTax.setText(mFormatter.format((newTotal * DineOnConstants.TAX)));
-					mTotal.setText(mFormatter.format((newTotal * (1 + DineOnConstants.TAX))));
-				}
+		void removeMenuItem(MenuItem item) {
+			CurrentOrderItem orderItem = mItemMap.get(item);
+			if (orderItem == null) { // If we dont have the 
+				return;
 			}
 
+			// remove it from the map
+			mItemMap.remove(item);
+			// Remove Current order item from the adapters
+			super.remove(orderItem);
+			// Notify change in data set
+			super.notifyDataSetChanged();
+		}
+	}
+
+	/**
+	 * This handlers all the input that is done for a specific view 
+	 * in the list of all current order items in the order.
+	 * @author mhotan
+	 */
+	private class OrderItemHandler implements View.OnClickListener {
+
+		/**
+		 * The Menu item in the order that this view has to track.
+		 */
+		private final MenuItem mItem;
+
+		/**
+		 * Context of the containing application.
+		 */
+		private final Context mContext;
+
+		/**
+		 * Current quantity tracked for the internal menu item. 
+		 */
+		private int mQuantity;
+
+		// UI Components to maintain
+		private final Button mIncrementButton, mDecrementButton;
+		private final ImageButton mDeleteButton;
+		private final ImageView mItemImageView;
+		private final TextView mQuantityView;
+
+		/**
+		 * Creates a handler to handle input for a specific menu item.
+		 * @param item Item to show
+		 * @param qty Quantity to show for the item.
+		 * @param rowView View that will present the order item
+		 */
+		OrderItemHandler(MenuItem item, int qty, View rowView) {
+			mContext = getActivity();
+			mItem = item;
+			mQuantity = qty;
+
+			TextView itemTitle = (TextView) rowView.findViewById(R.id.label_order_item);
+			mItemImageView = (ImageView) rowView.findViewById(R.id.image_order_menu_item);
+			mQuantityView = (TextView) rowView.findViewById(R.id.label_item_quantity);
+
+			mIncrementButton = (Button) rowView.findViewById(R.id.button_increment_item);
+			mDecrementButton = (Button) rowView.findViewById(R.id.button_decrement_item);
+			mDeleteButton = (ImageButton) rowView.findViewById(R.id.button_delete);
+
+			// Set the title appropiately
+			itemTitle.setText(mItem.getTitle());
+			mQuantityView.setText(String.valueOf(mQuantity));
+			if (mItem.getImage() != null) {
+				mListener.onGetImage(mItem.getImage(), new OrderImageGetCallback(mItemImageView));
+			} else {
+				// TODO make sure this works
+				// mItemImageView.setVisibility(View.GONE);
+			}
+
+			mIncrementButton.setOnClickListener(this);
+			mDecrementButton.setOnClickListener(this);
+			mDeleteButton.setOnClickListener(this);
 		}
 
+		@Override
+		public void onClick(View v) {
+			if (v == mIncrementButton) {
+				// Handle the incrementation of the order
+				// If the listener allowed us to increment the value
+				// then update our state.
+				mListener.onIncrementItemOrder(mItem);
+
+			} else if (v == mDecrementButton) {
+				// Handle the incrementation of the order
+				// If the listener allowed us to increment the value
+				// then update our state.
+				mListener.onDecrementItemOrder(mItem);
+			} else if (v == mDeleteButton) {
+				// Show prompt to confirm menu item deletion.
+				mListener.onRemoveItemFromOrder(mItem);
+			}
+
+			Order order = mListener.getOrder();
+			int qty = order.getQuantity(mItem);
+			// if the quantity is 0 then get prompt user to see if they want
+			// to delete this item from the current order.
+			mQuantityView.setText(String.valueOf(qty));
+		}	
 	}
+
+
+
+	/**
+	 * Fragment get callback to poplate the view with the image of the menu item.
+	 * @author mhotan
+	 */
+	private class OrderImageGetCallback implements ImageGetCallback {
+
+		private final ImageView mContainer;
+
+		/**
+		 * Creates a callback that will populate the argument view
+		 * only if a correct Bitmap is retrieved.
+		 * @param view View to populate
+		 */
+		public OrderImageGetCallback(ImageView view) {
+			if (view == null) {
+				throw new IllegalArgumentException("Null view for Image get callback not allowed");
+			}
+			mContainer = view;
+		}
+
+		@Override
+		public void onImageReceived(Exception e, Bitmap b) {
+			if (e == null) {
+				mContainer.setImageBitmap(b);
+				return;
+			}
+			// Error occured getting the image.
+			// Fail gracefully and remove the image view.
+			mContainer.setVisibility(View.GONE);
+		}
+
+
+	}
+
 }

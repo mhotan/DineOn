@@ -25,6 +25,7 @@
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:contentDescription="@string/menu_item_pic"
+            android:padding="5dp"
             android:scaleType="centerCrop"
             android:src="@drawable/placeholdermenuitem" />
 

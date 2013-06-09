@@ -3,7 +3,6 @@ package uw.cse.dineon.user.bill;
 import java.text.NumberFormat;
 
 import uw.cse.dineon.library.DiningSession;
-import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 /**
  * 
  * @author mhotan
- *
  */
 public class CurrentBillFragment extends Fragment implements 
 OnSeekBarChangeListener,
@@ -30,15 +28,17 @@ OnClickListener {
 	
 	private SeekBar mTipBar;
 	private int mCurTipPercent;
-	private double mSubtotal;
-	private double mTax;
 	private Button mPayButton;
 	
 	private DiningSession mSession;
-	
-	private NumberFormat mFormatter = NumberFormat.getCurrencyInstance();
-	
+	private NumberFormat mFormatter;
 	private PayBillListener mListener;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mFormatter = NumberFormat.getCurrencyInstance();
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,11 +60,14 @@ OnClickListener {
 		mTipBar.setProgress(0);
 		mCurTipPercent = 0;
 		mTip.setText("" + mCurTipPercent + "%");
-		mTipBar.setOnSeekBarChangeListener(this);
-		
-		mSession = DineOnUserApplication.getCurrentDiningSession();
-		
+		mTipBar.setOnSeekBarChangeListener(this);	
 		return view;
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		updateBill(mListener.getDiningSession());
 	}
 	
 	@Override
@@ -79,27 +82,33 @@ OnClickListener {
 	}
 	
 	/**
-	 * Update the UI fragment to reflect current bill.
-	 * @param subtotal of current order
-	 * @param tax for current order
+	 * Updates the current bill with the argument session. 
+	 * @param session Session to update bill with.
 	 */
-	public void setBill(double subtotal, double tax) {
+	void updateBill(DiningSession session) {
+		mSession = session;
 		
-		if (this.mSession == null) {
-			this.mSession = DineOnUserApplication.getCurrentDiningSession();
+		String title = "No Current Dining Session";
+		double subTotal = 0, tax = 0, tip = 0;
+		if (mSession != null) {
+			title = "Current Bill for " + mSession.getRestaurantInfo().getName();
+			subTotal = mSession.getSubTotal();
+			tax = mSession.getTax();
 		}
-
-		mTitle.setText("Current Bill for " + mSession.getRestaurantInfo().getName());
+		tip = ((double)mCurTipPercent / 100.0) * (subTotal + tax);
 		
-		mSubTotal.setText(this.mFormatter.format(subtotal));
+		mTitle.setTag(title);
+		mSubTotal.setText(this.mFormatter.format(subTotal));
 		mTotalTax.setText(this.mFormatter.format(tax));
-		
-		this.mSubtotal = subtotal;
-		this.mTax = tax;
-		double tipAmount = ((double)mCurTipPercent / 100.0) * (this.mTax + this.mSubtotal);
-		double totalPrice = this.mSubtotal + this.mTax + tipAmount;
-		mTip.setText(" " + mCurTipPercent + "%,  $" + String.format("%.2f", tipAmount));
-		mTotal.setText(this.mFormatter.format(totalPrice));
+		mTip.setText(" " + mCurTipPercent + "%, " + mFormatter.format(tip));
+		mTotal.setText(mFormatter.format(tip + subTotal + tax));
+	}
+	
+	/**
+	 * Updates the bill using the current session.
+	 */
+	private void updateBill() {
+		updateBill(mSession);
 	}
 
 	@Override
@@ -107,11 +116,7 @@ OnClickListener {
 			boolean fromUser) {
 		if (fromUser) {
 			mCurTipPercent = progress;
-			
-			double tipAmount = ((double)mCurTipPercent / 100.0) * (this.mTax + this.mSubtotal);
-			mTip.setText(" " + mCurTipPercent + "%,  $" + String.format("%.2f", tipAmount));
-			double totalPrice = this.mSubtotal + this.mTax + tipAmount;
-			mTotal.setText(this.mFormatter.format(totalPrice));
+			updateBill();
 		}
 	}
 
@@ -135,9 +140,19 @@ OnClickListener {
 	public interface PayBillListener {
 		
 		/**
+		 * Retrieves the session to currently present for the bill. 
+		 * @return Dining session to currently present.
+		 */
+		DiningSession getDiningSession();
+		
+		/**
 		 * Pay the current bill by sending payment info to restaurant.
 		 */
 		public void payCurrentBill();
+		
+		// TODO 
+		// Add individual check out feature.
+		// 
 	}
 
 }
