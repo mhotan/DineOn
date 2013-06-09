@@ -6,10 +6,13 @@ import java.util.List;
 
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.animation.ExpandAnimation;
+import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.image.ImageObtainable;
+import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -164,6 +167,32 @@ public class OrderListFragment extends ListFragment {
 
 	}
 
+	/**
+	 * Get the pre set image for this user.
+	 * 
+	 * @author mhotan
+	 */
+	private class InitialGetImageCallback implements ImageGetCallback {
+
+		private ImageView mView;
+
+		/**
+		 * prepares callback for placing an image in the view.
+		 * 
+		 * @param view View to place image.
+		 */
+		public InitialGetImageCallback(ImageView view) {
+			mView = view;
+		}
+
+		@Override
+		public void onImageReceived(Exception e, Bitmap b) {
+			if (e == null && mView != null) {
+				mView.setImageBitmap(b);
+			}
+		}
+	}
+	
 	//////////////////////////////////////////////////////
 	//// Adapter to handle using listitems specific to 
 	//// Showing Orders for restaurants
@@ -269,8 +298,8 @@ public class OrderListFragment extends ListFragment {
 				mBottom = bottom;
 
 				// Get a reference to all the top pieces 
-//				final ImageView ORDERIMAGE = (ImageView) 
-//						mTop.findViewById(R.id.image_order_thumbnail);
+				final ImageView ORDERIMAGE = (ImageView) 
+						mTop.findViewById(R.id.image_order_thumbnail);
 				TextView orderTitle = 
 						(TextView) mTop.findViewById(R.id.label_order_title);
 				mExpandDown = (ImageView) 
@@ -283,7 +312,12 @@ public class OrderListFragment extends ListFragment {
 						mBottom.findViewById(R.id.button_completed_order);
 
 				SeekBar progressBar = (SeekBar) mBottom.findViewById(R.id.seekbar_order_progress);
-
+				DineOnImage image = order.getOriginalUser().getImage();
+				if (image != null) {
+					mListener.onGetImage(image, new InitialGetImageCallback(
+							ORDERIMAGE));
+				}
+				
 				//Populate
 				int table = order.getTableID();
 
