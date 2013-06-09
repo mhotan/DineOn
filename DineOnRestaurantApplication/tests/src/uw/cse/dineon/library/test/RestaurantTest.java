@@ -71,7 +71,7 @@ public class RestaurantTest extends AndroidTestCase {
 		testUInfo = new UserInfo(mUser);
 		testUInfo.setObjId("tui");
 		testItems = new ArrayList<MenuItem>();
-		testItem = new MenuItem("24", 4.5, "Root Beer Float", "Ice cream and root beer");
+		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
 		testItem.setObjId("toi");
 		testItems.add(testItem);
 		testOrder = new Order(32, testUInfo, testItems);

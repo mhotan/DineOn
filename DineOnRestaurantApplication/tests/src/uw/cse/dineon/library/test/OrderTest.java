@@ -41,7 +41,7 @@ public class OrderTest extends AndroidTestCase {
 		testUInfo = new UserInfo(testUser);
 		testUInfo.setObjId("tui");
 		testItems = new ArrayList<MenuItem>();
-		testItem = new MenuItem("24", 4.5, "Root Beer Float", "Ice cream and root beer");
+		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
 		testItem.setObjId("ti");
 		CurrentOrderItem mCOI = new CurrentOrderItem(testItem);
 		mCOI.setObjId("coi");

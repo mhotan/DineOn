@@ -217,7 +217,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			// TODO Download the Image Asyncronously
 
 			menuItemTitle.setText(toShow.getMenuItem().getTitle());
-			menuItemDesc.setText(idLabel + toShow.getMenuItem().getProductID());
+			menuItemDesc.setText(idLabel + toShow.getMenuItem().getObjId());
 			menuItemPrice.setText(qtyLabel + qty);
 
 			return view;

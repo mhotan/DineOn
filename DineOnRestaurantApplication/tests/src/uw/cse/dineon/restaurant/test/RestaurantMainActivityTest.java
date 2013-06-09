@@ -83,7 +83,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 		mRequest.setObjId("aa");
 
 		List<MenuItem> items = new ArrayList<MenuItem>();
-		items.add(new MenuItem("123", 1.99, "Yum yums", "description"));
+		items.add(new MenuItem(123, 1.99, "Yum yums", "description"));
 		mOrder = new Order(1, mUI.getUserInfo(), items);
 		mOrder.setObjId("435");
 		testSession = new DiningSession(1, mUI.getUserInfo(), mRestaurant.getInfo());

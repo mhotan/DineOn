@@ -79,7 +79,7 @@ public class RestaurantProfileActivityTest extends
 		r.getInfo().setPhone(TEST_PHONE);
 
 		testMenu = new Menu(TEST_MENU_TITLE);
-		mMenuItem = new MenuItem(""+TEST_ITEM_ID, TEST_ITEM_PRICE, TEST_ITEM_TITLE, TEST_ITEM_DESC);
+		mMenuItem = new MenuItem(TEST_ITEM_ID, TEST_ITEM_PRICE, TEST_ITEM_TITLE, TEST_ITEM_DESC);
 		DineOnImage image = TestUtility.getFakeImage(res, R.raw.food);
 		mMenuItem.setImage(image);
 		testMenu.addNewItem(mMenuItem);

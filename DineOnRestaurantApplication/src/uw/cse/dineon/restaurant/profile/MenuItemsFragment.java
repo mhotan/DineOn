@@ -234,7 +234,7 @@ public class MenuItemsFragment extends ListFragment {
 
 				double price = Double.parseDouble(priceString);
 
-				MenuItem mi = new MenuItem("" + mAdapter.getCount() + 1, price,
+				MenuItem mi = new MenuItem(mAdapter.getCount() + 1, price,
 						title, desc);
 
 				// If we are testing add it directly to adapter

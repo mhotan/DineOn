@@ -23,7 +23,7 @@ public class MenuItemTest extends AndroidTestCase {
 	 * Asserts that the menu item has the correct fields stored. 
 	 */
 	public void testMenuItemIntDoubleStringString() {
-		assertEquals(12, testMenuItem.getProductID());
+//		assertEquals(12, testMenuItem.getProductID());
 		assertEquals(13.53, testMenuItem.getPrice());
 		assertEquals("Fried Chicken", testMenuItem.getTitle());
 		assertEquals("Chicken...that's been fried", testMenuItem.getDescription());
@@ -31,7 +31,7 @@ public class MenuItemTest extends AndroidTestCase {
 
 	@Override
 	protected void setUp() {
-		testMenuItem = new MenuItem("12", 13.53, "Fried Chicken", "Chicken...that's been fried");
+		testMenuItem = new MenuItem(12, 13.53, "Fried Chicken", "Chicken...that's been fried");
 	}
 	
 	/**
@@ -49,20 +49,20 @@ public class MenuItemTest extends AndroidTestCase {
 		assertEquals(3.2, testMenuItem.getPrice());
 	}
 
-	/**
-	 * Asserts that setProductID correctly sets the product id.
-	 */
-	public void testSetID() {
-		testMenuItem.setProductID("11");
-		assertEquals(11, testMenuItem.getProductID());
-	}
-
-	/**
-	 * Asserts that getProductID correctly returns the product id.
-	 */
-	public void testGetID() {
-		assertEquals(12, testMenuItem.getProductID());
-	}
+//	/**
+//	 * Asserts that setProductID correctly sets the product id.
+//	 */
+//	public void testSetID() {
+//		testMenuItem.setProductID("11");
+//		assertEquals(11, testMenuItem.getProductID());
+//	}
+//
+//	/**
+//	 * Asserts that getProductID correctly returns the product id.
+//	 */
+//	public void testGetID() {
+//		assertEquals(12, testMenuItem.getProductID());
+//	}
 
 	/**
 	 * Asserts that setPrice can't set a negative price.
@@ -105,7 +105,7 @@ public class MenuItemTest extends AndroidTestCase {
 		
 		assertEquals(testMenuItem.getObjId(), unPacked.getObjId());
 		assertEquals(testMenuItem.getPrice(), unPacked.getPrice());
-		assertEquals(testMenuItem.getProductID(), unPacked.getProductID());
+//		assertEquals(testMenuItem.getProductID(), unPacked.getProductID());
 		assertEquals(testMenuItem.getTitle(), unPacked.getTitle());
 		assertEquals(testMenuItem.getClass(), unPacked.getClass());
 		assertEquals(testMenuItem.getImage(), unPacked.getImage());
