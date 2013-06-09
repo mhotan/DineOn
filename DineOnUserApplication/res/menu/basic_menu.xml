@@ -9,6 +9,15 @@
         android:showAsAction="collapseActionView|ifRoom"
         android:title="@string/search_restaurant">
     </item>
+
+<!--     <item
+        android:id="@+id/item_progress"
+        android:actionLayout="@layout/menu_progress"
+        android:menuCategory="container"
+        android:title="Progress"
+        android:showAsAction="always">
+    </item>
+ -->
     <item
         android:id="@+id/option_profile"
         style="@style/DineOnMenuItem"

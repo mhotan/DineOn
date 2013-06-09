@@ -121,7 +121,7 @@ LoginFragment.OnLoginListener {
 	public void startRestSelectionAct(DineOnUser user) {
 		// Destroy any running progress dialog
 		if(user != null) {
-			DineOnUserApplication.setDineOnUser(user);
+			DineOnUserApplication.setDineOnUser(user, this);
 			destroyProgressDialog();
 			Intent i;
 			if (DineOnUserApplication.getDineOnUser().getDiningSession() != null) {

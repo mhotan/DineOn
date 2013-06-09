@@ -26,10 +26,13 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
@@ -52,11 +55,14 @@ import com.parse.SaveCallback;
  */
 public class DineOnUserActivity extends DineOnStandardActivity implements 
 SatelliteListener { 
-//OrderUpdateListener /* manipulation of list from the current order activity */ {
-//SubMenuFragment.MenuItemListListener /* manipulation of order from sub menu */  
+	//OrderUpdateListener /* manipulation of list from the current order activity */ {
+	//SubMenuFragment.MenuItemListListener /* manipulation of order from sub menu */  
 
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
-	
+
+	private DineOnUserService mService;
+	private boolean mIsBound;
+
 	/**
 	 * Satellite for communication.
 	 */
@@ -66,10 +72,24 @@ SatelliteListener {
 	 * A self reference.
 	 */
 	private DineOnUserActivity This;
-	
+
 	private ProgressDialog mProgressDialog;
-	
+
 	protected DineOnUser mUser;
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mService = null;
+		}
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder binder) {
+			mService = ((DineOnUserService.DineOnUserBinder) binder).getService();
+			Log.d(TAG, "Connected to service");		
+		}
+	};
 
 	/**
 	 * Set this value to the current dining user.
@@ -86,10 +106,11 @@ SatelliteListener {
 		if (mUser == null) {
 			Utility.getBackToLoginAlertDialog(this, 
 					"Unable to find your information", UserLoginActivity.class).show();
-		}
-		
-		this.mProgressDialog = null;
+		} 
 
+		doBindService();
+
+		this.mProgressDialog = null;
 	}
 
 	/**
@@ -98,14 +119,14 @@ SatelliteListener {
 	public UserSatellite getSat() {
 		return this.mSat;
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		Log.d(TAG, "DineOnUserActivity destroyed");
-		
+		doUnbindService();
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		handleSearchIntent(intent);
@@ -137,6 +158,26 @@ SatelliteListener {
 	}
 
 	/**
+	 * Initiate the binding of the service.
+	 */
+	void doBindService() {
+		bindService(new Intent(this, DineOnUserService.class), mConnection,
+				Context.BIND_AUTO_CREATE);
+		mIsBound = true;
+	}
+
+	/**
+	 * Unbind the current service.
+	 */
+	void doUnbindService() {
+		if (mIsBound) {
+			// Detach our existing connection.
+	        unbindService(mConnection);
+	        mIsBound = false;
+		}
+	}
+	
+	/**
 	 * A valid user found this allows the ability for the Userinterface to initialize.
 	 * Any subclasses of this activity can use this as a sign that the user has been identified
 	 */
@@ -156,7 +197,7 @@ SatelliteListener {
 		Log.d(TAG, "Resuming DineOnUserActivity");
 		mSat.register(DineOnUserApplication.getDineOnUser(), This);
 		intializeUI();
-		
+
 	}
 
 	@Override
@@ -168,8 +209,8 @@ SatelliteListener {
 	protected void onPause() {
 		super.onPause();
 		mSat.unRegister();
-		
-		
+
+
 	}
 
 	@Override
@@ -189,7 +230,7 @@ SatelliteListener {
 				data = new JSONObject(contents);
 				if(data.has(DineOnConstants.KEY_RESTAURANT) 
 						&& data.has(DineOnConstants.TABLE_NUM)) {
-					
+
 					// block the user until dining session is returned
 					createProgressDialog("Checking In...", "Contacting " 
 							+ data.getString(DineOnConstants.KEY_RESTAURANT));
@@ -197,7 +238,7 @@ SatelliteListener {
 					mSat.requestCheckIn(DineOnUserApplication.getUserInfo(),
 							data.getInt(DineOnConstants.TABLE_NUM), 
 							data.getString(DineOnConstants.KEY_RESTAURANT));
-					
+
 					// Add a timeout to dialog
 					timerDelayRemoveDialog(DineOnConstants.MAX_RESPONSE_TIME);
 				}
@@ -207,7 +248,7 @@ SatelliteListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Create a progress dialog to notify the user.
 	 * @param title title of the dialog
@@ -234,7 +275,7 @@ SatelliteListener {
 			mProgressDialog = null;
 		}
 	}
-	
+
 	/**
 	 * If an error occurs while checking in show error dialog to user.
 	 * @param message message to display to the user
@@ -246,7 +287,7 @@ SatelliteListener {
 		b.setCancelable(true);
 		b.show();
 	}
-	
+
 	/**
 	 * Postpones an action.
 	 * @param time millisecond time until runner is called
@@ -255,22 +296,22 @@ SatelliteListener {
 	public void timerDelayRemoveDialog(long time, Runnable runner) {
 		new Handler().postDelayed(runner, time);
 	}
-	
+
 	/**
 	 * Create a timeout for the progress dialog.
 	 * @param time timeout for progress dialog
 	 */
 	public void timerDelayRemoveDialog(long time) {
-	    new Handler().postDelayed(new Runnable() {
-	        public void run() {        
-	        	if (mProgressDialog != null && mProgressDialog.isShowing()) {
-	        		destroyProgressDialog();
-		        	showErrorCheckingInDialog("No response from restaurant. Try again.");
-	        	}
-	        }
-	    }, time); 
+		new Handler().postDelayed(new Runnable() {
+			public void run() {        
+				if (mProgressDialog != null && mProgressDialog.isShowing()) {
+					destroyProgressDialog();
+					showErrorCheckingInDialog("No response from restaurant. Try again.");
+				}
+			}
+		}, time); 
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(android.view.Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -334,8 +375,8 @@ SatelliteListener {
 		this.finish();
 		Log.d(TAG, "Finishing DineOnUserActivity before logout");
 		startActivity(i);
-		
-		
+
+
 	}
 
 	/**
@@ -368,24 +409,24 @@ SatelliteListener {
 
 		// If checked in
 		if(DineOnUserApplication.getCurrentDiningSession() != null) {
-			
+
 			// Disable the check in button because we are already checked in.
 			disableMenuItem(menu, R.id.option_check_in);
-			
+
 			// Should be able to view any pending orders.
 			if (mUser.hasPendingOrder()) {
 				enableMenuItem(menu, R.id.option_view_order);
 			} else {
 				disableMenuItem(menu, R.id.option_view_order);
 			}
-				
+
 			// If there is an order to bill
-			if (mUser.hasPendingOrder() && mUser.getDiningSession().hasOrders()) {
+			if (mUser.getDiningSession().hasOrders()) {
 				enableMenuItem(menu, R.id.option_bill);
 			} else {
 				disableMenuItem(menu, R.id.option_bill);
 			}
-			
+
 			// There is a dining session therefore 
 			if (searchView != null) {
 				searchView.setEnabled(false);
@@ -480,10 +521,10 @@ SatelliteListener {
 	@Override
 	protected void onSaveInstanceState(Bundle savedInstanceState) {
 		// Save the ID if the user is not null
-//		if (DineOnUserApplication.getDineOnUser() != null) {
-//			savedInstanceState.putString(DineOnConstants.KEY_USER, 
-//					DineOnUserApplication.getDineOnUser().getObjId());
-//		}
+		//		if (DineOnUserApplication.getDineOnUser() != null) {
+		//			savedInstanceState.putString(DineOnConstants.KEY_USER, 
+		//					DineOnUserApplication.getDineOnUser().getObjId());
+		//		}
 		super.onSaveInstanceState(savedInstanceState);
 	}
 
@@ -498,7 +539,7 @@ SatelliteListener {
 
 		// DEBUG:
 		Log.d("GOT_DINING_SESSION_FROM_CLOUD", session.getTableID() + "");
-		
+
 		// kill the checkin progress dialog
 		destroyProgressDialog();
 
@@ -531,16 +572,20 @@ SatelliteListener {
 		startActivity(i);
 	}
 
-	@Override
+	/**
+	 * Method that allows the user to re udpate their state with the 
+	 * new UI.
+	 * @param restaurant new Restaurant.
+	 */
 	public void onRestaurantInfoChanged(RestaurantInfo restaurant) {
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "Restaurant Info Changed", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
-	public void onConfirmOrder(DiningSession ds, String orderId) {
+	public void onConfirmOrder(DiningSession ds) {
 		Toast.makeText(this, "Order Confirmed", Toast.LENGTH_SHORT).show();
-		
+
 		// We have to chech that the order id of the order
 		// we are currently possession of as our pending order 
 		// is the same as the order returned
@@ -548,25 +593,23 @@ SatelliteListener {
 			Log.e(TAG, "Local pending order is null but still got an order confirmation");
 			return;
 		} 
-		if (!mUser.getPendingOrder().getObjId().equals(orderId)) {
-			Log.e(TAG, "Local pending order object ID does not match confirmed id.");
-			return;
-		} 
-		
-		// Successfully retrieved
-		DineOnUserApplication.setCurrentDiningSession(ds);
+		invalidateOptionsMenu();
 	}
 
 	@Override
-	public void onConfirmCustomerRequest(DiningSession ds, String requestID) {
+	public void onConfirmCustomerRequest(DiningSession ds) {
 		// TODO implement
 		Toast.makeText(this, "Your Request was received", Toast.LENGTH_SHORT).show();
 	}
 
-	@Override
+	/**
+	 * Notifies all Sub activities of. 
+	 * @param res Reservation being confirmed.
+	 */
 	public void onConfirmReservation(Reservation res) {
 		// TODO Auto-generated method stub
-		Toast.makeText(this, "onConfirmReservation", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Reservation Confirmed for " 
+				+ res.getOriginatingTime(), Toast.LENGTH_SHORT).show();
 	}
 
 	/**
@@ -593,68 +636,26 @@ SatelliteListener {
 		DineOnUserApplication.setCurrentDiningSession(null);
 	}
 
-//	@Override
-//	public void onMenuItemFocusedOn(uw.cse.dineon.library.MenuItem menuItem) {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	@Override
-//	public void onViewCurrentBill() {
-//		// TODO Auto-generated method stub
-//	}
-//
-//	@Override
-//	public RestaurantInfo getCurrentRestaurant() {
-//		return DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo();
-//	}
+	@Override
+	public void onRestaurantInfoChanged() {
+		if (mService == null) {
+			Log.e(TAG, "Restaurant Change but service is null.");
+			return;
+		}
+		RestaurantInfo info = mService.getLastChanged();
+		if (info != null) {
+			onRestaurantInfoChanged(info);
+		}
+	}
 
-//	@Override
-//	public void onPlaceOrder(Order order) {
-//		mSat.requestOrder(DineOnUserApplication.getCurrentDiningSession(), 
-//				order, 
-//				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
-//		DineOnUserApplication.clearCurrentOrder();
-//		Toast.makeText(this, "Order Sent!", Toast.LENGTH_SHORT).show();
-//	}
-
-//	@Override
-//	public void onIncrementItemOrder(MenuItem item) {
-//		DineOnUserApplication.incrementItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public void onDecrementItemOrder(MenuItem item) {
-//		DineOnUserApplication.decrementItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public void onRemoveItemFromOrder(MenuItem item) {
-//		DineOnUserApplication.removeItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public void onMenuItemIncremented(MenuItem item) {
-//		DineOnUserApplication.incrementItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public void onMenuItemDecremented(MenuItem item) {
-//		DineOnUserApplication.decrementItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public HashMap<MenuItem, CurrentOrderItem> getOrder() {
-//		return DineOnUserApplication.getCurrentOrder();
-//	}
-//
-//	@Override
-//	public void resetCurrentOrder() {
-//		DineOnUserApplication.clearCurrentOrder();
-//	}
-//
-//	@Override
-//	public void doneWithOrder() {
-//		// TODO Auto-generated method stub
-//	}
+	@Override
+	public void onConfirmReservation() {
+		List<Reservation> reservations = mUser.getReserves();
+		if (reservations.isEmpty()) {
+			Log.e(TAG, "Reservation confirmed but nothing updated in list.");
+			return;
+		}
+		// Get most recent reservation.
+		onConfirmReservation(reservations.get(reservations.size() - 1));
+	}
 }

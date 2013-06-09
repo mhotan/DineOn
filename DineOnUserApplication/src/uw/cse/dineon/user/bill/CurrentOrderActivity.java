@@ -172,8 +172,8 @@ implements PayBillListener, OrderUpdateListener {
 	}	
 	
 	@Override
-	public void onConfirmOrder(DiningSession ds, String orderId) {
-		super.onConfirmOrder(ds, orderId);
+	public void onConfirmOrder(DiningSession ds) {
+		super.onConfirmOrder(ds);
 		// If success 
 		mDialog.hide();
 		mPending = mUser.getPendingOrder();
