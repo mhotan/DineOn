@@ -46,8 +46,6 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
 	private List<RestaurantInfo> mRestaurants;
 
-	private ProgressDialog mProgressDialog;
-
 	private RestaurantInfo currentRestaurant;
 	
 	private AlertDialog mAd;
@@ -234,9 +232,6 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	 */
 	public void onSearchForRestaurantByName(String name) {
 		createProgressDialog();
-//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
-//		query.whereEqualTo(RestaurantInfo.NAME, name);
-//		queryForRestaurants(query, "No restaurants match. Please check spelling.");
 		
 		RestaurantInfoDownloader sessionDownloader = new RestaurantInfoDownloader(name, this);
 		sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
@@ -245,14 +240,8 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	@Override
 	public void onShowNearbyRestaurants() {
 		createProgressDialog();
-//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		Location lastLoc = super.getLastKnownLocation();
 		if (lastLoc != null) {
-//			query.whereWithinMiles(LocatableStorable.LOCATION, 
-//					new ParseGeoPoint(lastLoc.getLatitude(), lastLoc.getLongitude()), 
-//					DineOnConstants.MAX_RESTAURANT_DISTANCE);
-//			queryForRestaurants(query, 
-//					"There are no restaurants nearby.");
 			
 			RestaurantInfoDownloader sessionDownloader = 
 					new RestaurantInfoDownloader(new ParseGeoPoint(lastLoc.getLatitude(), 
@@ -276,36 +265,16 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	@Override
 	public void onShowUserFavorites() {
 		createProgressDialog();
-//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		String[] objIds = new String[DineOnUserApplication.getDineOnUser().getFavs().size()];
 		List<RestaurantInfo> favs = DineOnUserApplication.getDineOnUser().getFavs();
 		for (int i = 0; i < favs.size(); i++) {
 			objIds[i] = favs.get(i).getObjId();
 		}
-//		query.whereContainedIn("objectId", Arrays.asList(objIds));
-//		queryForRestaurants(query, "No restaurants in your favorites. Please do a search.");
-		
 		RestaurantInfoDownloader sessionDownloader = 
 				new RestaurantInfoDownloader(objIds, this);
 		sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 	}
 
-//	/**
-//	 * Query for restaurants using attributes set and populate selection list.
-//	 * on return
-//	 * @param query parse query object to query restaurants.
-//	 * @param message message to display if no restaurant found.
-//	 */
-//	public void queryForRestaurants(ParseQuery query, final String message) {
-//		query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
-//		query.setLimit(DineOnConstants.MAX_RESTAURANTS); 
-//		query.findInBackground(getFindCallback(message));
-//	}
-
-//	@Override
-//	public RestaurantInfo getCurrentRestaurant() {
-//		return currentRestaurant;
-//	}
 
 	@Override
 	public List<RestaurantInfo> getRestaurants() {
@@ -333,6 +302,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	public void destroyProgressDialog() {
 		if(mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
+			mProgressDialog = null;
 		}
 	}
 
@@ -343,28 +313,6 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	public void showNoRestaurantsDialog(String message) {
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
-//
-//	/**
-//	 * Gets the FindCallback for when restaurants are found.
-//	 * @param message to show if no restaurants found
-//	 * @return the Callback object
-//	 */
-//	public FindCallback getFindCallback(final String message) {
-//		return new FindCallback() {
-//
-//			@Override
-//			public void done(List<ParseObject> objects, ParseException e) {
-//				if (e == null) {
-//					
-//				} else { 
-//					destroyProgressDialog();
-//					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
-//					Log.d(TAG, "No restaurants where found in the cloud.");
-//				}
-//			}
-//
-//		};
-//	}
 
 	@Override
 	public void onFailToDownLoadRestaurantInfos(String message) {

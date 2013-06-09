@@ -67,7 +67,7 @@ SatelliteListener {
 	 */
 	private DineOnUserActivity This;
 	
-	private ProgressDialog mProgressDialog;
+	protected ProgressDialog mProgressDialog;
 	
 	protected DineOnUser mUser;
 
