@@ -274,25 +274,25 @@ public class RestaurantInfo extends LocatableStorable {
 		return removed;
 	}
 	
-	/**
-	 * Retrieves menu with associated name menuName.
-	 * 
-	 * @param menuName MenuName to search for
-	 * @return Menu with argument name, null otherwise
-	 */
-	private Menu getMenu(String menuName) {
-		if (menuName == null) {
-			return null;
-		}
-
-		for (Menu m : mMenus) {
-			if (m.getName().equals(menuName)) {
-				return m;
-			}
-		}
-		// Not found
-		return null;
-	}
+//	/**
+//	 * Retrieves menu with associated name menuName.
+//	 * 
+//	 * @param menuName MenuName to search for
+//	 * @return Menu with argument name, null otherwise
+//	 */
+//	private Menu getMenu(String menuName) {
+//		if (menuName == null) {
+//			return null;
+//		}
+//
+//		for (Menu m : mMenus) {
+//			if (m.getName().equals(menuName)) {
+//				return m;
+//			}
+//		}
+//		// Not found
+//		return null;
+//	}
 	
 	/**
 	 * @return The restaurant's list of menus
@@ -309,11 +309,7 @@ public class RestaurantInfo extends LocatableStorable {
 	 * @return true if restaurant has Menu already.
 	 */
 	public boolean hasMenu(Menu menu) {
-		if (menu == null) {
-			return false;
-		}
-
-		return getMenu(menu.getName()) != null;
+		return mMenus.contains(menu);
 	}
 
 	/**
@@ -356,68 +352,9 @@ public class RestaurantInfo extends LocatableStorable {
 	 * @return true if menu was removed false other wise.
 	 */
 	public boolean removeMenu(Menu menu) {
-		if (!hasMenu(menu)) {
-			return false;
-		}
-		return mMenus.remove(getMenu(menu.getName()));
+		return mMenus.remove(menu);
 	}
 
-//	/**
-//	 * Creates Restaurant Info from a Parcel.
-//	 * @param source Source to use to build Restaurant Info.
-//	 */
-//	public RestaurantInfo(Parcel source) {
-//		super(source);
-//		mUser = new ParseUser();
-//		mUser.setObjectId(source.readString());
-//		mUser.fetchInBackground(new GetCallback() {
-//			
-//			@Override
-//			public void done(ParseObject o, ParseException e) {
-//				if (e != null) {
-//					Log.e(TAG, "Unable to fetch user");
-//				}
-//			}
-//		});
-//		mName = source.readString();
-//		mAddress = parseAddress(source.readString());
-//		mPhone = source.readString();
-//		mMainImageIndex = source.readInt();
-//		mImageList = new ArrayList<DineOnImage>();
-//		source.readList(mImageList, String.class.getClassLoader());
-//		mMenus = new ArrayList<Menu>();
-//		source.readTypedList(mMenus, Menu.CREATOR);
-//	}
-//	
-//	@Override
-//	public void writeToParcel(Parcel dest, int flags) {
-//		super.writeToParcel(dest, flags);
-//		dest.writeString(mUser.getObjectId());
-//		dest.writeString(mName);
-//		dest.writeString(addressToString(mAddress));
-//		dest.writeString(mPhone);
-//		dest.writeInt(mMainImageIndex);
-//		dest.writeList(mImageList);
-//		dest.writeTypedList(mMenus);
-//	}
-//
-//	/**
-//	 * Parcelable creator object of a RestaurantInfo.
-//	 * Can create a RestaurantInfo from a Parcel.
-//	 */
-//	public static final Parcelable.Creator<RestaurantInfo> CREATOR = 
-//			new Parcelable.Creator<RestaurantInfo>() {
-//
-//		@Override
-//		public RestaurantInfo createFromParcel(Parcel source) {
-//			return new RestaurantInfo(source);
-//		}
-//
-//		@Override
-//		public RestaurantInfo[] newArray(int size) {
-//			return new RestaurantInfo[size];
-//		}
-//	};
 	
 	///////////////////////////////////////////////////////////
 	////  Private helper methods for storing addresses.
