@@ -1,4 +1,4 @@
-package uw.cse.dineon.library;
+		package uw.cse.dineon.library;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +43,7 @@ public class DiningSession extends TimeableStorable {
 	// list of orders made but not completed 
 	private final List<Order> mOrders;
 	// list of unresolved pending request
-	private final List<CustomerRequest> mPendingRequests;
+	private final List<CustomerRequest> mRequests;
 	
 	private final RestaurantInfo mRest;
 
@@ -77,7 +77,7 @@ public class DiningSession extends TimeableStorable {
 		mUsers = new ArrayList<UserInfo>();
 		mUsers.add(uInfo);
 		mOrders = new ArrayList<Order>();
-		mPendingRequests = new ArrayList<CustomerRequest>();
+		mRequests = new ArrayList<CustomerRequest>();
 		mRest = rInfo;
 		mSubTotal = 0;
 	}
@@ -94,7 +94,7 @@ public class DiningSession extends TimeableStorable {
 		mTableID = po.getInt(TABLE_ID);
 		mUsers = ParseUtil.toListOfStorables(UserInfo.class, po.getList(USERS));
 		mOrders = ParseUtil.toListOfStorables(Order.class, po.getList(ORDERS));
-		mPendingRequests = ParseUtil.toListOfStorables(CustomerRequest.class, po.getList(REQUESTS));
+		mRequests = ParseUtil.toListOfStorables(CustomerRequest.class, po.getList(REQUESTS));
 		mRest = new RestaurantInfo(po.getParseObject(RESTAURANT_INFO));
 		
 		mSubTotal = 0;
@@ -113,7 +113,7 @@ public class DiningSession extends TimeableStorable {
 		ParseObject po = super.packObject();
 		po.put(USERS, ParseUtil.toListOfParseObjects(mUsers));
 		po.put(ORDERS, ParseUtil.toListOfParseObjects(mOrders));
-		po.put(REQUESTS, ParseUtil.toListOfParseObjects(mPendingRequests));
+		po.put(REQUESTS, ParseUtil.toListOfParseObjects(mRequests));
 		po.put(RESTAURANT_INFO, this.mRest.packObject());
 		po.put(TABLE_ID, mTableID);
 		return po;
@@ -147,7 +147,7 @@ public class DiningSession extends TimeableStorable {
 	 * @return the requests of the dining session.
 	 */
 	public List<CustomerRequest> getRequests() {
-		return new ArrayList<CustomerRequest>(mPendingRequests);
+		return new ArrayList<CustomerRequest>(mRequests);
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class DiningSession extends TimeableStorable {
 		return mRest;
 	}
 	
-	/**
+	/*	*
 	 * Adds a order to be pending for this session.
 	 * @param order to add.
 	 */
@@ -245,14 +245,21 @@ public class DiningSession extends TimeableStorable {
 	 * @param request request to be added
 	 */
 	public void addRequest(CustomerRequest request) {
-		mPendingRequests.add(request);
+		mRequests.add(request);
+	}
+	
+	public void removeRequest(CustomerRequest request){
+		if (mRequests.contains(request)) {
+			mRequests.remove(request);
+			request.deleteFromCloud();
+		}
 	}
 
 	@Override
 	public void deleteFromCloud() {
 
 		// Delete all the request at this time
-		for (CustomerRequest r: mPendingRequests) {
+		for (CustomerRequest r: mRequests) {
 			r.deleteFromCloud();
 		}
 

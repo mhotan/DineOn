@@ -332,7 +332,6 @@ public class Restaurant extends Storable {
 	 */
 	public void removeCustomerRequest(CustomerRequest oldReq) {
 		mCustomerRequests.remove(oldReq);
-		oldReq.deleteFromCloud();
 	}
 
 	/**
@@ -438,7 +437,16 @@ public class Restaurant extends Storable {
 	 */
 	public void delete(DiningSession session) {
 		mSessions.remove(session);
+		
+		// Remove all references the the customer request to be removed.
+		for (CustomerRequest req: session.getRequests()) {
+			mCustomerRequests.remove(req);
+		}
+		
 		session.deleteFromCloud();
+		
+		// Save the restaurant immediately
+		this.saveInBackGround(null);
 	}
 	
 
