@@ -3,17 +3,19 @@ package uw.cse.dineon.restaurant.active;
 import java.util.List;
 import java.util.Map;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
-
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
+import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.restaurant.R;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -27,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
  * A fragment that shows the details of a particular dining session.
@@ -130,6 +133,7 @@ public class DiningSessionDetailFragment extends Fragment {
 			} else {
 				mOrderHeader.setVisibility(View.VISIBLE);
 			}
+			
 
 			mUserList.setAdapter(mUserAdapter);
 			mOrderList.setAdapter(mOrderAdapter);
@@ -182,7 +186,7 @@ public class DiningSessionDetailFragment extends Fragment {
 	 * Mandatory interface for this fragment.
 	 * @author mhotan 
 	 */
-	public interface DiningSessionDetailListener {
+	public interface DiningSessionDetailListener extends ImageObtainable {
 
 		/**
 		 * Sends a message to user defined.
@@ -199,6 +203,32 @@ public class DiningSessionDetailFragment extends Fragment {
 
 	}
 
+	/**
+	 * Get the pre set image for this user.
+	 * 
+	 * @author mhotan
+	 */
+	private class InitialGetImageCallback implements ImageGetCallback {
+
+		private ImageView mView;
+
+		/**
+		 * prepares callback for placing an image in the view.
+		 * 
+		 * @param view View to place image.
+		 */
+		public InitialGetImageCallback(ImageView view) {
+			mView = view;
+		}
+
+		@Override
+		public void onImageReceived(Exception e, Bitmap b) {
+			if (e == null && mView != null) {
+				mView.setImageBitmap(b);
+			}
+		}
+	}
+	
 	//////////////////////////////////////////////////////
 	//// Adapter to handle the presentation of specific 
 	//// User presentations.
@@ -279,7 +309,13 @@ public class DiningSessionDetailFragment extends Fragment {
 
 				// TODO Download Profile Image.
 				// mProfileImage.setImage blah blah
-
+				
+				DineOnImage image = mUser.getImage();
+				if (image != null) {
+					mListener.onGetImage(image, new InitialGetImageCallback(
+							mProfileImage));
+				}
+				
 				// Set the title of this box to be the user name
 				mUserName.setText(mUser.getName());
 

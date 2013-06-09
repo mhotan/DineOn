@@ -161,9 +161,11 @@ MenuItemDetailListener {
 		startActivity(i);
 	}
 	
-	@Override
-	public void onMakeRequest(String request) {
-		UserInfo ui = new UserInfo(ParseUser.getCurrentUser());
+	/**
+	 * @param request String request description
+	 */
+	public void onRequestMade(String request) {
+		UserInfo ui = DineOnUserApplication.getUserInfo();
 		
 		final CustomerRequest C_REQ = new CustomerRequest(request, ui);
 		
