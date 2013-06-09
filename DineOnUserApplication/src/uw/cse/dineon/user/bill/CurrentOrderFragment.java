@@ -7,11 +7,8 @@ import java.util.Map;
 import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
-import uw.cse.dineon.library.image.DineOnImage;
 import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
-import uw.cse.dineon.library.util.DineOnConstants;
-import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +17,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -76,6 +74,16 @@ public class CurrentOrderFragment extends Fragment {
 		mTax = (TextView) view.findViewById(R.id.value_tax);
 		mTotal = (TextView) view.findViewById(R.id.value_total);
 		mPlaceOrderButton = (Button) view.findViewById(R.id.button_place_order);
+		
+		// Make sure the place order button exist when the order is full
+		mPlaceOrderButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mListener.onCommitPendingOrder();
+			}
+		});
+		
 		return view;
 	}
 
