@@ -50,17 +50,17 @@ LoginFragment.OnLoginListener {
 	public static final String EXTRA_FACEBOOK = "Login with facebook";
 
 	private Context thisCxt;
-	
+
 	/**
 	 * Progress bar dialog for showing user progress.
 	 */
 	private ProgressDialog mProgressDialog;
-	
+
 	/**
 	 * Login to handle user attempts to login.
 	 */
 	private DineOnLoginCallback mLoginCallback;
-	
+
 	////////////////////////////////////////////////////////////////////////
 	/////  Activity specific 
 	////////////////////////////////////////////////////////////////////////
@@ -73,10 +73,18 @@ LoginFragment.OnLoginListener {
 		mLoginCallback = new DineOnLoginCallback();
 		thisCxt = this;
 		Log.d(TAG, "Createing UserLoginActivity after logout");
-
-		
 	}
-	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// Automatic login and entry if user has an active account already.
+		DineOnUser user = DineOnUserApplication.getDineOnUser();
+		if (user != null) {
+			startRestSelectionAct(user);
+		}
+	}
+
 	/**
 	 * This automates the addition of the User Intent.
 	 * Should never be called when mUser is null.
@@ -90,7 +98,7 @@ LoginFragment.OnLoginListener {
 		}
 		super.startActivity(intent);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -100,7 +108,7 @@ LoginFragment.OnLoginListener {
 	////////////////////////////////////////////////////////////////////////
 	/////  Private Helper methods for starting new activities
 	////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Starts Restaurant selection activity with current.
 	 * @param user User to send of the
@@ -120,11 +128,11 @@ LoginFragment.OnLoginListener {
 			this.finish();
 		}
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////
 	/////  Callbacks for the Fragment interface
 	////////////////////////////////////////////////////////////////////////
-	
+
 	// Logging in Via email
 	@Override
 	public void onLogin(String username, String password) {
@@ -164,7 +172,7 @@ LoginFragment.OnLoginListener {
 		// Process the face book application
 		ParseFacebookUtils.logIn(this, REQUEST_LOGIN_FACEBOOK, mLoginCallback);
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////
 	/////  UI Specific methods
 	////////////////////////////////////////////////////////////////////////
@@ -210,7 +218,7 @@ LoginFragment.OnLoginListener {
 			}
 		}).show();
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////
 	/////  Callback for logging in, saving, and dowloading
 	////////////////////////////////////////////////////////////////////////
@@ -282,7 +290,7 @@ LoginFragment.OnLoginListener {
 	private class UserFinder extends GetCallback {
 
 		private final ParseUser mUserToFind;
-		
+
 		/**
 		 * Creates a finder for extracting a User that contains this ParseUser.
 		 * @param user user to find
@@ -290,7 +298,7 @@ LoginFragment.OnLoginListener {
 		public UserFinder(ParseUser user) {
 			mUserToFind = user;
 		}
-		
+
 		/**
 		 * Attempts to find the User associated with this Finder.
 		 */
@@ -303,11 +311,11 @@ LoginFragment.OnLoginListener {
 			query.whereMatchesQuery(DineOnUser.USER_INFO, inner);
 			query.getFirstInBackground(this);
 		}
-		
+
 		@Override
 		public void done(ParseObject object, ParseException e) {
-			
-			
+
+
 			if (e == null) {
 				// We have found the correct object
 				try {

@@ -2,6 +2,9 @@ package uw.cse.dineon.user;
 
 import uw.cse.dineon.library.DiningSession;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -33,11 +36,13 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 	 * The dining session parse object ID of the Dining Session to find.
 	 */
 	private final String mSessionID;
+	
+	private final DiningSessionGetCallback mGetCallback;
 
 	/**
 	 * Message associated with parse exception generated.
 	 */
-	private String parseExceptionMessage;
+	private Exception mException;
 
 //	/**
 //	 * Creates a DiningSession Downloader that retrieves the Dining Session 
@@ -59,6 +64,17 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 //	}
 
 	/**
+	 * DiningSession Callback. 
+	 * @param id Id of dining session to get.
+	 * @param callback Callback to use.
+	 */
+	public DiningSessionDownloader(String id, DiningSessionGetCallback callback) {
+		mSessionID = id;
+		mParseUser = null;
+		mGetCallback = callback;
+	}
+	
+	/**
 	 * Creates a Dining Session Downloader that retrieves the dining session 
 	 * given the Parse object id.
 	 * @param id Object id of the Parse Dining Session
@@ -69,6 +85,7 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 		}
 		mSessionID = id;
 		mParseUser = null;
+		mGetCallback = null;
 	}
 
 	// Background process.
@@ -115,10 +132,10 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 	protected void onProgressUpdate(ParseException... pairs) {
 		ParseException exception = pairs[0];
 		if (exception == null) {
-			parseExceptionMessage = "Unknown Error";
+			mException = new Exception("Unknown Error");
 			return;
 		}
-		parseExceptionMessage = exception.getMessage();
+		mException = exception;
 	}
 	
 	/**
@@ -127,8 +144,16 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 	 */
 	@Override
 	protected void onPostExecute(DiningSession result) {
-		DineOnUserApplication.setCurrentDiningSession(result);
-	
+		if (mException != null) {
+			DineOnUserApplication.setCurrentDiningSession(result);
+		} else {
+			Log.e(TAG, "Error occured " + mException.getMessage());
+		}
+		
+		if (mGetCallback == null) {
+			return;
+		}
+		mGetCallback.done(result, mException);
 		
 //		if (result == null) {
 //			Log.e(TAG, "Unable to download dining session.");
@@ -138,25 +163,19 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 //		}
 //		mCallback.onDownloadedDiningSession(result);
 	}
-
-//	/**
-//	 * Interface used by user application to interact with downloader.
-//	 * @author mtrathjen08
-//	 */
-//	public interface DiningSessionDownLoaderCallback {
-//
-//		/**
-//		 * Notifies caller that the Dining Session request failed.
-//		 * @param message Description of what failed
-//		 */
-//		void onFailToDownLoadDiningSession(String message);
-//
-//		/**
-//		 * Notifies the caller that the Dining Session was successfully retrieved.
-//		 * @param session Dining Session retrieved from Parse
-//		 */
-//		void onDownloadedDiningSession(DiningSession session);
-//
-//	} 
-
+	
+	/**
+	 * Interface for getting Dining sessionss.
+	 * @author mhotan
+	 */
+	public interface DiningSessionGetCallback {
+		
+		/**
+		 * Called on completion of dining session retrieval.
+		 * @param session Session retrieved
+		 * @param e Exception if error occured else null
+		 */
+		void done(DiningSession session, Exception e);
+		
+	}
 }

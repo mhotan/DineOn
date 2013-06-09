@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uw.cse.dineon.user"
+<manifest package="uw.cse.dineon.user"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -14,9 +13,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" >
+    </uses-permission>
 
     <application
         android:name="DineOnUserApplication"
@@ -102,6 +102,16 @@
         </activity>
         <activity android:name=".general.ProfileEditActivity" >
         </activity>
+        <service android:name="DineOnUserService"></service>
+        <receiver android:name="DineOnUserReceiver">
+            <intent-filter>
+                <action android:name="uw.cse.dineon.user.CONFIRM_DINING_SESSION"/>
+                <action android:name="uw.cse.dineon.user.CONFIRM_ORDER"/>
+                <action android:name="uw.cse.dineon.user.CONFIRM_CUSTOMER_REQUEST"/>
+                <action android:name="uw.cse.dineon.user.CONFIRM_RESERVATION"/>
+                <action android:name="uw.cse.dineon.user.CHANGE_RESTAURANT_INFO"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

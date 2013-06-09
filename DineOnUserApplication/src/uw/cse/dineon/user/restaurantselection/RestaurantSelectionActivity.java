@@ -355,6 +355,10 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 					// Clear all the old restaurants because we got something new.
 					mRestaurants.clear();
 
+					if (mUser.getDiningSession() != null) {
+						mRestaurants.add(mUser.getDiningSession().getRestaurantInfo());
+					}
+					
 					// Each parse object represents one restaurant
 					// Populate our list of restaurants with 
 					for (ParseObject po: objects) {
