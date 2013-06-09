@@ -385,6 +385,11 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
 		// Clear all the old restaurants because we got something new.
 		mRestaurants.clear();
+		
+		// Put the restaurant with a current dining session at top of the list
+		if (mUser.getDiningSession() != null) {
+			mRestaurants.add(mUser.getDiningSession().getRestaurantInfo());
+		}
 
 		// Each parse object represents one restaurant
 		// Populate our list of restaurants with 
