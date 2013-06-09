@@ -315,6 +315,7 @@ public class SubMenuFragment extends ListFragment {
 				mMoreInfoButton.setOnClickListener(this);
 
 				mSpecialInstructions.addTextChangedListener(this);
+				mSpecialInstructions.setOnClickListener(this);
 				mTop.setOnClickListener(this);
 			}
 
@@ -322,7 +323,12 @@ public class SubMenuFragment extends ListFragment {
 			public void onClick(View v) {
 				// If the user clicks on the name or the hint
 				// Expand the view exposing more instructions.
-				if (v == mIncrementButton) {
+				
+				if(v == this.mSpecialInstructions){
+					this.mSpecialInstructions.setFocusable(true);
+					this.mSpecialInstructions.requestFocus();
+				}
+				else if (v == mIncrementButton) {
 					incrementQty();
 				} else if (v == mDecrementButton) {
 					decrementQty();
