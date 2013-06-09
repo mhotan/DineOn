@@ -25,7 +25,7 @@ import com.parse.ParseUser;
 public class OrderTest extends AndroidTestCase {
 
 	UserInfo testUInfo;
-	List<CurrentOrderItem> testItems;
+	List<MenuItem> testItems;
 	MenuItem testItem;
 	Order testOrder;
 	ParseUser testUser;
@@ -40,12 +40,12 @@ public class OrderTest extends AndroidTestCase {
 		
 		testUInfo = new UserInfo(testUser);
 		testUInfo.setObjId("tui");
-		testItems = new ArrayList<CurrentOrderItem>();
+		testItems = new ArrayList<MenuItem>();
 		testItem = new MenuItem(24, 4.5, "Root Beer Float", "Ice cream and root beer");
 		testItem.setObjId("ti");
 		CurrentOrderItem mCOI = new CurrentOrderItem(testItem);
 		mCOI.setObjId("coi");
-		testItems.add(mCOI);
+		testItems.add(testItem);
 		testOrder = new Order(32, testUInfo, testItems);
 		testOrder.setObjId("to");
 	}
@@ -74,7 +74,7 @@ public class OrderTest extends AndroidTestCase {
 	 * when there aren't any menu items.
 	 */
 	public void testGetNoMenuItems() {
-		testOrder = new Order(32, testUInfo, new ArrayList<CurrentOrderItem>());
+		testOrder = new Order(32, testUInfo, new ArrayList<MenuItem>());
 		assertEquals(new ArrayList<CurrentOrderItem>(), testOrder.getMenuItems());
 	}
 	

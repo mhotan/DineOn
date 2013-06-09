@@ -6,7 +6,7 @@ import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.image.DineOnImage;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
@@ -254,7 +254,7 @@ public class OrderDetailFragment extends Fragment implements OnClickListener {
 			// TODO Download the Image Asyncronously
 
 			menuItemTitle.setText(toShow.getMenuItem().getTitle());
-			menuItemDesc.setText(idLabel + toShow.getMenuItem().getProductID());
+			menuItemDesc.setText(idLabel + toShow.getMenuItem().getObjId());
 			menuItemPrice.setText(qtyLabel + qty);
 
 			return view;

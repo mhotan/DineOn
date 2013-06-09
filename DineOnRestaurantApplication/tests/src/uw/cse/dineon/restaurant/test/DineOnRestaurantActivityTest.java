@@ -134,8 +134,7 @@ ActivityInstrumentationTestCase2<RestauarantMainActivity> {
 	public void testOrderRequested() { 
 		Order order = null;
 		try {
-			List<CurrentOrderItem> list = new ArrayList<CurrentOrderItem>();
-			order = new Order(10, mDineOnUser.getUserInfo(), list);
+			order = new Order(10, mDineOnUser.getUserInfo());
 			order.saveOnCurrentThread();
 			mActivity.onOrderRequest(order, testSession.getObjId());
 			order.deleteFromCloud();

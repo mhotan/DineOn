@@ -1,18 +1,14 @@
 package uw.cse.dineon.user;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.CustomerRequest;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
-import uw.cse.dineon.library.MenuItem;
-import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Reservation;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.android.DineOnStandardActivity;
@@ -23,11 +19,9 @@ import uw.cse.dineon.library.util.Utility;
 import uw.cse.dineon.user.UserSatellite.SatelliteListener;
 import uw.cse.dineon.user.bill.CurrentBillActivity;
 import uw.cse.dineon.user.bill.CurrentOrderActivity;
-import uw.cse.dineon.user.bill.CurrentOrderFragment.OrderUpdateListener;
 import uw.cse.dineon.user.general.ProfileActivity;
 import uw.cse.dineon.user.login.UserLoginActivity;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
-import uw.cse.dineon.user.restaurant.home.SubMenuFragment;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
@@ -57,14 +51,12 @@ import com.parse.SaveCallback;
  * @author mhotan
  */
 public class DineOnUserActivity extends DineOnStandardActivity implements 
-SatelliteListener,
-SubMenuFragment.MenuItemListListener, /* manipulation of order from sub menu */
-OrderUpdateListener /* manipulation of list from the current order activity */ { 
+SatelliteListener { 
+//OrderUpdateListener /* manipulation of list from the current order activity */ {
+//SubMenuFragment.MenuItemListListener /* manipulation of order from sub menu */  
 
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
 	
-	private static final Long MAX_RESPONSE_TIME = (long) 30000;
-
 	/**
 	 * Satellite for communication.
 	 */
@@ -76,11 +68,8 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	private DineOnUserActivity This;
 	
 	private ProgressDialog mProgressDialog;
-
-//	/**
-//	 * Location Listener for location based services.
-//	 */
-//	private UserLocationListener mLocationListener;
+	
+	protected DineOnUser mUser;
 
 	/**
 	 * Set this value to the current dining user.
@@ -93,7 +82,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		This = this;
 
 		mSat = new UserSatellite();
-		DineOnUser mUser = DineOnUserApplication.getDineOnUser();
+		mUser = DineOnUserApplication.getDineOnUser();
 		if (mUser == null) {
 			Utility.getBackToLoginAlertDialog(this, 
 					"Unable to find your information", UserLoginActivity.class).show();
@@ -210,7 +199,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 							data.getString(DineOnConstants.KEY_RESTAURANT));
 					
 					// Add a timeout to dialog
-					timerDelayRemoveDialog(MAX_RESPONSE_TIME);
+					timerDelayRemoveDialog(DineOnConstants.MAX_RESPONSE_TIME);
 				}
 
 			} catch (JSONException e) {
@@ -256,6 +245,15 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		b.setMessage(message);
 		b.setCancelable(true);
 		b.show();
+	}
+	
+	/**
+	 * Postpones an action.
+	 * @param time millisecond time until runner is called
+	 * @param runner Runnable instance to execute with allotted time left
+	 */
+	public void timerDelayRemoveDialog(long time, Runnable runner) {
+		new Handler().postDelayed(runner, time);
 	}
 	
 	/**
@@ -375,10 +373,14 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			disableMenuItem(menu, R.id.option_check_in);
 			
 			// Should be able to view any pending orders.
-			enableMenuItem(menu, R.id.option_view_order);
-			
+			if (mUser.hasPendingOrder()) {
+				enableMenuItem(menu, R.id.option_view_order);
+			} else {
+				disableMenuItem(menu, R.id.option_view_order);
+			}
+				
 			// If there is an order to bill
-			if (DineOnUserApplication.getCurrentDiningSession().getOrders().size() > 0) {
+			if (mUser.hasPendingOrder() && mUser.getDiningSession().hasOrders()) {
 				enableMenuItem(menu, R.id.option_bill);
 			} else {
 				disableMenuItem(menu, R.id.option_bill);
@@ -387,7 +389,7 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 			// There is a dining session therefore 
 			if (searchView != null) {
 				searchView.setEnabled(false);
-				searchView.setVisibility(View.INVISIBLE);
+				searchView.setVisibility(View.GONE);
 			}
 		} 
 		else { // If not checked in
@@ -532,19 +534,33 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 	@Override
 	public void onRestaurantInfoChanged(RestaurantInfo restaurant) {
 		// TODO Auto-generated method stub
-		Toast.makeText(this, "onRestaurantInfoChanged", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Restaurant Info Changed", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void onConfirmOrder(DiningSession ds, String orderId) {
-		Toast.makeText(this, "onConfirmOrder", Toast.LENGTH_SHORT).show();
-//		DineOnUserApplication.setCurrentDiningSession(ds);
+		Toast.makeText(this, "Order Confirmed", Toast.LENGTH_SHORT).show();
+		
+		// We have to chech that the order id of the order
+		// we are currently possession of as our pending order 
+		// is the same as the order returned
+		if (mUser.getPendingOrder() == null) {
+			Log.e(TAG, "Local pending order is null but still got an order confirmation");
+			return;
+		} 
+		if (!mUser.getPendingOrder().getObjId().equals(orderId)) {
+			Log.e(TAG, "Local pending order object ID does not match confirmed id.");
+			return;
+		} 
+		
+		// Successfully retrieved
+		DineOnUserApplication.setCurrentDiningSession(ds);
 	}
 
 	@Override
 	public void onConfirmCustomerRequest(DiningSession ds, String requestID) {
 		// TODO implement
-		Toast.makeText(this, "onConfirmCustomerRequest", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Your Request was received", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -577,68 +593,68 @@ OrderUpdateListener /* manipulation of list from the current order activity */ {
 		DineOnUserApplication.setCurrentDiningSession(null);
 	}
 
-	@Override
-	public void onMenuItemFocusedOn(uw.cse.dineon.library.MenuItem menuItem) {
-		// TODO Auto-generated method stub
+//	@Override
+//	public void onMenuItemFocusedOn(uw.cse.dineon.library.MenuItem menuItem) {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	@Override
+//	public void onViewCurrentBill() {
+//		// TODO Auto-generated method stub
+//	}
+//
+//	@Override
+//	public RestaurantInfo getCurrentRestaurant() {
+//		return DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo();
+//	}
 
-	}
+//	@Override
+//	public void onPlaceOrder(Order order) {
+//		mSat.requestOrder(DineOnUserApplication.getCurrentDiningSession(), 
+//				order, 
+//				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
+//		DineOnUserApplication.clearCurrentOrder();
+//		Toast.makeText(this, "Order Sent!", Toast.LENGTH_SHORT).show();
+//	}
 
-	@Override
-	public void onViewCurrentBill() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public RestaurantInfo getCurrentRestaurant() {
-		return DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo();
-	}
-
-	@Override
-	public void onPlaceOrder(Order order) {
-		mSat.requestOrder(DineOnUserApplication.getCurrentDiningSession(), 
-				order, 
-				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
-		DineOnUserApplication.clearCurrentOrder();
-		Toast.makeText(this, "Order Sent!", Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
-	public void onIncrementItemOrder(MenuItem item) {
-		DineOnUserApplication.incrementItemInCurrentOrder(item);
-	}
-
-	@Override
-	public void onDecrementItemOrder(MenuItem item) {
-		DineOnUserApplication.decrementItemInCurrentOrder(item);
-	}
-
-	@Override
-	public void onRemoveItemFromOrder(MenuItem item) {
-		DineOnUserApplication.removeItemInCurrentOrder(item);
-	}
-
-	@Override
-	public void onMenuItemIncremented(MenuItem item) {
-		DineOnUserApplication.incrementItemInCurrentOrder(item);
-	}
-
-	@Override
-	public void onMenuItemDecremented(MenuItem item) {
-		DineOnUserApplication.decrementItemInCurrentOrder(item);
-	}
-
-	@Override
-	public HashMap<MenuItem, CurrentOrderItem> getOrder() {
-		return DineOnUserApplication.getCurrentOrder();
-	}
-
-	@Override
-	public void resetCurrentOrder() {
-		DineOnUserApplication.clearCurrentOrder();
-	}
-
-	@Override
-	public void doneWithOrder() {
-		// TODO Auto-generated method stub
-	}
+//	@Override
+//	public void onIncrementItemOrder(MenuItem item) {
+//		DineOnUserApplication.incrementItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public void onDecrementItemOrder(MenuItem item) {
+//		DineOnUserApplication.decrementItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public void onRemoveItemFromOrder(MenuItem item) {
+//		DineOnUserApplication.removeItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public void onMenuItemIncremented(MenuItem item) {
+//		DineOnUserApplication.incrementItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public void onMenuItemDecremented(MenuItem item) {
+//		DineOnUserApplication.decrementItemInCurrentOrder(item);
+//	}
+//
+//	@Override
+//	public HashMap<MenuItem, CurrentOrderItem> getOrder() {
+//		return DineOnUserApplication.getCurrentOrder();
+//	}
+//
+//	@Override
+//	public void resetCurrentOrder() {
+//		DineOnUserApplication.clearCurrentOrder();
+//	}
+//
+//	@Override
+//	public void doneWithOrder() {
+//		// TODO Auto-generated method stub
+//	}
 }

@@ -10,7 +10,6 @@ import uw.cse.dineon.user.R;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -248,7 +247,7 @@ public class ProfileActivity extends DineOnUserActivity implements
 		@Override
 		protected void onPostExecute(DineOnImage result) {
 			if (result != null) {
-				addImageToCache(result, mBitmap);
+				addToCache(result.getObjId(), result.getLastUpdatedTime(), mBitmap);
 			} else {
 				String message = getResources().getString(
 						R.string.message_unable_get_image);

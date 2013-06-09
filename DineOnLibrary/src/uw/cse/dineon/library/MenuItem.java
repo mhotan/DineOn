@@ -78,20 +78,18 @@ public class MenuItem extends Storable {
 		return mImage;
 	}
 	
-	/**
-	 * @return the productID
-	 */
-	public int getProductID() {
-		return mProductID;
-	}
+//	/**
+//	 * @return the productID
+//	 */
+//	public String getProductID() {
+//		return mProductID;
+//	}
 
 	/**
 	 * @param productID the productID to set
 	 */
 	public void setProductID(int productID) {
-		if(productID > -1) {	// or some other arbitrary value
-			this.mProductID = productID;			
-		}
+		this.mProductID = productID;
 	}
 
 	/**

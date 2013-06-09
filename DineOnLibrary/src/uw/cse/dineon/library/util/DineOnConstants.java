@@ -1,7 +1,9 @@
 package uw.cse.dineon.library.util;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
+
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 
@@ -48,6 +50,8 @@ public final class DineOnConstants {
 	public static final int REQUEST_CHOOSE_PHOTO = 0x1 << 4;
 	// some change
 
+	public static final double CURRENCY_EPSILON = .01; // One penny
+	
 	/**
 	 * Images stored on the parse cloud must maintain a maximum size.
 	 * Images must be able to be viewed in both orientations.  This static constant
@@ -58,7 +62,7 @@ public final class DineOnConstants {
 	 * For unskewed image with height h and width w
 	 * w <= LONGEST_IMAGE_DIMENSION && h <= LONGEST_IMAGE_DIMENSION
 	 */
-	public static final int LONGEST_IMAGE_DIMENSION = 600;
+	public static final int LONGEST_IMAGE_DIMENSION = 400;
 	
 	/**
 	 * This can be used as a generalized key for Bundles.
@@ -95,6 +99,8 @@ public final class DineOnConstants {
 	public static final String KEY_USER = "USER";
 	
 	public static final String KEY_DININGSESSION = "DININGSESSION";
+	
+	public static final Long MAX_RESPONSE_TIME = (long) 30000;
 	
 	/**
 	 * Tax for determining price of orders.
@@ -187,8 +193,7 @@ public final class DineOnConstants {
 	 * @return Date format to use.
 	 */
 	public static DateFormat getCurrentDateFormat() { 
-		return DateFormat.getDateTimeInstance(
-				DateFormat.FULL, DateFormat.FULL, Locale.getDefault());
+		return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
 	}
 	
 }

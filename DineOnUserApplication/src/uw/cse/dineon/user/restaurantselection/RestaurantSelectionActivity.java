@@ -292,10 +292,10 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 		query.findInBackground(getFindCallback(message));
 	}
 
-	@Override
-	public RestaurantInfo getCurrentRestaurant() {
-		return currentRestaurant;
-	}
+//	@Override
+//	public RestaurantInfo getCurrentRestaurant() {
+//		return currentRestaurant;
+//	}
 
 	@Override
 	public List<RestaurantInfo> getRestaurants() {

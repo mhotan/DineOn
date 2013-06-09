@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
 import uw.cse.dineon.library.Storable;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -130,8 +129,9 @@ public class DineOnImage extends Storable {
 	 * Attempts to get the image asynchronously.  Returns results through callback.
 	 * @param callback Callback to return a result to
 	 */
-	void getImageBitmap(final ImageGetCallback callback) {
+	public void getImageBitmap(final ImageGetCallback callback) {
 		if (!mImgFile.isDataAvailable()) { // data is not available
+			// Download the image via a network call.
 			mImgFile.getDataInBackground(new GetDataCallback() {
 
 				@Override
