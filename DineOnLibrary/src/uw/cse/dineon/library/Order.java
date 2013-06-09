@@ -80,8 +80,7 @@ public class Order extends TimeableStorable {
 		for (int i = 0; i < items.size(); ++i) {
 			mMenuItems.put(items.get(i), quantities.get(i));
 		}
-	}
-	
+	}	
 
 	/**
 	 * Packs this Order into a ParseObject to be stored.
@@ -112,9 +111,9 @@ public class Order extends TimeableStorable {
 	 * determined by qty.  if qty is non positive then the item is removed.
 	 * Other then that the quantity is set appropiately.
 	 * @param item Item whose quantity will change
-	 * @param qty Quantity to set to
+	 * @param qty Quantity to set to, if non positive menu item is removed.
 	 */
-	void setItemQuantity(MenuItem item, int qty) {
+	public void setItemQuantity(MenuItem item, int qty) {
 		if (qty <= 0) {
 			// Remove from the order
 			mMenuItems.remove(item);
@@ -128,7 +127,7 @@ public class Order extends TimeableStorable {
 	/**
 	 * Retrieve the quantity of the specific menu item.
 	 * @param item item to get quantity for
-	 * @return quantity for this Menu item.
+	 * @return quantity for this Menu item. 0 for items that have not existed.
 	 */
 	public int getQuantity(MenuItem item) {
 		if (!mMenuItems.containsKey(item)) {

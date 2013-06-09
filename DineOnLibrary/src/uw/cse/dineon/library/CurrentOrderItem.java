@@ -31,7 +31,7 @@ public class CurrentOrderItem extends Storable {
 		if(menuItem != null) {
 			this.mMenuItem = menuItem;			
 		} else {
-			this.mMenuItem = new MenuItem("0", 1, "Name", "Description");
+			this.mMenuItem = new MenuItem(0, 1, "Name", "Description");
 		}
 		
 		this.mQuantity = 1;

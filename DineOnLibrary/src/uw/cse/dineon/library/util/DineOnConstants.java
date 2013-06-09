@@ -100,6 +100,8 @@ public final class DineOnConstants {
 	
 	public static final String KEY_DININGSESSION = "DININGSESSION";
 	
+	public static final Long MAX_RESPONSE_TIME = (long) 30000;
+	
 	/**
 	 * Tax for determining price of orders.
 	 */

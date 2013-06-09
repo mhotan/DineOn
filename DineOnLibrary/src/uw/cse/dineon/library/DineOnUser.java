@@ -11,6 +11,7 @@ import android.util.Log;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 /**
  * Basic User class.
@@ -193,6 +194,22 @@ public class DineOnUser extends Storable {
 	}
 	
 	/**
+	 * Return the pending order.
+	 * @return null if no pending order exists, instance of pending order otherwise
+	 */
+	public Order getPendingOrder() {
+		return mPendingOrder;
+	}
+	
+	/**
+	 * Prepares order to be placed.
+	 * @param callback Callback to notify user that order is ready.
+	 */
+	public void finalizePendingOrder(SaveCallback callback) {
+		mPendingOrder.saveInBackGround(callback);
+	}
+	
+	/**
 	 * @return true if there is a non empty pending order
 	 */
 	public boolean hasPendingOrder() {
@@ -212,8 +229,21 @@ public class DineOnUser extends Storable {
 			mPendingOrder = null;
 		} else {
 			// Create an empty order to add to later
-			mPendingOrder = new Order(mDiningSession.getTableID(), mUserInfo);
+			mPendingOrder = getBlankOrder();
 		} 
+	}
+	
+	/**
+	 * When a user has a current dining session the user is able to
+	 * create a blank Order to construct menu items.
+	 * @return null if User is not apart of a dining session, 
+	 * 	Blank order for the user to use otherwise.
+	 */
+	private Order getBlankOrder() {
+		if (mDiningSession == null) {
+			return null;
+		}
+		return new Order(mDiningSession.getTableID(), mUserInfo); 
 	}
 
 	/**
@@ -226,6 +256,10 @@ public class DineOnUser extends Storable {
 	 * @return true if pending order exist false otherwise
 	 */
 	public boolean setMenuItemToOrder(MenuItem item, int qty) {
+		if (mDiningSession != null && mPendingOrder == null) {
+			Log.e(TAG, "Pending order and dining session sync error");
+			mPendingOrder = getBlankOrder();
+		}
 		if (mPendingOrder == null) {
 			Log.e(TAG, "Attempting to add menu item " + item + " while not in dining session");
 			return false;

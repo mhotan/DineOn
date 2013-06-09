@@ -84,12 +84,7 @@ public class Menu extends Storable {
 	 * @return true if an item with the same product ID exists
 	 */
 	public boolean hasMenuItem(MenuItem nItem) {
-		for (MenuItem item: mItems) {
-			if (item.getProductID() == nItem.getProductID()) {
-				return true;
-			}
-		}
-		return false;
+		return mItems.contains(nItem);
 	}
 
 	/**

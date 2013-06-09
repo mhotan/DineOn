@@ -120,6 +120,14 @@ public class DiningSession extends TimeableStorable {
 	}
 
 	/**
+	 * Return if this dining session has orders.
+	 * @return if dining session has orders.
+	 */
+	public boolean hasOrders() {
+		return !mOrders.isEmpty();
+	}
+	
+	/**
 	 * Pending orders are defined as orders that have been placed
 	 * but not received by the customer.
 	 * @return A list of current pending orders
