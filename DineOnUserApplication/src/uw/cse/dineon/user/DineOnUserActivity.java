@@ -335,7 +335,7 @@ SatelliteListener {
 		
 		// clean up user data
 		DineOnUserApplication.setCurrentDiningSession(null);
-		DineOnUserApplication.clearCurrentOrder();
+//		DineOnUserApplication.clearCurrentOrder();
 		DineOnUserApplication.clearResaurantList();
 		DineOnUserApplication.setRestaurantOfInterest(null);
 		DineOnUserApplication.setDineOnUser(null);
