@@ -181,6 +181,9 @@ public class RestaurantInfo extends LocatableStorable {
 	 * @return hours of operation for restaurant
 	 */
 	public String getHours() {
+		if (mHours.equals(UNDETERMINED)) {
+			return "";
+		}
 		return mHours;
 	}
 
@@ -188,6 +191,7 @@ public class RestaurantInfo extends LocatableStorable {
 	 * @param hours of operation to set
 	 */
 	public void setHours(String hours) {
+		
 		this.mHours = hours;
 	}
 	
@@ -195,6 +199,9 @@ public class RestaurantInfo extends LocatableStorable {
 	 * @return phone number of Restaurant
 	 */
 	public String getPhone() {
+		if (mPhone.equals(UNDETERMINED)) {
+			return "";
+		}
 		return mPhone;
 	}
 

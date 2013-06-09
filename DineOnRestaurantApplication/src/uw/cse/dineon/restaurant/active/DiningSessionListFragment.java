@@ -7,8 +7,8 @@ import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.animation.ExpandAnimation;
 import uw.cse.dineon.library.image.DineOnImage;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
 import uw.cse.dineon.restaurant.R;
 import android.app.Activity;
 import android.content.Context;
@@ -28,9 +28,8 @@ import android.widget.TextView;
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
- * For displaying current restaurant customers.
- * TODO Improve and complete
- * @author mhotan
+ * This View presents a list of all the current dining sessions for this restaurant.
+ * @author mhotan, glee23
  * @author blasv
  */
 public class DiningSessionListFragment extends ListFragment {
@@ -42,8 +41,6 @@ public class DiningSessionListFragment extends ListFragment {
 
 	//An activity that implements the required listener functions
 	private DiningSessionListListener mListener;
-
-	private static final String SESSIONS = TAG + "_sessions";
 
 	private DiningSessionListAdapter mAdapter;
 

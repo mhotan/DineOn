@@ -6,7 +6,7 @@ import java.util.List;
 import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.animation.ExpandAnimation;
 import uw.cse.dineon.library.image.DineOnImage;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.user.R;
 import android.app.Activity;

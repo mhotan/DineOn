@@ -369,7 +369,7 @@ MenuItemsFragment.MenuItemListener {
 					mRestInfoFragment.addImage(mBitmap);
 				}
 				// Success add image to the cache
-				addImageToCache(result, mBitmap);
+				addToCache(result.getObjId(), result.getLastUpdatedTime(), mBitmap);
 			} else {
 				Toast.makeText(This, 
 						getString(R.string.unable_save_image), Toast.LENGTH_SHORT)
@@ -603,7 +603,7 @@ MenuItemsFragment.MenuItemListener {
 		@Override
 		protected void onPostExecute(DineOnImage result) {
 			if (result != null) {
-				addImageToCache(result, mBitmap);
+				addToCache(result.getObjId(), result.getLastUpdatedTime(), mBitmap);
 			} else {
 				String message = getResources().getString(
 						R.string.message_unable_get_image);

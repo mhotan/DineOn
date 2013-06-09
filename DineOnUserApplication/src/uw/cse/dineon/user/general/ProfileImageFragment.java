@@ -2,7 +2,7 @@ package uw.cse.dineon.user.general;
 
 import uw.cse.dineon.library.UserInfo;
 import uw.cse.dineon.library.image.DineOnImage;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.general.ProfileEditFragment.InfoChangeListener;

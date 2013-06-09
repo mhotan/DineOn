@@ -23,17 +23,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 
 /**
- * The main activity where the restaurant.
+ * The is the main activity that all other activities branch off from or contain 
+ * relevant fragments.  This activity manages the viewing of the information fragment
+ * along with all the menus of the restaurant.  This Activity also handles all the call backs for those activities
  * @author mhotan
  */
 public class RestaurantHomeActivity extends DineOnUserActivity
 // Implement all the fragments callbacks
-implements SubMenuFragment.MenuItemListListener, 
+implements RestaurantRetrievable, SubMenuFragment.MenuItemListListener, 
 RestaurantInfoFragment.RestaurantInfoListener,
-RestaurantHomeMainFragment.ReferenceDataListener,
 MenuItemDetailListener {
 
 	private final String TAG = this.getClass().getSimpleName();
@@ -144,12 +146,6 @@ MenuItemDetailListener {
 	}
 
 	@Override
-	public void onViewCurrentBill() {
-		// TODO Take to Current Bill screen
-
-	}
-
-	@Override
 	public RestaurantInfo getCurrentRestaurant() {
 		return this.mRestaurant;
 	}
@@ -166,12 +162,9 @@ MenuItemDetailListener {
 		startActivity(i);
 	}
 	
-	/**
-	 * @param request String request description
-	 */
-	public void onRequestMade(String request) {
+	@Override
+	public void onMakeRequest(String request) {
 		UserInfo ui = DineOnUserApplication.getUserInfo();
-		
 		
 		final CustomerRequest C_REQ = new CustomerRequest(request, ui);
 		
@@ -188,5 +181,13 @@ MenuItemDetailListener {
 			}
 		} );
 				
+	}
+
+	@Override
+	public void onMenuItemAddToOrder(MenuItem item, int quantity) {
+		if (!mUser.setMenuItemToOrder(item, quantity)) {
+			Toast.makeText(this, "Not in a dining session", Toast.LENGTH_SHORT).show();
+		}
+		invalidateOptionsMenu();
 	}
 }

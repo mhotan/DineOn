@@ -93,6 +93,8 @@
     <string name="string_format_hours">Hours: %1$s</string>
     <string name="string_format_address">Address: %1$s</string>
     <string name="string_format_phone">Phone: %1$s</string>
+    <string name="string_format_remove_item_title">Remove %1$s?</string>
+    <string name="string_format_remove_item_message">Are you sure you want to remove %1$s from this current order?</string>
     <string name="string_log_out_alert">Are you sure you want to quit?</string>
     <string name="send_request">Send Request</string>
 
@@ -104,6 +106,7 @@
     </string-array>
 
     <string name="bill_summary">Bill Summary</string>
+    <string name="content_description_add_to_order">Add this item to current pending order.</string>
     <string name="message_unable_get_image">Sorry we were not able to get the image</string>
     <string name="saving">Saving&#8230;</string>
     <string name="saving_new_image">Give me a little bit while we save your changes.</string>
@@ -111,5 +114,9 @@
     <string name="dialog_message_getimage_for_menuitem">Want to put your own image for this menu item?</string>
     <string name="dialog_option_take_picture">Take Pic</string>
     <string name="dialog_option_choose_picture">Choose Pic</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="coming_soon">Coming Soon...</string>
+    <string name="who_are_you_paying_for_question">Are you treating someone else?</string>
 
 </resources>

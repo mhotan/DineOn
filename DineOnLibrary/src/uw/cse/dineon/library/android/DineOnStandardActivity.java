@@ -2,13 +2,14 @@ package uw.cse.dineon.library.android;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Date;
 
 import uw.cse.dineon.library.image.DineOnImage;
-import uw.cse.dineon.library.image.ImageCache;
-import uw.cse.dineon.library.image.ImageCache.ImageGetCallback;
+import uw.cse.dineon.library.image.ImageGetCallback;
 import uw.cse.dineon.library.image.ImageIO;
 import uw.cse.dineon.library.image.ImageObtainable;
 import uw.cse.dineon.library.image.ImageObtainer;
+import uw.cse.dineon.library.image.PersistentImageCache;
 import uw.cse.dineon.library.util.DineOnConstants;
 import android.content.Context;
 import android.content.Intent;
@@ -54,7 +55,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 	 * Protected reference for ease of use.
 	 * Don't be dumbass a null it out.
 	 */
-	private ImageCache mPersImageCache;
+	private PersistentImageCache mPersImageCache;
 
 	/**
 	 * Temporary file for storing image.
@@ -90,7 +91,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 		// Initialize the memory cache
 		final int MAXMEMORY = (int) (Runtime.getRuntime().maxMemory() / 1024);
 		// lets only use 1 / 8 the memory available
-		final int CACHESIZE = MAXMEMORY / 8;
+		final int CACHESIZE = MAXMEMORY / 6;
 
 		mImageMemCache = new LruCache<String, Bitmap>(CACHESIZE) {
 			@Override
@@ -101,7 +102,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 			}
 		};
 
-		mPersImageCache = new ImageCache(this);
+		mPersImageCache = PersistentImageCache.getInstance(getApplicationContext());
 		mPersImageCache.open();
 
 		this.mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -219,6 +220,10 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 
 	@Override
 	public void onGetImage(DineOnImage image, ImageGetCallback callback) {
+		// This is a callback for this activity to be able to return images
+		// to the user via a callback.
+		// IE fragments will call onGetImage to return the image and further process
+		// it via the callback
 		getImage(image, callback);
 	}
 
@@ -233,19 +238,59 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 		// Attempt to create a gosh darn file to write images to
 		return new File(Environment.getExternalStorageDirectory(), "temp.jpg");
 	}
-
+	
 	/**
-	 * Memory cache to upload image.
-	 * @param image image to get from memory cache
-	 * @return Bitmap associated with this image. 
+	 * Add the current image to local cache.  This is a write through process 
+	 * except long writes are done in a seperate thread.
+	 * @param imageId Image id number to associate bitmap to
+	 * @param updateTime Time the image was updated in the cloud
+	 * @param bitmap Bitmap image to add to cache
 	 */
-	protected Bitmap getBitmapFromMemCache(DineOnImage image) {
+	protected void addToCache(String imageId, Date updateTime, Bitmap bitmap) {
+		if (bitmap == null) {
+			Log.e(tag, "Can't have null image in the cache!");
+			return;
+		}
+		if (imageId == null) {
+			Log.e(tag, "Image Id number cannot to be null.  No add proceeded");
+			return;
+		}
+		// Adding to memory is fast
+		mImageMemCache.put(imageId, bitmap);
+		// Adding to the persistent cache is slow so do it in the
+		// background to enhance the user experience.
+		mPersImageCache.addInBackground(imageId, updateTime, bitmap);
+	}
+	
+	/**
+	 * Attempt to get the image from the Memory Cache.
+	 * @param image image to get from memory cache
+	 * @return Bitmap associated with this image. null if no image exists
+	 */
+	private Bitmap getBitmapFromMemCache(DineOnImage image) {
 		String id = image.getObjId();
 		return mImageMemCache.get(id);
 	}
 
 	/**
-	 * Attempts to get the image as fast as possible.
+	 * Attempt to get the Bitmap image from the persistent cache.
+	 * @param image Image to retrieve.
+	 * @return Bitmap Bitmap of the DineOnImage.
+	 */
+	private Bitmap getBitmapFromPersistentCache(DineOnImage image) {
+		String id = image.getObjId();
+		return mPersImageCache.get(id, image.getLastUpdatedTime());
+	} 
+	
+	/**
+	 * Attempts to get the image.
+	 * This retrieval process goes through a multiple levels of local caching.
+	 * If no recent local copy is available it will continue to make a network 
+	 * call to attempt and retrieve the image.
+	 * 
+	 * Note:
+	 * If the callback is null the image is retrieved and added to the cache if needed.
+	 * @requires the image is not null
 	 * @param image image to get.
 	 * @param callback Callback to get back
 	 */
@@ -265,20 +310,27 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 			callback.onImageReceived(null, ret);
 			return;
 		}
+		Log.d(tag, "LRU Memory Cache miss for " + image);
 
-		Log.w(tag, "Cache miss for image " + image.getObjId());
-
-		// Check in SQL database or network
-		mPersImageCache.getImageFromCache(image, new ImageGetCallback() {
-
+		ret = getBitmapFromPersistentCache(image);
+		if (ret != null) {
+			callback.onImageReceived(null, ret);
+			return;
+		}
+		Log.d(tag, "LRU Persistent Cache miss for " + image);
+		
+		final DineOnImage TOADD = image;
+		TOADD.getImageBitmap(new ImageGetCallback() {
+			
 			@Override
 			public void onImageReceived(Exception e, Bitmap b) {
 				if (e == null) {
-					addImageToCache(image, b);
-					callback.onImageReceived(null, b);
-				} else {
-					callback.onImageReceived(e, null);
+					addToCache(TOADD.getObjId(), TOADD.getLastUpdatedTime(), b);
+					callback.onImageReceived(e, b);
+					return;
 				}
+				Log.e(tag, "Cloud image miss for " + TOADD);
+				callback.onImageReceived(e, null);
 			}
 		});
 	}
@@ -296,17 +348,6 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 	private void getPhotoAndExecute(Uri uri, ImageGetCallback callback) {
 		Bitmap b = ImageIO.loadBitmapFromURI(getContentResolver(), uri);
 		callback.onImageReceived(null, b);
-	}
-
-	/**
-	 * Adds an image to cache replacing old version if it exists.
-	 * @param image image to associate bitmap to
-	 * @param bitmap Bitmap to use.
-	 */
-	protected void addImageToCache(DineOnImage image, Bitmap bitmap) {
-		String id = image.getObjId();
-		mImageMemCache.put(id, bitmap);
-		mPersImageCache.addToCache(image);
 	}
 
 	@Override
