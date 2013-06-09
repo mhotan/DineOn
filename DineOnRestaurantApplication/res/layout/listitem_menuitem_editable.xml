@@ -7,11 +7,14 @@
 
     <ImageView
         android:id="@+id/image_thumbnail_menuitem"
+        style="@style/DineOnBackground"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center_vertical"
+        android:padding="4dp"
         android:layout_marginRight="10dp"
         android:contentDescription="@string/label_menu_item_thumbnail"
+        android:scaleType="fitXY"
         android:src="@drawable/placeholdermenuitem" />
 
     <LinearLayout
