@@ -90,7 +90,7 @@ public class RestaurantInfo extends LocatableStorable {
 		po.put(HOURS, mHours);
 		po.put(IMAGE_MAIN, mMainImageIndex);
 		po.put(IMAGE_LIST, ParseUtil.toListOfParseObjects(mImageList));
-		po.put(MENUS, ParseUtil.toListOfParseObjects(mMenus));	
+		po.addAllUnique(MENUS, ParseUtil.toListOfParseObjects(mMenus));	
 		po.put(HOURS, mHours);
 		return po;
 	}
@@ -325,6 +325,24 @@ public class RestaurantInfo extends LocatableStorable {
 		}
 		return false;
 	}
+	
+	/**
+	 * 
+	 * @param menu Menu to be removed
+	 * @return True if object was removed false other wise
+	 */
+	public boolean removeMenu(Menu menu) {
+		if (!hasMenu(menu)) {
+			return false;
+		}
+		List<ParseObject> po = new ArrayList<ParseObject>();
+		po.add(menu.packObject());
+		mMenus.remove(menu);
+		mCompleteObject.removeAll(MENUS, po);
+		
+		// TODO Delete eventually
+		return true;
+	}
 
 	/**
 	 * Adds a new Item to associated Menu.
@@ -345,16 +363,6 @@ public class RestaurantInfo extends LocatableStorable {
 		}
 		return false;
 	}
-
-	/**
-	 * Removes a menu from the restaurant.
-	 * @param menu menu to remove
-	 * @return true if menu was removed false other wise.
-	 */
-	public boolean removeMenu(Menu menu) {
-		return mMenus.remove(menu);
-	}
-
 	
 	///////////////////////////////////////////////////////////
 	////  Private helper methods for storing addresses.
