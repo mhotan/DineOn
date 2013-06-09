@@ -84,7 +84,12 @@ LoginFragment.OnLoginListener {
 			startRestSelectionAct(user);
 		}
 	}
-
+	
+	@Override
+	public void onBackPressed(){
+		this.finish();
+	}
+	
 	/**
 	 * This automates the addition of the User Intent.
 	 * Should never be called when mUser is null.
