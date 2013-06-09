@@ -3,15 +3,14 @@
 package uw.cse.dineon.user.restaurantselection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import uw.cse.dineon.library.LocatableStorable;
 import uw.cse.dineon.library.RestaurantInfo;
-import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
+import uw.cse.dineon.user.RestaurantInfoDownloader;
+import uw.cse.dineon.user.RestaurantInfoDownloader.RestaurantInfoDownLoaderCallback;
 import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -27,11 +26,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import com.parse.ParseQuery.CachePolicy;
 
 /**
  * Activity to handle restaurant selection.
@@ -39,7 +35,8 @@ import com.parse.ParseQuery;
  */
 public class RestaurantSelectionActivity extends DineOnUserActivity implements 
 RestaurantSelectionButtonsFragment.OnClickListener, // Listening for button actions
-RestaurantListFragment.RestaurantListListener { //  Listening for List items
+RestaurantListFragment.RestaurantListListener, //  Listening for List items
+RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
 	private final String TAG = this.getClass().getSimpleName();
 
@@ -237,22 +234,31 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 	 */
 	public void onSearchForRestaurantByName(String name) {
 		createProgressDialog();
-		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
-		query.whereEqualTo(RestaurantInfo.NAME, name);
-		queryForRestaurants(query, "No restaurants match. Please check spelling.");
+//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+//		query.whereEqualTo(RestaurantInfo.NAME, name);
+//		queryForRestaurants(query, "No restaurants match. Please check spelling.");
+		
+		RestaurantInfoDownloader sessionDownloader = new RestaurantInfoDownloader(name, this);
+		sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 	}
 
 	@Override
 	public void onShowNearbyRestaurants() {
 		createProgressDialog();
-		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		Location lastLoc = super.getLastKnownLocation();
 		if (lastLoc != null) {
-			query.whereWithinMiles(LocatableStorable.LOCATION, 
-					new ParseGeoPoint(lastLoc.getLatitude(), lastLoc.getLongitude()), 
-					DineOnConstants.MAX_RESTAURANT_DISTANCE);
-			queryForRestaurants(query, 
-					"There are no restaurants nearby.");
+//			query.whereWithinMiles(LocatableStorable.LOCATION, 
+//					new ParseGeoPoint(lastLoc.getLatitude(), lastLoc.getLongitude()), 
+//					DineOnConstants.MAX_RESTAURANT_DISTANCE);
+//			queryForRestaurants(query, 
+//					"There are no restaurants nearby.");
+			
+			RestaurantInfoDownloader sessionDownloader = 
+					new RestaurantInfoDownloader(new ParseGeoPoint(lastLoc.getLatitude(), 
+							lastLoc.getLongitude()), this);
+			sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
+			
 		} else {
 			Toast.makeText(this, "Your device does not support Location finding", 
 					Toast.LENGTH_SHORT).show();
@@ -270,27 +276,31 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 	@Override
 	public void onShowUserFavorites() {
 		createProgressDialog();
-		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		String[] objIds = new String[DineOnUserApplication.getDineOnUser().getFavs().size()];
 		List<RestaurantInfo> favs = DineOnUserApplication.getDineOnUser().getFavs();
 		for (int i = 0; i < favs.size(); i++) {
 			objIds[i] = favs.get(i).getObjId();
 		}
-		query.whereContainedIn("objectId", Arrays.asList(objIds));
-		queryForRestaurants(query, "No restaurants in your favorites. Please do a search.");
+//		query.whereContainedIn("objectId", Arrays.asList(objIds));
+//		queryForRestaurants(query, "No restaurants in your favorites. Please do a search.");
+		
+		RestaurantInfoDownloader sessionDownloader = 
+				new RestaurantInfoDownloader(objIds, this);
+		sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 	}
 
-	/**
-	 * Query for restaurants using attributes set and populate selection list.
-	 * on return
-	 * @param query parse query object to query restaurants.
-	 * @param message message to display if no restaurant found.
-	 */
-	public void queryForRestaurants(ParseQuery query, final String message) {
-		query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
-		query.setLimit(DineOnConstants.MAX_RESTAURANTS); 
-		query.findInBackground(getFindCallback(message));
-	}
+//	/**
+//	 * Query for restaurants using attributes set and populate selection list.
+//	 * on return
+//	 * @param query parse query object to query restaurants.
+//	 * @param message message to display if no restaurant found.
+//	 */
+//	public void queryForRestaurants(ParseQuery query, final String message) {
+//		query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
+//		query.setLimit(DineOnConstants.MAX_RESTAURANTS); 
+//		query.findInBackground(getFindCallback(message));
+//	}
 
 //	@Override
 //	public RestaurantInfo getCurrentRestaurant() {
@@ -333,53 +343,63 @@ RestaurantListFragment.RestaurantListListener { //  Listening for List items
 	public void showNoRestaurantsDialog(String message) {
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
+//
+//	/**
+//	 * Gets the FindCallback for when restaurants are found.
+//	 * @param message to show if no restaurants found
+//	 * @return the Callback object
+//	 */
+//	public FindCallback getFindCallback(final String message) {
+//		return new FindCallback() {
+//
+//			@Override
+//			public void done(List<ParseObject> objects, ParseException e) {
+//				if (e == null) {
+//					
+//				} else { 
+//					destroyProgressDialog();
+//					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
+//					Log.d(TAG, "No restaurants where found in the cloud.");
+//				}
+//			}
+//
+//		};
+//	}
 
-	/**
-	 * Gets the FindCallback for when restaurants are found.
-	 * @param message to show if no restaurants found
-	 * @return the Callback object
-	 */
-	public FindCallback getFindCallback(final String message) {
-		return new FindCallback() {
+	@Override
+	public void onFailToDownLoadRestaurantInfos(String message) {
+		// TODO Auto-generated method stub
+		destroyProgressDialog();
+		showNoRestaurantsDialog("Problem getting restaurants:" + message);
+		Log.d(TAG, "No restaurants where found in the cloud.");
+	}
 
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					// Quickly notify the user if no restaurants are available
-					if (objects.isEmpty()) {
-						destroyProgressDialog();
-						showNoRestaurantsDialog(message);
-						return;
-					}
+	@Override
+	public void onDownloadedRestaurantInfos(List<RestaurantInfo> infos) {
+		// Quickly notify the user if no restaurants are available
+		if (infos.isEmpty()) {
+			destroyProgressDialog();
+			showNoRestaurantsDialog("No restaurant were found.");
+			return;
+		}
 
-					// Clear all the old restaurants because we got something new.
-					mRestaurants.clear();
+		// Clear all the old restaurants because we got something new.
+		mRestaurants.clear();
+		
+		// Put the restaurant with a current dining session at top of the list
+		if (mUser.getDiningSession() != null) {
+			mRestaurants.add(mUser.getDiningSession().getRestaurantInfo());
+		}
 
-					if (mUser.getDiningSession() != null) {
-						mRestaurants.add(mUser.getDiningSession().getRestaurantInfo());
-					}
-					
-					// Each parse object represents one restaurant
-					// Populate our list of restaurants with 
-					for (ParseObject po: objects) {
-						try {
-							mRestaurants.add(new RestaurantInfo(po));
-						} catch (ParseException e1) {
-							Log.d(TAG, e1.getMessage());
-						}
-					}
+		// Each parse object represents one restaurant
+		// Populate our list of restaurants with 
+		for (RestaurantInfo info: infos) {
+			mRestaurants.add(info);
+		}
 
-					// Destroy the progress dialog.
-					destroyProgressDialog();
-					// notify the fragment of the change
-					notifyFragment();
-				} else { 
-					destroyProgressDialog();
-					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
-					Log.d(TAG, "No restaurants where found in the cloud.");
-				}
-			}
-
-		};
+		// Destroy the progress dialog.
+		destroyProgressDialog();
+		// notify the fragment of the change
+		notifyFragment();
 	}
 }
