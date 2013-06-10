@@ -76,9 +76,9 @@ SatelliteListener {
 	 * A self reference.
 	 */
 	private DineOnUserActivity This;
-
-	private ProgressDialog mProgressDialog;
-
+	
+	protected ProgressDialog mProgressDialog;
+	
 	protected DineOnUser mUser;
 
 	private ServiceConnection mConnection = new ServiceConnection() {
@@ -419,7 +419,6 @@ SatelliteListener {
 		
 		// clean up user data
 		DineOnUserApplication.setCurrentDiningSession(null);
-//		DineOnUserApplication.clearCurrentOrder();
 		DineOnUserApplication.clearResaurantList();
 		DineOnUserApplication.setRestaurantOfInterest(null);
 		DineOnUserApplication.setDineOnUser(null, this);

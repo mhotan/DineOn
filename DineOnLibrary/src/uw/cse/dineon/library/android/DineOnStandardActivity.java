@@ -76,7 +76,11 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 	 * Last received location from this activity. Initially null.
 	 */
 	private Location mLocation;
-
+	
+	/**
+	 * True is location services is supported, else false.
+	 */
+	private boolean mLocationSupport;
 
 	/////////////////////////////////////////////////////////////////////
 	/////  Override Activity specific methods for correct behavior
@@ -109,11 +113,13 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 		this.mLocation = null;
 		try {
 			requestLocationUpdates();
+			this.mLocationSupport = true;
 		} catch (IllegalArgumentException ex) {
 			// The provider doesn't exist because its emulator
 			Toast.makeText(this, "Location updates unsupported on this device.  " 
 					+ "Are you on an emulator?", 
 					Toast.LENGTH_SHORT).show();
+			this.mLocationSupport = false;
 		}
 
 		// Attempt to restore old values only if they exist
@@ -385,5 +391,10 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 				DineOnConstants.MIN_LOCATION_UPDATE_DISTANCE_METERS, 
 				this);
 		// TODO add support for gps
+	}
+
+	@Override
+	public boolean isLocationSupported() {
+		return this.mLocationSupport;
 	}
 }
