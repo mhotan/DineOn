@@ -415,8 +415,7 @@ SatelliteListener {
 	 */
 	public void startLoginActivity() {
 		Intent i = new Intent(this, UserLoginActivity.class);
-		this.finish();
-		
+
 		// clean up user data
 		DineOnUserApplication.setCurrentDiningSession(null);
 		DineOnUserApplication.clearResaurantList();
@@ -425,6 +424,7 @@ SatelliteListener {
 				
 		Log.d(TAG, "Finishing DineOnUserActivity before logout");
 		startActivity(i);
+		this.finish();
 	}
 
 	/**

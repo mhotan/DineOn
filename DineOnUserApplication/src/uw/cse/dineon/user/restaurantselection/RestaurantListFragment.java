@@ -84,9 +84,12 @@ public class RestaurantListFragment extends ListFragment {
 	
 	/**
 	 * Inavlidate the restaurant selection list.
+	 * @param restaurants 
 	 */
-	public void notifyInvalidated() {
+	public void notifyInvalidated(List<RestaurantInfo> restaurants) {
 		mAdapter.notifyDataSetInvalidated();
+		mAdapter = new RestaurantListAdapter(this.getActivity(), restaurants);
+		setListAdapter(mAdapter);
 	}
 
 	/**

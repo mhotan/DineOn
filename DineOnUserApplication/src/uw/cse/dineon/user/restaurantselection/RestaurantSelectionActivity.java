@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uw.cse.dineon.library.RestaurantInfo;
+import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
@@ -38,8 +39,8 @@ RestaurantSelectionButtonsFragment.OnClickListener, // Listening for button acti
 RestaurantListFragment.RestaurantListListener, //  Listening for List items
 RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
-	private final String TAG = this.getClass().getSimpleName();
-
+	private static final String TAG = RestaurantSelectionActivity.class.getSimpleName();
+	
 	public static final String EXTRA_USER = "USER";
 
 	private static final int MENU_ITEM_FILTER = 1234;
@@ -51,7 +52,6 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	private AlertDialog mAd;
 	
 	private boolean mWaitOnLocation;
-
 
 	//////////////////////////////////////////////////////////////////////
 	////  Android specific 
@@ -72,6 +72,16 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		// Clear out old restaurant of interest
 		DineOnUserApplication.setRestaurantOfInterest(null);
 
+		String restName = getIntent() == null ? null 
+				: getIntent().getExtras() == null ? null 
+						: getIntent().getExtras().getString(DineOnConstants.KEY_RESTAURANT); 
+		if (restName != null) {
+			// There is a restaurant to check in to.
+			int table = getIntent().getExtras().getInt(DineOnConstants.TABLE_NUM);
+			mSat.requestCheckIn(mUser.getUserInfo(), table, restName);
+			enableProgressActionBar();
+		}
+		
 		mRestaurants = DineOnUserApplication.getRestaurantList();
 		this.mWaitOnLocation = false;
 		// Free up the static memory
@@ -183,12 +193,13 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
 	/**
 	 * Notifies the fragment state change.
+	 * @param restaurants 
 	 */
-	public void notifyFragment() {
+	public void notifyFragment(List<RestaurantInfo> restaurants) {
 		FragmentManager fm = getSupportFragmentManager();
 		RestaurantListFragment frag = 
 				(RestaurantListFragment) fm.findFragmentById(R.id.restaurantList);
-		frag.notifyInvalidated();
+		frag.notifyInvalidated(restaurants);
 	}
 
 	@Override
@@ -368,7 +379,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		// Destroy the progress dialog.
 		destroyProgressDialog();
 		// notify the fragment of the change
-		notifyFragment();
+		notifyFragment(mRestaurants);
 	}
 	
 	@Override
