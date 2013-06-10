@@ -36,7 +36,7 @@ public class ProfileActivityEditLogOutTest extends
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);
 	    
-	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setDineOnUser(this.dineOnUser, null);
 	    
 		mActivity = getActivity();
 	}

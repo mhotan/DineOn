@@ -68,7 +68,7 @@ public class CurrentOrderActivityTest extends
 	    setActivityIntent(addEvent);
 	    
 	    // initilize static data
-	    DineOnUserApplication.setDineOnUser(dineOnUser, getActivity());
+	    DineOnUserApplication.setDineOnUser(this.dineOnUser, null);
 	    DineOnUserApplication.setCurrentDiningSession(ds);
 	    DineOnUserApplication.setRestaurantOfInterest(rest.getInfo());
 	    
