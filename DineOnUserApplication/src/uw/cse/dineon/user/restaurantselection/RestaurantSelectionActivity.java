@@ -46,11 +46,11 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
 	private List<RestaurantInfo> mRestaurants;
 
-	private ProgressDialog mProgressDialog;
-
 	private RestaurantInfo currentRestaurant;
 
 	private AlertDialog mAd;
+	
+	private boolean mWaitOnLocation;
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -73,15 +73,28 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		DineOnUserApplication.setRestaurantOfInterest(null);
 
 		mRestaurants = DineOnUserApplication.getRestaurantList();
+		this.mWaitOnLocation = false;
 		// Free up the static memory
 		DineOnUserApplication.clearResaurantList();
 		if (mRestaurants == null) {
-			// This activity was started for the first time.
 			mRestaurants = new ArrayList<RestaurantInfo>();
 			if (mUser.getDiningSession() != null) {
 				mRestaurants.add(mUser.getDiningSession().getRestaurantInfo());
+			}
+				
+			if (DineOnUserApplication.getDineOnUser().getFavs().size() > 0) {
+				// show user favs if possible
+				onShowUserFavorites();
+			} else if (super.isLocationSupported()) {
+				// Show nearby restaurants to user's current location
+				if (super.getLastKnownLocation() != null) {
+					onShowNearbyRestaurants();
+				} else {
+					this.mWaitOnLocation = true;
+					createProgressDialog();
+				}
 			} else {
-				onShowNearbyRestaurants();
+				Toast.makeText(this, "Search for restaurants.", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -238,10 +251,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	 */
 	public void onSearchForRestaurantByName(String name) {
 		createProgressDialog();
-		//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
-		//		query.whereEqualTo(RestaurantInfo.NAME, name);
-		//		queryForRestaurants(query, "No restaurants match. Please check spelling.");
-
+		
 		RestaurantInfoDownloader sessionDownloader = new RestaurantInfoDownloader(name, this);
 		sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 	}
@@ -249,23 +259,17 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	@Override
 	public void onShowNearbyRestaurants() {
 		createProgressDialog();
-		//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		Location lastLoc = super.getLastKnownLocation();
 		if (lastLoc != null) {
-			//			query.whereWithinMiles(LocatableStorable.LOCATION, 
-			//					new ParseGeoPoint(lastLoc.getLatitude(), lastLoc.getLongitude()), 
-			//					DineOnConstants.MAX_RESTAURANT_DISTANCE);
-			//			queryForRestaurants(query, 
-			//					"There are no restaurants nearby.");
-
+			
 			RestaurantInfoDownloader sessionDownloader = 
 					new RestaurantInfoDownloader(new ParseGeoPoint(lastLoc.getLatitude(), 
 							lastLoc.getLongitude()), this);
 			sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 
 		} else {
-			Toast.makeText(this, "Your device does not support Location finding", 
-					Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "Your device does not support Location finding", 
+//					Toast.LENGTH_SHORT).show();
 			Log.d(TAG, "Don't have current location info.");
 			destroyProgressDialog();
 		}
@@ -280,15 +284,11 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	@Override
 	public void onShowUserFavorites() {
 		createProgressDialog();
-		//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		String[] objIds = new String[DineOnUserApplication.getDineOnUser().getFavs().size()];
 		List<RestaurantInfo> favs = DineOnUserApplication.getDineOnUser().getFavs();
 		for (int i = 0; i < favs.size(); i++) {
 			objIds[i] = favs.get(i).getObjId();
 		}
-		//		query.whereContainedIn("objectId", Arrays.asList(objIds));
-		//		queryForRestaurants(query, "No restaurants in your favorites. Please do a search.");
-
 		RestaurantInfoDownloader sessionDownloader = 
 				new RestaurantInfoDownloader(objIds, this);
 		sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
@@ -320,6 +320,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	public void destroyProgressDialog() {
 		if(mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
+			mProgressDialog = null;
 		}
 	}
 
@@ -368,5 +369,15 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		destroyProgressDialog();
 		// notify the fragment of the change
 		notifyFragment();
+	}
+	
+	@Override
+	public void onLocationChanged(Location location) {
+		super.onLocationChanged(location);
+		if (this.mWaitOnLocation) {
+			// Update the restaurants and delete dialog
+			onShowNearbyRestaurants();
+			this.mWaitOnLocation = false;
+		}
 	}
 }
