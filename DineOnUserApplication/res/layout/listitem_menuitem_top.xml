@@ -21,14 +21,29 @@
         android:layout_weight="21.33"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/label_menuitem_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:gravity="center_vertical"
-            android:text="@string/medium_text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/label_menuitem_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:gravity="center_vertical"
+                android:text="@string/medium_text"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/label_menuitem_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:gravity="right"
+                android:text="$3.99" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/label_more_info_hint"
@@ -97,10 +112,9 @@
             android:id="@+id/button_add_to_order"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
             android:layout_margin="2dp"
+            android:background="?android:attr/selectableItemBackground"
             android:src="@drawable/shop_cart_add_icon" />
-        
     </LinearLayout>
 
 </LinearLayout>
