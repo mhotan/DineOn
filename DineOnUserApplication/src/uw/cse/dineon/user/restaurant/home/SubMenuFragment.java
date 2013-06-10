@@ -1,5 +1,6 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -249,6 +250,8 @@ public class SubMenuFragment extends ListFragment {
 			 */
 			private final EditText mSpecialInstructions;
 
+			private final NumberFormat mCurrencyFormatter;
+			
 			/**
 			 * Creates a handler for this particular menu item portrayal in a list.
 			 * 
@@ -263,6 +266,11 @@ public class SubMenuFragment extends ListFragment {
 				mBottom = bottom;
 				mTop = top;
 
+				mCurrencyFormatter = NumberFormat.getCurrencyInstance();
+				TextView price = (TextView) top
+						.findViewById(R.id.label_menuitem_price);
+				price.setText(mCurrencyFormatter.format(item.getPrice()));
+				
 				// Assign the top portions 
 				mImage = (ImageView) top.findViewById(R.id.image_menuitem);
 				mMenuItemName = (TextView) top.findViewById(R.id.label_menuitem_name);
