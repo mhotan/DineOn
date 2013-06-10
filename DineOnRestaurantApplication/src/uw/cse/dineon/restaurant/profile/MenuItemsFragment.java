@@ -108,7 +108,10 @@ public class MenuItemsFragment extends ListFragment {
 	 * @param menu Menu to add.
 	 */
 	public void addMenu(Menu menu) {
-		mMenus.add(menu);
+		if (!mMenus.contains(menu)) {
+			mMenus.add(menu);
+			updateMenuView(menu);
+		}
 		
 		// Add the menu and update the view.
 		if (mCurrentMenu == null) {
