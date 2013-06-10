@@ -78,6 +78,10 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		DineOnUserApplication.clearResaurantList();
 		if (mRestaurants == null) {
 			mRestaurants = new ArrayList<RestaurantInfo>();
+			if (mUser.getDiningSession() != null) {
+				mRestaurants.add(mUser.getDiningSession().getRestaurantInfo());
+			}
+				
 			if (DineOnUserApplication.getDineOnUser().getFavs().size() > 0) {
 				// show user favs if possible
 				onShowUserFavorites();
