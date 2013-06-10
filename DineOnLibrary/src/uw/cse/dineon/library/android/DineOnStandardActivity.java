@@ -91,7 +91,7 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 		// Initialize the memory cache
 		final int MAXMEMORY = (int) (Runtime.getRuntime().maxMemory() / 1024);
 		// lets only use 1 / 8 the memory available
-		final int CACHESIZE = MAXMEMORY / 6;
+		final int CACHESIZE = MAXMEMORY / 8;
 
 		mImageMemCache = new LruCache<String, Bitmap>(CACHESIZE) {
 			@Override
@@ -311,6 +311,8 @@ public class DineOnStandardActivity extends FragmentActivity implements ImageObt
 			return;
 		}
 		Log.d(tag, "LRU Memory Cache miss for " + image);
+		
+		// Check for memory constraints
 
 		ret = getBitmapFromPersistentCache(image);
 		if (ret != null) {
