@@ -1,14 +1,18 @@
 package uw.cse.dineon.user.restaurant.home;
 
+import java.util.List;
+
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
 import uw.cse.dineon.library.MenuItem;
+import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.user.DineOnUserActivity;
 import uw.cse.dineon.user.DineOnUserApplication;
 import uw.cse.dineon.user.R;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * 
@@ -40,8 +44,19 @@ MenuItemDetailFragment.MenuItemDetailListener {
 		// Ugly way to find the item
 		DineOnUser dou = DineOnUserApplication.getDineOnUser();
 		DiningSession session = dou.getDiningSession();
-		if (session != null) {
-			for (Menu menu: session.getRestaurantInfo().getMenuList()) {
+		
+		List<Menu> menus = null;
+		if (session == null) {
+			RestaurantInfo ofInterest =  DineOnUserApplication.getRestaurantOfInterest();
+			if (ofInterest != null) {
+				menus = ofInterest.getMenuList();
+			}
+		} else {
+			menus = session.getRestaurantInfo().getMenuList();
+		}
+		
+		if (menus != null) {
+			for (Menu menu: menus) {
 				for (MenuItem item : menu.getItems()) {
 					if (item.getTitle().equals(itemName)) {
 						mItem = item;
@@ -51,7 +66,8 @@ MenuItemDetailFragment.MenuItemDetailListener {
 		}
 		
 		if (mItem == null) {
-			Log.e(TAG, "Unable to load menu item to show details");
+			Toast.makeText(this, "Unable to load menu item to show details", 
+					Toast.LENGTH_SHORT).show();
 			return;
 		}
 		
