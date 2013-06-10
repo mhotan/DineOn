@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp" >
+
+    <TextView
+        android:id="@+id/label_title_order_summary"
+        style="@style/DineOnHeadingBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:text="@string/label_title_order_summary"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ListView
+        android:id="@+id/list_order"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tablelayout"
+        android:layout_below="@+id/label_title_order_summary" />
+
+    <TableLayout
+        android:id="@+id/tablelayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_place_order"
+        android:layout_centerHorizontal="true" >
+
+        <TextView
+                android:id="@+id/label_order_summary"
+                style="@style/DineOnHeadingBackground"
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/price_summary"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        <!-- 2 columns -->
+
+        <!-- edittext span 2 column -->
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <TextView
+                android:id="@+id/label_subtotal"
+                android:layout_width="match_parent"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:text="@string/subtotal"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/value_subtotal"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:text="@string/decimal_zero"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </TableRow>
+
+        <!-- 3 columns -->
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <TextView
+                android:id="@+id/label_tax"
+                android:layout_width="match_parent"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:text="@string/tax"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/value_tax"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:text="@string/decimal_zero"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </TableRow>
+
+        <!-- display this button in 3rd column via layout_column(zero based) -->
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <TextView
+                android:id="@+id/label_total"
+                android:layout_width="match_parent"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:text="@string/total"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/value_total"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:text="@string/decimal_zero"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </TableRow>
+    </TableLayout>
+
+    <Button
+        android:id="@+id/button_place_order"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_place_order" />
+
+</RelativeLayout>

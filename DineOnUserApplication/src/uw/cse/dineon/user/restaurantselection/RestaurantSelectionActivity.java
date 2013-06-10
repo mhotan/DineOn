@@ -47,7 +47,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	private List<RestaurantInfo> mRestaurants;
 
 	private RestaurantInfo currentRestaurant;
-	
+
 	private AlertDialog mAd;
 	
 	private boolean mWaitOnLocation;
@@ -61,7 +61,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_restaurant_selection);
-		
+
 		// Replace the Action bar title with a message letting the 
 		// user know this is the restaurant selection page
 		final ActionBar ACTION_BAR = getActionBar();
@@ -126,23 +126,23 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 			public void onClick(DialogInterface arg0, int arg1) {
 				RSA.destroyLogoutAlert();
 				RSA.startLoginActivity();
-				
-				
+
+
 			}
-			
+
 		});
-		
+
 		adb.setNegativeButton("Cancel", new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				RSA.destroyLogoutAlert();
 			}
-			
+
 		});
 		this.mAd = adb.show();
 	}
-	
+
 	/**
 	 * Returns the alert dialog that is generated on back pressed.
 	 * Not thread safe. Mainly for testing.
@@ -152,7 +152,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	public AlertDialog getLogoutAlertDialog() {
 		return this.mAd;
 	}
-	
+
 	/**
 	 * Gets rid of alert box.
 	 */
@@ -161,7 +161,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 			this.mAd.cancel();
 		}
 	}
-	
+
 	/**
 	 * Add a new restaurant info object to the restaurant list.
 	 * @param infos RestaurantInfo object to add to list.
@@ -184,7 +184,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		FragmentManager fm = getSupportFragmentManager();
 		RestaurantListFragment frag = 
 				(RestaurantListFragment) fm.findFragmentById(R.id.restaurantList);
-		frag.notifyStateChange();
+		frag.notifyInvalidated();
 	}
 
 	@Override
@@ -194,7 +194,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		this.disableMenuItem(menu, R.id.option_check_in);
 		return temp;
 	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean temp = super.onPrepareOptionsMenu(menu);
@@ -204,13 +204,13 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-//		switch (item.getItemId()) {
-//		case MENU_ITEM_FILTER:
-//			// TODO
-//			break;
-//		default:
-//			break;
-//		}
+		//		switch (item.getItemId()) {
+		//		case MENU_ITEM_FILTER:
+		//			// TODO
+		//			break;
+		//		default:
+		//			break;
+		//		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -262,7 +262,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 					new RestaurantInfoDownloader(new ParseGeoPoint(lastLoc.getLatitude(), 
 							lastLoc.getLongitude()), this);
 			sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
-			
+
 		} else {
 //			Toast.makeText(this, "Your device does not support Location finding", 
 //					Toast.LENGTH_SHORT).show();
@@ -289,7 +289,6 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 				new RestaurantInfoDownloader(objIds, this);
 		sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 	}
-
 
 	@Override
 	public List<RestaurantInfo> getRestaurants() {
@@ -348,7 +347,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
 		// Clear all the old restaurants because we got something new.
 		mRestaurants.clear();
-		
+
 		// Put the restaurant with a current dining session at top of the list
 		if (mUser.getDiningSession() != null) {
 			mRestaurants.add(mUser.getDiningSession().getRestaurantInfo());
@@ -357,7 +356,9 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		// Each parse object represents one restaurant
 		// Populate our list of restaurants with 
 		for (RestaurantInfo info: infos) {
-			mRestaurants.add(info);
+			if (!mRestaurants.contains(info)) {
+				mRestaurants.add(info);
+			}
 		}
 
 		// Destroy the progress dialog.

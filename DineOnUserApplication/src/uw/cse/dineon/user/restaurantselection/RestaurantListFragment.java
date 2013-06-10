@@ -81,6 +81,13 @@ public class RestaurantListFragment extends ListFragment {
 	public void notifyStateChange() {
 		mAdapter.notifyDataSetChanged();
 	}
+	
+	/**
+	 * Inavlidate the restaurant selection list.
+	 */
+	public void notifyInvalidated() {
+		mAdapter.notifyDataSetInvalidated();
+	}
 
 	/**
 	 * For any activity that wishes to contain this fragment then that
