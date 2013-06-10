@@ -99,7 +99,7 @@ public class DineOnUserApplication extends Application {
 	 */
 	public static void setCurrentDiningSession(DiningSession session) {
 		currentUser.setDiningSession(session);
-		currentUser.saveEventually(null);
+		currentUser.saveInBackGround(null);
 	}
 
 	/**

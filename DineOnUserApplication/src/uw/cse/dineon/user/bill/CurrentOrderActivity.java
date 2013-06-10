@@ -58,6 +58,8 @@ implements PayBillListener, OrderUpdateListener {
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {		
+		super.onPrepareOptionsMenu(menu);
+		
 		// TODO If in landscape mode then user already sees the bill
 		// So hide the fragments
 		MenuItem paybillItem = menu.findItem(R.id.option_bill);
@@ -119,14 +121,27 @@ implements PayBillListener, OrderUpdateListener {
 			
 			@Override
 			public void done(ParseException e) {
-				if (e == null) {
-					DiningSession session = mUser.getDiningSession();
-					mSat.requestOrder(session, TOORDER, session.getRestaurantInfo());
-				} else {
-					 onFailToSaveOrder();
-				}
+				String mess = e == null ? null : e.getMessage();				
+				orderSent(TOORDER, mess);
 			}
 		});
+	}
+	
+	/**
+	 * Handle error.
+	 * @param order Order to send
+	 * @param error Error returned if any
+	 */
+	private void orderSent(Order order, String error) {
+		mDialog.hide();
+		if (error != null) {
+			onFailToSaveOrder();
+			return;
+		} 
+		DiningSession session = mUser.getDiningSession();
+		mSat.requestOrder(session, order, session.getRestaurantInfo());
+		enableProgressActionBar();
+		finish();
 	}
 	
 	/**
@@ -134,7 +149,6 @@ implements PayBillListener, OrderUpdateListener {
 	 */
 	private void onFailToSaveOrder() {
 		Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show();
-		mDialog.hide();
 	}
 
 	@Override

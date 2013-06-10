@@ -10,6 +10,7 @@ import uw.cse.dineon.library.RestaurantInfo;
 import uw.cse.dineon.library.util.DineOnConstants;
 import uw.cse.dineon.library.util.ParseUtil;
 import uw.cse.dineon.user.DiningSessionDownloader.DiningSessionGetCallback;
+import uw.cse.dineon.user.restaurant.home.RestaurantHomeActivity;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -36,12 +37,12 @@ public class DineOnUserService extends Service {
 	private final IBinder mBinder = new DineOnUserBinder();
 
 	private RestaurantInfo mLastChanged;
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
 	}
-	
+
 	/**
 	 * @return the restaurant that was last changed.
 	 */
@@ -108,7 +109,7 @@ public class DineOnUserService extends Service {
 			if (DineOnConstants.ACTION_CONFIRM_CUSTOMER_REQUEST.equals(action)) {
 				ACTION_LOCAL = DineOnConstants.ACTION_CONFIRM_CUSTOMER_REQUEST_LOCAL;
 			} else if (DineOnConstants.ACTION_CONFIRM_DINING_SESSION.equals(action)) {
-				ACTION_LOCAL = DineOnConstants.ACTION_CONFIRM_DINING_SESSION_LOCAL;
+				ACTION_LOCAL = null;
 			} else {
 				ACTION_LOCAL = DineOnConstants.ACTION_CONFIRM_ORDER_LOCAL;
 			}
@@ -123,17 +124,25 @@ public class DineOnUserService extends Service {
 								sendFailMessage(e.getMessage());
 								return;
 							}
-							Intent intent = new Intent();
-							intent.setAction(ACTION_LOCAL);
-							sendBroadcast(intent);
+							if (ACTION_LOCAL != null) {
+								Intent intent = new Intent();
+								intent.setAction(ACTION_LOCAL);
+								sendBroadcast(intent);
+							} else {
+								Intent intent = new Intent(
+										getApplicationContext(), RestaurantHomeActivity.class);
+								intent.putExtra(DineOnUserActivity.PROGRESS_ON, false);
+								intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								startActivity(intent);
+							}
 						}
 					});
 			sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 		} // Restaurant information changed.
 		else if (DineOnConstants.ACTION_CHANGE_RESTAURANT_INFO.equals(action)) { 
-			
+
 			new RestaurantInfoDownloader(id, new RestaurantInfoGetCallback() {
-				
+
 				@Override
 				public void done(RestaurantInfo restaurantInfo, Exception e) {
 					if (e != null) {
@@ -147,9 +156,9 @@ public class DineOnUserService extends Service {
 			}).execute(CachePolicy.NETWORK_ONLY);
 		} 
 		else if (DineOnConstants.ACTION_CONFIRM_RESERVATION.equals(action)) {
-			
+
 			new ReservationDownloader(id, new ReservationGetCallback() {
-				
+
 				@Override
 				public void done(Reservation reservation, Exception e) {
 					if (e != null) {
@@ -158,7 +167,7 @@ public class DineOnUserService extends Service {
 					}
 					Intent intent = new Intent();
 					intent.setAction(DineOnConstants.ACTION_CONFIRM_RESERVATION_LOCAL);
-					
+
 					sendBroadcast(intent);
 				}
 			});
@@ -166,7 +175,7 @@ public class DineOnUserService extends Service {
 
 		return Service.START_NOT_STICKY;
 	}
-	
+
 	/**
 	 * Broadcast failure to any running activity.
 	 * @param message Error message
@@ -214,7 +223,7 @@ public class DineOnUserService extends Service {
 			// Error
 			return null;
 		}
-		
+
 		/**
 		 * Called when a parse exception is returned during the request.
 		 * @param pairs Exceptions returned from Parse request
@@ -228,7 +237,7 @@ public class DineOnUserService extends Service {
 			}
 			mException = exception;
 		}
-		
+
 		/**
 		 * Called when the Restaurant Info has been successfully received.
 		 * @param result Restaurant Info retreived from Parse
@@ -253,34 +262,34 @@ public class DineOnUserService extends Service {
 			ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 			query.setCachePolicy(policy);
 			ParseObject sessionObject = query.get(mId);
-			
+
 			// This calls takes a long ass time.
 			return new RestaurantInfo(sessionObject);
 		}
 	}
-	
+
 	/**
 	 * Callback for restaurant infos.
 	 * @author mhotan
 	 */
 	public interface RestaurantInfoGetCallback {
-		
+
 		/**
 		 * Called on completion of dining session retrieval.
 		 * @param restaurantInfo Restaurant info retrieved
 		 * @param e Exception if error occured else null
 		 */
 		void done(RestaurantInfo restaurantInfo, Exception e);
-		
+
 	} 
-	
+
 	/**
 	 * 
 	 * @author mhotan
 	 *
 	 */
 	private class ReservationDownloader extends AsyncTask<CachePolicy, Exception, Reservation> {
-		
+
 		private Exception mException;
 		private final String mId;
 		private final ReservationGetCallback mCallback;
@@ -310,7 +319,7 @@ public class DineOnUserService extends Service {
 			// Error
 			return null;
 		}
-		
+
 		/**
 		 * Called when a parse exception is returned during the request.
 		 * @param pairs Exceptions returned from Parse request
@@ -324,7 +333,7 @@ public class DineOnUserService extends Service {
 			}
 			mException = exception;
 		}
-		
+
 		/**
 		 * Called when the Restaurant Info has been successfully received.
 		 * @param result Restaurant Info retreived from Parse
@@ -348,19 +357,19 @@ public class DineOnUserService extends Service {
 			ParseQuery query = new ParseQuery(Reservation.class.getSimpleName());
 			query.setCachePolicy(policy);
 			ParseObject sessionObject = query.get(mId);
-			
+
 			// This calls takes a long ass time.
 			return new Reservation(sessionObject);
 		}
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @author mhotan
 	 */
 	private interface ReservationGetCallback {
-		
+
 		/**
 		 * Callend on completion of reservation download.
 		 * @param reservation Reservation that was downloaded, null if error
@@ -368,6 +377,6 @@ public class DineOnUserService extends Service {
 		 */
 		void done(Reservation reservation, Exception e);
 	}
-	
-	
+
+
 }

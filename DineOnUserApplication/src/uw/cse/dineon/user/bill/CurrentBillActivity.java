@@ -33,7 +33,8 @@ implements PayBillListener {
 	}
 	
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {		
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
 		// TODO If in landscape mode then user already sees the bill
 		// So hide the fragments
 		MenuItem paybillItem = menu.findItem(R.id.option_bill);

@@ -35,6 +35,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.SearchView;
@@ -60,6 +61,9 @@ SatelliteListener {
 
 	private static final String TAG = DineOnUserActivity.class.getSimpleName();
 
+	public static final String PROGRESS_ON = TAG + "PROGRESS_ON";
+	private boolean isProgressOn;
+	
 	private DineOnUserService mService;
 	private boolean mIsBound;
 
@@ -107,12 +111,30 @@ SatelliteListener {
 			Utility.getBackToLoginAlertDialog(this, 
 					"Unable to find your information", UserLoginActivity.class).show();
 		} 
-
+		
+		// Figure out if we should turn the progress bar on
+		Intent i = getIntent();
+		Bundle extras = i == null ? null : i.getExtras();
+		if (i != null && extras != null) {
+			isProgressOn = extras.getBoolean(PROGRESS_ON, false);
+		} else if (savedInstanceState != null) {
+			isProgressOn = savedInstanceState.getBoolean(PROGRESS_ON, false);
+		} else {
+			isProgressOn = false;
+		}
 		doBindService();
 
 		this.mProgressDialog = null;
 	}
 
+	
+	
+	@Override
+	public void startActivity(Intent intent) {
+		intent.putExtra(PROGRESS_ON, isProgressOn);
+		super.startActivity(intent);
+	}
+	
 	/**
 	 * @return UserSatellite for this activity
 	 */
@@ -194,10 +216,14 @@ SatelliteListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d(TAG, "Resuming DineOnUserActivity");
-		mSat.register(DineOnUserApplication.getDineOnUser(), This);
-		intializeUI();
-
+		if (DineOnUserApplication.getDineOnUser() == null) {
+			Log.d(TAG, "Illegal state");
+			startLoginActivity();
+		} else {
+			Log.d(TAG, "Resuming DineOnUserActivity");
+			mSat.register(DineOnUserApplication.getDineOnUser(), This);
+			intializeUI();
+		}
 	}
 
 	@Override
@@ -209,8 +235,6 @@ SatelliteListener {
 	protected void onPause() {
 		super.onPause();
 		mSat.unRegister();
-
-
 	}
 
 	@Override
@@ -235,6 +259,8 @@ SatelliteListener {
 					createProgressDialog("Checking In...", "Contacting " 
 							+ data.getString(DineOnConstants.KEY_RESTAURANT));
 
+					enableProgressActionBar();
+					
 					mSat.requestCheckIn(DineOnUserApplication.getUserInfo(),
 							data.getInt(DineOnConstants.TABLE_NUM), 
 							data.getString(DineOnConstants.KEY_RESTAURANT));
@@ -247,6 +273,22 @@ SatelliteListener {
 				Log.e(TAG, "JSONException: " + e.getMessage());
 			}
 		}
+	}
+	
+	/**
+	 * Disable action bar progress dialog in the. 
+	 */
+	public void disableProgressActionBar() {
+		isProgressOn = false;
+		invalidateOptionsMenu();
+	}
+	
+	/**
+	 * Enable progress bar in action bar.
+	 */
+	public void enableProgressActionBar() {
+		isProgressOn = true;
+		invalidateOptionsMenu();
 	}
 
 	/**
@@ -308,6 +350,7 @@ SatelliteListener {
 					destroyProgressDialog();
 					showErrorCheckingInDialog("No response from restaurant. Try again.");
 				}
+				disableProgressActionBar();
 			}
 		}, time); 
 	}
@@ -379,7 +422,7 @@ SatelliteListener {
 //		DineOnUserApplication.clearCurrentOrder();
 		DineOnUserApplication.clearResaurantList();
 		DineOnUserApplication.setRestaurantOfInterest(null);
-		DineOnUserApplication.setDineOnUser(null);
+		DineOnUserApplication.setDineOnUser(null, this);
 				
 		Log.d(TAG, "Finishing DineOnUserActivity before logout");
 		startActivity(i);
@@ -448,6 +491,13 @@ SatelliteListener {
 				searchView.setEnabled(true);
 				searchView.setVisibility(View.VISIBLE);
 			}
+		}
+		
+		// enable the progress bar when needed.
+		MenuItem progressbar = menu.findItem(R.id.item_progress);
+		if (progressbar != null) {
+			progressbar.setEnabled(isProgressOn);
+			progressbar.setVisible(isProgressOn);
 		}
 
 		return true;
@@ -536,6 +586,7 @@ SatelliteListener {
 
 	@Override
 	public void onFail(String message) {
+		disableProgressActionBar();
 		// TODO Auto-generated method stub
 		Toast.makeText(this, "onFail: " + message, Toast.LENGTH_SHORT).show();
 	}
@@ -599,6 +650,7 @@ SatelliteListener {
 			Log.e(TAG, "Local pending order is null but still got an order confirmation");
 			return;
 		} 
+		disableProgressActionBar();
 		invalidateOptionsMenu();
 	}
 
