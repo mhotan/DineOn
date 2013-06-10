@@ -8,6 +8,7 @@ import uw.cse.dineon.library.CurrentOrderItem;
 import uw.cse.dineon.library.DineOnUser;
 import uw.cse.dineon.library.DiningSession;
 import uw.cse.dineon.library.Menu;
+import uw.cse.dineon.library.MenuItem;
 import uw.cse.dineon.library.Order;
 import uw.cse.dineon.library.Restaurant;
 import uw.cse.dineon.library.util.TestUtility;
@@ -57,12 +58,15 @@ public class CreateNewAccountActivityTest extends
 		DiningSession ds = 
 				new DiningSession(10, new Date(), dineOnUser.getUserInfo(), rest.getInfo());
 		
-		List<CurrentOrderItem> mi = TestUtility.createFakeOrderItems(3);
-		Order one = new Order(1, dineOnUser.getUserInfo(), mi);
+		List<MenuItem> mi = TestUtility.createFakeMenuItems(3);
+		Order one = new Order(1, dineOnUser.getUserInfo());
+		for (MenuItem item: mi) {
+			one.setItemQuantity(item, 1);
+		}
 		ds.addPendingOrder(one);
 		dineOnUser.setDiningSession(ds);
 		Menu m = TestUtility.createFakeMenu();
-		m.addNewItem(mi.get(0).getMenuItem());
+		m.addNewItem(mi.get(0));
 		rest.getInfo().addMenu(m);
 		
 		this.setActivityInitialTouchMode(false);
@@ -70,7 +74,7 @@ public class CreateNewAccountActivityTest extends
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);
 	    
-	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setDineOnUser(this.dineOnUser, null);
 	    DineOnUserApplication.setCurrentDiningSession(ds);
 	    
 		mActivity = getActivity();

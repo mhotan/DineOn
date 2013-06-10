@@ -157,22 +157,36 @@ implements SateliteListener {
 
 	/**
 	 * Removes dining session from restaurant.
-	 * @param session Dining Session to add
+	 * @param user Dining Session to add
 	 */
-	protected void removeDiningSession(DiningSession session) {
+	protected void removeUser(UserInfo user) {
 		
-		// We have to iterate through all the orders pertaining to
-		// this dining session and remove it from the pending list
-		removeCustomerRequests(session.getRequests());
+		DiningSession session = mRestaurant.getDiningSession(user);
+		if (session == null) {
+			Log.w(TAG, "Customer " + user.getName() + " request check out but no dining session");
+			return;
+		}
 		
-		// Cancel any pending orders for the restaurant.
-		for (Order pendingOrder: session.getOrders()) {
-			mRestaurant.cancelPendingOrder(pendingOrder);
-		}		
-		
-		// Finally remove the diningsession
-		mRestaurant.removeDiningSession(session);
-		session.deleteFromCloud();
+		// Remove the user from the current dining session
+		session.removeUser(user);
+		List<UserInfo> remainingUsers = session.getUsers();
+		if (remainingUsers.isEmpty()) {
+			// Delete the dining session.
+			// We have to iterate through all the orders pertaining to
+			// this dining session and remove it from the pending list
+			removeCustomerRequests(session.getRequests());
+			
+			// Cancel any pending orders for the restaurant.
+			for (Order pendingOrder: session.getOrders()) {
+				mRestaurant.cancelPendingOrder(pendingOrder);
+			}		
+			
+			// Finally remove the diningsession
+			mRestaurant.removeDiningSession(session);
+			session.deleteFromCloud();
+		} else {
+			session.saveInBackGround(null);
+		} 
 		mRestaurant.saveInBackGround(null);
 	}
 	
@@ -456,12 +470,13 @@ implements SateliteListener {
 	}
 
 	@Override
-	public void onCheckedOut(DiningSession session) {
+	public void onCheckedOut(UserInfo user) {
 		// TODO Auto-generated method stub
-		Toast.makeText(this, getString(R.string.checked_out), Toast.LENGTH_SHORT).show();
-
+		Toast.makeText(this, getString(R.string.checked_out) 
+				+ user.getName(), Toast.LENGTH_SHORT).show();
+		
 		// All we do is call the 
-		removeDiningSession(session);
+		removeUser(user);
 	}
 
 

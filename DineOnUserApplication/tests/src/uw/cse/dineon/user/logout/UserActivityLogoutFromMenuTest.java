@@ -29,7 +29,7 @@ public class UserActivityLogoutFromMenuTest extends ActivityInstrumentationTestC
 		super.setUp();
 		this.dineOnUser = TestUtility.createFakeUser();
 		assertNotNull(this.dineOnUser);
-		DineOnUserApplication.setDineOnUser(this.dineOnUser);
+		DineOnUserApplication.setDineOnUser(this.dineOnUser, null);
 		this.setActivityInitialTouchMode(false);
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);

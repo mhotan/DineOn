@@ -108,7 +108,10 @@ public class MenuItemsFragment extends ListFragment {
 	 * @param menu Menu to add.
 	 */
 	public void addMenu(Menu menu) {
-		mMenus.add(menu);
+		if (!mMenus.contains(menu)) {
+			mMenus.add(menu);
+			updateMenuView(menu);
+		}
 		
 		// Add the menu and update the view.
 		if (mCurrentMenu == null) {
@@ -127,7 +130,6 @@ public class MenuItemsFragment extends ListFragment {
 	public void addMenuItem(Menu menu, MenuItem item) {
 		if (mCurrentMenu != null && mCurrentMenu.equals(menu)) {
 			mAdapter.add(item);
-			mAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -438,6 +440,8 @@ public class MenuItemsFragment extends ListFragment {
 
 		private final NumberFormat mCurrencyFormatter;
 
+		private final List<MenuItem> mItems;
+		
 		/**
 		 * Creates a menu item adapter for displaying, modifying, and deleting
 		 * menu items.
@@ -449,16 +453,26 @@ public class MenuItemsFragment extends ListFragment {
 		 */
 		public RestaurantMenuItemAdapter(Context ctx, List<MenuItem> items) {
 			super(ctx, R.layout.listitem_menuitem_editable, items);
+			mItems = items;
 			mContext = ctx;
 			// Update the time
 			mCurrencyFormatter = NumberFormat.getCurrencyInstance();
 		}
+		
+		@Override
+		public void add(MenuItem item) {
+			if (mItems.contains(item)) {
+				return;
+			}
+			super.add(item);
+			super.notifyDataSetChanged();
+		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			if (position >= this.getCount()) {
-				super.getView(position, convertView, parent);
-			}
+//			if (position >= this.getCount()) {
+//				super.getView(position, convertView, parent);
+//			}
 			LayoutInflater inflater = (LayoutInflater) mContext
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view;

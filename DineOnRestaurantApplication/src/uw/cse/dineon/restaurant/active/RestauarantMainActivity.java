@@ -92,14 +92,26 @@ RequestDetailListener {
 	}
 
 	@Override
-	protected void removeDiningSession(DiningSession session) {
+	protected void removeUser(UserInfo user) {
 		// Update our UI for the current dining session
+		if (user == null) {
+			super.removeUser(user);
+			return;
+		}
+		
+		DiningSession session = mRestaurant.getDiningSession(user);
+		if (session == null || session.getUsers().size() > 1) { 
+			super.removeUser(user);
+			return;
+		}
+		
+		// Only update our state when the user is the last one left.
 		DiningSessionListFragment frag = mPagerAdapter.getCurrentDiningSessionListFragment();
 		if (frag != null) {
 			frag.removeDiningSession(session);
 		}
 
-		super.removeDiningSession(session);
+		super.removeUser(user);
 	}
 
 	@Override

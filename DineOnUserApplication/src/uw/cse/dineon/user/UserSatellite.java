@@ -200,12 +200,12 @@ public class UserSatellite extends BroadcastReceiver {
 	 * This method does not do any saving.
 	 * NOTE: This method does not do any saving. That is if you want to update the
 	 * restaurant you must save your argument before you call this method
-	 * @param session Saved DiningSession that has been checked out.
+	 * @param user User to check out.
 	 * @param rest Restaurant to send notification to.
 	 */
-	public void requestCheckOut(DiningSession session, RestaurantInfo rest) {
+	public void requestCheckOut(DineOnUser user, RestaurantInfo rest) {
 		notifyByAction(DineOnConstants.ACTION_REQUEST_CHECK_OUT,
-				session.getObjId(), rest.getName()); 
+				user.getUserInfo().getObjId(), rest.getName()); 
 	}
 
 	/**

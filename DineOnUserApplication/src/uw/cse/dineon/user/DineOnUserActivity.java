@@ -30,6 +30,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -243,6 +244,7 @@ SatelliteListener {
 		if (intent == null) { 
 			return;
 		}
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 		IntentResult scanResult = 
 				IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 		if (scanResult != null) {
@@ -542,6 +544,7 @@ SatelliteListener {
 			startActivity(i);
 			break;
 		case R.id.option_check_in:
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 			IntentIntegrator integrator = new IntentIntegrator(this);
 			integrator.initiateScan();
 			break;
@@ -683,7 +686,7 @@ SatelliteListener {
 	 * Pay bill for current order.
 	 */
 	public void payBill() {
-		mSat.requestCheckOut(DineOnUserApplication.getCurrentDiningSession(), 
+		mSat.requestCheckOut(mUser, 
 				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
 
 		Toast.makeText(this, "Payment Sent!", Toast.LENGTH_SHORT).show();

@@ -351,7 +351,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 		} 
 		else if (DineOnConstants.ACTION_REQUEST_CHECK_OUT.equals(action)) {
 			// Get the current Dining Session instance
-			query = new ParseQuery(DiningSession.class.getSimpleName());
+			query = new ParseQuery(UserInfo.class.getSimpleName());
 			query.setCachePolicy(CachePolicy.CACHE_ELSE_NETWORK);
 			callback.setOption(ACTION_OPTION.REQUEST_CHECK_OUT);
 			query.getInBackground(id, callback);
@@ -412,7 +412,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 					mListener.onUserChanged(new UserInfo(object));
 					break;
 				case REQUEST_CHECK_OUT:
-					mListener.onCheckedOut(new DiningSession(object));
+					mListener.onCheckedOut(new UserInfo(object));
 					break;
 				case REQUEST_DINING_SESSION:
 					int tableNum;
@@ -462,7 +462,7 @@ public class RestaurantSatellite extends BroadcastReceiver {
 		 * for associated dining session.
 		 * @param session checked out dining session
 		 */
-		void onCheckedOut(DiningSession session);
+		void onCheckedOut(UserInfo session);
 
 		/**
 		 * User attempted to check in to restaurant 
