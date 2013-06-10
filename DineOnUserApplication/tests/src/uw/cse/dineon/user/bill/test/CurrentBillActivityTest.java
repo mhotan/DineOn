@@ -15,6 +15,7 @@ import uw.cse.dineon.user.R;
 import uw.cse.dineon.user.bill.CurrentBillActivity;
 import uw.cse.dineon.user.bill.CurrentBillFragment;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.TextView;
 
@@ -48,7 +49,7 @@ public class CurrentBillActivityTest extends
 		dineOnUser.setDiningSession(ds);
 		
 		// add am order to the current list
-		DineOnUserApplication.setCurrentOrder(TestUtility.createFakeOrderItems(1));
+		dineOnUser.setMenuItemToOrder(TestUtility.createFakeMenuItems(1).get(0), 2);
 		
 		Menu m = TestUtility.createFakeMenu();
 		rest.getInfo().addMenu(m);
@@ -59,7 +60,7 @@ public class CurrentBillActivityTest extends
 	    setActivityIntent(addEvent);
 	    
 	    // initilize static data
-	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setDineOnUser(dineOnUser, getActivity());
 	    DineOnUserApplication.setCurrentDiningSession(ds);
 	    DineOnUserApplication.setRestaurantOfInterest(rest.getInfo());
 	    

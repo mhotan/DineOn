@@ -56,7 +56,7 @@ public class CurrentOrderActivityTest extends
 		dineOnUser.setDiningSession(ds);
 		
 		// add am order to the current list
-		DineOnUserApplication.setCurrentOrder(TestUtility.createFakeOrderItems(1));
+		dineOnUser.setMenuItemToOrder(TestUtility.createFakeMenuItems(1).get(0), 2);
 		
 		Menu m = TestUtility.createFakeMenu();
 		rest.getInfo().addMenu(m);
@@ -68,7 +68,7 @@ public class CurrentOrderActivityTest extends
 	    setActivityIntent(addEvent);
 	    
 	    // initilize static data
-	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setDineOnUser(dineOnUser, getActivity());
 	    DineOnUserApplication.setCurrentDiningSession(ds);
 	    DineOnUserApplication.setRestaurantOfInterest(rest.getInfo());
 	    
@@ -104,7 +104,7 @@ public class CurrentOrderActivityTest extends
 		
 		String startDisplay = itemQuantity.getText().toString();		
 		
-		for(CurrentOrderItem item : DineOnUserApplication.getCurrentOrder().values()) {
+		for(CurrentOrderItem item : DineOnUserApplication.getDineOnUser().getPendingOrder().getMenuItems()) {
 			startQuantity = item.getQuantity();
 		}		
 		
@@ -117,7 +117,7 @@ public class CurrentOrderActivityTest extends
 		
 		String endDisplay = itemQuantity.getText().toString();
 		
-		for(CurrentOrderItem item : DineOnUserApplication.getCurrentOrder().values()) {
+		for(CurrentOrderItem item : DineOnUserApplication.getDineOnUser().getPendingOrder().getMenuItems()) {
 			endQuantity = item.getQuantity();
 		}
 		// assert that incremented number is displayed and saved in the order
@@ -137,7 +137,7 @@ public class CurrentOrderActivityTest extends
 		
 		String startDisplay = itemQuantity.getText().toString();
 		
-		for(CurrentOrderItem item : DineOnUserApplication.getCurrentOrder().values()) {
+		for(CurrentOrderItem item : DineOnUserApplication.getDineOnUser().getPendingOrder().getMenuItems()) {
 			startQuantity = item.getQuantity();
 		}
 		
@@ -149,7 +149,7 @@ public class CurrentOrderActivityTest extends
 		mInstrumentation.waitForIdleSync();
 		String endDisplay = itemQuantity.getText().toString();
 		
-		for(CurrentOrderItem item : DineOnUserApplication.getCurrentOrder().values()) {
+		for(CurrentOrderItem item : DineOnUserApplication.getDineOnUser().getPendingOrder().getMenuItems()) {
 			endQuantity = item.getQuantity();
 		}
 		// assert that decremented number is displayed and saved in the order
@@ -167,7 +167,7 @@ public class CurrentOrderActivityTest extends
 		final CurrentOrderActivity RSA = this.mActivity; 
 		
 		// should be 1
-		int start = DineOnUserApplication.getCurrentOrder().size();
+		int start = DineOnUserApplication.getDineOnUser().getPendingOrder().getMenuItems().size();
 		RSA.runOnUiThread(new Runnable() {
 	          public void run() {
 	        	  deleteButton.performClick();
@@ -176,7 +176,7 @@ public class CurrentOrderActivityTest extends
 		mInstrumentation.waitForIdleSync();
 		
 		// should be 0
-		int end = DineOnUserApplication.getCurrentOrder().size();
+		int end = DineOnUserApplication.getDineOnUser().getPendingOrder().getMenuItems().size();
 		assertEquals(start - 1, end);	// assert that item was removed from the order mapping
 		
 		RSA.finish();
