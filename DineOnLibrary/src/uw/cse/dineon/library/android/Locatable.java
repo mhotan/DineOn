@@ -25,4 +25,10 @@ public interface Locatable extends android.location.LocationListener {
 	 * Request a single update from the containing element.
 	 */
 	public void requestLocationUpdates();
+	
+	/**
+	 * Return true if location services is supported on device, else false.
+	 * @return true if supported, else false
+	 */
+	public boolean isLocationSupported();
 }

@@ -49,6 +49,8 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	private RestaurantInfo currentRestaurant;
 	
 	private AlertDialog mAd;
+	
+	private boolean mWaitOnLocation;
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -71,12 +73,25 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		DineOnUserApplication.setRestaurantOfInterest(null);
 
 		mRestaurants = DineOnUserApplication.getRestaurantList();
+		this.mWaitOnLocation = false;
 		// Free up the static memory
 		DineOnUserApplication.clearResaurantList();
 		if (mRestaurants == null) {
-			// This activity was started for the first time.
 			mRestaurants = new ArrayList<RestaurantInfo>();
-			onShowNearbyRestaurants();
+			if (DineOnUserApplication.getDineOnUser().getFavs().size() > 0) {
+				// show user favs if possible
+				onShowUserFavorites();
+			} else if (super.isLocationSupported()) {
+				// Show nearby restaurants to user's current location
+				if (super.getLastKnownLocation() != null) {
+					onShowNearbyRestaurants();
+				} else {
+					this.mWaitOnLocation = true;
+					createProgressDialog();
+				}
+			} else {
+				Toast.makeText(this, "Search for restaurants.", Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 
@@ -249,8 +264,8 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 			sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 			
 		} else {
-			Toast.makeText(this, "Your device does not support Location finding", 
-					Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "Your device does not support Location finding", 
+//					Toast.LENGTH_SHORT).show();
 			Log.d(TAG, "Don't have current location info.");
 			destroyProgressDialog();
 		}
@@ -349,5 +364,15 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		destroyProgressDialog();
 		// notify the fragment of the change
 		notifyFragment();
+	}
+	
+	@Override
+	public void onLocationChanged(Location location) {
+		super.onLocationChanged(location);
+		if (this.mWaitOnLocation) {
+			// Update the restaurants and delete dialog
+			onShowNearbyRestaurants();
+			this.mWaitOnLocation = false;
+		}
 	}
 }

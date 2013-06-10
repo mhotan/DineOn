@@ -335,7 +335,6 @@ SatelliteListener {
 		
 		// clean up user data
 		DineOnUserApplication.setCurrentDiningSession(null);
-//		DineOnUserApplication.clearCurrentOrder();
 		DineOnUserApplication.clearResaurantList();
 		DineOnUserApplication.setRestaurantOfInterest(null);
 		DineOnUserApplication.setDineOnUser(null);
@@ -599,68 +598,4 @@ SatelliteListener {
 		DineOnUserApplication.setCurrentDiningSession(null);
 	}
 
-//	@Override
-//	public void onMenuItemFocusedOn(uw.cse.dineon.library.MenuItem menuItem) {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	@Override
-//	public void onViewCurrentBill() {
-//		// TODO Auto-generated method stub
-//	}
-//
-//	@Override
-//	public RestaurantInfo getCurrentRestaurant() {
-//		return DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo();
-//	}
-
-//	@Override
-//	public void onPlaceOrder(Order order) {
-//		mSat.requestOrder(DineOnUserApplication.getCurrentDiningSession(), 
-//				order, 
-//				DineOnUserApplication.getCurrentDiningSession().getRestaurantInfo());
-//		DineOnUserApplication.clearCurrentOrder();
-//		Toast.makeText(this, "Order Sent!", Toast.LENGTH_SHORT).show();
-//	}
-
-//	@Override
-//	public void onIncrementItemOrder(MenuItem item) {
-//		DineOnUserApplication.incrementItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public void onDecrementItemOrder(MenuItem item) {
-//		DineOnUserApplication.decrementItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public void onRemoveItemFromOrder(MenuItem item) {
-//		DineOnUserApplication.removeItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public void onMenuItemIncremented(MenuItem item) {
-//		DineOnUserApplication.incrementItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public void onMenuItemDecremented(MenuItem item) {
-//		DineOnUserApplication.decrementItemInCurrentOrder(item);
-//	}
-//
-//	@Override
-//	public HashMap<MenuItem, CurrentOrderItem> getOrder() {
-//		return DineOnUserApplication.getCurrentOrder();
-//	}
-//
-//	@Override
-//	public void resetCurrentOrder() {
-//		DineOnUserApplication.clearCurrentOrder();
-//	}
-//
-//	@Override
-//	public void doneWithOrder() {
-//		// TODO Auto-generated method stub
-//	}
 }
