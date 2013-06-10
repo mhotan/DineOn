@@ -87,9 +87,12 @@ public class DineOnUserApplication extends Application {
 
 	/**
 	 * Return the userinfo for current user.
-	 * @return user
+	 * @return user if available null other wise
 	 */
 	public static UserInfo getUserInfo() {
+		if (currentUser == null) {
+			return null;
+		}
 		return currentUser.getUserInfo();
 	}
 
@@ -98,8 +101,10 @@ public class DineOnUserApplication extends Application {
 	 * @param session dining session for current user
 	 */
 	public static void setCurrentDiningSession(DiningSession session) {
-		currentUser.setDiningSession(session);
-		currentUser.saveInBackGround(null);
+		if (currentUser != null) {
+			currentUser.setDiningSession(session);
+			currentUser.saveInBackGround(null);
+		}
 	}
 
 	/**
@@ -107,6 +112,9 @@ public class DineOnUserApplication extends Application {
 	 * @return the current DiningSession
 	 */
 	public static DiningSession getCurrentDiningSession() {
+		if (currentUser == null) {
+			return null;
+		}
 		return currentUser.getDiningSession();
 	}
 
