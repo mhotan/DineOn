@@ -463,16 +463,16 @@ MenuItemsFragment.MenuItemListener {
 		item.saveOnCurrentThread();
 
 		// Add it to the menu then save.
-		menu.addNewItem(item);
-		menu.saveOnCurrentThread();
+		if (!menu.hasMenuItem(item)) {
+			menu.addNewItem(item);
+			menu.saveOnCurrentThread();
+		}
+		
 		RestaurantInfo info = mRestaurant.getInfo();
 		if (!info.hasMenu(menu)) {
 			info.addMenu(menu);
+			info.saveOnCurrentThread();
 		}
-		if (!menu.hasMenuItem(item)) {
-			menu.addNewItem(item);
-		}
-		info.saveOnCurrentThread();
 	}
 
 	/**

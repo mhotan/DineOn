@@ -150,7 +150,7 @@ implements CreateNewAccountFragment.OnCreateNewAccountListener {
 	 */
 	public void onSuccess(DineOnUser dou) {
 		if(dou != null) {
-			DineOnUserApplication.setDineOnUser(dou);
+			DineOnUserApplication.setDineOnUser(dou, this);
 			Intent intent = 
 					new Intent(this, RestaurantSelectionActivity.class);
 			startActivity(intent);
