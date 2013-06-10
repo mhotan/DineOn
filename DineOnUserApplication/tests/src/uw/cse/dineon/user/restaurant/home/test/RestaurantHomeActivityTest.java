@@ -69,7 +69,7 @@ public class RestaurantHomeActivityTest extends
 	    setActivityIntent(addEvent);
 	    
 	    // initilize static data
-	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setDineOnUser(this.dineOnUser, null);
 	    DineOnUserApplication.setCurrentDiningSession(ds);
 	    DineOnUserApplication.setRestaurantOfInterest(rest.getInfo());
 	    

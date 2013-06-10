@@ -35,7 +35,7 @@ public class ProfileActivityTest extends
 	    Intent addEvent = new Intent();
 	    setActivityIntent(addEvent);
 	    
-	    DineOnUserApplication.setDineOnUser(dineOnUser);
+	    DineOnUserApplication.setDineOnUser(this.dineOnUser, null);
 	    
 		mActivity = getActivity();
 	}

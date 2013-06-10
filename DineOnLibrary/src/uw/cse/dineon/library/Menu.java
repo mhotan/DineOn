@@ -75,7 +75,7 @@ public class Menu extends Storable {
 	 * @return the items
 	 */
 	public List<MenuItem> getItems() {
-		return new ArrayList<MenuItem>(mItems);
+		return mItems;
 	}
 
 	/**

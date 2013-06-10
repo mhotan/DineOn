@@ -60,8 +60,8 @@ public class DineOnUserApplication extends Application {
 	 * @param user DineOnUser
 	 * @param context Context to subsribe and unsubscribe to notification.
 	 */
-	public static void setDineOnUser(DineOnUser user, Context context) {
-		if (currentUser != null && !currentUser.equals(user)) {
+	public static void setDineOnUser(DineOnUser user, Context context) {	
+		if (currentUser != null && !currentUser.equals(user) && context != null) {
 			// Unsubscribe the current user
 			PushService.unsubscribe(context, ParseUtil.getChannel(currentUser.getUserInfo()));
 		}
@@ -69,7 +69,7 @@ public class DineOnUserApplication extends Application {
 		// Resassign user
 		currentUser = user;
 
-		if (currentUser != null) {
+		if (currentUser != null && context != null) {
 			// Subscribe to my channel so I can hear incoming messages
 			PushService.subscribe(context, 
 					ParseUtil.getChannel(currentUser.getUserInfo()), 

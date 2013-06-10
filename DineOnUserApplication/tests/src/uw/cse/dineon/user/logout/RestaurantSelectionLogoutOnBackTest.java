@@ -51,7 +51,7 @@ public class RestaurantSelectionLogoutOnBackTest extends
 		rest.getInfo().addMenu(m);
 			    
 	    // initilize static data
-	    DineOnUserApplication.setDineOnUser(dineOnUser);
+		DineOnUserApplication.setDineOnUser(this.dineOnUser, null);
 	    DineOnUserApplication.setCurrentDiningSession(ds);
 	    DineOnUserApplication.setRestaurantOfInterest(rest.getInfo());
 		// Initialize activity testing parameters
