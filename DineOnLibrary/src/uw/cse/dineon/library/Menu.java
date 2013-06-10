@@ -123,7 +123,7 @@ public class Menu extends Storable {
 	public ParseObject packObject() {
 		ParseObject po = super.packObject();
 		po.put(Menu.NAME, this.getName());
-		po.put(Menu.ITEMS, ParseUtil.toListOfParseObjects(this.mItems));
+		po.addAllUnique(Menu.ITEMS, ParseUtil.toListOfParseObjects(this.mItems));
 		// in case this storable is going to be used after the pack.
 		return po;
 	}

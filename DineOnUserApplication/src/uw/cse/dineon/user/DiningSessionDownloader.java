@@ -139,7 +139,7 @@ public class DiningSessionDownloader extends AsyncTask<CachePolicy, ParseExcepti
 	 */
 	@Override
 	protected void onPostExecute(DiningSession result) {
-		if (mException != null) {
+		if (mException == null) {
 			DineOnUserApplication.setCurrentDiningSession(result);
 		} else {
 			Log.e(TAG, "Error occured " + mException.getMessage());

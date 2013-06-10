@@ -163,6 +163,8 @@ public final class DineOnConstants {
 			ACTION_PREFIX_USER + "CONFIRM_RESERVATION";
 	public static final String ACTION_CHANGE_RESTAURANT_INFO = 
 			ACTION_PREFIX_USER + "CHANGE_RESTAURANT_INFO";
+	public static final String ACTION_FAIL = 
+			ACTION_PREFIX_USER + "FAIL";
 	
 	private static final String LOCAL = "_LOCAL";
 	public static final String ACTION_CONFIRM_DINING_SESSION_LOCAL = 
@@ -175,13 +177,15 @@ public final class DineOnConstants {
 			ACTION_CONFIRM_RESERVATION + LOCAL;
 	public static final String ACTION_CHANGE_RESTAURANT_INFO_LOCAL = 
 			ACTION_CHANGE_RESTAURANT_INFO + LOCAL;
+	public static final String ACTION_FAIL_LOCAL = ACTION_FAIL + LOCAL;
 	
 	public static final String[] CUSTOMER_ACTIONS = {
-		ACTION_CONFIRM_DINING_SESSION,
-		ACTION_CONFIRM_ORDER,
-		ACTION_CONFIRM_ORDER,
-		ACTION_CONFIRM_RESERVATION,
-		ACTION_CHANGE_RESTAURANT_INFO,
+		ACTION_CONFIRM_DINING_SESSION_LOCAL,
+		ACTION_CONFIRM_ORDER_LOCAL,
+		ACTION_CONFIRM_ORDER_LOCAL,
+		ACTION_CONFIRM_RESERVATION_LOCAL,
+		ACTION_CHANGE_RESTAURANT_INFO_LOCAL,
+		ACTION_FAIL_LOCAL
 	};
 
 	/**
@@ -201,6 +205,8 @@ public final class DineOnConstants {
 	 */
 	static final String CHANNEL_PREFIX = "uw_cse_dineon_";	 
 
+	public static final String ARGUMENT = "__argument";
+	
 	/**
 	 * Returns the Date format for use with both applications.
 	 * @return Date format to use.

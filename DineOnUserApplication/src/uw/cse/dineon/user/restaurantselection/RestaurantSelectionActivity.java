@@ -49,7 +49,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	private ProgressDialog mProgressDialog;
 
 	private RestaurantInfo currentRestaurant;
-	
+
 	private AlertDialog mAd;
 
 
@@ -61,7 +61,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_restaurant_selection);
-		
+
 		// Replace the Action bar title with a message letting the 
 		// user know this is the restaurant selection page
 		final ActionBar ACTION_BAR = getActionBar();
@@ -78,7 +78,11 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		if (mRestaurants == null) {
 			// This activity was started for the first time.
 			mRestaurants = new ArrayList<RestaurantInfo>();
-			onShowNearbyRestaurants();
+			if (mUser.getDiningSession() != null) {
+				mRestaurants.add(mUser.getDiningSession().getRestaurantInfo());
+			} else {
+				onShowNearbyRestaurants();
+			}
 		}
 	}
 
@@ -113,23 +117,23 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 			public void onClick(DialogInterface arg0, int arg1) {
 				RSA.destroyLogoutAlert();
 				RSA.startLoginActivity();
-				
-				
+
+
 			}
-			
+
 		});
-		
+
 		adb.setNegativeButton("Cancel", new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				RSA.destroyLogoutAlert();
 			}
-			
+
 		});
 		this.mAd = adb.show();
 	}
-	
+
 	/**
 	 * Returns the alert dialog that is generated on back pressed.
 	 * Not thread safe. Mainly for testing.
@@ -139,7 +143,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	public AlertDialog getLogoutAlertDialog() {
 		return this.mAd;
 	}
-	
+
 	/**
 	 * Gets rid of alert box.
 	 */
@@ -148,7 +152,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 			this.mAd.cancel();
 		}
 	}
-	
+
 	/**
 	 * Add a new restaurant info object to the restaurant list.
 	 * @param infos RestaurantInfo object to add to list.
@@ -171,7 +175,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		FragmentManager fm = getSupportFragmentManager();
 		RestaurantListFragment frag = 
 				(RestaurantListFragment) fm.findFragmentById(R.id.restaurantList);
-		frag.notifyStateChange();
+		frag.notifyInvalidated();
 	}
 
 	@Override
@@ -181,7 +185,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		this.disableMenuItem(menu, R.id.option_check_in);
 		return temp;
 	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean temp = super.onPrepareOptionsMenu(menu);
@@ -191,13 +195,13 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-//		switch (item.getItemId()) {
-//		case MENU_ITEM_FILTER:
-//			// TODO
-//			break;
-//		default:
-//			break;
-//		}
+		//		switch (item.getItemId()) {
+		//		case MENU_ITEM_FILTER:
+		//			// TODO
+		//			break;
+		//		default:
+		//			break;
+		//		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -234,10 +238,10 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	 */
 	public void onSearchForRestaurantByName(String name) {
 		createProgressDialog();
-//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
-//		query.whereEqualTo(RestaurantInfo.NAME, name);
-//		queryForRestaurants(query, "No restaurants match. Please check spelling.");
-		
+		//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		//		query.whereEqualTo(RestaurantInfo.NAME, name);
+		//		queryForRestaurants(query, "No restaurants match. Please check spelling.");
+
 		RestaurantInfoDownloader sessionDownloader = new RestaurantInfoDownloader(name, this);
 		sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 	}
@@ -245,20 +249,20 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	@Override
 	public void onShowNearbyRestaurants() {
 		createProgressDialog();
-//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		Location lastLoc = super.getLastKnownLocation();
 		if (lastLoc != null) {
-//			query.whereWithinMiles(LocatableStorable.LOCATION, 
-//					new ParseGeoPoint(lastLoc.getLatitude(), lastLoc.getLongitude()), 
-//					DineOnConstants.MAX_RESTAURANT_DISTANCE);
-//			queryForRestaurants(query, 
-//					"There are no restaurants nearby.");
-			
+			//			query.whereWithinMiles(LocatableStorable.LOCATION, 
+			//					new ParseGeoPoint(lastLoc.getLatitude(), lastLoc.getLongitude()), 
+			//					DineOnConstants.MAX_RESTAURANT_DISTANCE);
+			//			queryForRestaurants(query, 
+			//					"There are no restaurants nearby.");
+
 			RestaurantInfoDownloader sessionDownloader = 
 					new RestaurantInfoDownloader(new ParseGeoPoint(lastLoc.getLatitude(), 
 							lastLoc.getLongitude()), this);
 			sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
-			
+
 		} else {
 			Toast.makeText(this, "Your device does not support Location finding", 
 					Toast.LENGTH_SHORT).show();
@@ -276,36 +280,19 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	@Override
 	public void onShowUserFavorites() {
 		createProgressDialog();
-//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
+		//		ParseQuery query = new ParseQuery(RestaurantInfo.class.getSimpleName());
 		String[] objIds = new String[DineOnUserApplication.getDineOnUser().getFavs().size()];
 		List<RestaurantInfo> favs = DineOnUserApplication.getDineOnUser().getFavs();
 		for (int i = 0; i < favs.size(); i++) {
 			objIds[i] = favs.get(i).getObjId();
 		}
-//		query.whereContainedIn("objectId", Arrays.asList(objIds));
-//		queryForRestaurants(query, "No restaurants in your favorites. Please do a search.");
-		
+		//		query.whereContainedIn("objectId", Arrays.asList(objIds));
+		//		queryForRestaurants(query, "No restaurants in your favorites. Please do a search.");
+
 		RestaurantInfoDownloader sessionDownloader = 
 				new RestaurantInfoDownloader(objIds, this);
 		sessionDownloader.execute(CachePolicy.NETWORK_ELSE_CACHE);
 	}
-
-//	/**
-//	 * Query for restaurants using attributes set and populate selection list.
-//	 * on return
-//	 * @param query parse query object to query restaurants.
-//	 * @param message message to display if no restaurant found.
-//	 */
-//	public void queryForRestaurants(ParseQuery query, final String message) {
-//		query.setCachePolicy(ParseQuery.CachePolicy.NETWORK_ONLY);
-//		query.setLimit(DineOnConstants.MAX_RESTAURANTS); 
-//		query.findInBackground(getFindCallback(message));
-//	}
-
-//	@Override
-//	public RestaurantInfo getCurrentRestaurant() {
-//		return currentRestaurant;
-//	}
 
 	@Override
 	public List<RestaurantInfo> getRestaurants() {
@@ -343,28 +330,6 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 	public void showNoRestaurantsDialog(String message) {
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
-//
-//	/**
-//	 * Gets the FindCallback for when restaurants are found.
-//	 * @param message to show if no restaurants found
-//	 * @return the Callback object
-//	 */
-//	public FindCallback getFindCallback(final String message) {
-//		return new FindCallback() {
-//
-//			@Override
-//			public void done(List<ParseObject> objects, ParseException e) {
-//				if (e == null) {
-//					
-//				} else { 
-//					destroyProgressDialog();
-//					showNoRestaurantsDialog("Problem getting restaurants:" + e.getMessage());
-//					Log.d(TAG, "No restaurants where found in the cloud.");
-//				}
-//			}
-//
-//		};
-//	}
 
 	@Override
 	public void onFailToDownLoadRestaurantInfos(String message) {
@@ -385,7 +350,7 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 
 		// Clear all the old restaurants because we got something new.
 		mRestaurants.clear();
-		
+
 		// Put the restaurant with a current dining session at top of the list
 		if (mUser.getDiningSession() != null) {
 			mRestaurants.add(mUser.getDiningSession().getRestaurantInfo());
@@ -394,7 +359,9 @@ RestaurantInfoDownLoaderCallback { // Listen for restaurantinfos
 		// Each parse object represents one restaurant
 		// Populate our list of restaurants with 
 		for (RestaurantInfo info: infos) {
-			mRestaurants.add(info);
+			if (!mRestaurants.contains(info)) {
+				mRestaurants.add(info);
+			}
 		}
 
 		// Destroy the progress dialog.
